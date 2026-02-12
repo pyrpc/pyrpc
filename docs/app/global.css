@@ -77,12 +77,12 @@ aside button[aria-label*="Search"] {
 .fd-sidebar,
 .fd-toc {
   position: fixed !important;
-  top: 2.5rem !important;
+  top: 4rem !important;
   /* Updated to match new header height */
   /* Hardcoded to match h-14/--fd-header-height */
   left: 0 !important;
-  height: calc(100vh - 2.5rem) !important;
-  max-height: calc(100vh - 2.5rem) !important;
+  height: calc(100vh - 4rem) !important;
+  max-height: calc(100vh - 4rem) !important;
   /* Header is usually z-40, we stay below it but above content */
   z-index: 30 !important;
   overflow: hidden !important;
