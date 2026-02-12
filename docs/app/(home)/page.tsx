@@ -71,51 +71,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Comparison Block */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto space-y-12 overflow-hidden">
-          <h2 className="text-3xl font-bold text-center">Modern RPC for Python</h2>
-          <div className="relative overflow-x-auto rounded-xl border">
-            <table className="w-full text-left">
-              <thead className="bg-muted/50 border-b">
-                <tr>
-                  <th className="p-4 font-semibold">Problem</th>
-                  <th className="p-4 font-semibold text-muted-foreground">REST / OpenAPI</th>
-                  <th className="p-4 font-semibold text-muted-foreground">gRPC</th>
-                  <th className="p-4 font-semibold text-primary">pRPC</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                <tr>
-                  <td className="p-4 font-medium">Boilerplate</td>
-                  <td className="p-4">High</td>
-                  <td className="p-4">High</td>
-                  <td className="p-4 font-bold text-primary">Low</td>
-                </tr>
-                <tr>
-                  <td className="p-4 font-medium">Python DX</td>
-                  <td className="p-4">Medium</td>
-                  <td className="p-4">Poor</td>
-                  <td className="p-4 font-bold text-primary">Excellent</td>
-                </tr>
-                <tr>
-                  <td className="p-4 font-medium">Type safety</td>
-                  <td className="p-4">Partial</td>
-                  <td className="p-4">Strong</td>
-                  <td className="p-4 font-bold text-primary">Strong</td>
-                </tr>
-                <tr>
-                  <td className="p-4 font-medium">Flexibility</td>
-                  <td className="p-4">Medium</td>
-                  <td className="p-4">Low</td>
-                  <td className="p-4 font-bold text-primary">High</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
       {/* Code Example Section */}
       <section className="py-24 px-6 bg-muted/30 border-y">
         <div className="max-w-5xl mx-auto space-y-12">
@@ -227,14 +182,66 @@ function FeaturesSection() {
     </div>
   ];
 
+  const group4 = [
+    <div key="boilerplate" className="flex flex-col items-center text-center space-y-4 p-8 w-full h-full">
+      <div className="p-3 bg-primary/10 rounded-2xl">
+        <Code className="w-10 h-10 text-primary" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-xl font-bold text-primary">Zero Boilerplate</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          Focus on your logic, not the glue. No OpenAPI pain, schema files, or manual codegen required.
+        </p>
+      </div>
+    </div>
+  ];
+
+  const group5 = [
+    <div key="dx" className="flex flex-col items-center text-center space-y-4 p-8 w-full h-full">
+      <div className="p-3 bg-primary/10 rounded-2xl">
+        <Terminal className="w-10 h-10 text-primary" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-xl font-bold text-primary">Superior DX</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          A developer experience that feels like local function calls, with full IDE support and auto-completion.
+        </p>
+      </div>
+    </div>
+  ];
+
+  const group6 = [
+    <div key="flexibility" className="flex flex-col items-center text-center space-y-4 p-8 w-full h-full">
+      <div className="p-3 bg-primary/10 rounded-2xl">
+        <Settings className="w-10 h-10 text-primary" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-xl font-bold text-primary">Extreme Flexibility</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          Scale from simple scripts to complex microservices with support for multiple transports and protocols.
+        </p>
+      </div>
+    </div>
+  ];
+
   return (
-    <div className="w-full max-w-5xl border bg-background/50 overflow-hidden mx-auto">
-      <StackedLogos
-        logoGroups={[group1, group2, group3]}
-        disableAnimation
-        logoWidth="33.333%"
-        className="w-full"
-      />
+    <div className="w-full max-w-5xl flex flex-col gap-0 mx-auto">
+      <div className="w-full border border-b-0 bg-background/50 overflow-hidden">
+        <StackedLogos
+          logoGroups={[group1, group2, group3]}
+          disableAnimation
+          logoWidth="33.333%"
+          className="w-full"
+        />
+      </div>
+      <div className="w-full border bg-background/50 overflow-hidden">
+        <StackedLogos
+          logoGroups={[group4, group5, group6]}
+          disableAnimation
+          logoWidth="33.333%"
+          className="w-full"
+        />
+      </div>
     </div>
   );
 }
