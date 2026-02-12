@@ -3,8 +3,8 @@
 @import 'fumadocs-ui/css/preset.css';
 
 :root {
-  /* Site Header Height - Reduced for docs */
-  --fd-header-height: 2.5rem;
+  /* Site Header Height - Fumadocs */
+  --fd-header-height: 3.5rem;
   /* Make EVERYTHING full width */
   --fd-layout-width: 100%;
 }
@@ -131,8 +131,80 @@ aside button[aria-label*="Search"] {
   top: var(--fd-header-height) !important;
 }
 
-/* Remove any auto-centering from internal containers */
-#nd-docs-layout>div {
+/* Custom Full Width Header Support */
+:root {
+  --fd-layout-width: 100% !important;
+}
+
+/* Force basic full-width behavior for Fumadocs root layout containers */
+.fd-nav-container,
+.fd-nav {
   max-width: none !important;
+  width: 100% !important;
   margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* StackedLogos - CSS Variables & Animations */
+.stacked-logos {
+  --duration: 30;
+  --items: 4;
+  --lists: 4;
+  --stagger: 0;
+  --logo-width: 200px;
+  --mouse-x: 0px;
+  --mouse-y: 0px;
+}
+
+.stacked-logos:hover .stacked-logos__glow {
+  opacity: 1;
+}
+
+.stacked-logos:hover .stacked-logos__border-glow {
+  opacity: 1;
+}
+
+.stacked-logos__cell {
+  --base-delay: calc(sin((var(--index) / var(--lists)) * 45deg) * var(--stagger));
+}
+
+.stacked-logos__logo.animate {
+  animation-name: stacked-logos-appear;
+  animation-duration: calc(var(--duration) * 1s);
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
+  animation-delay: calc((var(--duration) / var(--items)) * (var(--items) - var(--i)) * -1s + (var(--base-delay, 0) * 1s));
+}
+
+@keyframes stacked-logos-appear {
+
+  0%,
+  100% {
+    opacity: 0;
+    filter: blur(4px);
+  }
+
+  5%,
+  20% {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  25%,
+  100% {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stacked-logos__logo {
+    animation: none;
+    opacity: 1;
+    filter: none;
+  }
+
+  .stacked-logos__item:not(:first-child) {
+    display: none;
+  }
 }

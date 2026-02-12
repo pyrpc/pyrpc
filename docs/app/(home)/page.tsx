@@ -1,4 +1,19 @@
 import Link from 'next/link';
+import { StackedLogos } from '@/components/ui/stacked-logos';
+import {
+  Database,
+  ShieldCheck,
+  Zap,
+  Cpu,
+  Globe,
+  Layers,
+  Cloud,
+  Lock,
+  Search,
+  Settings,
+  Terminal,
+  Code
+} from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -22,7 +37,7 @@ export default function HomePage() {
             Get started →
           </Link>
           <Link
-            href="https://github.com/AtnatewosH/prpc"
+            href="https://github.com/pRPC-dev/prpc"
             className="px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
           >
             GitHub
@@ -31,28 +46,17 @@ export default function HomePage() {
       </section>
 
       {/* Why pRPC Section */}
-      <section className="py-20 px-6 bg-muted/30">
-        <div className="max-w-5xl mx-auto space-y-12">
-          <h2 className="text-3xl font-bold text-center">Why pRPC?</h2>
-          <div className="grid md:grid-cols-3 gap-8 text-left">
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-primary">Python-native</h3>
-              <p className="text-muted-foreground">
-                Built for asyncio, Pydantic, and modern Python — not a port of a Java idea.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-primary">End-to-end typing</h3>
-              <p className="text-muted-foreground">
-                Request, response, and errors stay in sync without schemas or generators.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-primary">Plugin-driven</h3>
-              <p className="text-muted-foreground">
-                Auth, caching, observability, and transports as composable plugins.
-              </p>
-            </div>
+      <section className="py-24 px-6 bg-muted/30 border-y">
+        <div className="max-w-5xl mx-auto space-y-16">
+          <div className="space-y-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Why pRPC?</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Built for performance, developer experience, and safety.
+            </p>
+          </div>
+
+          <div className="flex justify-center w-full">
+            <FeaturesSection />
           </div>
         </div>
       </section>
@@ -135,5 +139,60 @@ async def get_user(user_id: int) -> User:
         <p className="text-sm text-muted-foreground">Built in public</p>
       </footer>
     </main>
+  );
+}
+
+function FeaturesSection() {
+  const group1 = [
+    <div key="native" className="flex flex-col items-center text-center space-y-4 p-8 w-full h-full">
+      <div className="p-3 bg-primary/10 rounded-2xl">
+        <Zap className="w-10 h-10 text-primary" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-xl font-bold text-primary">Python-native</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          Built for asyncio, Pydantic, and modern Python — not a port of a legacy protocol.
+        </p>
+      </div>
+    </div>
+  ];
+
+  const group2 = [
+    <div key="typed" className="flex flex-col items-center text-center space-y-4 p-8 w-full h-full">
+      <div className="p-3 bg-primary/10 rounded-2xl">
+        <ShieldCheck className="w-10 h-10 text-primary" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-xl font-bold text-primary">End-to-end typing</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          Request, response, and errors stay in sync without schemas or generators.
+        </p>
+      </div>
+    </div>
+  ];
+
+  const group3 = [
+    <div key="plugins" className="flex flex-col items-center text-center space-y-4 p-8 w-full h-full">
+      <div className="p-3 bg-primary/10 rounded-2xl">
+        <Layers className="w-10 h-10 text-primary" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-xl font-bold text-primary">Plugin-driven</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          Auth, caching, observability, and transports as composable plugins.
+        </p>
+      </div>
+    </div>
+  ];
+
+  return (
+    <div className="w-full max-w-5xl border bg-background/50 overflow-hidden mx-auto">
+      <StackedLogos
+        logoGroups={[group1, group2, group3]}
+        disableAnimation
+        logoWidth="33.333%"
+        className="w-full"
+      />
+    </div>
   );
 }
