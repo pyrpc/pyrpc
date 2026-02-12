@@ -17,7 +17,7 @@ export function baseOptions(): BaseLayoutProps {
       transparentMode: 'top',
       component: (
         <header className="fixed top-0 z-50 w-full border-b bg-fd-background/50 backdrop-blur-sm transition-colors h-(--fd-header-height)">
-          <div className="flex items-center justify-between w-full h-full px-4 sm:px-6 md:px-8">
+          <div className="flex items-center justify-between w-full h-full px-4">
             <Link href="/" className="flex-1 text-lg font-bold uppercase tracking-tight">
               pRPC
             </Link>
