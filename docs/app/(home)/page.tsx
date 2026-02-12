@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { StackedLogos } from '@/components/ui/stacked-logos';
+import { PerspectiveGrid } from '@/components/ui/perspective-grid';
 import {
   Database,
   ShieldCheck,
@@ -17,31 +18,37 @@ import {
 
 export default function HomePage() {
   return (
-    <main className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center py-20 px-6 text-center space-y-6">
-        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">
-          pRPC
-        </h1>
-        <h2 className="text-3xl md:text-4xl font-bold text-muted-foreground">
-          Type-safe, Python-first RPC for modern APIs
-        </h2>
-        <p className="max-w-2xl text-lg text-muted-foreground/80">
-          Build end-to-end typed APIs without OpenAPI pain, codegen, or boilerplate.
-        </p>
-        <div className="flex flex-row gap-4 pt-4">
-          <Link
-            href="/docs"
-            className="px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            Get started →
-          </Link>
-          <Link
-            href="https://github.com/pRPC-dev/prpc"
-            className="px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
-          >
-            GitHub
-          </Link>
+      <section className="relative w-full overflow-hidden border-b bg-background min-h-screen flex flex-col">
+        <PerspectiveGrid className="absolute inset-0 z-0" />
+        <div className="relative z-10 flex flex-col items-center justify-center py-32 md:py-48 px-6 text-center space-y-8 max-w-7xl mx-auto flex-1">
+          <h1 className="text-6xl md:text-8xl font-extrabold tracking-tighter text-foreground">
+            pRPC
+          </h1>
+          <div className="space-y-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-fd-muted-foreground tracking-tight">
+              Type-safe, Python-first RPC
+            </h2>
+            <p className="max-w-2xl mx-auto text-lg md:text-xl text-fd-muted-foreground/80 leading-relaxed">
+              Build end-to-end typed APIs without OpenAPI pain, codegen, or boilerplate.
+              The bridge between Python and Next.js.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 pt-4 shrink-0">
+            <Link
+              href="/docs"
+              className="px-8 py-4 bg-fd-primary text-fd-primary-foreground font-bold rounded-xl hover:opacity-90 transition-all hover:scale-105 shadow-lg shadow-fd-primary/20"
+            >
+              Get started →
+            </Link>
+            <Link
+              href="https://github.com/pRPC-dev/prpc"
+              className="px-8 py-4 bg-fd-secondary text-fd-secondary-foreground font-bold rounded-xl hover:bg-fd-secondary/80 transition-all hover:scale-105 border shadow-sm"
+            >
+              GitHub
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -138,7 +145,7 @@ async def get_user(user_id: int) -> User:
         </div>
         <p className="text-sm text-muted-foreground">Built in public</p>
       </footer>
-    </main>
+    </div>
   );
 }
 
