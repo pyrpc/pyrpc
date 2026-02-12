@@ -1,7 +1,7 @@
 import type * as PageTree from 'fumadocs-core/page-tree';
 import { type ComponentProps, type HTMLAttributes, type ReactNode, useMemo } from 'react';
 import { Languages, Sidebar as SidebarIcon } from 'lucide-react';
-import { cn } from '../../../lib/cn';
+import { cn } from '@/lib/cn';
 import { buttonVariants } from '../../ui/button';
 import {
   Sidebar,

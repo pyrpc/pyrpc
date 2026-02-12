@@ -1,7 +1,7 @@
 'use client';
 
 import { type ComponentProps, createContext, type ReactNode, use, useMemo } from 'react';
-import { cn } from '../../../lib/cn';
+import { cn } from '@/lib/cn';
 import { useSidebar } from '../sidebar/base';
 import { usePathname } from 'fumadocs-core/framework';
 import Link from 'fumadocs-core/link';

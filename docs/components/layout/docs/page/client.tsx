@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'fumadocs-core/link';
-import { cn } from '../../../../lib/cn';
+import { cn } from '@/lib/cn';
 import { useI18n } from 'fumadocs-ui/contexts/i18n';
 import { useTreeContext, useTreePath } from 'fumadocs-ui/contexts/tree';
 import type * as PageTree from 'fumadocs-core/page-tree';
