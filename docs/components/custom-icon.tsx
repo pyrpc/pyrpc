@@ -1,7 +1,7 @@
 import { type LucideIcon } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { isValidElement, cloneElement } from 'react';
-import { cn } from '../lib/cn';
+import { cn } from '@/lib/cn';
 
 const icons = {
     NextJs: {

@@ -11,7 +11,7 @@ import {
   CollapsibleTrigger,
 } from '../../ui/collapsible';
 import { ChevronDown, Server, Laptop, Plug, Library, LayoutGrid, Users, BookOpen } from 'lucide-react';
-import { cn } from '../../../lib/cn';
+import { cn } from '@/lib/cn';
 import { CustomIcon } from '../../custom-icon';
 
 const ICONS: Record<string, React.ElementType> = {
