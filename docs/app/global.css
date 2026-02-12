@@ -3,8 +3,8 @@
 @import 'fumadocs-ui/css/preset.css';
 
 :root {
-  /* Site Header Height - Reduced for docs */
-  --fd-header-height: 2.5rem;
+  /* Site Header Height - Fumadocs */
+  --fd-header-height: 3.5rem;
   /* Make EVERYTHING full width */
   --fd-layout-width: 100%;
 }
@@ -77,12 +77,12 @@ aside button[aria-label*="Search"] {
 .fd-sidebar,
 .fd-toc {
   position: fixed !important;
-  top: 2.5rem !important;
+  top: 4rem !important;
   /* Updated to match new header height */
   /* Hardcoded to match h-14/--fd-header-height */
   left: 0 !important;
-  height: calc(100vh - 2.5rem) !important;
-  max-height: calc(100vh - 2.5rem) !important;
+  height: calc(100vh - 4rem) !important;
+  max-height: calc(100vh - 4rem) !important;
   /* Header is usually z-40, we stay below it but above content */
   z-index: 30 !important;
   overflow: hidden !important;
@@ -131,8 +131,146 @@ aside button[aria-label*="Search"] {
   top: var(--fd-header-height) !important;
 }
 
-/* Remove any auto-centering from internal containers */
-#nd-docs-layout>div {
+/* Custom Full Width Header Support */
+:root {
+  --fd-layout-width: 100% !important;
+}
+
+/* Force basic full-width behavior for Fumadocs root layout containers */
+.fd-nav-container,
+.fd-nav {
   max-width: none !important;
+  width: 100% !important;
   margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* StackedLogos - CSS Variables & Animations */
+.stacked-logos {
+  --duration: 30;
+  --items: 4;
+  --lists: 4;
+  --stagger: 0;
+  --logo-width: 200px;
+  --mouse-x: 0px;
+  --mouse-y: 0px;
+}
+
+.stacked-logos:hover .stacked-logos__glow {
+  opacity: 1;
+}
+
+.stacked-logos:hover .stacked-logos__border-glow {
+  opacity: 1;
+}
+
+.stacked-logos__cell {
+  --base-delay: calc(sin((var(--index) / var(--lists)) * 45deg) * var(--stagger));
+}
+
+.stacked-logos__logo.animate {
+  animation-name: stacked-logos-appear;
+  animation-duration: calc(var(--duration) * 1s);
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
+  animation-delay: calc((var(--duration) / var(--items)) * (var(--items) - var(--i)) * -1s + (var(--base-delay, 0) * 1s));
+}
+
+@keyframes stacked-logos-appear {
+
+  0%,
+  100% {
+    opacity: 0;
+    filter: blur(4px);
+  }
+
+  5%,
+  20% {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  25%,
+  100% {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stacked-logos__logo {
+    animation: none;
+    opacity: 1;
+    filter: none;
+  }
+
+  .stacked-logos__item:not(:first-child) {
+    display: none;
+  }
+}
+
+/* PerspectiveGrid Component Styles */
+
+/* Base tile styles - ensure visibility */
+.tile {
+  min-width: 1px;
+  min-height: 1px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.05);
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+.dark .tile {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Hover colors */
+.tile:nth-child(4n):hover {
+  background-color: rgb(248 113 113);
+}
+
+.tile:nth-child(4n + 1):hover {
+  background-color: rgb(56 189 248);
+}
+
+.tile:nth-child(4n + 2):hover {
+  background-color: rgb(74 222 128);
+}
+
+.tile:nth-child(4n + 3):hover {
+  background-color: rgb(253 224 71);
+}
+
+.tile:nth-child(7n):hover {
+  background-color: rgb(56 189 248);
+}
+
+.tile:nth-child(7n + 3):hover {
+  background-color: rgb(74 222 128);
+}
+
+.tile:nth-child(7n + 5):hover {
+  background-color: rgb(253 224 71);
+}
+
+.tile:nth-child(7n + 6):hover {
+  background-color: rgb(248 113 113);
+}
+
+.tile:nth-child(11n + 1):hover {
+  background-color: rgb(248 113 113);
+}
+
+.tile:nth-child(11n + 4):hover {
+  background-color: rgb(56 189 248);
+}
+
+.tile:nth-child(11n + 7):hover {
+  background-color: rgb(74 222 128);
+}
+
+.tile:nth-child(11n + 10):hover {
+  background-color: rgb(253 224 71);
 }

@@ -61,7 +61,7 @@ export function SidebarContent({
               data-collapsed={collapsed}
               data-hovered={collapsed && hovered}
               className={cn(
-                'fixed flex flex-col start-0 top-14 bottom-0 pt-[var(--fd-docs-row-1)] bg-fd-card text-sm border-e duration-250 w-[var(--fd-sidebar-width)] z-30 pb-16',
+                'fixed flex flex-col start-0 top-14 bottom-0 pt-[var(--fd-docs-row-1)] bg-fd-background text-sm border-e duration-250 w-[var(--fd-sidebar-width)] z-30 pb-16',
                 collapsed && [
                   'inset-y-2 rounded-xl transition-transform border w-[var(--fd-sidebar-width)]',
                   hovered
