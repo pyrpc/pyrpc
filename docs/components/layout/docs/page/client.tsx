@@ -13,13 +13,13 @@ import {
 } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'fumadocs-core/link';
-import { cn } from '../../../../lib/cn';
+import { cn } from '@/lib/cn';
 import { useI18n } from 'fumadocs-ui/contexts/i18n';
 import { useTreeContext, useTreePath } from 'fumadocs-ui/contexts/tree';
 import type * as PageTree from 'fumadocs-core/page-tree';
 import { usePathname } from 'fumadocs-core/framework';
 import { type BreadcrumbOptions, getBreadcrumbItemsFromPath } from 'fumadocs-core/breadcrumb';
-import { isActive } from '../../../../lib/urls';
+import { isActive } from '@/lib/urls';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../ui/collapsible';
 import { useTOCItems } from '../../../toc';
 import { useActiveAnchor } from 'fumadocs-core/toc';
