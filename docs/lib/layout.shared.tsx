@@ -1,9 +1,8 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import type { ReactNode } from 'react';
 
-// fill this with your actual GitHub info, for example:
 export const gitConfig = {
-  user: 'AtnatewosH',
+  user: 'pRPC-dev',
   repo: 'prpc',
   branch: 'main',
 };
