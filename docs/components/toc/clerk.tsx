@@ -1,9 +1,9 @@
 'use client';
 import * as Primitive from 'fumadocs-core/toc';
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
-import { cn } from '../../lib/cn';
+import { cn } from '@/lib/cn';
 import { TocThumb, useTOCItems } from './index';
-import { mergeRefs } from '../../lib/merge-refs';
+import { mergeRefs } from '@/lib/merge-refs';
 import { useI18n } from 'fumadocs-ui/contexts/i18n';
 
 export function TOCItems({ ref, className, ...props }: ComponentProps<'div'>) {
@@ -80,7 +80,7 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<'div'>) {
               encodeURIComponent(
                 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svg.width} ${svg.height}"><path d="${svg.path}" stroke="black" stroke-width="1" fill="none" /></svg>`,
               )
-            }")`,
+              }")`,
           }}
         >
           <TocThumb

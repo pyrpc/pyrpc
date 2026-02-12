@@ -1,7 +1,7 @@
 'use client';
 import type { ComponentProps, ReactNode } from 'react';
 import { usePathname } from 'fumadocs-core/framework';
-import { isActive } from '../../lib/urls';
+import { isActive } from '@/lib/urls';
 import Link from 'fumadocs-core/link';
 
 interface Filterable {
@@ -62,13 +62,13 @@ export interface MenuItemType extends Partial<WithHref>, Filterable {
 
   items: (
     | (MainItemType & {
-        /**
-         * Options when displayed on navigation menu
-         */
-        menu?: ComponentProps<'a'> & {
-          banner?: ReactNode;
-        };
-      })
+      /**
+       * Options when displayed on navigation menu
+       */
+      menu?: ComponentProps<'a'> & {
+        banner?: ReactNode;
+      };
+    })
     | CustomItemType
   )[];
 

@@ -19,7 +19,7 @@ import { useTreeContext, useTreePath } from 'fumadocs-ui/contexts/tree';
 import type * as PageTree from 'fumadocs-core/page-tree';
 import { usePathname } from 'fumadocs-core/framework';
 import { type BreadcrumbOptions, getBreadcrumbItemsFromPath } from 'fumadocs-core/breadcrumb';
-import { isActive } from '../../../../lib/urls';
+import { isActive } from '@/lib/urls';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../ui/collapsible';
 import { useTOCItems } from '../../../toc';
 import { useActiveAnchor } from 'fumadocs-core/toc';
