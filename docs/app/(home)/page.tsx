@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { StackedLogos } from '@/components/ui/stacked-logos';
 import { PerspectiveGrid } from '@/components/ui/perspective-grid';
+import AnimatedButton from '@/components/ui/animated-button';
 import {
   Database,
   ShieldCheck,
@@ -35,16 +36,18 @@ export default function HomePage() {
               The bridge between Python and Next.js.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 pt-4 shrink-0">
-            <Link
-              href="/docs"
-              className="px-8 py-4 bg-fd-primary text-fd-primary-foreground font-bold rounded-xl hover:opacity-90 transition-all hover:scale-105 shadow-lg shadow-fd-primary/20"
-            >
-              Get started →
+          <div className="flex flex-col sm:flex-row gap-6 pt-4 shrink-0 transition-all">
+            <Link href="/docs" className="group">
+              <AnimatedButton
+                as="div"
+                className="px-10 py-4 text-lg font-bold rounded-none shadow-2xl shadow-fd-primary/20 min-w-[200px]"
+              >
+                Get started →
+              </AnimatedButton>
             </Link>
             <Link
               href="https://github.com/pRPC-dev/prpc"
-              className="px-8 py-4 bg-fd-secondary text-fd-secondary-foreground font-bold rounded-xl hover:bg-fd-secondary/80 transition-all hover:scale-105 border shadow-sm"
+              className="px-10 py-4 text-lg font-bold rounded-none shadow-2xl min-w-[200px] bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100 flex items-center justify-center hover:bg-neutral-200 dark:hover:bg-neutral-800/80 transition-colors"
             >
               GitHub
             </Link>
@@ -114,24 +117,56 @@ export default function HomePage() {
       </section>
 
       {/* Code Example Section */}
-      <section className="py-20 px-6 bg-muted/30">
-        <div className="max-w-4xl mx-auto space-y-8 text-center">
-          <h2 className="text-3xl font-bold">One definition. Fully typed. No schema files.</h2>
-          <div className="grid md:grid-cols-2 gap-4 text-left">
-            <div className="p-6 bg-card rounded-xl border border-border">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wider">server.py</h3>
-              <pre className="text-sm font-mono text-primary">
-                <code>{`@rpc
-async def get_user(user_id: int) -> User:
-    return await db.users.get(user_id)`}</code>
-              </pre>
+      <section className="py-24 px-6 bg-muted/30 border-y">
+        <div className="max-w-5xl mx-auto space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">One definition. Fully typed.</h2>
+            <p className="text-muted-foreground text-lg">No schema files, no codegen, just pure Python and TypeScript.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Server Code Window */}
+            <div className="flex flex-col rounded-none overflow-hidden border border-neutral-800 bg-black shadow-2xl">
+              <div className="flex items-center justify-between px-4 py-3 bg-neutral-900 border-b border-neutral-800">
+                <div className="flex gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                </div>
+                <div className="text-xs font-medium text-neutral-400 font-mono tracking-wider">SERVER.PY</div>
+                <div className="w-10" />
+              </div>
+              <div className="p-6 font-mono text-sm leading-relaxed overflow-x-auto">
+                <pre>
+                  <code className="text-white">
+                    <span className="text-neutral-400 font-medium">@rpc</span>{'\n'}
+                    <span className="text-white font-bold">async def</span> <span className="text-neutral-300">get_user</span>(user_id: <span className="text-neutral-400 text-xs uppercase tracking-widest font-bold">int</span>) <span className="text-white">-{'>'}</span> <span className="text-neutral-400 text-xs uppercase tracking-widest font-bold">User</span>:{'\n'}
+                    {'    '}<span className="text-white font-bold">return await</span> db.users.<span className="text-neutral-300">get</span>(user_id)
+                  </code>
+                </pre>
+              </div>
             </div>
-            <div className="p-6 bg-card rounded-xl border border-border">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wider">client.py</h3>
-              <pre className="text-sm font-mono text-primary">
-                <code>{`user = await client.get_user.aio(user_id=1)
-# Fully typed result!`}</code>
-              </pre>
+
+            {/* Client Code Window */}
+            <div className="flex flex-col rounded-none overflow-hidden border border-neutral-800 bg-black shadow-2xl">
+              <div className="flex items-center justify-between px-4 py-3 bg-neutral-900 border-b border-neutral-800">
+                <div className="flex gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                </div>
+                <div className="text-xs font-medium text-neutral-400 font-mono tracking-wider">CLIENT.TS</div>
+                <div className="w-10" />
+              </div>
+              <div className="p-6 font-mono text-sm leading-relaxed overflow-x-auto">
+                <pre>
+                  <code className="text-white">
+                    <span className="text-white font-bold">const</span> user = <span className="text-white font-bold">await</span> client.get_user.<span className="text-neutral-300">aio</span>({'{'} user_id: <span className="text-white font-medium">1</span> {'}'});{'\n'}
+                    <span className="text-neutral-500 italic">// Fully typed result!</span>{'\n'}
+                    <span className="text-neutral-300">console</span>.<span className="text-neutral-300">log</span>(user.<span className="text-neutral-300">name</span>);
+                  </code>
+                </pre>
+              </div>
             </div>
           </div>
         </div>
