@@ -1,0 +1,11 @@
+{
+    "title": "Client",
+    "description": "Consume your pRPC API from the client",
+    "icon": "Laptop",
+    "pages": [
+        "index",
+        "vanilla",
+        "nextjs",
+        "advanced"
+    ]
+}

@@ -1,0 +1,55 @@
+---
+title: Error Handling
+description: Structured errors from server to client.
+
+---
+
+# Error Handling
+
+pRPC uses structured errors that flow from your procedures to the client. No opaque strings — codes and messages are predictable.
+
+## Server-Side
+
+Raise `RPCError` in your procedures:
+
+```python
+from prpc import rpc, RPCError
+
+@rpc
+def get_user(user_id: int) -> dict:
+    user = db.find_user(user_id)
+    if not user:
+        raise RPCError(-404, "User not found")
+    return user
+```
+
+## Client-Side
+
+Catch `RPCError` when calling procedures:
+
+```python
+from prpc import RPCClient, RPCError
+
+with RPCClient("http://localhost:8000") as client:
+    try:
+        user = client.get_user(user_id=999)
+    except RPCError as e:
+        print(e.code)    # -404
+        print(e.message) # User not found
+```
+
+## Standard Codes
+
+| Code  | Meaning              |
+|-------|----------------------|
+| -32600| Invalid Request      |
+| -32601| Method not found     |
+| -32602| Invalid params       |
+| -32603| Internal error       |
+
+Use negative codes (e.g. -404, -401) for application-specific errors.
+
+## Next
+
+- [Server](/docs/server) — Routers, context, authorization
+- [Client](/docs/client) — Sync, async, and TypeScript codegen

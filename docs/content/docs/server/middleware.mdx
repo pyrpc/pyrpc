@@ -1,0 +1,67 @@
+---
+title: Middleware
+description: Add middleware around your pRPC endpoint.
+
+---
+
+# Middleware
+
+pRPC is mounted as a route on your framework. Use the framework's middleware to wrap requests before they reach the RPC handler.
+
+## FastAPI
+
+Add middleware to the FastAPI app. It runs for all routes, including the RPC endpoint:
+
+```python
+from fastapi import FastAPI
+from prpc import rpc
+from prpc_fastapi import mount_fastapi
+
+app = FastAPI()
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    # Log, modify headers, etc.
+    response = await call_next(request)
+    return response
+
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+
+mount_fastapi(app)
+```
+
+## Flask
+
+Use Flask's `before_request`, `after_request`, or extensions like Flask-CORS:
+
+```python
+from flask import Flask
+from prpc import rpc
+from prpc_flask import mount_flask
+
+app = Flask(__name__)
+
+@app.before_request
+def before():
+    # Auth, logging, etc.
+    pass
+
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+
+mount_flask(app)
+```
+
+## ASGI
+
+For the standalone ASGI app, wrap it with ASGI middleware:
+
+```python
+from prpc.transport.asgi import app as prpc_app
+
+# Wrap with your ASGI middleware
+app = YourMiddleware(prpc_app)
+```

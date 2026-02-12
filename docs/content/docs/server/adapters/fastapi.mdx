@@ -1,0 +1,44 @@
+---
+title: FastAPI Adapter
+description: Mount pRPC on a FastAPI application using mount_fastapi.
+
+---
+
+# FastAPI Adapter
+
+The FastAPI adapter exposes your pRPC procedures at `POST /rpc` on a FastAPI app.
+
+## Installation
+
+```bash
+uv add prpc prpc-fastapi
+```
+
+## Basic Setup
+
+```python
+from fastapi import FastAPI
+from prpc import rpc
+from prpc_fastapi import mount_fastapi
+
+app = FastAPI()
+
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+
+mount_fastapi(app)
+```
+
+This registers `add` in the global registry and mounts a `POST /rpc` endpoint that forwards requests to pRPC.
+
+## How It Works
+
+- `@rpc` registers functions in the default registry.
+- `mount_fastapi(app)` adds a FastAPI route:
+  - path: `/rpc`
+  - method: `POST`
+  - body: JSON-RPC request payload
+
+The adapter calls `handle_request(payload)` from `prpc`, then returns the JSON-RPC response.
+

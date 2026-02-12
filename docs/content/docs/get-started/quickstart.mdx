@@ -1,0 +1,88 @@
+---
+title: Quickstart
+description: Get a working pRPC server and client in under 2 minutes.
+
+---
+
+# Quickstart
+
+Copy, paste, run. No fluff — just a working pRPC server and client call.
+
+## 1. Install
+
+```bash
+uv add prpc prpc-fastapi uvicorn
+```
+
+## 2. Server
+
+Create `server.py`:
+
+```python
+from fastapi import FastAPI
+from prpc import rpc
+from prpc_fastapi import mount_fastapi
+
+app = FastAPI()
+
+@rpc
+def add(a: int, b: int) -> int:
+    """Add two numbers."""
+    return a + b
+
+@rpc
+def greet(name: str = "World") -> str:
+    """Greet someone."""
+    return f"Hello, {name}!"
+
+mount_fastapi(app)
+```
+
+Run it:
+
+```bash
+uvicorn server:app --reload
+```
+
+**Expected output:**
+
+```
+INFO:     Uvicorn running on http://127.0.0.1:8000
+INFO:     Application startup complete.
+```
+
+## 3. Client
+
+Create `client.py` (in another terminal):
+
+```python
+from prpc import RPCClient
+
+with RPCClient("http://localhost:8000") as client:
+    result = client.add(a=10, b=5)
+    print(result)  # 15
+
+    msg = client.greet(name="pRPC")
+    print(msg)  # Hello, pRPC!
+```
+
+Run it:
+
+```bash
+python client.py
+```
+
+**Expected output:**
+
+```
+15
+Hello, pRPC!
+```
+
+## Done
+
+You now have a working pRPC server + client. Next:
+
+- [Installation](/docs/get-started/installation) — Adapters (Flask, codegen)
+- [Concepts](/docs/concepts) — Mental model, protocol, error handling
+- [Server](/docs/server) — Routers, procedures, context

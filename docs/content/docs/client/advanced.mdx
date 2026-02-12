@@ -1,0 +1,83 @@
+---
+title: Advanced
+description: Testing, customization, and patterns for pRPC clients.
+
+---
+
+# Advanced Client Usage
+
+This page covers patterns that go beyond the basic client examples.
+
+## Testing with ASGITransport
+
+You can test the Python client against the in‑memory ASGI app instead of a real server.
+
+```python
+import httpx
+import pytest
+from prpc import rpc, asgi_app, RPCClient, default_registry
+
+@pytest.fixture(autouse=True)
+def clear_registry():
+    default_registry._procedures.clear()
+
+@pytest.mark.anyio
+async def test_client_async():
+    @rpc
+    def add(a: int, b: int) -> int:
+        return a + b
+
+    async with RPCClient("http://test") as client:
+        client._async_client = httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=asgi_app),
+            base_url="http://test",
+        )
+
+        result = await client.add.aio(10, 20)
+        assert result == 30
+```
+
+## Custom HTTP Settings
+
+`RPCClient` uses `httpx.Client` / `httpx.AsyncClient` under the hood. You can override them:
+
+```python
+import httpx
+from prpc import RPCClient
+
+client = RPCClient("http://localhost:8000")
+client._sync_client = httpx.Client(
+    base_url="http://localhost:8000",
+    timeout=10.0,
+    headers={"X-Request-Source": "batch-job"},
+)
+```
+
+For TypeScript, you can wrap `PRPCClient` to inject custom headers or use a different `fetch` implementation.
+
+## Codegen Tips
+
+- Re‑run `prpc codegen` whenever you add or change procedures.
+- Commit the generated client to your repo so frontend builds don't depend on Python tooling.
+
+## Error Handling Patterns
+
+- Wrap RPC calls in a small helper that normalizes `RPCError` / `PRPCError`.
+- Map error codes to user‑facing messages in one place.
+
+```ts
+export function handleRpcError(e: unknown): string {
+  if (e instanceof PRPCError) {
+    if (e.code === 401) return "You must be signed in.";
+    if (e.code === 403) return "You don't have permission.";
+    return e.message;
+  }
+  return "Something went wrong. Please try again.";
+}
+```
+
+## Next Steps
+
+- [Server](/docs/server) — How procedures are defined
+- [Plugins](/docs/plugins) — Framework‑specific integrations
+

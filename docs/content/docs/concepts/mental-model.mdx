@@ -1,0 +1,44 @@
+---
+title: Mental Model
+description: How pRPC thinks about your API.
+
+---
+
+# Mental Model
+
+pRPC treats your backend as a **library of typed functions**. No schemas, no generated clients (for Python) — just call procedures like local methods.
+
+## Procedures = Functions
+
+Every RPC procedure is a Python function decorated with `@rpc`:
+
+```python
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+```
+
+The client calls it the same way:
+
+```python
+client.add(a=10, b=5)  # 15
+```
+
+## No OpenAPI Middle Layer
+
+Unlike REST or OpenAPI-based tools, pRPC does not:
+
+- Generate schemas
+- Require you to maintain `.yaml` or `.json` spec files
+- Force a separate client codegen step for Python
+
+Types flow directly from your functions. The protocol carries JSON; the client deserializes based on introspection.
+
+## End-to-End Typing
+
+When you add a procedure, the client can call it with full awareness of parameters and return type. Errors are structured and typed too — see [Error Handling](/docs/concepts/error-handling).
+
+## Next
+
+- [Protocol Design](/docs/concepts/protocol-design) — How requests and responses are structured
+- [Error Handling](/docs/concepts/error-handling) — How errors are represented and propagated

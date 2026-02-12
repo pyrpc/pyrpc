@@ -1,0 +1,98 @@
+---
+title: Routers
+description: Organize your API into modular routers.
+
+---
+
+# Routers
+
+pRPC uses a **procedure registry** to hold your RPC procedures. You register procedures with `@rpc`, then mount the registry onto your app using an adapter. There is no separate router object — the registry is the router.
+
+## The Registry
+
+Procedures are stored in a global registry (`default_registry`). The `@rpc` decorator registers a function:
+
+```python
+from prpc import rpc
+from prpc_fastapi import mount_fastapi
+
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+
+@rpc
+def greet(name: str = "World") -> str:
+    return f"Hello, {name}!"
+
+mount_fastapi(app)  # Exposes add and greet at POST /rpc
+```
+
+When a request arrives, pRPC looks up the procedure by name in the registry and invokes it with the request params.
+
+## Custom Procedure Names
+
+By default, the procedure name is the function name. Override it with the `name` parameter:
+
+```python
+@rpc(name="getUserById")
+def get_user(user_id: int) -> dict:
+    return {"id": user_id, "name": "Jane"}
+```
+
+The client calls `getUserById`, not `get_user`.
+
+## Organizing Procedures
+
+You can spread procedures across multiple modules. All procedures decorated with `@rpc` end up in the same registry:
+
+```
+myapp/
+  procedures/
+    users.py    # @rpc def get_user, create_user, ...
+    products.py # @rpc def get_product, list_products, ...
+  main.py       # imports procedures, mount_fastapi(app)
+```
+
+**procedures/users.py:**
+
+```python
+from prpc import rpc
+
+@rpc
+def get_user(user_id: int) -> dict:
+    ...
+
+@rpc
+def create_user(name: str, email: str) -> dict:
+    ...
+```
+
+**main.py:**
+
+```python
+from fastapi import FastAPI
+from prpc_fastapi import mount_fastapi
+
+# Import so @rpc runs and registers procedures
+import procedures.users
+import procedures.products
+
+app = FastAPI()
+mount_fastapi(app)
+```
+
+Mounting happens once. All registered procedures are available at the adapter's endpoint (e.g. `POST /rpc`).
+
+## Mounting with Adapters
+
+How you mount depends on the adapter. See [Adapters](/docs/server/adapters) for details.
+
+- **FastAPI** — `mount_fastapi(app)` adds a `POST /rpc` route
+- **Flask** — `mount_flask(app)` adds a `POST /rpc` route
+- **ASGI** — Use `PRPCAsgiApp` or `asgi_app` for a standalone app
+
+## Next Steps
+
+- [Procedures](/docs/server/procedures) — Validation, types, and async
+- [Context](/docs/server/context) — Accessing request context
+- [Adapters](/docs/server/adapters) — FastAPI, Flask, ASGI

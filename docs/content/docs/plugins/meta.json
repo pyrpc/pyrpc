@@ -1,0 +1,9 @@
+{
+    "title": "Plugins",
+    "description": "Extend pRPC with tooling and behavioral add-ons",
+    "icon": "Plug",
+    "pages": [
+        "index",
+        "prpc-codegen"
+    ]
+}

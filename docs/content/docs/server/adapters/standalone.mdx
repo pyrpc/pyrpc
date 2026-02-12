@@ -1,0 +1,35 @@
+---
+title: Standalone ASGI Adapter
+description: Use the minimal PRPCAsgiApp directly as your ASGI app.
+
+---
+
+# Standalone ASGI Adapter
+
+For minimal deployments or ASGI-first frameworks, use the built-in `PRPCAsgiApp`.
+
+## Basic Usage
+
+```python
+from prpc.transport.asgi import PRPCAsgiApp
+
+app = PRPCAsgiApp()
+```
+
+Or use the pre-created instance:
+
+```python
+from prpc.transport.asgi import app
+```
+
+This ASGI app:
+
+- handles only `POST /rpc`
+- reads the JSON body
+- calls `handle_request(payload)`
+- returns a JSON-RPC response
+
+## Mounting Under a Prefix
+
+Use your ASGI framework/router to mount the app at a prefix (e.g. `/api/rpc`). The app itself listens on `/rpc` internally; the outer router controls the external path.
+

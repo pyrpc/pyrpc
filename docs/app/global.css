@@ -1,0 +1,138 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+:root {
+  /* Site Header Height - Reduced for docs */
+  --fd-header-height: 2.5rem;
+  /* Make EVERYTHING full width */
+  --fd-layout-width: 100%;
+}
+
+/* Ensure the HomeLayout main content fills the screen properly */
+#nd-home-layout {
+  min-height: calc(100vh - var(--fd-header-height));
+  --fd-layout-width: 100%;
+}
+
+/* Header full width and left aligned */
+#nd-nav>div {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  max-width: none !important;
+  width: 100% !important;
+  padding-left: 0rem !important;
+  padding-right: 0rem !important;
+}
+
+#nd-nav .fd-nav-container {
+  max-width: none !important;
+}
+
+/* Hide Search Toggle ONLY in global headers (root and docs sub-nav) */
+header button[data-search],
+header button[data-search-full],
+header button[aria-label*="Search"] {
+  display: none !important;
+}
+
+/* BUT we want to keep it in the sidebar */
+aside button[data-search],
+aside button[data-search-full],
+aside button[aria-label*="Search"] {
+  display: inline-flex !important;
+}
+
+
+/* Ensure DocsLayout accounts for the top header space and occupies full width */
+#nd-docs-layout {
+  --fd-nav-height: 3.5rem;
+  --fd-layout-width: 100% !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+@media (min-width: 768px) {
+  #nd-docs-layout {
+    --fd-nav-height: 0px;
+  }
+
+  /* Hide the documentation sub-navbar on desktop entirely to prevent overlap */
+  #nd-subnav {
+    display: none !important;
+  }
+}
+
+/* Hide redundant sub-nav links */
+#nd-subnav a,
+#nd-subnav span:not([button]) {
+  display: none !important;
+}
+
+/* 
+  FIX: Sidebar and TOC fixed positioning.
+  Force them to start EXACTLY below the header and clamp their height 
+  to the remaining viewport space.
+*/
+.fd-sidebar,
+.fd-toc {
+  position: fixed !important;
+  top: 2.5rem !important;
+  /* Updated to match new header height */
+  /* Hardcoded to match h-14/--fd-header-height */
+  left: 0 !important;
+  height: calc(100vh - 2.5rem) !important;
+  max-height: calc(100vh - 2.5rem) !important;
+  /* Header is usually z-40, we stay below it but above content */
+  z-index: 30 !important;
+  overflow: hidden !important;
+  background-color: var(--fd-background) !important;
+}
+
+/* 
+   Ensure the global header is definitely on top 
+   to provide a clean "cut line" for the sidebar.
+*/
+#nd-nav {
+  z-index: 50 !important;
+  background-color: var(--fd-background) !important;
+}
+
+/* Ensure internal aside fills the fixed wrapper and stays contained */
+#nd-sidebar {
+  height: 100% !important;
+  max-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Scroll area within the sidebar: restricted to this area only */
+#nd-sidebar [data-sidebar-viewport],
+.fd-sidebar-viewport {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  min-height: 0 !important;
+}
+
+/* Alignment for the main content area */
+.fd-doc {
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  max-width: none !important;
+}
+
+
+/* Prevent double headers from creating scroll space on mobile */
+#nd-subnav {
+  top: var(--fd-header-height) !important;
+}
+
+/* Remove any auto-centering from internal containers */
+#nd-docs-layout>div {
+  max-width: none !important;
+  margin-left: 0 !important;
+}

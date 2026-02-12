@@ -1,0 +1,14 @@
+{
+    "title": "Docs",
+    "description": "pRPC documentation",
+    "pages": [
+        "get-started",
+        "concepts",
+        "server",
+        "client",
+        "plugins",
+        "reference",
+        "extra",
+        "community"
+    ]
+}

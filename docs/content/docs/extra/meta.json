@@ -1,0 +1,10 @@
+{
+    "title": "Extra",
+    "description": "Additional resources and information",
+    "icon": "Sparkles",
+    "pages": [
+        "faq",
+        "spec",
+        "further-reading"
+    ]
+}

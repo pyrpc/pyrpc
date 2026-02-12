@@ -1,0 +1,95 @@
+---
+title: Vanilla Python
+description: Use RPCClient to call your pRPC server from Python.
+
+---
+
+# Vanilla Python Client
+
+The Python client gives you a dynamic, ergonomic way to call your pRPC server.
+
+## RPCClient Basics
+
+```python
+from prpc import RPCClient, RPCError
+
+with RPCClient("http://localhost:8000") as client:
+    try:
+        result = client.add(10, 5)
+        print(result)
+    except RPCError as e:
+        print(f"RPC failed: {e.code} {e.message}")
+```
+
+- `RPCClient(base_url)` points at your server (e.g. `http://localhost:8000`).
+- Each registered procedure (`@rpc def add(...)`) becomes a method on `client`.
+
+## Sync vs Async
+
+By default, calling `client.add(...)` is **synchronous**.
+
+For async usage, either:
+
+```python
+result = await client.add.aio(a=1, b=2)
+```
+
+or call the explicit API:
+
+```python
+result = await client.call_async("add", a=1, b=2)
+```
+
+## Positional vs Keyword Params
+
+pRPC supports both styles:
+
+```python
+client.add(1, 2)          # positional -> [1, 2]
+client.add(a=1, b=2)      # keyword   -> {"a": 1, "b": 2}
+```
+
+On the server, they both map to `def add(a: int, b: int) -> int`.
+
+## Lifetime Management
+
+`RPCClient` manages an underlying `httpx` client (sync + async).
+
+- Use `with RPCClient(...)` for sync code.
+- Use `async with RPCClient(...)` for async code.
+
+```python
+async with RPCClient("http://localhost:8000") as client:
+    status = await client.get_status.aio()
+```
+
+You can also close it manually:
+
+```python
+client = RPCClient("http://localhost:8000")
+try:
+    ...
+finally:
+    client.close()
+```
+
+## Error Handling
+
+Server-side errors become `RPCError` instances:
+
+```python
+from prpc import RPCError
+
+try:
+    client.fail()
+except RPCError as e:
+    print(e.code, e.message)
+```
+
+HTTP errors (non‑2xx) raise `httpx` exceptions before pRPC even sees the payload.
+
+## Next Steps
+
+- [Next.js / TypeScript Client](/docs/client/nextjs)
+- [Advanced Usage](/docs/client/advanced)
+

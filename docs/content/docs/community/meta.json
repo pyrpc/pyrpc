@@ -1,0 +1,10 @@
+{
+    "title": "Community",
+    "description": "Join the pRPC community",
+    "icon": "MessageCircle",
+    "pages": [
+        "contributing",
+        "testimonials",
+        "sponsors"
+    ]
+}

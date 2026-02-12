@@ -1,0 +1,13 @@
+{
+    "title": "Adapters",
+    "description": "Integrate pRPC with different servers",
+    "icon": "LayoutGrid",
+    "pages": [
+        "index",
+        "fastapi",
+        "flask",
+        "standalone",
+        "community-adapters"
+    ],
+    "collapsible": false
+}

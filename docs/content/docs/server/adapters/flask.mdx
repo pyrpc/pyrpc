@@ -1,0 +1,45 @@
+---
+title: Flask Adapter
+description: Mount pRPC on a Flask application using mount_flask.
+
+---
+
+# Flask Adapter
+
+The Flask adapter exposes your pRPC procedures at `POST /rpc` on a Flask app.
+
+## Installation
+
+```bash
+uv add prpc prpc-flask
+```
+
+## Basic Setup
+
+```python
+from flask import Flask
+from prpc import rpc
+from prpc_flask import mount_flask
+
+app = Flask(__name__)
+
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+
+mount_flask(app)
+```
+
+This registers `add` in the global registry and mounts a `POST /rpc` endpoint that forwards requests to pRPC.
+
+## How It Works
+
+- `@rpc` registers functions in the default registry.
+- `mount_flask(app)` adds a `/rpc` route on the Flask app.
+- The adapter:
+  - parses JSON from the request body
+  - calls `handle_request(payload)`
+  - returns a JSON response using `jsonify`
+
+Because Flask is sync-only, the adapter runs the async interpreter with `anyio.run`.
+

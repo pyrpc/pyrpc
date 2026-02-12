@@ -1,0 +1,10 @@
+{
+    "title": "Reference",
+    "description": "Complete API documentation",
+    "icon": "Library",
+    "pages": [
+        "prpc-client",
+        "prpc-next",
+        "prpc-server"
+    ]
+}

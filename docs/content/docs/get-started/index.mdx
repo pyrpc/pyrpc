@@ -1,0 +1,31 @@
+---
+title: Introduction
+description: Welcome to pRPC - The type-safe, Python-first RPC framework.
+
+---
+
+**pRPC** is a modern "drop-in RPC layer" for Python. It turns your backend into a library of typed async functions that can be called from anywhere.
+
+Inspired by the DX of **tRPC** and **Better Auth**, pRPC eliminates the need for OpenAPI schemas, heavy generators, or manual boilerplate.
+
+## Why pRPC?
+
+- **Python-native**: Built for asyncio, Pydantic v2, and modern Python type hints.
+- **End-to-End Typing**: Request, response, and errors stay in sync automatically.
+- **Zero Config**: Drop it into your existing FastAPI or Flask app in seconds.
+- **Modular**: Only install what you need (core, adapters, codegen).
+
+## How it works
+
+1. **Define**: Use the `@rpc` decorator on any Python function.
+2. **Mount**: Attach your pRPC registry to your favorite web framework.
+3. **Call**: Use the pRPC client (Python or generated TypeScript) to call your functions.
+
+## Next Steps
+
+<Cards>
+  <Card title="Quickstart" href="/docs/get-started/quickstart" description="Copy-paste your first working API in 2 minutes." />
+  <Card title="Installation" href="/docs/get-started/installation" description="Get pRPC running in your project." />
+  <Card title="Server Guide" href="/docs/server" description="Learn how to define RPC procedures." />
+  <Card title="Client Guide" href="/docs/client" description="Sync and Async client usage." />
+</Cards>

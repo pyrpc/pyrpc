@@ -1,0 +1,63 @@
+---
+title: Procedures
+description: Define RPC procedures with types, validation, and async support.
+
+---
+
+# Procedures
+
+Procedures are Python functions decorated with `@rpc`. They receive params from the client and return a result (or raise an error).
+
+## Basic Definition
+
+```python
+from prpc import rpc
+
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+
+@rpc
+def greet(name: str = "World") -> str:
+    return f"Hello, {name}!"
+```
+
+The client sends `{"jsonrpc": "2.0", "method": "add", "params": {"a": 1, "b": 2}, "id": 1}`. pRPC deserializes params, calls `add(a=1, b=2)`, and returns the result in the JSON-RPC response.
+
+## Types and Validation
+
+Params are validated from the JSON payload using the request model. Type hints on your function parameters define the expected structure. Use standard Python types (`int`, `str`, `list`, `dict`, etc.) and Pydantic models where helpful.
+
+## Sync vs Async
+
+Procedures can be sync or async. pRPC detects awaitables and awaits them:
+
+```python
+@rpc
+def sync_proc(x: int) -> int:
+    return x * 2
+
+@rpc
+async def async_proc(x: int) -> int:
+    await asyncio.sleep(0.1)
+    return x * 2
+```
+
+## Naming
+
+Procedure names default to the function name. Use `name` to expose a different name:
+
+```python
+@rpc(name="getUser")
+def get_user(user_id: int) -> dict:
+    ...
+```
+
+## Errors
+
+Exceptions in a procedure are caught and returned as JSON-RPC errors. See [Error Handling](/docs/concepts/error-handling) for the protocol details.
+
+## Next Steps
+
+- [Context](/docs/server/context) — Accessing request context
+- [Adapters](/docs/server/adapters) — Mounting your procedures

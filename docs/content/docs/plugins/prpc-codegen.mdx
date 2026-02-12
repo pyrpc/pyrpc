@@ -1,0 +1,108 @@
+---
+title: Code Generation
+description: Generate TypeScript and Python client SDKs from your pRPC router
+
+---
+
+# prpc-codegen
+
+Automatically generate type-safe client SDKs for TypeScript and Python from your pRPC server definition.
+
+## Installation
+
+```bash
+pip install prpc-codegen
+```
+
+## CLI Usage
+
+Generate a TypeScript client:
+
+```bash
+prpc-codegen --input myapp/router.py --output ./generated/client.ts --lang typescript
+```
+
+Generate a Python client:
+
+```bash
+prpc-codegen --input myapp/router.py --output ./generated/client.py --lang python
+```
+
+## Features
+
+✅ TypeScript SDK generation  
+✅ Python SDK generation  
+✅ Full type inference  
+✅ Tree-shakeable modular output  
+✅ Documentation comments  
+
+## Generated Client Example
+
+### TypeScript
+
+```typescript
+// generated/client.ts
+import { createClient } from '@prpc/client';
+
+const client = createClient({ baseUrl: 'http://localhost:8000' });
+
+// Fully typed!
+const user = await client.getUser({ userId: 1 });
+console.log(user.name); // TypeScript knows this is a string
+```
+
+### Python
+
+```python
+# generated/client.py
+from prpc import Client
+
+client = Client("http://localhost:8000")
+
+# Type hints included
+user = await client.get_user(user_id=1)
+print(user.name)  # IDE autocomplete works!
+```
+
+## Configuration
+
+Create a `prpc.config.json`:
+
+```json
+{
+  "input": "myapp/router.py",
+  "outputs": [
+    {
+      "path": "./clients/typescript/index.ts",
+      "lang": "typescript"
+    },
+    {
+      "path": "./clients/python/client.py",
+      "lang": "python"
+    }
+  ],
+  "includeDocstrings": true
+}
+```
+
+Run with:
+
+```bash
+prpc-codegen --config prpc.config.json
+```
+
+## CI/CD Integration
+
+Add to your GitHub Actions workflow:
+
+```yaml
+- name: Generate pRPC Clients
+  run: |
+    pip install prpc-codegen
+    prpc-codegen --config prpc.config.json
+```
+
+## Next Steps
+
+- Learn about [Client Usage](/docs/client)
+- Explore [TypeScript Integration](/docs/client/vanilla)

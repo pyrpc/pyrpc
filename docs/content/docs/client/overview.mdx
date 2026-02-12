@@ -1,0 +1,27 @@
+---
+title: Overview
+description: Consuming your pRPC API.
+
+---
+
+# Client
+
+This section shows how to call your pRPC server from different client environments.
+
+## What You'll Learn
+
+- **[Vanilla Python](/docs/client/vanilla)** — Use `RPCClient` in scripts, services, and CLIs.
+- **[Next.js / TypeScript](/docs/client/nextjs)** — Use generated `PRPCClient` in React apps.
+- **[Advanced](/docs/client/advanced)** — Error handling, testing, and customization.
+
+## Quick Example (Python)
+
+```python
+from prpc import RPCClient
+
+with RPCClient("http://localhost:8000") as client:
+    result = client.add(a=10, b=5)
+    print(result)  # 15
+```
+
+If your server exposes more procedures (via `@rpc`), they appear as dynamic methods on `client`.

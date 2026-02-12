@@ -1,0 +1,87 @@
+---
+title: Next.js / TypeScript
+description: Call your pRPC server from TypeScript using a generated PRPCClient.
+
+---
+
+# Next.js / TypeScript Client
+
+Use `prpc-codegen` to generate a typed TypeScript client for your pRPC procedures.
+
+## Generate the Client
+
+From your Python project:
+
+```bash
+uv add prpc-codegen
+
+prpc codegen -m my_app.main -o src/lib/prpc-client.ts
+```
+
+This scans registered procedures in `my_app.main` and generates a `PRPCClient` class.
+
+## Using PRPCClient
+
+```ts
+import { PRPCClient } from "@/lib/prpc-client";
+
+const client = new PRPCClient(process.env.NEXT_PUBLIC_API_URL!);
+
+export async function addExample() {
+  const result = await client.add(1, 2);
+  console.log(result);
+}
+```
+
+Under the hood, `PRPCClient`:
+
+- Sends `POST /rpc` requests to your server.
+- Sends `{"id", "method", "params"}` JSON.
+- Throws `PRPCError` when the server returns an error.
+
+## In Next.js Components
+
+Use it inside server actions or React components as you would any fetch‑based client. For example, in a server action:
+
+```ts
+"use server";
+
+import { PRPCClient } from "@/lib/prpc-client";
+
+const client = new PRPCClient(process.env.PRPC_API_URL!);
+
+export async function createUserAction(formData: FormData) {
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  return client.createUser(name, email);
+}
+```
+
+## Error Handling
+
+The generated client throws:
+
+- `PRPCError` when the RPC returns an error.
+- Standard `Error` when the HTTP request fails.
+
+```ts
+import { PRPCClient, PRPCError } from "@/lib/prpc-client";
+
+const client = new PRPCClient(process.env.NEXT_PUBLIC_API_URL!);
+
+try {
+  const user = await client.getUser(1);
+} catch (e) {
+  if (e instanceof PRPCError) {
+    console.error(e.code, e.message);
+  } else {
+    console.error("Network error", e);
+  }
+}
+```
+
+## Next Steps
+
+- [Vanilla Python Client](/docs/client/vanilla)
+- [Advanced Usage](/docs/client/advanced)
+

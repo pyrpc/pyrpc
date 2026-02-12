@@ -1,0 +1,62 @@
+---
+title: Protocol Design
+description: JSON-RPC over HTTP — simple and predictable.
+
+---
+
+# Protocol Design
+
+pRPC uses **JSON-RPC 2.0** over HTTP POST. One endpoint, one format, no surprises.
+
+## Request
+
+```
+POST /rpc
+Content-Type: application/json
+```
+
+```json
+{
+  "id": "unique-request-id",
+  "method": "add",
+  "params": { "a": 10, "b": 5 }
+}
+```
+
+- `id` — Unique identifier for the request (UUID or string)
+- `method` — Procedure name
+- `params` — Object (named) or array (positional) of arguments
+
+## Response
+
+**Success:**
+
+```json
+{
+  "id": "unique-request-id",
+  "result": 15
+}
+```
+
+**Error:**
+
+```json
+{
+  "id": "unique-request-id",
+  "error": {
+    "code": -32602,
+    "message": "Invalid params"
+  }
+}
+```
+
+## Why JSON-RPC?
+
+- **Standard** — Well-specified, widely understood
+- **Simple** — No custom wire format, easy to debug
+- **Compatible** — Works with any HTTP client; adapters handle the details
+
+## Next
+
+- [Error Handling](/docs/concepts/error-handling) — Error codes and propagation
+- [Server](/docs/server) — Mounting, procedures, context

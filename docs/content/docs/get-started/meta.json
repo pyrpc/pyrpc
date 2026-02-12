@@ -1,0 +1,12 @@
+{
+    "title": "Get Started",
+    "description": "Start building with pRPC",
+    "icon": "CirclePlay",
+    "defaultOpen": true,
+    "pages": [
+        "index",
+        "comparison",
+        "installation",
+        "quickstart"
+    ]
+}

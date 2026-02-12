@@ -1,0 +1,11 @@
+{
+    "title": "Concepts",
+    "description": "Core concepts of pRPC",
+    "icon": "Book",
+    "pages": [
+        "index",
+        "mental-model",
+        "protocol-design",
+        "error-handling"
+    ]
+}

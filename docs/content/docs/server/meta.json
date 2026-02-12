@@ -1,0 +1,19 @@
+{
+    "title": "Server",
+    "description": "Build your pRPC server",
+    "icon": "Server",
+    "pages": [
+        "index",
+        "routers",
+        "procedures",
+        "context",
+        "middleware",
+        "---Adapters---",
+        "./adapters/index",
+        "./adapters/fastapi",
+        "./adapters/flask",
+        "./adapters/standalone",
+        "---Others---",
+        "./adapters/community-adapters"
+    ]
+}

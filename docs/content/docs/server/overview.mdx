@@ -1,0 +1,32 @@
+---
+title: Overview
+description: Building your API with Routers and Procedures.
+
+---
+
+# Server
+
+This section covers everything you need to build a pRPC server.
+
+## What You'll Learn
+
+- **[Routers](/docs/server/routers)** — The procedure registry, `@rpc`, and organizing procedures
+- **[Procedures](/docs/server/procedures)** — Defining procedures, types, sync vs async
+- **[Context](/docs/server/context)** — Accessing request and adapter context
+- **[Middleware](/docs/server/middleware)** — Framework middleware around your RPC endpoint
+- **[Adapters](/docs/server/adapters)** — FastAPI, Flask, and ASGI integration
+
+## Quick Reference
+
+```python
+from prpc import rpc
+from prpc_fastapi import mount_fastapi
+
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+
+mount_fastapi(app)
+```
+
+That's the core pattern: register with `@rpc`, mount with an adapter.
