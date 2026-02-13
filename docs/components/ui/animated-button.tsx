@@ -7,7 +7,8 @@ import { cn } from '@/lib/cn'
 type AnimatedButtonProps<T extends React.ElementType = 'button'> = {
     as?: T;
     children?: React.ReactNode;
-} & MotionProps & Omit<React.ComponentPropsWithoutRef<T>, keyof MotionProps | 'as' | 'children'>;
+    className?: string;
+} & MotionProps & Omit<React.ComponentPropsWithoutRef<T>, keyof MotionProps | 'as' | 'children' | 'className'>;
 
 function AnimatedButton<T extends React.ElementType = 'button'>({
     children = 'Browse Components',
