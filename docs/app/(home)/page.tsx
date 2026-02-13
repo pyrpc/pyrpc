@@ -106,7 +106,7 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">One definition. Fully typed.</h2>
-            <p className="text-muted-foreground text-lg">No schema files, no codegen, just pure Python and TypeScript.</p>
+            <p className="text-muted-foreground text-lg">No manual schema files, instant type safety, and pure Python-first RPC.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -130,7 +130,7 @@ export default function HomePage() {
                     {'\n'}
                     <span className="text-neutral-400 font-medium">@rpc</span>{'\n'}
                     <span className="text-white font-bold">async def</span> <span className="text-neutral-300">get_user</span>(id: <span className="text-neutral-400">int</span>) <span className="text-white">-{'>'}</span> <span className="text-neutral-300">User</span>:{'\n'}
-                    {'    '}<span className="text-white font-bold">return await</span> db.users.<span className="text-neutral-300">get</span>(id){'\n'}
+                    {'    '}<span className="text-white font-bold">return</span> <span className="text-neutral-300">User</span>(id=id, name=<span className="text-neutral-400">"pRPC User"</span>){'\n'}
                     {'\n'}
                     <span className="text-neutral-400 font-medium">@rpc</span>{'\n'}
                     <span className="text-white font-bold">async def</span> <span className="text-neutral-300">update_user</span>(id: <span className="text-neutral-400">int</span>, name: <span className="text-neutral-400">str</span>):{'\n'}
@@ -154,14 +154,11 @@ export default function HomePage() {
               <div className="p-6 font-mono text-sm leading-relaxed overflow-x-auto">
                 <pre>
                   <code className="text-white">
-                    <span className="text-white font-bold">const</span> user = <span className="text-white font-bold">await</span> client.get_user.<span className="text-neutral-300">aio</span>({'{'} id: <span className="text-white font-medium">1</span> {'}'});{'\n'}
+                    <span className="text-white font-bold">const</span> user = <span className="text-white font-bold">await</span> client.<span className="text-neutral-300">get_user</span>(<span className="text-white font-medium">1</span>);{'\n'}
                     <span className="text-neutral-300">console</span>.<span className="text-neutral-300">log</span>(user.<span className="text-neutral-300">name</span>);{'\n'}
                     {'\n'}
                     <span className="text-neutral-500 italic">// Full type-safety on mutations!</span>{'\n'}
-                    <span className="text-white font-bold">await</span> client.update_user.<span className="text-neutral-300">aio</span>({'{'} {'\n'}
-                    {'  '}id: <span className="text-white font-medium">1</span>, {'\n'}
-                    {'  '}name: <span className="text-neutral-400">"New Name"</span> {'\n'}
-                    {'}'});
+                    <span className="text-white font-bold">await</span> client.<span className="text-neutral-300">update_user</span>(<span className="text-white font-medium">1</span>, <span className="text-neutral-400">"New Name"</span>);
                   </code>
                 </pre>
               </div>

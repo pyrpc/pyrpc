@@ -30,19 +30,7 @@ export function PlaygroundEditor({ code, language, onChange, label }: Playground
     }
 
     return (
-        <div className="flex flex-col h-full border border-edge bg-background overflow-hidden">
-            {label && (
-                <div className="px-4 py-2 border-b border-edge bg-muted/30 flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-widest font-mono text-fd-muted-foreground">
-                        {label}
-                    </span>
-                    <div className="flex gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-edge" />
-                        <div className="w-2 h-2 rounded-full bg-edge" />
-                        <div className="w-2 h-2 rounded-full bg-edge" />
-                    </div>
-                </div>
-            )}
+        <div className="flex flex-col h-full bg-background overflow-hidden">
             <div className="flex-1">
                 <Editor
                     height="100%"
