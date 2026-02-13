@@ -23,16 +23,16 @@ export function baseOptions(): BaseLayoutProps {
             </Link>
             <div className="flex items-center gap-3 md:gap-4 lg:gap-6">
               <Link
-                href="/demo"
-                className="text-sm font-medium text-fd-muted-foreground hover:text-fd-accent-foreground transition-colors"
-              >
-                Demo
-              </Link>
-              <Link
                 href="/docs"
                 className="text-sm font-medium text-fd-muted-foreground hover:text-fd-accent-foreground transition-colors"
               >
                 Docs
+              </Link>
+              <Link
+                href="/demo"
+                className="text-sm font-medium text-fd-muted-foreground hover:text-fd-accent-foreground transition-colors"
+              >
+                Demo
               </Link>
               <a
                 href={githubUrl}
