@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PlaygroundEditor } from '@/components/playground/PlaygroundEditor'
 import { Inspector } from '@/components/playground/Inspector'
 import { RequestFlow } from '@/components/playground/RequestFlow'
@@ -60,47 +60,228 @@ export default function PlaygroundPage() {
     const [clientCode, setClientCode] = useState(TEMPLATES.FastAPI.client.React.TypeScript)
     const [status, setStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle')
     const [logs, setLogs] = useState<string[]>([])
-    const [request, setRequest] = useState<any>({ method: 'get_user', params: { id: 1 }, id: 'rpc-1' })
-    const [response, setResponse] = useState<any>(null)
+    const parseClientCode = (code: string) => {
+        const match = code.match(/client\.(\w+)\(([^)]*)\)/);
+        if (!match) return null;
 
-    const getMockData = (lang: string) => {
-        switch (lang) {
-            case 'FastAPI':
-                return {
-                    method: 'get_user',
-                    params: { id: 1 },
-                    logMethod: 'get_user(1)',
-                    result: { id: 1, name: "pRPC User" }
+        const method = match[1];
+        const argsStr = match[2].trim();
+        let params: any = [];
+
+        if (argsStr) {
+            try {
+                // Try to handle simple positional args or a single object arg
+                if (argsStr.startsWith('{') && argsStr.endsWith('}')) {
+                    // Very rough 'convert to JSON' for simple objects
+                    const jsonStr = argsStr.replace(/(\w+):/g, '"$1":').replace(/'/g, '"');
+                    params = JSON.parse(jsonStr);
+                } else {
+                    params = argsStr.split(',').map(s => {
+                        const t = s.trim();
+                        if (!isNaN(Number(t))) return Number(t);
+                        if (t.startsWith('"') || t.startsWith("'")) return t.slice(1, -1);
+                        return t;
+                    });
                 }
-            case 'Django':
+            } catch {
+                params = [argsStr];
+            }
+        }
+        return { method, params };
+    }
+
+    const parseServerCode = (code: string, methodName: string, reqParams: any) => {
+        // 1. Extract parameter names from the function signature
+        // async def get_user(id: int) -> User:
+        const sigRegex = new RegExp(`(?:async\\s+)?def\\s+${methodName}\\s*\\((.*?)\\)`, 'm');
+        const sigMatch = code.match(sigRegex);
+        const paramNames: string[] = [];
+
+        if (sigMatch) {
+            const paramsStr = sigMatch[1].trim();
+            if (paramsStr) {
+                paramsStr.split(',').forEach((p: string) => {
+                    const name = p.split(':')[0].trim();
+                    if (name) paramNames.push(name);
+                });
+            }
+        }
+
+        // 2. Map request params (positional or named) to names
+        const varMap: Record<string, any> = {};
+        if (Array.isArray(reqParams)) {
+            paramNames.forEach((name: string, i: number) => {
+                if (i < reqParams.length) varMap[name] = reqParams[i];
+            });
+        } else if (typeof reqParams === 'object' && reqParams !== null) {
+            Object.assign(varMap, reqParams);
+        }
+
+        // 3. Look for the return statement
+        const returnRegex = new RegExp(`(?:async\\s+)?def\\s+${methodName}\\s*\\(.*?\\).*?:[\\s\\S]*?return\\s+(.*)`, 'm');
+        const match = code.match(returnRegex);
+        if (!match) return null;
+
+        let returnExpr = match[1].trim();
+        // Remove trailing comments or logic on the same line
+        returnExpr = returnExpr.split('#')[0].trim();
+        if (returnExpr.endsWith(')')) {
+            // Check if it's a multiline model call or nested
+        }
+
+        // 4. Resolve the return expression
+        // Handling User(id=id, name="pRPC User")
+        if (returnExpr.includes('(')) {
+            const modelMatch = returnExpr.match(/\w+\((.*)\)/);
+            if (modelMatch) {
+                const attrs: any = {};
+                modelMatch[1].split(',').forEach((attr: string) => {
+                    const parts = attr.split('=').map(s => s.trim());
+                    if (parts.length === 2) {
+                        const [k, v] = parts;
+                        if (!isNaN(Number(v))) attrs[k] = Number(v);
+                        else if (v.startsWith('"') || v.startsWith("'")) attrs[k] = v.slice(1, -1);
+                        else if (varMap.hasOwnProperty(v)) attrs[k] = varMap[v];
+                        else attrs[k] = v;
+                    }
+                });
+                return attrs;
+            }
+        }
+
+        // Handling {"id": id, 'name': name}
+        if (returnExpr.startsWith('{') && returnExpr.endsWith('}')) {
+            const content = returnExpr.slice(1, -1);
+            const attrs: any = {};
+            content.split(',').forEach((pair: string) => {
+                const parts = pair.split(':').map(s => s.trim());
+                if (parts.length === 2) {
+                    let [k, v] = parts;
+                    // Clean keys: "id" -> id
+                    if ((k.startsWith('"') && k.endsWith('"')) || (k.startsWith("'") && k.endsWith("'"))) k = k.slice(1, -1);
+
+                    if (!isNaN(Number(v))) attrs[k] = Number(v);
+                    else if (v.startsWith('"') || v.startsWith("'")) attrs[k] = v.slice(1, -1);
+                    else if (varMap.hasOwnProperty(v)) attrs[k] = varMap[v];
+                    else attrs[k] = v;
+                }
+            });
+            return attrs;
+        }
+
+        // Handling f"Hello {name}"
+        if (returnExpr.startsWith('f"') || returnExpr.startsWith("f'")) {
+            const template = returnExpr.slice(2, -1);
+            return template.replace(/{(\w+)}/g, (_, p) => varMap[p] ?? p);
+        }
+
+        // Handling literals or variables
+        if (!isNaN(Number(returnExpr))) return Number(returnExpr);
+        if (returnExpr.startsWith('"') || returnExpr.startsWith("'")) return returnExpr.slice(1, -1);
+        if (varMap.hasOwnProperty(returnExpr)) return varMap[returnExpr];
+
+        return returnExpr;
+    }
+
+    const getMockData = (method: string, params: any, code: string) => {
+        // First try to parse the actual server code
+        const dynamicResult = parseServerCode(code, method, params);
+
+        const paramsDisplay = Array.isArray(params)
+            ? params.map((p: any) => typeof p === 'string' ? `'${p}'` : p).join(', ')
+            : JSON.stringify(params);
+
+        if (dynamicResult !== null) {
+            return {
+                logMethod: `${method}(${paramsDisplay})`,
+                result: dynamicResult
+            }
+        }
+
+        // Fallback to template results if parsing fails or return is too complex
+        switch (method) {
+            case 'get_user':
+                const id = Array.isArray(params) ? params[0] : (params?.id || 1);
                 return {
-                    method: 'greet',
-                    params: { name: "pRPC" },
-                    logMethod: "greet(name='pRPC')",
-                    result: "Hello pRPC"
+                    logMethod: `get_user(id=${id})`,
+                    result: { id: Number(id), name: "pRPC User" }
+                }
+            case 'greet':
+                const name = Array.isArray(params) ? params[0] : (params?.name || "pRPC");
+                return {
+                    logMethod: `greet(name='${name}')`,
+                    result: `Hello ${name}`
+                }
+            case 'add':
+                const valA = Array.isArray(params) ? params[0] : params?.a;
+                const valB = Array.isArray(params) ? params[1] : params?.b;
+                const a = isNaN(Number(valA)) ? 0 : Number(valA);
+                const b = isNaN(Number(valB)) ? 0 : Number(valB);
+                return {
+                    logMethod: `add(a=${a}, b=${b})`,
+                    result: a + b
                 }
             default:
                 return {
-                    method: 'add',
-                    params: { a: 1, b: 2 },
-                    logMethod: 'add(a=1, b=2)',
-                    result: 3
+                    logMethod: `${method}(${paramsDisplay})`,
+                    result: { status: "success", data: "Received custom RPC call" }
                 }
         }
     }
 
+    const [request, setRequest] = useState<any>(() => {
+        const extracted = parseClientCode(TEMPLATES.FastAPI.client.React.TypeScript) || { method: 'get_user', params: [1] };
+        return { method: extracted.method, params: extracted.params, id: 'rpc-1' };
+    });
+    const [response, setResponse] = useState<any>(null)
+
+    useEffect(() => {
+        const extracted = parseClientCode(clientCode)
+        if (extracted) {
+            setRequest((prev: any) => ({ ...prev, method: extracted.method, params: extracted.params }))
+        }
+    }, [clientCode])
+
     const handleRun = async () => {
         setStatus('running')
-        const mock = getMockData(serverLang)
 
-        const rpcId = `rpc-${Math.floor(Math.random() * 1000)}`
-        const currentRequest = { method: mock.method, params: mock.params, id: rpcId }
+        // 1. Extract call from client code
+        const extracted = parseClientCode(clientCode) || { method: 'add', params: [1, 2] }
+
+        // 2. Extract signature from server code to map positional args to named ones
+        const sigRegex = new RegExp(`(?:async\\s+)?def\\s+${extracted.method}\\s*\\((.*?)\\)`, 'm');
+        const sigMatch = serverCode.match(sigRegex);
+        const paramNames: string[] = [];
+        if (sigMatch && sigMatch[1].trim()) {
+            sigMatch[1].split(',').forEach((p: string) => {
+                const name = p.split(':')[0].trim();
+                if (name && name !== 'self' && name !== 'cls') paramNames.push(name);
+            });
+        }
+
+        // 3. Map positional args to named params (mimics TS codegen behavior)
+        let wireParams: any = {};
+        if (Array.isArray(extracted.params)) {
+            paramNames.forEach((name: string, i: number) => {
+                if (i < (extracted.params as any[]).length) {
+                    wireParams[name] = (extracted.params as any[])[i];
+                }
+            });
+        } else {
+            wireParams = extracted.params;
+        }
+
+        const mock = getMockData(extracted.method, wireParams, serverCode)
+
+        // 4. Use codegen-style ID
+        const rpcId = Math.random().toString(36).substring(7);
+        const currentRequest = { method: extracted.method, params: wireParams, id: rpcId }
         setRequest(currentRequest)
 
         setLogs(['Initializing RPC bridge...', 'Encoding request...', 'Dispatching to Python server...'])
 
         setTimeout(() => {
-            setLogs(prev => [
+            setLogs((prev: string[]) => [
                 ...prev,
                 `${serverLang} adapter processing...`,
                 `Executing procedure: ${mock.logMethod}`,
@@ -115,8 +296,8 @@ export default function PlaygroundPage() {
         setStatus('idle')
         setLogs([])
         setResponse(null)
-        const mock = getMockData(serverLang)
-        setRequest({ method: mock.method, params: mock.params, id: 'rpc-1' })
+        const extracted = parseClientCode(clientCode) || { method: 'get_user', params: [1] }
+        setRequest({ method: extracted.method, params: extracted.params, id: 'rpc-1' })
     }
 
     const updateClientCode = (framework: string, language: string) => {
@@ -179,9 +360,10 @@ export default function PlaygroundPage() {
                                     onChange={(v: string) => {
                                         setServerLang(v);
                                         setServerCode(TEMPLATES[v].server);
-                                        setClientCode(TEMPLATES[v].client[clientFramework][clientLanguage]);
-                                        const mock = getMockData(v);
-                                        setRequest({ method: mock.method, params: mock.params, id: 'rpc-1' });
+                                        const newClientCode = TEMPLATES[v].client[clientFramework][clientLanguage];
+                                        setClientCode(newClientCode);
+                                        const extracted = parseClientCode(newClientCode) || { method: 'get_user', params: { id: 1 } };
+                                        setRequest({ method: extracted.method, params: extracted.params, id: 'rpc-1' });
                                         setResponse(null);
                                         setStatus('idle');
                                     }}
