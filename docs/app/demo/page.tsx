@@ -310,8 +310,18 @@ export default function PlaygroundPage() {
             <section className="relative w-full overflow-hidden border-b bg-background py-16 px-6">
                 <PerspectiveGrid className="absolute inset-0 z-0" />
                 <div className="relative z-10 max-w-5xl mx-auto space-y-4">
-                    <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">Interactive Playground</h1>
-                    <p className="max-w-2xl text-fd-muted-foreground uppercase tracking-tight font-mono text-sm leading-relaxed">
+                    <div className="flex flex-col items-start gap-3">
+                        <div className="flex">
+                            <span className="flex items-center gap-1.5 px-2 py-0.5 text-[9px] font-mono font-bold tracking-[0.2em] bg-fd-primary text-fd-primary-foreground uppercase shadow-sm">
+                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                Currently in Beta Preview
+                            </span>
+                        </div>
+                        <h1 className="text-4xl md:text-7xl font-extrabold tracking-tighter uppercase leading-none">
+                            Interactive<br />Playground
+                        </h1>
+                    </div>
+                    <p className="max-w-2xl text-fd-muted-foreground uppercase tracking-[0.1em] font-mono text-xs leading-relaxed">
                         Experiment with pRPC in real-time. Define your server logic in Python and see how it reflects in your client.
                     </p>
                 </div>
@@ -321,7 +331,7 @@ export default function PlaygroundPage() {
             <div className="sticky top-[--fd-header-height] z-20 w-full border-b border-edge bg-background/80 backdrop-blur-md">
                 <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 border border-edge bg-muted/20 text-[10px] font-bold uppercase tracking-widest font-mono text-fd-muted-foreground">
+                        <div className="flex items-center gap-2 px-3 py-1.5 border border-edge bg-muted/30 text-[10px] font-bold uppercase tracking-[0.2em] font-mono text-fd-foreground">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                             Live Session
                         </div>
@@ -337,7 +347,7 @@ export default function PlaygroundPage() {
                         <AnimatedButton
                             onClick={handleRun}
                             disabled={status === 'running'}
-                            className="px-6 py-2 uppercase tracking-widest font-mono text-xs font-bold gap-2 flex items-center"
+                            className="px-6 py-2 uppercase tracking-[0.2em] font-mono text-xs font-bold gap-2 flex items-center"
                         >
                             <Play className={cn("w-3 h-3 fill-current", status === 'running' && "animate-pulse")} />
                             {status === 'running' ? 'Running...' : 'Run RPC'}
@@ -349,10 +359,10 @@ export default function PlaygroundPage() {
             {/* Main Grid */}
             <main className="flex-1 border-b border-edge bg-background">
                 <div className="max-w-5xl mx-auto border-x border-edge flex flex-col min-h-[calc(100vh-theme(height.header)-16rem)]">
-                    <div className="grid lg:grid-cols-2 divide-x divide-edge border-b border-edge bg-black overflow-hidden">
+                    <div className="grid lg:grid-cols-2 divide-x divide-edge border-b border-edge bg-fd-card/50 overflow-hidden">
                         <div className="h-[300px] lg:h-[380px] flex flex-col">
-                            <div className="px-4 py-2 border-b border-edge bg-muted/10 flex items-center justify-between shrink-0">
-                                <span className="text-[10px] font-bold uppercase tracking-widest font-mono text-fd-muted-foreground">Server Logic</span>
+                            <div className="px-4 py-2 border-b border-edge bg-fd-muted/30 flex items-center justify-between shrink-0">
+                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] font-mono text-fd-foreground">Server Logic</span>
                                 <FrameworkSelect
                                     label="Provider"
                                     value={serverLang}
@@ -378,8 +388,8 @@ export default function PlaygroundPage() {
                             </div>
                         </div>
                         <div className="h-[300px] lg:h-[380px] flex flex-col">
-                            <div className="px-4 py-2 border-b border-edge bg-muted/10 flex items-center justify-between shrink-0">
-                                <span className="text-[10px] font-bold uppercase tracking-widest font-mono text-fd-muted-foreground">Client Implementation</span>
+                            <div className="px-4 py-2 border-b border-edge bg-fd-muted/30 flex items-center justify-between shrink-0">
+                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] font-mono text-fd-foreground">Client Implementation</span>
                                 <div className="flex items-center gap-3">
                                     <FrameworkSelect
                                         value={clientFramework}
@@ -420,22 +430,22 @@ export default function PlaygroundPage() {
 function FrameworkSelect({ label, value, options, onChange }: any) {
     return (
         <div className="flex items-center gap-2">
-            {label && <span className="text-[9px] font-bold uppercase tracking-tight font-mono text-fd-muted-foreground/60">{label}:</span>}
+            {label && <span className="text-[9px] font-bold uppercase tracking-[0.2em] font-mono text-fd-muted-foreground">{label}:</span>}
             <Select.Root value={value} onValueChange={onChange}>
-                <Select.Trigger className="inline-flex items-center gap-2 px-2 py-0.5 border border-edge bg-muted/20 text-[9px] font-bold uppercase tracking-widest font-mono hover:bg-muted/40 transition-colors outline-none">
+                <Select.Trigger className="inline-flex items-center gap-2 px-2 py-0.5 border border-edge bg-fd-secondary text-[9px] font-bold uppercase tracking-[0.2em] font-mono hover:bg-fd-secondary/80 transition-colors outline-none text-fd-secondary-foreground shadow-sm">
                     <Select.Value />
                     <Select.Icon>
-                        <ChevronDown className="w-2.5 h-2.5" />
+                        <ChevronDown className="w-2.5 h-2.5 opacity-50" />
                     </Select.Icon>
                 </Select.Trigger>
                 <Select.Portal>
-                    <Select.Content className="overflow-hidden bg-background border border-edge shadow-xl z-50">
+                    <Select.Content className="overflow-hidden bg-fd-popover border border-edge shadow-xl z-50 min-w-[var(--radix-select-trigger-width)]">
                         <Select.Viewport className="p-1">
                             {options.map((opt: string) => (
                                 <Select.Item
                                     key={opt}
                                     value={opt}
-                                    className="flex items-center px-4 py-1.5 text-[9px] font-bold uppercase tracking-widest font-mono outline-none cursor-pointer hover:bg-muted"
+                                    className="flex items-center px-4 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] font-mono outline-none cursor-pointer text-fd-popover-foreground data-[highlighted]:bg-fd-accent data-[highlighted]:text-fd-accent-foreground data-[state=checked]:bg-fd-primary data-[state=checked]:text-fd-primary-foreground transition-colors"
                                 >
                                     <Select.ItemText>{opt}</Select.ItemText>
                                 </Select.Item>

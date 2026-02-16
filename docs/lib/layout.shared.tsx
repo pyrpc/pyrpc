@@ -1,6 +1,6 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import type { ReactNode } from 'react';
-import { ThemeToggle } from '@/components/layout/theme-toggle';
+import { ThemeToggle } from '../components/layout/theme-toggle';
 import Link from 'next/link';
 
 export const gitConfig = {
