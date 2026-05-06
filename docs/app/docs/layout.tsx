@@ -11,18 +11,18 @@ export default function Layout({ children }: { children: ReactNode }) {
       tree={source.getPageTree()}
       {...options}
       nav={{
-        enabled: true,
-        title: '',
+        enabled: false,
       }}
       sidebar={{
         enabled: true,
         collapsible: true,
-        defaultOpenLevel: 0, // All closed by default; get-started uses defaultOpen in meta
-        tabs: false, // Better Auth style: all sections collapsible accordions, no tabs
+        defaultOpenLevel: 0,
+        tabs: false,
       }}
       themeSwitch={{
         enabled: false,
       }}
+
     >
       {children}
     </DocsLayout>
