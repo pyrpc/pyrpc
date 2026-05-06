@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="1088" height="262" alt="dark-banner" src="https://github.com/user-attachments/assets/9ba9727d-77b4-4e57-a11d-f4bf9e83d59b" />
+  <img width="1044" height="262" alt="banner-dark" src="https://github.com/user-attachments/assets/7aada9c1-44f2-4f99-b0e7-2c62ae5827a1" />
   
   <p>
     <a href="https://pyrpc.com">Website</a>
