@@ -7,8 +7,8 @@ import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`dark ${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning style={{ colorScheme: 'dark' }}>
-      <body className="font-sans antialiased bg-black" suppressHydrationWarning>
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+      <body className="font-sans antialiased bg-fd-background text-fd-foreground" suppressHydrationWarning>
         <RootProvider>
           <SiteHeader />
           <main className="pt-14">
