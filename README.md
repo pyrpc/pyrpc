@@ -1,6 +1,8 @@
-# pRPC
+<img width="1044" height="262" alt="banner-dark" src="https://github.com/user-attachments/assets/7aada9c1-44f2-4f99-b0e7-2c62ae5827a1" />
 
-**pRPC** is a modern, tRPC-inspired "drop-in RPC layer" for Python. It's designed to be dead simple, type-safe, and framework-agnostic.
+# pyRPC
+
+**pyRPC** is a modern, tRPC-inspired "drop-in RPC layer" for Python. It's designed to be dead simple, type-safe, and framework-agnostic.
 
 Inspired by giving you the best DX, pRPC focuses on giving you a type-safe bridge between your backend and frontend without forcing a specific architecture or framework.
 
