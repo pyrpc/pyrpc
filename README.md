@@ -1,12 +1,22 @@
-<img width="1044" height="262" alt="banner-dark" src="https://github.com/user-attachments/assets/7aada9c1-44f2-4f99-b0e7-2c62ae5827a1" />
+<div align="center">
+  <picture>
+    <img width="1044" height="262" alt="banner-dark" src="https://github.com/user-attachments/assets/7aada9c1-44f2-4f99-b0e7-2c62ae5827a1" />
+  </picture>
 
-# pyRPC
+  <p>
+    <a href="https://pyrpc.com">Website</a>
+    ·
+    <a href="https://github.com/pyrpc/pyrpc/issues">Issues</a>
+  </p>
+</div>
+
+## pyRPC
 
 **pyRPC** is a modern, tRPC-inspired "drop-in RPC layer" for Python. It's designed to be dead simple, type-safe, and framework-agnostic.
 
 Inspired by giving you the best DX, pRPC focuses on giving you a type-safe bridge between your backend and frontend without forcing a specific architecture or framework.
 
-## Philosophy
+### Philosophy
 - **Dead simple install**: Zero config, zero ceremony.
 - **Works everywhere**: Plugs into FastAPI, Flask, or any ASGI server.
 - **Batteries included but modular**: Install only what you need.
@@ -14,11 +24,11 @@ Inspired by giving you the best DX, pRPC focuses on giving you a type-safe bridg
 
 ---
 
-## Modular Installation
+### Modular Installation
 
 pRPC follows a modular packaging strategy. You only pay for what you use.
 
-### 1. Core (Required)
+#### 1. Core (Required)
 The tiny core protocol and runtime.
 ```bash
 uv add prpc
@@ -26,7 +36,7 @@ uv add prpc
 pip install prpc
 ```
 
-### 2. Adapters (Optional)
+#### 2. Adapters (Optional)
 Install the adapter for your favorite framework.
 
 **FastAPI**
@@ -39,7 +49,7 @@ uv add prpc-fastapi
 uv add prpc-flask
 ```
 
-### 3. Codegen (Optional)
+#### 3. Codegen (Optional)
 Tools for generating TypeScript clients.
 ```bash
 uv add prpc-codegen
@@ -47,9 +57,9 @@ uv add prpc-codegen
 
 ---
 
-## Quick Start
+### Quick Start
 
-### 1. Server-side (FastAPI Example)
+#### 1. Server-side (FastAPI Example)
 Define your procedures and mount the RPC layer.
 
 ```python
@@ -66,7 +76,7 @@ def add(a: int, b: int) -> int:
 mount_fastapi(app)
 ```
 
-### 2. Client-side (Python)
+#### 2. Client-side (Python)
 Call your procedures with full type support and dynamic method discovery.
 
 ```python
@@ -77,7 +87,7 @@ with RPCClient("http://localhost:8000") as client:
     print(f"Result: {result}")
 ```
 
-### 3. Client-side (TypeScript)
+#### 3. Client-side (TypeScript)
 Use the CLI to generate a type-safe TS client.
 
 ```bash
@@ -86,19 +96,19 @@ prpc codegen -m my_app.main -o client.ts
 
 ---
 
-## CLI Utilities
+### CLI Utilities
 The `prpc` command (provided by `prpc-codegen`) allows you to:
 - `prpc serve`: Instantly host an RPC module.
 - `prpc inspect`: Visualize all registered procedures.
 - `prpc codegen`: Generate frontend clients.
 
-## Documentation & Examples
+### Documentation & Examples
 Check out the [examples/](examples/) directory for complete server and client implementations.
 
-## License
+### License
 MIT
 
-## CLI Usage
+### CLI Usage
 
 ```bash
 prpc --help
