@@ -2,15 +2,15 @@ import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import type { ReactNode } from 'react';
 
 export const gitConfig = {
-    user: 'pRPC-dev',
-    repo: 'prpc',
+    user: 'pyrpc',
+    repo: 'pyrpc',
     branch: 'main',
 };
 
 export function baseOptions(): BaseLayoutProps {
     return {
         nav: {
-            title: 'pRPC',
+            title: 'pyrpc',
             transparentMode: 'top',
         },
         links: [

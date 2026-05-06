@@ -1,10 +1,10 @@
 ---
 title: Installation
-description: Install pRPC and its modular adapters.
+description: Install pyRPC and its modular adapters.
 
 ---
 
-pRPC follows a modular packaging strategy. You only pay for what you use.
+pyRPC follows a modular packaging strategy. You only pay for what you use.
 
 ## Core Package
 
@@ -12,10 +12,10 @@ The tiny core protocol and runtime. This is always required.
 
 ```bash
 # Using uv
-uv add prpc
+uv add pyrpc
 
 # Using pip
-pip install prpc
+pip install pyrpc
 ```
 
 ## Adapters
@@ -25,13 +25,13 @@ Install the adapter for your favorite web framework.
 ### FastAPI
 
 ```bash
-uv add prpc-fastapi
+uv add pyrpc-fastapi
 ```
 
 ### Flask
 
 ```bash
-uv add prpc-flask
+uv add pyrpc-flask
 ```
 
 ## Codegen & CLI
@@ -39,15 +39,15 @@ uv add prpc-flask
 Tools for generating TypeScript clients and inspecting your registry.
 
 ```bash
-uv add prpc-codegen
+uv add pyrpc-codegen
 ```
 
 ## Quick Start Example (FastAPI)
 
 ```python
 from fastapi import FastAPI
-from prpc import rpc
-from prpc_fastapi import mount_fastapi
+from pyrpc import rpc
+from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()
 

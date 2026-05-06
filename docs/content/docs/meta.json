@@ -1,6 +1,6 @@
 {
     "title": "Docs",
-    "description": "pRPC documentation",
+    "description": "pyRPC documentation",
     "pages": [
         "get-started",
         "concepts",

@@ -4,9 +4,9 @@ from typing import Any, Callable, Dict
 from ..core.interpreter import handle_request
 
 
-class PRPCAsgiApp:
+class PyRPCAsgiApp:
     """
-    A minimal ASGI application for serving pRPC requests.
+    A minimal ASGI application for serving pyRPC requests.
     """
 
     def __init__(self) -> None:
@@ -75,4 +75,4 @@ class PRPCAsgiApp:
 
 
 # Global instance for easy use
-app = PRPCAsgiApp()
+app = PyRPCAsgiApp()

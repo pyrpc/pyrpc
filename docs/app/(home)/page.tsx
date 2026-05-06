@@ -18,11 +18,11 @@ export default function HomePage() {
     }
   }, [codeTab]);
 
-  const command = manager === 'uv' ? 'uv add prpc' :
-    manager === 'pip' ? 'pip install prpc' :
-    manager === 'npm' ? 'npm install @prpc/client' :
-    manager === 'pnpm' ? 'pnpm add @prpc/client' :
-    'bun add @prpc/client';
+  const command = manager === 'uv' ? 'uv add pyrpc' :
+    manager === 'pip' ? 'pip install pyrpc' :
+    manager === 'npm' ? 'npm install @pyrpc/client' :
+    manager === 'pnpm' ? 'pnpm add @pyrpc/client' :
+    'bun add @pyrpc/client';
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(command);
@@ -143,7 +143,7 @@ export default function HomePage() {
                     </div>
                     <div className="px-8 whitespace-pre text-neutral-400 overflow-hidden leading-relaxed">
                       <code>
-                        <span className="text-purple-400">from</span>{' '}prpc{' '}<span className="text-purple-400">import</span>{' '}<span className="text-white">rpc</span>{'\n'}
+                        <span className="text-purple-400">from</span>{' '}pyrpc{' '}<span className="text-purple-400">import</span>{' '}<span className="text-white">rpc</span>{'\n'}
                         <span className="text-purple-400">from</span>{' '}pydantic{' '}<span className="text-purple-400">import</span>{' '}<span className="text-white">BaseModel</span>{'\n'}
                         {'\n'}
                         <span className="text-purple-400">class</span>{' '}<span className="text-sky-400">User</span>(BaseModel):{'\n'}
@@ -152,7 +152,7 @@ export default function HomePage() {
                         {'\n'}
                         <span className="text-sky-400">@rpc</span>{'\n'}
                         <span className="text-purple-400">async def</span>{' '}<span className="text-sky-400">get_user</span>(id:{' '}<span className="text-pink-400">int</span>) <span className="text-neutral-600">-&gt;</span>{' '}<span className="text-sky-400">User</span>:{'\n'}
-                        {'    '}<span className="text-purple-400">return</span>{' '}<span className="text-sky-400">User</span>(id=id, name=<span className="text-emerald-400">"pRPC User"</span>)
+                        {'    '}<span className="text-purple-400">return</span>{' '}<span className="text-sky-400">User</span>(id=id, name=<span className="text-emerald-400">"pyRPC User"</span>)
                       </code>
                     </div>
                   </div>
@@ -163,7 +163,7 @@ export default function HomePage() {
                     </div>
                     <div className="px-8 whitespace-pre text-neutral-400 overflow-hidden leading-relaxed">
                       <code>
-                        <span className="text-purple-400">import</span>{' '}{'{'}{' '}<span className="text-sky-400">createClient</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@prpc/client"</span>;{'\n'}
+                        <span className="text-purple-400">import</span>{' '}{'{'}{' '}<span className="text-sky-400">createClient</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/client"</span>;{'\n'}
                         <span className="text-purple-400">import</span>{' '}<span className="text-purple-400">type</span>{' '}{'{'}{' '}<span className="text-sky-400">AppRouter</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"./server"</span>;{'\n'}
                         {'\n'}
                         <span className="text-purple-400">const</span>{' '}client = <span className="text-sky-400">createClient</span>&lt;<span className="text-sky-400">AppRouter</span>&gt;({'{'}{'\n'}

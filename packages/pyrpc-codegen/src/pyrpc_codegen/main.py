@@ -10,7 +10,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from .ts_codegen import save_typescript_client
-from prpc import default_registry, get_registry_schema
+from pyrpc import default_registry, get_registry_schema
 
 
 # Avoid importing from .. (the root __init__) to prevent circularity if possible
@@ -21,8 +21,8 @@ __version__ = "0.1.0"
 
 
 app = typer.Typer(
-    name="prpc",
-    help="pRPC CLI - tRPC power for Python projects",
+    name="pyrpc",
+    help="pyRPC CLI - tRPC power for Python projects",
     add_completion=False,
 )
 console = Console()
@@ -40,31 +40,31 @@ def _import_module(module_path: str):
 
 @app.command()
 def version():
-    """Show pRPC version."""
-    console.print(f"pRPC version: [bold cyan]{__version__}[/bold cyan]")
+    """Show pyRPC version."""
+    console.print(f"pyRPC version: [bold cyan]{__version__}[/bold cyan]")
 
 
 @app.command()
 def serve(
-    module: str = typer.Argument(..., help="Module containing the pRPC application (e.g. 'app.main')"),
+    module: str = typer.Argument(..., help="Module containing the pyRPC application (e.g. 'app.main')"),
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Bind socket to this host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind socket to this port"),
     reload: bool = typer.Option(False, "--reload", help="Enable auto-reload"),
 ):
-    """Start the pRPC ASGI server."""
+    """Start the pyRPC ASGI server."""
     _import_module(module)
     
     console.print(Panel(
-        f"Starting pRPC server for [bold cyan]{module}[/bold cyan]\n"
+        f"Starting pyRPC server for [bold cyan]{module}[/bold cyan]\n"
         f"Endpoint: [bold green]http://{host}:{port}/rpc[/bold green]",
-        title="pRPC Serve",
+        title="pyRPC Serve",
         border_style="blue"
     ))
     
     # We use the built-in asgi_app if found in the package, or just the module path for uvicorn
     # If the user wants to serve their own app (like FastAPI), they'd use uvicorn directly.
-    # Here we assume they want to serve the default prpc asgi app.
-    uvicorn.run("prpc:asgi_app", host=host, port=port, reload=reload)
+    # Here we assume they want to serve the default pyrpc asgi app.
+    uvicorn.run("pyrpc:asgi_app", host=host, port=port, reload=reload)
 
 
 @app.command()
@@ -73,7 +73,7 @@ def codegen(
     target: str = typer.Option("ts", "--target", "-t", help="Target language (only 'ts' supported)"),
     output: str = typer.Option("client.ts", "--output", "-o", help="Output file path"),
 ):
-    """Generate a client for a pRPC service."""
+    """Generate a client for a pyRPC service."""
     if target != "ts":
         console.print(f"[bold red]Error:[/bold red] Target '{target}' is not supported. Use 'ts'.")
         raise typer.Exit(code=1)
@@ -98,7 +98,7 @@ def inspect(
         console.print("[yellow]No procedures found in registry for this module.[/yellow]")
         return
 
-    table = Table(title=f"pRPC Registry: {module}")
+    table = Table(title=f"pyRPC Registry: {module}")
     table.add_column("Method", style="cyan")
     table.add_column("Params", style="green")
     table.add_column("Returns", style="magenta")

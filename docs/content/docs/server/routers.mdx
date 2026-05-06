@@ -6,15 +6,15 @@ description: Organize your API into modular routers.
 
 # Routers
 
-pRPC uses a **procedure registry** to hold your RPC procedures. You register procedures with `@rpc`, then mount the registry onto your app using an adapter. There is no separate router object — the registry is the router.
+pyRPC uses a **procedure registry** to hold your RPC procedures. You register procedures with `@rpc`, then mount the registry onto your app using an adapter. There is no separate router object — the registry is the router.
 
 ## The Registry
 
 Procedures are stored in a global registry (`default_registry`). The `@rpc` decorator registers a function:
 
 ```python
-from prpc import rpc
-from prpc_fastapi import mount_fastapi
+from pyrpc import rpc
+from pyrpc_fastapi import mount_fastapi
 
 @rpc
 def add(a: int, b: int) -> int:
@@ -27,7 +27,7 @@ def greet(name: str = "World") -> str:
 mount_fastapi(app)  # Exposes add and greet at POST /rpc
 ```
 
-When a request arrives, pRPC looks up the procedure by name in the registry and invokes it with the request params.
+When a request arrives, pyRPC looks up the procedure by name in the registry and invokes it with the request params.
 
 ## Custom Procedure Names
 
@@ -56,7 +56,7 @@ myapp/
 **procedures/users.py:**
 
 ```python
-from prpc import rpc
+from pyrpc import rpc
 
 @rpc
 def get_user(user_id: int) -> dict:
@@ -71,7 +71,7 @@ def create_user(name: str, email: str) -> dict:
 
 ```python
 from fastapi import FastAPI
-from prpc_fastapi import mount_fastapi
+from pyrpc_fastapi import mount_fastapi
 
 # Import so @rpc runs and registers procedures
 import procedures.users
@@ -89,7 +89,7 @@ How you mount depends on the adapter. See [Adapters](/docs/server/adapters) for 
 
 - **FastAPI** — `mount_fastapi(app)` adds a `POST /rpc` route
 - **Flask** — `mount_flask(app)` adds a `POST /rpc` route
-- **ASGI** — Use `PRPCAsgiApp` or `asgi_app` for a standalone app
+- **ASGI** — Use `PyRPCAsgiApp` or `asgi_app` for a standalone app
 
 ## Next Steps
 

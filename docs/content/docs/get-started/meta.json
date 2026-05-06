@@ -1,6 +1,6 @@
 {
     "title": "Get Started",
-    "description": "Start building with pRPC",
+    "description": "Start building with pyRPC",
     "icon": "CirclePlay",
     "defaultOpen": true,
     "pages": [

@@ -4,8 +4,8 @@ import { ThemeToggle } from '../components/layout/theme-toggle';
 import Link from 'next/link';
 
 export const gitConfig = {
-  user: 'pRPC-dev',
-  repo: 'prpc',
+  user: 'pyrpc',
+  repo: 'pyrpc',
   branch: 'main',
 };
 
@@ -19,7 +19,7 @@ export function baseOptions(): BaseLayoutProps {
         <header className="fixed top-0 z-50 w-full border-b bg-fd-background/50 backdrop-blur-sm transition-colors h-(--fd-header-height)">
           <div className="flex items-center justify-between w-full h-full px-4">
             <Link href="/" className="flex-1 text-lg font-bold uppercase tracking-tight">
-              pRPC
+              pyRPC
             </Link>
             <div className="flex items-center gap-3 md:gap-4 lg:gap-6">
               <Link

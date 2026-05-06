@@ -1,6 +1,6 @@
 {
     "title": "Server",
-    "description": "Build your pRPC server",
+    "description": "Build your pyRPC server",
     "icon": "Server",
     "pages": [
         "index",

@@ -6,14 +6,14 @@ description: Structured errors from server to client.
 
 # Error Handling
 
-pRPC uses structured errors that flow from your procedures to the client. No opaque strings — codes and messages are predictable.
+pyRPC uses structured errors that flow from your procedures to the client. No opaque strings — codes and messages are predictable.
 
 ## Server-Side
 
 Raise `RPCError` in your procedures:
 
 ```python
-from prpc import rpc, RPCError
+from pyrpc import rpc, RPCError
 
 @rpc
 def get_user(user_id: int) -> dict:
@@ -28,7 +28,7 @@ def get_user(user_id: int) -> dict:
 Catch `RPCError` when calling procedures:
 
 ```python
-from prpc import RPCClient, RPCError
+from pyrpc import RPCClient, RPCError
 
 with RPCClient("http://localhost:8000") as client:
     try:

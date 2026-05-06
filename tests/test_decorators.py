@@ -1,4 +1,4 @@
-from prpc import default_registry, rpc
+from pyrpc import default_registry, rpc
 
 def test_rpc_decorator_default_name():
     # Clear registry for clean test
