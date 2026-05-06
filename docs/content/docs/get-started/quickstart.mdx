@@ -1,17 +1,17 @@
 ---
 title: Quickstart
-description: Get a working pRPC server and client in under 2 minutes.
+description: Get a working pyRPC server and client in under 2 minutes.
 
 ---
 
 # Quickstart
 
-Copy, paste, run. No fluff — just a working pRPC server and client call.
+Copy, paste, run. No fluff — just a working pyRPC server and client call.
 
 ## 1. Install
 
 ```bash
-uv add prpc prpc-fastapi uvicorn
+uv add pyrpc pyrpc-fastapi uvicorn
 ```
 
 ## 2. Server
@@ -20,8 +20,8 @@ Create `server.py`:
 
 ```python
 from fastapi import FastAPI
-from prpc import rpc
-from prpc_fastapi import mount_fastapi
+from pyrpc import rpc
+from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()
 
@@ -56,14 +56,14 @@ INFO:     Application startup complete.
 Create `client.py` (in another terminal):
 
 ```python
-from prpc import RPCClient
+from pyrpc import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
     result = client.add(a=10, b=5)
     print(result)  # 15
 
-    msg = client.greet(name="pRPC")
-    print(msg)  # Hello, pRPC!
+    msg = client.greet(name="pyRPC")
+    print(msg)  # Hello, pyRPC!
 ```
 
 Run it:
@@ -76,12 +76,12 @@ python client.py
 
 ```
 15
-Hello, pRPC!
+Hello, pyRPC!
 ```
 
 ## Done
 
-You now have a working pRPC server + client. Next:
+You now have a working pyRPC server + client. Next:
 
 - [Installation](/docs/get-started/installation) — Adapters (Flask, codegen)
 - [Concepts](/docs/concepts) — Mental model, protocol, error handling

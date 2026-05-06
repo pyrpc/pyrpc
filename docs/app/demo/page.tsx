@@ -12,11 +12,11 @@ import { cn } from '@/lib/cn'
 
 const TEMPLATES: any = {
     FastAPI: {
-        server: `from pydantic import BaseModel\nfrom prpc import rpc\n\nclass User(BaseModel):\n    id: int\n    name: str\n\n@rpc\nasync def get_user(id: int) -> User:\n    return User(id=id, name="pRPC User")`,
+        server: `from pydantic import BaseModel\nfrom pyrpc import rpc\n\nclass User(BaseModel):\n    id: int\n    name: str\n\n@rpc\nasync def get_user(id: int) -> User:\n    return User(id=id, name="pyRPC User")`,
         client: {
             NextJS: {
-                TypeScript: `export async function getServerSideProps() {\n  const client = new PRPCClient("http://api.internal");\n  const user = await client.get_user(1);\n  return { props: { user } };\n}`,
-                JavaScript: `export async function getServerSideProps() {\n  const client = new PRPCClient("http://api.internal");\n  const user = await client.get_user(1);\n  return { props: { user } };\n}`,
+                TypeScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const user = await client.get_user(1);\n  return { props: { user } };\n}`,
+                JavaScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const user = await client.get_user(1);\n  return { props: { user } };\n}`,
             },
             React: {
                 TypeScript: `const { data: user } = useQuery(['user'], () => client.get_user(1));`,
@@ -25,11 +25,11 @@ const TEMPLATES: any = {
         }
     },
     Flask: {
-        server: `from prpc import rpc\n\n@rpc\ndef add(a: int, b: int) -> int:\n    return a + b`,
+        server: `from pyrpc import rpc\n\n@rpc\ndef add(a: int, b: int) -> int:\n    return a + b`,
         client: {
             NextJS: {
-                TypeScript: `export async function getServerSideProps() {\n  const client = new PRPCClient("http://api.internal");\n  const result = await client.add(10, 5);\n  return { props: { result } };\n}`,
-                JavaScript: `export async function getServerSideProps() {\n  const client = new PRPCClient("http://api.internal");\n  const result = await client.add(10, 5);\n  return { props: { result } };\n}`,
+                TypeScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const result = await client.add(10, 5);\n  return { props: { result } };\n}`,
+                JavaScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const result = await client.add(10, 5);\n  return { props: { result } };\n}`,
             },
             React: {
                 TypeScript: `const { data: result } = useQuery(['add'], () => client.add(10, 5));`,
@@ -38,15 +38,15 @@ const TEMPLATES: any = {
         }
     },
     Django: {
-        server: `from prpc import rpc\n\n@rpc\ndef greet(name: str) -> str:\n    return f"Hello {name}"`,
+        server: `from pyrpc import rpc\n\n@rpc\ndef greet(name: str) -> str:\n    return f"Hello {name}"`,
         client: {
             NextJS: {
-                TypeScript: `export async function getServerSideProps() {\n  const client = new PRPCClient("http://api.internal");\n  const msg = await client.greet("pRPC");\n  return { props: { msg } };\n}`,
-                JavaScript: `export async function getServerSideProps() {\n  const client = new PRPCClient("http://api.internal");\n  const msg = await client.greet("pRPC");\n  return { props: { msg } };\n}`,
+                TypeScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const msg = await client.greet("pyRPC");\n  return { props: { msg } };\n}`,
+                JavaScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const msg = await client.greet("pyRPC");\n  return { props: { msg } };\n}`,
             },
             React: {
-                TypeScript: `const { data: msg } = useQuery(['greet'], () => client.greet("pRPC"));`,
-                JavaScript: `const { data: msg } = useQuery(['greet'], () => client.greet("pRPC"));`,
+                TypeScript: `const { data: msg } = useQuery(['greet'], () => client.greet("pyRPC"));`,
+                JavaScript: `const { data: msg } = useQuery(['greet'], () => client.greet("pyRPC"));`,
             }
         }
     }
@@ -130,7 +130,7 @@ export default function PlaygroundPage() {
         }
 
         // 4. Resolve the return expression
-        // Handling User(id=id, name="pRPC User")
+        // Handling User(id=id, name="pyRPC User")
         if (returnExpr.includes('(')) {
             const modelMatch = returnExpr.match(/\w+\((.*)\)/);
             if (modelMatch) {
@@ -204,10 +204,10 @@ export default function PlaygroundPage() {
                 const id = Array.isArray(params) ? params[0] : (params?.id || 1);
                 return {
                     logMethod: `get_user(id=${id})`,
-                    result: { id: Number(id), name: "pRPC User" }
+                    result: { id: Number(id), name: "pyRPC User" }
                 }
             case 'greet':
-                const name = Array.isArray(params) ? params[0] : (params?.name || "pRPC");
+                const name = Array.isArray(params) ? params[0] : (params?.name || "pyRPC");
                 return {
                     logMethod: `greet(name='${name}')`,
                     result: `Hello ${name}`

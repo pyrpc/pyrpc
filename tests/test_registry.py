@@ -1,4 +1,4 @@
-from prpc.core.registry import ProcedureRegistry
+from pyrpc.core.registry import ProcedureRegistry
 
 def test_registry_register_get():
     registry = ProcedureRegistry()

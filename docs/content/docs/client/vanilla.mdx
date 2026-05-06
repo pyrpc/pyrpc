@@ -1,17 +1,17 @@
 ---
 title: Vanilla Python
-description: Use RPCClient to call your pRPC server from Python.
+description: Use RPCClient to call your pyRPC server from Python.
 
 ---
 
 # Vanilla Python Client
 
-The Python client gives you a dynamic, ergonomic way to call your pRPC server.
+The Python client gives you a dynamic, ergonomic way to call your pyRPC server.
 
 ## RPCClient Basics
 
 ```python
-from prpc import RPCClient, RPCError
+from pyrpc import RPCClient, RPCError
 
 with RPCClient("http://localhost:8000") as client:
     try:
@@ -42,7 +42,7 @@ result = await client.call_async("add", a=1, b=2)
 
 ## Positional vs Keyword Params
 
-pRPC supports both styles:
+pyRPC supports both styles:
 
 ```python
 client.add(1, 2)          # positional -> [1, 2]
@@ -78,7 +78,7 @@ finally:
 Server-side errors become `RPCError` instances:
 
 ```python
-from prpc import RPCError
+from pyrpc import RPCError
 
 try:
     client.fail()
@@ -86,7 +86,7 @@ except RPCError as e:
     print(e.code, e.message)
 ```
 
-HTTP errors (non‑2xx) raise `httpx` exceptions before pRPC even sees the payload.
+HTTP errors (non‑2xx) raise `httpx` exceptions before pyRPC even sees the payload.
 
 ## Next Steps
 

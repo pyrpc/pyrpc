@@ -1,21 +1,21 @@
 ---
 title: Adapters Overview
-description: Mount pRPC on your favorite web framework.
+description: Mount pyRPC on your favorite web framework.
 
 ---
 
 # Adapters
 
-Adapters integrate pRPC with your server runtime. They:
+Adapters integrate pyRPC with your server runtime. They:
 
 - expose a single HTTP endpoint (by default `POST /rpc`)
-- forward JSON-RPC payloads to the pRPC interpreter
+- forward JSON-RPC payloads to the pyRPC interpreter
 - return JSON-RPC responses from your procedures
 
 ## Available Adapters
 
-- **[FastAPI](/docs/server/adapters/fastapi)** — Mount pRPC on a FastAPI app
-- **[Flask](/docs/server/adapters/flask)** — Mount pRPC on a Flask app
+- **[FastAPI](/docs/server/adapters/fastapi)** — Mount pyRPC on a FastAPI app
+- **[Flask](/docs/server/adapters/flask)** — Mount pyRPC on a Flask app
 - **[Standalone ASGI](/docs/server/adapters/standalone)** — Use the minimal ASGI app directly
 
 Each adapter uses the same core registry of procedures registered with `@rpc`.

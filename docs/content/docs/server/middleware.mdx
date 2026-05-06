@@ -1,12 +1,12 @@
 ---
 title: Middleware
-description: Add middleware around your pRPC endpoint.
+description: Add middleware around your pyRPC endpoint.
 
 ---
 
 # Middleware
 
-pRPC is mounted as a route on your framework. Use the framework's middleware to wrap requests before they reach the RPC handler.
+pyRPC is mounted as a route on your framework. Use the framework's middleware to wrap requests before they reach the RPC handler.
 
 ## FastAPI
 
@@ -14,8 +14,8 @@ Add middleware to the FastAPI app. It runs for all routes, including the RPC end
 
 ```python
 from fastapi import FastAPI
-from prpc import rpc
-from prpc_fastapi import mount_fastapi
+from pyrpc import rpc
+from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()
 
@@ -38,8 +38,8 @@ Use Flask's `before_request`, `after_request`, or extensions like Flask-CORS:
 
 ```python
 from flask import Flask
-from prpc import rpc
-from prpc_flask import mount_flask
+from pyrpc import rpc
+from pyrpc_flask import mount_flask
 
 app = Flask(__name__)
 
@@ -60,8 +60,8 @@ mount_flask(app)
 For the standalone ASGI app, wrap it with ASGI middleware:
 
 ```python
-from prpc.transport.asgi import app as prpc_app
+from pyrpc.transport.asgi import app as pyRPC_app
 
 # Wrap with your ASGI middleware
-app = YourMiddleware(prpc_app)
+app = YourMiddleware(pyRPC_app)
 ```

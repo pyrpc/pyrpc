@@ -1,12 +1,12 @@
 ---
 title: Mental Model
-description: How pRPC thinks about your API.
+description: How pyRPC thinks about your API.
 
 ---
 
 # Mental Model
 
-pRPC treats your backend as a **library of typed functions**. No schemas, no generated clients (for Python) — just call procedures like local methods.
+pyRPC treats your backend as a **library of typed functions**. No schemas, no generated clients (for Python) — just call procedures like local methods.
 
 ## Procedures = Functions
 
@@ -26,7 +26,7 @@ client.add(a=10, b=5)  # 15
 
 ## No OpenAPI Middle Layer
 
-Unlike REST or OpenAPI-based tools, pRPC does not:
+Unlike REST or OpenAPI-based tools, pyRPC does not:
 
 - Generate schemas
 - Require you to maintain `.yaml` or `.json` spec files

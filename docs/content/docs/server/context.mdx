@@ -6,13 +6,13 @@ description: Access request headers, database sessions, and user auth.
 
 # Context
 
-Procedures receive only the JSON-RPC params. pRPC's core does not pass HTTP request context (headers, user, etc.) into procedures directly.
+Procedures receive only the JSON-RPC params. pyRPC's core does not pass HTTP request context (headers, user, etc.) into procedures directly.
 
 ## Adapter-Specific Context
 
 If you need request context, use your adapter's features:
 
-**FastAPI** — Use `Depends` to inject request-scoped data. Your RPC endpoint is a FastAPI route, so you can depend on `Request`, auth, or custom dependencies. How this integrates with pRPC's handler depends on the adapter implementation.
+**FastAPI** — Use `Depends` to inject request-scoped data. Your RPC endpoint is a FastAPI route, so you can depend on `Request`, auth, or custom dependencies. How this integrates with pyRPC's handler depends on the adapter implementation.
 
 **Flask** — Use `flask.g` or `flask.request` inside procedures. Ensure your procedure runs in a request context (it will when invoked via the Flask-mounted endpoint).
 
@@ -20,7 +20,7 @@ If you need request context, use your adapter's features:
 
 ```python
 from flask import request, g
-from prpc import rpc
+from pyrpc import rpc
 
 @rpc
 def get_current_ip() -> str:

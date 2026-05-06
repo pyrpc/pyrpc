@@ -50,7 +50,7 @@ export async function generateStaticParams() {
 export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): Promise<Metadata> {
   const params = await props.params;
   if (!params.slug || params.slug.length === 0) {
-    return { title: 'Docs', description: 'pRPC Documentation' };
+    return { title: 'Docs', description: 'pyRPC Documentation' };
   }
   const page = source.getPage(params.slug);
   if (!page) notFound();

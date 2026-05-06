@@ -1,11 +1,11 @@
 from typing import Any
 
-from prpc import handle_request
+from pyrpc import handle_request
 
 
 def mount_flask(app: Any) -> None:
     """
-    Mount the pRPC RPC endpoint onto a Flask application.
+    Mount the pyRPC RPC endpoint onto a Flask application.
 
     Args:
         app: A Flask application instance.

@@ -1,23 +1,23 @@
 ---
 title: Overview
-description: Consuming your pRPC API.
+description: Consuming your pyRPC API.
 
 ---
 
 # Client
 
-This section shows how to call your pRPC server from different client environments.
+This section shows how to call your pyRPC server from different client environments.
 
 ## What You'll Learn
 
 - **[Vanilla Python](/docs/client/vanilla)** — Use `RPCClient` in scripts, services, and CLIs.
-- **[Next.js / TypeScript](/docs/client/nextjs)** — Use generated `PRPCClient` in React apps.
+- **[Next.js / TypeScript](/docs/client/nextjs)** — Use generated `pyRPCClient` in React apps.
 - **[Advanced](/docs/client/advanced)** — Error handling, testing, and customization.
 
 ## Quick Example (Python)
 
 ```python
-from prpc import RPCClient
+from pyrpc import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
     result = client.add(a=10, b=5)

@@ -1,8 +1,8 @@
-from prpc import rpc
-from prpc_fastapi import mount_fastapi
+from pyrpc import rpc
+from pyrpc_fastapi import mount_fastapi
 
 
-app = FastAPI(title="pRPC Basic Example")
+app = FastAPI(title="pyRPC Basic Example")
 
 @rpc
 def add(a: int, b: int) -> int:

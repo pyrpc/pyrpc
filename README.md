@@ -17,7 +17,7 @@
 
 **pyRPC** is a modern, tRPC-inspired "drop-in RPC layer" for Python. It's designed to be dead simple, type-safe, and framework-agnostic.
 
-Inspired by giving you the best DX, pRPC focuses on giving you a type-safe bridge between your backend and frontend without forcing a specific architecture or framework.
+Inspired by giving you the best DX, pyRPC focuses on giving you a type-safe bridge between your backend and frontend without forcing a specific architecture or framework.
 
 ### Philosophy
 - **Dead simple install**: Zero config, zero ceremony.
@@ -29,14 +29,14 @@ Inspired by giving you the best DX, pRPC focuses on giving you a type-safe bridg
 
 ### Modular Installation
 
-pRPC follows a modular packaging strategy. You only pay for what you use.
+pyRPC follows a modular packaging strategy. You only pay for what you use.
 
 #### 1. Core (Required)
 The tiny core protocol and runtime.
 ```bash
-uv add prpc
+uv add pyrpc
 # or
-pip install prpc
+pip install pyrpc
 ```
 
 #### 2. Adapters (Optional)
@@ -44,18 +44,18 @@ Install the adapter for your favorite framework.
 
 **FastAPI**
 ```bash
-uv add prpc-fastapi
+uv add pyrpc-fastapi
 ```
 
 **Flask**
 ```bash
-uv add prpc-flask
+uv add pyrpc-flask
 ```
 
 #### 3. Codegen (Optional)
 Tools for generating TypeScript clients.
 ```bash
-uv add prpc-codegen
+uv add pyrpc-codegen
 ```
 
 ---
@@ -66,8 +66,8 @@ uv add prpc-codegen
 Define your procedures and mount the RPC layer.
 
 ```python
-from prpc import rpc
-from prpc_fastapi import mount_fastapi
+from pyrpc import rpc
+from pyrpc_fastapi import mount_fastapi
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -83,7 +83,7 @@ mount_fastapi(app)
 Call your procedures with full type support and dynamic method discovery.
 
 ```python
-from prpc import RPCClient
+from pyrpc import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
     result = client.add(10, 5)
@@ -94,16 +94,16 @@ with RPCClient("http://localhost:8000") as client:
 Use the CLI to generate a type-safe TS client.
 
 ```bash
-prpc codegen -m my_app.main -o client.ts
+pyrpc codegen -m my_app.main -o client.ts
 ```
 
 ---
 
 ### CLI Utilities
-The `prpc` command (provided by `prpc-codegen`) allows you to:
-- `prpc serve`: Instantly host an RPC module.
-- `prpc inspect`: Visualize all registered procedures.
-- `prpc codegen`: Generate frontend clients.
+The `pyrpc` command (provided by `pyrpc-codegen`) allows you to:
+- `pyrpc serve`: Instantly host an RPC module.
+- `pyrpc inspect`: Visualize all registered procedures.
+- `pyrpc codegen`: Generate frontend clients.
 
 ### Documentation & Examples
 Check out the [examples/](examples/) directory for complete server and client implementations.
@@ -114,5 +114,5 @@ MIT
 ### CLI Usage
 
 ```bash
-prpc --help
+pyrpc --help
 ```

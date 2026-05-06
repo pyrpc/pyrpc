@@ -4,12 +4,12 @@ from typing import Any, Dict
 
 from jinja2 import Environment, FileSystemLoader
 
-from prpc import get_registry_schema
+from pyrpc import get_registry_schema
 
 
 def generate_typescript_client(registry: Any) -> str:
     """
-    Generate a TypeScript client from a pRPC registry.
+    Generate a TypeScript client from a pyRPC registry.
     """
     schemas = get_registry_schema(registry)
     
