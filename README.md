@@ -10,6 +10,9 @@
   </p>
 </div>
 
+> [!WARNING]
+> pyRPC is in beta. APIs may change as development continues. If you run into issues, please open an issue.
+
 ## pyRPC
 
 **pyRPC** is a modern, tRPC-inspired "drop-in RPC layer" for Python. It's designed to be dead simple, type-safe, and framework-agnostic.
