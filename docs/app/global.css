@@ -2,17 +2,23 @@
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
 
-:root {
-  /* Site Header Height - Fumadocs */
-  --fd-header-height: 3.5rem;
-  /* Make EVERYTHING full width */
-  --fd-layout-width: 100%;
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-mono-punctuation, ui-monospace, monospace;
+  
+  --color-background: #000000;
+  --color-foreground: #ffffff;
 }
 
-/* Ensure the HomeLayout main content fills the screen properly */
-#nd-home-layout {
-  min-height: calc(100vh - var(--fd-header-height));
-  --fd-layout-width: 100%;
+html {
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #000000 !important;
+}
+
+body {
+  margin: 0;
+  background-color: #000000 !important;
 }
 
 /* Header full width and left aligned */
@@ -77,12 +83,12 @@ aside button[aria-label*="Search"] {
 .fd-sidebar,
 .fd-toc {
   position: fixed !important;
-  top: 4rem !important;
+  top: 3.5rem !important;
   /* Updated to match new header height */
   /* Hardcoded to match h-14/--fd-header-height */
   left: 0 !important;
-  height: calc(100vh - 4rem) !important;
-  max-height: calc(100vh - 4rem) !important;
+  height: calc(100vh - 3.5rem) !important;
+  max-height: calc(100vh - 3.5rem) !important;
   /* Header is usually z-40, we stay below it but above content */
   z-index: 30 !important;
   overflow: hidden !important;
@@ -131,18 +137,51 @@ aside button[aria-label*="Search"] {
   top: var(--fd-header-height) !important;
 }
 
-/* Custom Full Width Header Support */
-:root {
-  --fd-layout-width: 100% !important;
+/* Hide default Fumadocs nav as we use SiteHeader */
+.fd-nav, #nd-nav {
+  display: none !important;
 }
 
-/* Force basic full-width behavior for Fumadocs root layout containers */
-.fd-nav-container,
-.fd-nav {
-  max-width: none !important;
-  width: 100% !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+/* Specific background for docs to give it a modern feel */
+#nd-docs-layout, 
+.fd-toc, 
+.fd-doc {
+  background-color: #000000 !important;
+}
+
+aside,
+.fd-sidebar, 
+.fd-sidebar-viewport,
+[data-sidebar="true"],
+[data-radix-scroll-area-viewport] {
+  background-color: #000000 !important;
+  background: #000000 !important;
+}
+
+/* Adjust Sidebar to sit below SiteHeader */
+.fd-sidebar {
+  top: 3.5rem !important; /* h-14 */
+  height: calc(100vh - 3.5rem) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  z-index: 40 !important;
+}
+
+/* Adjust TOC to sit below SiteHeader */
+.fd-toc {
+  top: 3.5rem !important;
+  height: calc(100vh - 3.5rem) !important;
+}
+
+
+/* Ensure consistent spacing for docs pages */
+#nd-docs-layout {
+  padding-top: 0 !important;
+}
+
+/* Alignment for the main content area */
+.fd-doc {
+  margin-top: 2rem !important;
+  padding-bottom: 5rem !important;
 }
 
 /* StackedLogos - CSS Variables & Animations */

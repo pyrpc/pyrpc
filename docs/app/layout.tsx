@@ -1,17 +1,19 @@
 import { RootProvider } from 'fumadocs-ui/provider/next';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+import { SiteHeader } from '@/components/site-header';
 import './global.css';
 import type { ReactNode } from 'react';
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { baseOptions } from '@/lib/layout.shared';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="flex flex-col min-h-screen" suppressHydrationWarning>
+    <html lang="en" className={`dark ${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning style={{ colorScheme: 'dark' }}>
+      <body className="font-sans antialiased bg-black" suppressHydrationWarning>
         <RootProvider>
-          <HomeLayout {...baseOptions()}>
+          <SiteHeader />
+          <main className="pt-14">
             {children}
-          </HomeLayout>
+          </main>
         </RootProvider>
       </body>
     </html>
