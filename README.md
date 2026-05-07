@@ -34,9 +34,9 @@ pyRPC follows a modular packaging strategy. You only pay for what you use.
 #### 1. Core (Required)
 The tiny core protocol and runtime.
 ```bash
-uv add pyrpc
+uv add pyrpc-server
 # or
-pip install pyrpc
+pip install pyrpc-server
 ```
 
 #### 2. Adapters (Optional)
@@ -44,18 +44,18 @@ Install the adapter for your favorite framework.
 
 **FastAPI**
 ```bash
-uv add pyrpc-fastapi
+uv add pyrpc-server-fastapi
 ```
 
 **Flask**
 ```bash
-uv add pyrpc-flask
+uv add pyrpc-server-flask
 ```
 
 #### 3. Codegen (Optional)
 Tools for generating TypeScript clients.
 ```bash
-uv add pyrpc-codegen
+uv add pyrpc-server-codegen
 ```
 
 ---
@@ -100,7 +100,7 @@ pyrpc codegen -m my_app.main -o client.ts
 ---
 
 ### CLI Utilities
-The `pyrpc` command (provided by `pyrpc-codegen`) allows you to:
+The `pyrpc` command (provided by `pyrpc-server-codegen`) allows you to:
 - `pyrpc serve`: Instantly host an RPC module.
 - `pyrpc inspect`: Visualize all registered procedures.
 - `pyrpc codegen`: Generate frontend clients.
