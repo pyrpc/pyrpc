@@ -17,7 +17,7 @@ class RPCError(Exception):
 
 class RPCClient:
     """
-    A dynamic RPC client for pRPC.
+    A dynamic RPC client for pyRPC.
     Allows calling remote procedures as if they were local methods.
     """
 
@@ -26,7 +26,7 @@ class RPCClient:
         Initialize the RPC client.
 
         Args:
-            base_url: The base URL of the pRPC server.
+            base_url: The base URL of the pyRPC server.
         """
         self.base_url = base_url.rstrip("/")
         self._async_client = httpx.AsyncClient(base_url=self.base_url)

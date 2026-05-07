@@ -1,5 +1,5 @@
 import asyncio
-from prpc import RPCClient, RPCError
+from pyrpc import RPCClient, RPCError
 
 def run_sync_example():
     print("--- Running Synchronous Client Example ---")
@@ -13,7 +13,7 @@ def run_sync_example():
             print(client.greet())
 
             # Greet with parameter
-            print(client.greet(name="pRPC User"))
+            print(client.greet(name="pyRPC User"))
 
         except RPCError as e:
             print(f"Caught RPC Error: {e.code} - {e.message}")

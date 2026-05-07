@@ -6,7 +6,7 @@ from .core.introspection import get_procedure_schema, get_registry_schema
 from .core.interpreter import handle_request
 from .core.models import RpcRequest, RpcResponse
 from .core.registry import ProcedureRegistry
-from .transport.asgi import PRPCAsgiApp, app as asgi_app
+from .transport.asgi import PyRPCAsgiApp, app as asgi_app
 
 __all__ = [
     "ProcedureRegistry",
@@ -15,7 +15,7 @@ __all__ = [
     "RpcRequest",
     "RpcResponse",
     "handle_request",
-    "PRPCAsgiApp",
+    "PyRPCAsgiApp",
     "asgi_app",
     "RPCClient",
     "RPCError",

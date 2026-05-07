@@ -1,25 +1,25 @@
 ---
 title: Standalone ASGI Adapter
-description: Use the minimal PRPCAsgiApp directly as your ASGI app.
+description: Use the minimal PyRPCAsgiApp directly as your ASGI app.
 
 ---
 
 # Standalone ASGI Adapter
 
-For minimal deployments or ASGI-first frameworks, use the built-in `PRPCAsgiApp`.
+For minimal deployments or ASGI-first frameworks, use the built-in `PyRPCAsgiApp`.
 
 ## Basic Usage
 
 ```python
-from prpc.transport.asgi import PRPCAsgiApp
+from pyrpc.transport.asgi import PyRPCAsgiApp
 
-app = PRPCAsgiApp()
+app = PyRPCAsgiApp()
 ```
 
 Or use the pre-created instance:
 
 ```python
-from prpc.transport.asgi import app
+from pyrpc.transport.asgi import app
 ```
 
 This ASGI app:

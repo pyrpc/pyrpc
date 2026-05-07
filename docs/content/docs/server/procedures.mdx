@@ -11,7 +11,7 @@ Procedures are Python functions decorated with `@rpc`. They receive params from 
 ## Basic Definition
 
 ```python
-from prpc import rpc
+from pyrpc import rpc
 
 @rpc
 def add(a: int, b: int) -> int:
@@ -22,7 +22,7 @@ def greet(name: str = "World") -> str:
     return f"Hello, {name}!"
 ```
 
-The client sends `{"jsonrpc": "2.0", "method": "add", "params": {"a": 1, "b": 2}, "id": 1}`. pRPC deserializes params, calls `add(a=1, b=2)`, and returns the result in the JSON-RPC response.
+The client sends `{"jsonrpc": "2.0", "method": "add", "params": {"a": 1, "b": 2}, "id": 1}`. pyRPC deserializes params, calls `add(a=1, b=2)`, and returns the result in the JSON-RPC response.
 
 ## Types and Validation
 
@@ -30,7 +30,7 @@ Params are validated from the JSON payload using the request model. Type hints o
 
 ## Sync vs Async
 
-Procedures can be sync or async. pRPC detects awaitables and awaits them:
+Procedures can be sync or async. pyRPC detects awaitables and awaits them:
 
 ```python
 @rpc

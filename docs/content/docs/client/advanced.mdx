@@ -1,6 +1,6 @@
 ---
 title: Advanced
-description: Testing, customization, and patterns for pRPC clients.
+description: Testing, customization, and patterns for pyRPC clients.
 
 ---
 
@@ -15,7 +15,7 @@ You can test the Python client against the in‑memory ASGI app instead of a rea
 ```python
 import httpx
 import pytest
-from prpc import rpc, asgi_app, RPCClient, default_registry
+from pyrpc import rpc, asgi_app, RPCClient, default_registry
 
 @pytest.fixture(autouse=True)
 def clear_registry():
@@ -43,7 +43,7 @@ async def test_client_async():
 
 ```python
 import httpx
-from prpc import RPCClient
+from pyrpc import RPCClient
 
 client = RPCClient("http://localhost:8000")
 client._sync_client = httpx.Client(
@@ -53,21 +53,21 @@ client._sync_client = httpx.Client(
 )
 ```
 
-For TypeScript, you can wrap `PRPCClient` to inject custom headers or use a different `fetch` implementation.
+For TypeScript, you can wrap `pyRPCClient` to inject custom headers or use a different `fetch` implementation.
 
 ## Codegen Tips
 
-- Re‑run `prpc codegen` whenever you add or change procedures.
+- Re‑run `pyrpc codegen` whenever you add or change procedures.
 - Commit the generated client to your repo so frontend builds don't depend on Python tooling.
 
 ## Error Handling Patterns
 
-- Wrap RPC calls in a small helper that normalizes `RPCError` / `PRPCError`.
+- Wrap RPC calls in a small helper that normalizes `RPCError` / `pyRPCError`.
 - Map error codes to user‑facing messages in one place.
 
 ```ts
 export function handleRpcError(e: unknown): string {
-  if (e instanceof PRPCError) {
+  if (e instanceof pyRPCError) {
     if (e.code === 401) return "You must be signed in.";
     if (e.code === 403) return "You don't have permission.";
     return e.message;

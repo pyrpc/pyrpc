@@ -16,7 +16,7 @@ export function PlaygroundEditor({ code, language, onChange, label }: Playground
 
     const handleEditorDidMount: OnMount = (editor, monaco) => {
         // Custom theme configuration if needed
-        monaco.editor.defineTheme('prpc-dark', {
+        monaco.editor.defineTheme('pyrpc-dark', {
             base: 'vs-dark',
             inherit: true,
             rules: [],
@@ -26,7 +26,7 @@ export function PlaygroundEditor({ code, language, onChange, label }: Playground
             }
         })
 
-        monaco.editor.setTheme(theme === 'dark' ? 'prpc-dark' : 'vs')
+        monaco.editor.setTheme(theme === 'dark' ? 'pyrpc-dark' : 'vs')
     }
 
     return (

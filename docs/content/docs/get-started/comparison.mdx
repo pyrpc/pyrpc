@@ -1,28 +1,28 @@
 ---
 title: Comparison
-description: How pRPC compares to other RPC frameworks
+description: How pyRPC compares to other RPC frameworks
 
 ---
 
-# pRPC vs Other Frameworks
+# pyRPC vs Other Frameworks
 
-pRPC is a modern, type-safe RPC framework for Python that eliminates the need for OpenAPI schemas, heavy generators, and manual boilerplate.
+pyRPC is a modern, type-safe RPC framework for Python that eliminates the need for OpenAPI schemas, heavy generators, and manual boilerplate.
 
 ## Key Differences
 
 ### vs tRPC
-- **pRPC**: Python-first, built for asyncio and modern Python type hints
+- **pyRPC**: Python-first, built for asyncio and modern Python type hints
 - **tRPC**: TypeScript-only, limited to Node.js ecosystem
 
 ### vs gRPC
-- **pRPC**: Uses HTTP/JSON, no `.proto` files needed, developer-friendly
+- **pyRPC**: Uses HTTP/JSON, no `.proto` files needed, developer-friendly
 - **gRPC**: Requires Protocol Buffers, steeper learning curve, binary protocol
 
 ### vs FastAPI
-- **pRPC**: End-to-end type safety from server to client, automatic client generation
+- **pyRPC**: End-to-end type safety from server to client, automatic client generation
 - **FastAPI**: Manual client code, OpenAPI schemas as intermediary
 
-## When to Use pRPC
+## When to Use pyRPC
 
 ✅ You want type-safe RPC without code generation  
 ✅ You're building with Python on the backend  
@@ -30,8 +30,8 @@ pRPC is a modern, type-safe RPC framework for Python that eliminates the need fo
 ✅ You prefer async/await patterns  
 
 ```python
-# Example: pRPC server
-from prpc import Router
+# Example: pyRPC server
+from pyrpc import Router
 
 router = Router()
 

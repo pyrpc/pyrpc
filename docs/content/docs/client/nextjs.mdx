@@ -1,31 +1,31 @@
 ---
 title: Next.js / TypeScript
-description: Call your pRPC server from TypeScript using a generated PRPCClient.
+description: Call your pyRPC server from TypeScript using a generated pyRPCClient.
 
 ---
 
 # Next.js / TypeScript Client
 
-Use `prpc-codegen` to generate a typed TypeScript client for your pRPC procedures.
+Use `pyRPC-codegen` to generate a typed TypeScript client for your pyRPC procedures.
 
 ## Generate the Client
 
 From your Python project:
 
 ```bash
-uv add prpc-codegen
+uv add pyrpc-codegen
 
-prpc codegen -m my_app.main -o src/lib/prpc-client.ts
+pyrpc codegen -m my_app.main -o src/lib/pyRPC-client.ts
 ```
 
-This scans registered procedures in `my_app.main` and generates a `PRPCClient` class.
+This scans registered procedures in `my_app.main` and generates a `pyRPCClient` class.
 
-## Using PRPCClient
+## Using pyRPCClient
 
 ```ts
-import { PRPCClient } from "@/lib/prpc-client";
+import { pyRPCClient } from "@/lib/pyRPC-client";
 
-const client = new PRPCClient(process.env.NEXT_PUBLIC_API_URL!);
+const client = new pyRPCClient(process.env.NEXT_PUBLIC_API_URL!);
 
 export async function addExample() {
   const result = await client.add(1, 2);
@@ -33,11 +33,11 @@ export async function addExample() {
 }
 ```
 
-Under the hood, `PRPCClient`:
+Under the hood, `pyRPCClient`:
 
 - Sends `POST /rpc` requests to your server.
 - Sends `{"id", "method", "params"}` JSON.
-- Throws `PRPCError` when the server returns an error.
+- Throws `pyRPCError` when the server returns an error.
 
 ## In Next.js Components
 
@@ -46,9 +46,9 @@ Use it inside server actions or React components as you would any fetch‑based 
 ```ts
 "use server";
 
-import { PRPCClient } from "@/lib/prpc-client";
+import { pyRPCClient } from "@/lib/pyRPC-client";
 
-const client = new PRPCClient(process.env.PRPC_API_URL!);
+const client = new pyRPCClient(process.env.pyRPC_API_URL!);
 
 export async function createUserAction(formData: FormData) {
   const name = formData.get("name") as string;
@@ -61,18 +61,18 @@ export async function createUserAction(formData: FormData) {
 
 The generated client throws:
 
-- `PRPCError` when the RPC returns an error.
+- `pyRPCError` when the RPC returns an error.
 - Standard `Error` when the HTTP request fails.
 
 ```ts
-import { PRPCClient, PRPCError } from "@/lib/prpc-client";
+import { pyRPCClient, pyRPCError } from "@/lib/pyRPC-client";
 
-const client = new PRPCClient(process.env.NEXT_PUBLIC_API_URL!);
+const client = new pyRPCClient(process.env.NEXT_PUBLIC_API_URL!);
 
 try {
   const user = await client.getUser(1);
 } catch (e) {
-  if (e instanceof PRPCError) {
+  if (e instanceof pyRPCError) {
     console.error(e.code, e.message);
   } else {
     console.error("Network error", e);

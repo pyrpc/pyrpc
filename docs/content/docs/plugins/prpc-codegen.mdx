@@ -1,17 +1,17 @@
 ---
 title: Code Generation
-description: Generate TypeScript and Python client SDKs from your pRPC router
+description: Generate TypeScript and Python client SDKs from your pyRPC router
 
 ---
 
-# prpc-codegen
+# pyRPC-codegen
 
-Automatically generate type-safe client SDKs for TypeScript and Python from your pRPC server definition.
+Automatically generate type-safe client SDKs for TypeScript and Python from your pyRPC server definition.
 
 ## Installation
 
 ```bash
-pip install prpc-codegen
+pip install pyrpc-codegen
 ```
 
 ## CLI Usage
@@ -19,13 +19,13 @@ pip install prpc-codegen
 Generate a TypeScript client:
 
 ```bash
-prpc-codegen --input myapp/router.py --output ./generated/client.ts --lang typescript
+pyRPC-codegen --input myapp/router.py --output ./generated/client.ts --lang typescript
 ```
 
 Generate a Python client:
 
 ```bash
-prpc-codegen --input myapp/router.py --output ./generated/client.py --lang python
+pyRPC-codegen --input myapp/router.py --output ./generated/client.py --lang python
 ```
 
 ## Features
@@ -42,7 +42,7 @@ prpc-codegen --input myapp/router.py --output ./generated/client.py --lang pytho
 
 ```typescript
 // generated/client.ts
-import { createClient } from '@prpc/client';
+import { createClient } from '@pyRPC/client';
 
 const client = createClient({ baseUrl: 'http://localhost:8000' });
 
@@ -55,7 +55,7 @@ console.log(user.name); // TypeScript knows this is a string
 
 ```python
 # generated/client.py
-from prpc import Client
+from pyrpc import Client
 
 client = Client("http://localhost:8000")
 
@@ -66,7 +66,7 @@ print(user.name)  # IDE autocomplete works!
 
 ## Configuration
 
-Create a `prpc.config.json`:
+Create a `pyRPC.config.json`:
 
 ```json
 {
@@ -88,7 +88,7 @@ Create a `prpc.config.json`:
 Run with:
 
 ```bash
-prpc-codegen --config prpc.config.json
+pyRPC-codegen --config pyRPC.config.json
 ```
 
 ## CI/CD Integration
@@ -96,10 +96,10 @@ prpc-codegen --config prpc.config.json
 Add to your GitHub Actions workflow:
 
 ```yaml
-- name: Generate pRPC Clients
+- name: Generate pyRPC Clients
   run: |
-    pip install prpc-codegen
-    prpc-codegen --config prpc.config.json
+    pip install pyrpc-codegen
+    pyRPC-codegen --config pyRPC.config.json
 ```
 
 ## Next Steps
