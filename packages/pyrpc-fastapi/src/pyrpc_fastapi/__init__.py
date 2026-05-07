@@ -1,11 +1,11 @@
 from typing import Any, Dict
 
-from prpc import handle_request
+from pyrpc import handle_request
 
 
 def mount_fastapi(app: Any) -> None:
     """
-    Mount the pRPC RPC endpoint onto a FastAPI application.
+    Mount the pyRPC RPC endpoint onto a FastAPI application.
 
     Args:
         app: A FastAPI application instance.

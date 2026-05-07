@@ -1,6 +1,6 @@
 {
     "title": "Client",
-    "description": "Consume your pRPC API from the client",
+    "description": "Consume your pyRPC API from the client",
     "icon": "Laptop",
     "pages": [
         "index",

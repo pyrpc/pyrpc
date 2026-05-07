@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "prpc-workspace"
+name = "pyrpc-workspace"
 version = "0.1.0"
-description = "pRPC Monorepo Workspace"
+description = "pyRPC Monorepo Workspace"
 requires-python = ">=3.11"
 dependencies = []
 
@@ -29,10 +29,10 @@ dev = [
 members = ["packages/*"]
 
 [tool.uv.sources]
-prpc = { workspace = true }
-prpc-fastapi = { workspace = true }
-prpc-flask = { workspace = true }
-prpc-codegen = { workspace = true }
+pyrpc = { workspace = true }
+pyrpc-fastapi = { workspace = true }
+pyrpc-flask = { workspace = true }
+pyrpc-codegen = { workspace = true }
 
 
 [tool.hatch.build.targets.wheel]
@@ -46,9 +46,9 @@ target-version = "py311"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = [
-    "packages/prpc/src",
-    "packages/prpc-fastapi/src",
-    "packages/prpc-flask/src",
-    "packages/prpc-codegen/src"
+    "packages/pyrpc/src",
+    "packages/pyrpc-fastapi/src",
+    "packages/pyrpc-flask/src",
+    "packages/pyrpc-codegen/src"
 ]
 asyncio_mode = "auto"

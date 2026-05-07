@@ -1,7 +1,7 @@
 import pytest
 from flask import Flask
-from prpc import rpc, default_registry
-from prpc_flask import mount_flask
+from pyrpc import rpc, default_registry
+from pyrpc_flask import mount_flask
 
 @pytest.fixture(autouse=True)
 def clear_registry():

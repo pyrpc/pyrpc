@@ -1,6 +1,6 @@
 import pytest
-from prpc import rpc, default_registry
-from prpc_codegen import generate_typescript_client
+from pyrpc import rpc, default_registry
+from pyrpc_codegen import generate_typescript_client
 
 @pytest.fixture(autouse=True)
 def clear_registry():
@@ -14,7 +14,7 @@ def test_generate_typescript_client():
     
     content = generate_typescript_client(default_registry)
     
-    assert "export class PRPCClient" in content
+    assert "export class PyRPCClient" in content
     assert "async add(a: any, b: any): Promise<any>" in content
     assert 'return this.execute("add", {' in content
     assert '"a": a,' in content
@@ -22,6 +22,6 @@ def test_generate_typescript_client():
 
 def test_generate_typescript_client_empty():
     content = generate_typescript_client(default_registry)
-    assert "class PRPCClient" in content
+    assert "class PyRPCClient" in content
     # Should not have any methods other than constructor and execute
     assert "async " not in content.split("private async execute")[1]

@@ -1,25 +1,25 @@
 ---
 title: Flask Adapter
-description: Mount pRPC on a Flask application using mount_flask.
+description: Mount pyRPC on a Flask application using mount_flask.
 
 ---
 
 # Flask Adapter
 
-The Flask adapter exposes your pRPC procedures at `POST /rpc` on a Flask app.
+The Flask adapter exposes your pyRPC procedures at `POST /rpc` on a Flask app.
 
 ## Installation
 
 ```bash
-uv add prpc prpc-flask
+uv add pyrpc pyrpc-flask
 ```
 
 ## Basic Setup
 
 ```python
 from flask import Flask
-from prpc import rpc
-from prpc_flask import mount_flask
+from pyrpc import rpc
+from pyrpc_flask import mount_flask
 
 app = Flask(__name__)
 
@@ -30,7 +30,7 @@ def add(a: int, b: int) -> int:
 mount_flask(app)
 ```
 
-This registers `add` in the global registry and mounts a `POST /rpc` endpoint that forwards requests to pRPC.
+This registers `add` in the global registry and mounts a `POST /rpc` endpoint that forwards requests to pyRPC.
 
 ## How It Works
 

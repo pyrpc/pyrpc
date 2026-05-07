@@ -21,7 +21,7 @@ export function SiteHeader() {
       {/* Left: Logo */}
       <div className="flex items-center h-full px-6">
         <Link href="/" className="flex items-center gap-2 font-bold text-fd-foreground tracking-tighter text-lg">
-          pRPC
+          pyRPC
         </Link>
       </div>
 

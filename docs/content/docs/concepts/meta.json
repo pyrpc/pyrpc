@@ -1,6 +1,6 @@
 {
     "title": "Concepts",
-    "description": "Core concepts of pRPC",
+    "description": "Core concepts of pyRPC",
     "icon": "Book",
     "pages": [
         "index",

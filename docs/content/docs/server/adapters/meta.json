@@ -1,6 +1,6 @@
 {
     "title": "Adapters",
-    "description": "Integrate pRPC with different servers",
+    "description": "Integrate pyRPC with different servers",
     "icon": "LayoutGrid",
     "pages": [
         "index",
