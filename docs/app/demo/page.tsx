@@ -305,27 +305,11 @@ export default function PlaygroundPage() {
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-background">
-            {/* Header Info */}
-            <section className="relative w-full overflow-hidden border-b bg-background py-16 px-6">
-                <PerspectiveGrid className="absolute inset-0 z-0" />
-                <div className="relative z-10 max-w-5xl mx-auto space-y-4">
-                    <div className="flex flex-col items-start gap-3">
-                        <div className="flex">
-                            <span className="flex items-center gap-1.5 px-2 py-0.5 text-[9px] font-mono font-bold tracking-[0.2em] bg-fd-primary text-fd-primary-foreground uppercase shadow-sm">
-                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                                Currently in Beta Preview
-                            </span>
-                        </div>
-                        <h1 className="text-4xl md:text-7xl font-extrabold tracking-tighter uppercase leading-none">
-                            Interactive<br />Playground
-                        </h1>
-                    </div>
-                    <p className="max-w-2xl text-fd-muted-foreground uppercase tracking-[0.1em] font-mono text-xs leading-relaxed">
-                        Experiment with pRPC in real-time. Define your server logic in Python and see how it reflects in your client.
-                    </p>
-                </div>
-            </section>
+        <div className="flex flex-col min-h-screen bg-background pt-12">
+            {/* Minimalist Header for playground */}
+            <div className="max-w-5xl mx-auto px-4 py-4 w-full">
+               <h1 className="text-xl font-bold tracking-tight uppercase font-mono opacity-50">Interactive Playground</h1>
+            </div>
 
             {/* Toolbar */}
             <div className="sticky top-[--fd-header-height] z-20 w-full border-b border-edge bg-background/80 backdrop-blur-md">
@@ -413,14 +397,6 @@ export default function PlaygroundPage() {
                         </div>
                     </div>
 
-                    <div className="grid lg:grid-cols-2 divide-x divide-edge h-[300px]">
-                        <div className="bg-muted/5">
-                            <RequestFlow status={status} />
-                        </div>
-                        <div className="bg-background">
-                            <Inspector request={request} response={response} logs={logs} />
-                        </div>
-                    </div>
                 </div>
             </main>
         </div>
