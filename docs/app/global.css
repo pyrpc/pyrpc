@@ -5,20 +5,20 @@
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-mono-punctuation, ui-monospace, monospace;
-  
-  --color-background: #000000;
-  --color-foreground: #ffffff;
 }
 
 html {
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: #000000 !important;
 }
 
 body {
   margin: 0;
-  background-color: #000000 !important;
+}
+
+/* Dark mode Pitch Black override */
+html.dark {
+  --fd-background: 0 0 0;
 }
 
 /* Header full width and left aligned */
@@ -142,18 +142,18 @@ aside button[aria-label*="Search"] {
   display: none !important;
 }
 
-/* Specific background for docs to give it a modern feel */
-#nd-docs-layout, 
-.fd-toc, 
-.fd-doc {
+/* Docs background — theme-aware */
+.dark #nd-docs-layout, 
+.dark .fd-toc, 
+.dark .fd-doc {
   background-color: #000000 !important;
 }
 
-aside,
-.fd-sidebar, 
-.fd-sidebar-viewport,
-[data-sidebar="true"],
-[data-radix-scroll-area-viewport] {
+.dark aside,
+.dark .fd-sidebar, 
+.dark .fd-sidebar-viewport,
+.dark [data-sidebar="true"],
+.dark [data-radix-scroll-area-viewport] {
   background-color: #000000 !important;
   background: #000000 !important;
 }
@@ -162,7 +162,7 @@ aside,
 .fd-sidebar {
   top: 3.5rem !important; /* h-14 */
   height: calc(100vh - 3.5rem) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-right: 1px solid var(--fd-border) !important;
   z-index: 40 !important;
 }
 

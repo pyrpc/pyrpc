@@ -37,18 +37,18 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-[#000000] text-foreground font-sans selection:bg-white/10">
+    <div className="bg-fd-background text-fd-foreground font-sans selection:bg-fd-primary/10">
       {/* Background Effects */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.03)_0%,transparent_50%)]" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-white/[0.02] blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_0%,rgba(128,128,128,0.03)_0%,transparent_50%)]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-fd-muted/20 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Outer wrapper with margin to allow lines to cross */}
       <div className="relative z-10 flex flex-col mx-4 md:mx-6 lg:mx-8">
 
         {/* Crossing Border Lines - Even more subtle */}
-        <div className="absolute bottom-0 left-[-24px] right-[-24px] h-[1px] bg-white/[0.06]" />
-        <div className="absolute left-0 top-[-24px] bottom-[-24px] w-[1px] bg-white/[0.06]" />
-        <div className="absolute right-0 top-[-24px] bottom-[-24px] w-[1px] bg-white/[0.06]" />
+        <div className="absolute bottom-0 left-[-24px] right-[-24px] h-[1px] bg-fd-border/30" />
+        <div className="absolute left-0 top-[-24px] bottom-[-24px] w-[1px] bg-fd-border/30" />
+        <div className="absolute right-0 top-[-24px] bottom-[-24px] w-[1px] bg-fd-border/30" />
 
         {/* Content Container */}
         <div className="relative flex flex-col p-4 md:p-6 lg:p-8 pt-6 md:pt-8">
@@ -59,24 +59,24 @@ export default function HomePage() {
             {/* Left Column */}
             <div className="flex flex-col items-start space-y-10">
               {/* Beta Pill */}
-              <div className="flex items-center gap-3 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[11px] text-neutral-400 font-medium tracking-tight">
+              <div className="flex items-center gap-3 px-3 py-1 rounded-full border border-fd-border bg-fd-muted/50 backdrop-blur-md text-[11px] text-fd-muted-foreground font-medium tracking-tight">
                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
                 <span>Public Beta</span>
               </div>
 
               {/* Headline */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tighter text-white max-w-[15ch]">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tighter text-fd-foreground max-w-[15ch]">
                 End-to-end{'\n'}
-                <span className="bg-gradient-to-r from-white via-white to-white/30 bg-clip-text text-transparent">type safety.</span>
+                <span className="bg-gradient-to-r from-fd-foreground via-fd-foreground to-fd-muted-foreground bg-clip-text text-transparent">type safety.</span>
               </h1>
-              <p className="text-base md:text-lg text-neutral-400 leading-relaxed max-w-md tracking-tight">
+              <p className="text-base md:text-lg text-fd-muted-foreground leading-relaxed max-w-md tracking-tight">
                 Seamless bridge between your Python backend and TypeScript frontend with zero-cost abstractions.
               </p>
 
               <div className="flex items-center gap-6">
-                {/* Get Started Button - Linear Style */}
+                {/* Get Started Button */}
                 <Link href="/docs/get-started/installation">
-                  <button className="px-8 py-2.5 bg-white text-black font-semibold text-base rounded-none hover:bg-neutral-200 transition-all active:scale-[0.98]">
+                  <button className="px-8 py-2.5 bg-fd-foreground text-fd-background font-semibold text-base rounded-none hover:opacity-90 transition-all active:scale-[0.98]">
                     Get Started
                   </button>
                 </Link>
@@ -84,7 +84,7 @@ export default function HomePage() {
                 {/* View on GitHub Button */}
                 <Link
                   href="https://github.com/pRPC-dev/prpc"
-                  className="flex items-center gap-2.5 text-neutral-400 hover:text-white transition-colors group px-6 py-2.5 rounded-none border border-white/10 hover:bg-white/5 font-medium text-base"
+                  className="flex items-center gap-2.5 text-fd-muted-foreground hover:text-fd-foreground transition-colors group px-6 py-2.5 rounded-none border border-fd-border hover:bg-fd-accent/50 font-medium text-base"
                 >
                   <Github className="w-5 h-5" />
                   <span>View on GitHub</span>
@@ -92,29 +92,29 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Column - Code Window */}
+            {/* Right Column - Code Window (always dark) */}
             <div className="relative w-full max-w-[600px] lg:ml-auto">
               {/* Subtle Glow Behind Code Panel */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-[80%] max-h-[80%] bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none" />
 
-              <div className="relative w-full rounded-none border border-white/10 bg-white/[0.02] backdrop-blur-sm shadow-[0_40px_80px_-15px_rgba(0,0,0,0.9)] p-2">
-                <div className="flex flex-col rounded-none border border-white/5 overflow-hidden bg-black/90">
+              <div className="relative w-full rounded-none border border-neutral-800 bg-neutral-900/80 backdrop-blur-sm shadow-[0_40px_80px_-15px_rgba(0,0,0,0.9)] p-2">
+                <div className="flex flex-col rounded-none border border-neutral-800 overflow-hidden bg-[#0a0a0a]">
 
                   {/* Tabbed Header */}
-                  <div className="flex items-center justify-between px-5 py-3 bg-white/[0.02] border-b border-white/5">
+                  <div className="flex items-center justify-between px-5 py-3 bg-neutral-900/50 border-b border-neutral-800">
                     <div className="flex gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-neutral-800" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-neutral-800" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-neutral-800" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
                     </div>
 
                     {/* Pill Tabs */}
-                    <div className="flex items-center bg-white/[0.03] border border-white/5 p-0.5 rounded-full">
+                    <div className="flex items-center bg-neutral-800/50 border border-neutral-700 p-0.5 rounded-full">
                       <button
                         onClick={() => setCodeTab('server')}
                         className={cn(
                           "px-4 py-1 text-[10px] font-bold font-mono tracking-widest uppercase transition-all rounded-full",
-                          codeTab === 'server' ? "bg-white/10 text-white shadow-sm" : "text-neutral-500 hover:text-neutral-300"
+                          codeTab === 'server' ? "bg-neutral-700 text-white shadow-sm" : "text-neutral-500 hover:text-neutral-300"
                         )}
                       >
                         server.py
@@ -123,7 +123,7 @@ export default function HomePage() {
                         onClick={() => setCodeTab('client')}
                         className={cn(
                           "px-4 py-1 text-[10px] font-bold font-mono tracking-widest uppercase transition-all rounded-full",
-                          codeTab === 'client' ? "bg-white/10 text-white shadow-sm" : "text-neutral-500 hover:text-neutral-300"
+                          codeTab === 'client' ? "bg-neutral-700 text-white shadow-sm" : "text-neutral-500 hover:text-neutral-300"
                         )}
                       >
                         client.ts
@@ -137,7 +137,7 @@ export default function HomePage() {
                   <div className="relative">
                     {codeTab === 'server' ? (
                       <div className="p-0 font-mono text-[13px] leading-relaxed flex overflow-hidden bg-[#080808]">
-                        <div className="flex flex-col py-8 px-0 text-neutral-600 bg-white/[0.01] border-r border-white/5 select-none text-center w-12 shrink-0">
+                        <div className="flex flex-col py-8 px-0 text-neutral-600 bg-neutral-900/30 border-r border-neutral-800 select-none text-center w-12 shrink-0">
                           <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
                         </div>
                         <div className="p-8 whitespace-pre text-neutral-400 w-full overflow-hidden">
@@ -157,7 +157,7 @@ export default function HomePage() {
                       </div>
                     ) : (
                       <div className="p-0 font-mono text-[13px] leading-relaxed flex overflow-hidden bg-[#080808]">
-                        <div className="flex flex-col py-8 px-0 text-neutral-600 bg-white/[0.01] border-r border-white/5 select-none text-center w-12 shrink-0">
+                        <div className="flex flex-col py-8 px-0 text-neutral-600 bg-neutral-900/30 border-r border-neutral-800 select-none text-center w-12 shrink-0">
                           <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
                         </div>
                         <div className="p-8 whitespace-pre text-neutral-400 w-full overflow-hidden">
@@ -177,8 +177,8 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Terminal Snippet */}
-              <div className="mt-6 flex w-full justify-between items-center gap-4 rounded-md border border-white/10 bg-[#1e1e1e] px-4 py-2 font-mono text-sm text-neutral-300 group/terminal transition-all hover:border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+              {/* Terminal Snippet (always dark) */}
+              <div className="mt-6 flex w-full justify-between items-center gap-4 rounded-md border border-neutral-800 bg-[#1a1a1a] px-4 py-2 font-mono text-sm text-neutral-300 group/terminal transition-all hover:border-neutral-700 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
                 <div
                   className="flex items-center gap-3 cursor-pointer"
                   onClick={copyToClipboard}
@@ -190,7 +190,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 pl-3 border-l border-white/10">
+                <div className="flex items-center gap-2 pl-3 border-l border-neutral-700">
                   {codeTab === 'server' ? (
                     <>
                       <button
@@ -253,21 +253,21 @@ export default function HomePage() {
           </div>
 
           {/* Works With Section */}
-          <div className="mt-32 border-t border-white/5 pt-12">
-            <h3 className="text-neutral-500 font-bold text-xs uppercase tracking-[0.2em] mb-10">
+          <div className="mt-32 border-t border-fd-border pt-12">
+            <h3 className="text-fd-muted-foreground font-bold text-xs uppercase tracking-[0.2em] mb-10">
               Compatible with your favorite frameworks
             </h3>
             <div className="flex flex-wrap items-center gap-x-12 gap-y-8 opacity-50 hover:opacity-100 transition-opacity duration-700">
-              <span className="font-semibold text-white text-xl tracking-tight">FastAPI</span>
-              {/* <span className="font-semibold text-white text-xl tracking-tight">Django</span> */}
-              <span className="font-semibold text-white text-xl tracking-tight">Flask</span>
-              <span className="font-semibold text-white text-xl tracking-tight">React</span>
-              <span className="font-semibold text-white text-xl tracking-tight">Next.js</span>
-              {/* <span className="font-semibold text-white text-xl tracking-tight">SvelteKit</span> */}
-              {/* <span className="font-semibold text-white text-xl tracking-tight">Vue</span> */}
-              {/* <span className="font-semibold text-white text-xl tracking-tight">Nuxt</span> */}
-              {/* <span className="font-semibold text-white text-xl tracking-tight">Solid</span> */}
-              {/* <span className="font-semibold text-white text-xl tracking-tight">Astro</span> */}
+              <span className="font-semibold text-fd-foreground text-xl tracking-tight">FastAPI</span>
+              {/* <span className="font-semibold text-fd-foreground text-xl tracking-tight">Django</span> */}
+              <span className="font-semibold text-fd-foreground text-xl tracking-tight">Flask</span>
+              <span className="font-semibold text-fd-foreground text-xl tracking-tight">React</span>
+              <span className="font-semibold text-fd-foreground text-xl tracking-tight">Next.js</span>
+              {/* <span className="font-semibold text-fd-foreground text-xl tracking-tight">SvelteKit</span> */}
+              {/* <span className="font-semibold text-fd-foreground text-xl tracking-tight">Vue</span> */}
+              {/* <span className="font-semibold text-fd-foreground text-xl tracking-tight">Nuxt</span> */}
+              {/* <span className="font-semibold text-fd-foreground text-xl tracking-tight">Solid</span> */}
+              {/* <span className="font-semibold text-fd-foreground text-xl tracking-tight">Astro</span> */}
             </div>
           </div>
         </div>
