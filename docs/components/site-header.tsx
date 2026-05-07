@@ -17,7 +17,7 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className="fixed top-0 z-[100] w-full bg-fd-background border-b border-fd-border h-14 flex items-center justify-between">
+    <header className="fixed top-0 z-[100] w-full bg-white dark:bg-[#000000] border-b border-neutral-200 dark:border-white/[0.08] h-14 flex items-center justify-between">
       {/* Left: Logo */}
       <div className="flex items-center h-full px-6">
         <Link href="/" className="flex items-center gap-2 font-bold text-fd-foreground tracking-tighter text-lg">
