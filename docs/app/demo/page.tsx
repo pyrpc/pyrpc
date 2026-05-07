@@ -343,7 +343,7 @@ export default function PlaygroundPage() {
             {/* Main Grid */}
             <main className="flex-1 border-b border-edge bg-background">
                 <div className="max-w-5xl mx-auto border-x border-edge flex flex-col min-h-[calc(100vh-theme(height.header)-16rem)]">
-                    <div className="grid lg:grid-cols-2 divide-x divide-edge border-b border-edge bg-fd-card/50 overflow-hidden">
+                    <div className="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-edge border-b border-edge bg-fd-card/50 overflow-hidden">
                         <div className="h-[300px] lg:h-[380px] flex flex-col">
                             <div className="px-4 py-2 border-b border-edge bg-fd-muted/30 flex items-center justify-between shrink-0">
                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] font-mono text-fd-foreground">Server Logic</span>
