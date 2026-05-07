@@ -1,10 +1,10 @@
 [project]
-name = "pyrpc-codegen"
+name = "pyrpc-server-codegen"
 version = "0.1.0"
 description = "Codegen and CLI tools for pyRPC"
 requires-python = ">=3.11"
 dependencies = [
-    "pyrpc",
+    "pyrpc-server",
     "typer[all]>=0.9.0",
     "rich>=13.0.0",
     "jinja2>=3.1.0",

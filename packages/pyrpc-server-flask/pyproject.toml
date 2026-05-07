@@ -1,10 +1,10 @@
 [project]
-name = "pyrpc-flask"
+name = "pyrpc-server-flask"
 version = "0.1.0"
 description = "Flask adapter for pyRPC"
 requires-python = ">=3.11"
 dependencies = [
-    "pyrpc",
+    "pyrpc-server",
     "flask>=3.0.0",
 ]
 

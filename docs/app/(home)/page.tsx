@@ -18,8 +18,8 @@ export default function HomePage() {
     }
   }, [codeTab]);
 
-  const command = manager === 'uv' ? 'uv add pyrpc' :
-    manager === 'pip' ? 'pip install pyrpc' :
+  const command = manager === 'uv' ? 'uv add pyrpc-server' :
+    manager === 'pip' ? 'pip install pyrpc-server' :
     manager === 'npm' ? 'npm install @pyrpc/client' :
     manager === 'pnpm' ? 'pnpm add @pyrpc/client' :
     'bun add @pyrpc/client';
