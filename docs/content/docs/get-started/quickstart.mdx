@@ -20,8 +20,8 @@ Create `server.py`:
 
 ```python
 from fastapi import FastAPI
-from pyrpc import rpc
-from pyrpc_fastapi import mount_fastapi
+from pyrpc_server import rpc
+from pyrpc_server_fastapi import mount_fastapi
 
 app = FastAPI()
 
@@ -56,7 +56,7 @@ INFO:     Application startup complete.
 Create `client.py` (in another terminal):
 
 ```python
-from pyrpc import RPCClient
+from pyrpc_server import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
     result = client.add(a=10, b=5)
