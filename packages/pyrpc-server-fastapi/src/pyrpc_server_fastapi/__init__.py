@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from pyrpc import handle_request
+from pyrpc_server import handle_request
 
 
 def mount_fastapi(app: Any) -> None:

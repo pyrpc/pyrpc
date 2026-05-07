@@ -1,6 +1,6 @@
 from typing import Any
 
-from pyrpc import handle_request
+from pyrpc_server import handle_request
 
 
 def mount_flask(app: Any) -> None:

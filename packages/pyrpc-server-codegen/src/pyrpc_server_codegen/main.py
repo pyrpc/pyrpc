@@ -10,7 +10,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from .ts_codegen import save_typescript_client
-from pyrpc import default_registry, get_registry_schema
+from pyrpc_server import default_registry, get_registry_schema
 
 
 # Avoid importing from .. (the root __init__) to prevent circularity if possible
