@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, mock } from 'bun:test';
 import { createClient } from './index';
 
 describe('PyRPCClient', () => {
   it('should format request correctly', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
+    const mockFetch = mock().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({
         id: 'test-id',
@@ -27,11 +27,11 @@ describe('PyRPCClient', () => {
   });
 
   it('should handle named parameters', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
+    const mockFetch = mock().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ result: 'hello' })
     });
-    global.fetch = mockFetch;
+    globalThis.fetch = mockFetch as any;
 
     const client = createClient({ baseUrl: 'http://localhost:8000' });
     await client.greet({ name: 'World' });
@@ -41,12 +41,12 @@ describe('PyRPCClient', () => {
   });
 
   it('should throw PyRPCError on server error', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = mock().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({
         error: { code: -32601, message: 'Method not found' }
       })
-    });
+    }) as any;
 
     const client = createClient({ baseUrl: 'http://localhost:8000' });
     await expect(client.unknown()).rejects.toThrow('Method not found');
