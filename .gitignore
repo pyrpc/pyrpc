@@ -148,3 +148,7 @@ cython_debug/
 
 # OS X
 .DS_Store
+
+# Node modules
+node_modules
+dist
