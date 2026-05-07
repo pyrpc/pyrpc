@@ -1,0 +1,8 @@
+{
+  "name": "pyrpc-frontend-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "docs"
+  ]
+}
