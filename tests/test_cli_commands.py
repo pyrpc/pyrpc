@@ -1,7 +1,7 @@
 import pytest
 from typer.testing import CliRunner
-from pyrpc_codegen.main import app
-from pyrpc import rpc, default_registry
+from pyrpc_server_codegen.main import app
+from pyrpc_server import rpc, default_registry
 import unittest.mock as mock
 
 runner = CliRunner()

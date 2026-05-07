@@ -20,7 +20,7 @@ If you need request context, use your adapter's features:
 
 ```python
 from flask import request, g
-from pyrpc import rpc
+from pyrpc_server import rpc
 
 @rpc
 def get_current_ip() -> str:

@@ -4,6 +4,6 @@
     "icon": "Plug",
     "pages": [
         "index",
-        "pyRPC-codegen"
+        "pyrpc-server-codegen"
     ]
 }

@@ -18,8 +18,8 @@ export default function HomePage() {
     }
   }, [codeTab]);
 
-  const command = manager === 'uv' ? 'uv add pyrpc' :
-    manager === 'pip' ? 'pip install pyrpc' :
+  const command = manager === 'uv' ? 'uv add pyrpc-server' :
+    manager === 'pip' ? 'pip install pyrpc-server' :
     manager === 'npm' ? 'npm install @pyrpc/client' :
     manager === 'pnpm' ? 'pnpm add @pyrpc/client' :
     'bun add @pyrpc/client';
@@ -143,7 +143,7 @@ export default function HomePage() {
                     </div>
                     <div className="px-8 whitespace-pre text-neutral-400 overflow-hidden leading-relaxed">
                       <code>
-                        <span className="text-purple-400">from</span>{' '}pyrpc{' '}<span className="text-purple-400">import</span>{' '}<span className="text-white">rpc</span>{'\n'}
+                        <span className="text-purple-400">from</span>{' '}pyrpc_server{' '}<span className="text-purple-400">import</span>{' '}<span className="text-white">rpc</span>{'\n'}
                         <span className="text-purple-400">from</span>{' '}pydantic{' '}<span className="text-purple-400">import</span>{' '}<span className="text-white">BaseModel</span>{'\n'}
                         {'\n'}
                         <span className="text-purple-400">class</span>{' '}<span className="text-sky-400">User</span>(BaseModel):{'\n'}

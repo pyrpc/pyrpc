@@ -1,5 +1,5 @@
 import pytest
-from pyrpc import rpc, asgi_app, default_registry, RPCClient
+from pyrpc_server import rpc, asgi_app, default_registry, RPCClient
 
 @pytest.fixture(autouse=True)
 def clear_registry():
@@ -61,7 +61,7 @@ def test_client_sync_success(monkeypatch):
 
 @pytest.mark.anyio
 async def test_client_error():
-    from pyrpc import RPCError
+    from pyrpc_server import RPCError
     @rpc
     def fail():
         raise ValueError("RPC Error Test")

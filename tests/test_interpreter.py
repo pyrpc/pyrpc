@@ -1,5 +1,5 @@
 import pytest
-from pyrpc import handle_request, rpc, default_registry
+from pyrpc_server import handle_request, rpc, default_registry
 
 @pytest.fixture(autouse=True)
 def clear_registry():
