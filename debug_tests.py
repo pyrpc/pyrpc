@@ -4,7 +4,7 @@ import os
 # Ensure src is in the path
 sys.path.append(os.path.join(os.getcwd(), 'src'))
 
-from pyrpc import default_registry, rpc
+from pyrpc_server import default_registry, rpc
 
 def debug_decorator():
     print("Testing @rpc decorator...")

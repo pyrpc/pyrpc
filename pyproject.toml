@@ -29,10 +29,10 @@ dev = [
 members = ["packages/*"]
 
 [tool.uv.sources]
-pyrpc = { workspace = true }
-pyrpc-fastapi = { workspace = true }
-pyrpc-flask = { workspace = true }
-pyrpc-codegen = { workspace = true }
+pyrpc-server = { workspace = true }
+pyrpc-server-fastapi = { workspace = true }
+pyrpc-server-flask = { workspace = true }
+pyrpc-server-codegen = { workspace = true }
 
 
 [tool.hatch.build.targets.wheel]
@@ -46,9 +46,9 @@ target-version = "py311"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = [
-    "packages/pyrpc/src",
-    "packages/pyrpc-fastapi/src",
-    "packages/pyrpc-flask/src",
-    "packages/pyrpc-codegen/src"
+    "packages/pyrpc-server/src",
+    "packages/pyrpc-server-fastapi/src",
+    "packages/pyrpc-server-flask/src",
+    "packages/pyrpc-server-codegen/src"
 ]
 asyncio_mode = "auto"
