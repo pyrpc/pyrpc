@@ -17,7 +17,7 @@ This section shows how to call your pyRPC server from different client environme
 ## Quick Example (Python)
 
 ```python
-from pyrpc import RPCClient
+from pyrpc_server import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
     result = client.add(a=10, b=5)

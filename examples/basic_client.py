@@ -1,5 +1,5 @@
 import asyncio
-from pyrpc import RPCClient, RPCError
+from pyrpc_server import RPCClient, RPCError
 
 def run_sync_example():
     print("--- Running Synchronous Client Example ---")

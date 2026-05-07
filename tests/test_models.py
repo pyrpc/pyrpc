@@ -1,4 +1,4 @@
-from pyrpc import RpcRequest, RpcResponse
+from pyrpc_server import RpcRequest, RpcResponse
 import json
 
 def test_rpc_request_serialization():

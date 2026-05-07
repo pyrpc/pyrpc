@@ -66,8 +66,8 @@ uv add pyrpc-server-codegen
 Define your procedures and mount the RPC layer.
 
 ```python
-from pyrpc import rpc
-from pyrpc_fastapi import mount_fastapi
+from pyrpc_server import rpc
+from pyrpc_server_fastapi import mount_fastapi
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -83,7 +83,7 @@ mount_fastapi(app)
 Call your procedures with full type support and dynamic method discovery.
 
 ```python
-from pyrpc import RPCClient
+from pyrpc_server import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
     result = client.add(10, 5)

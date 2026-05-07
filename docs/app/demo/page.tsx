@@ -12,7 +12,7 @@ import { cn } from '@/lib/cn'
 
 const TEMPLATES: any = {
     FastAPI: {
-        server: `from pydantic import BaseModel\nfrom pyrpc import rpc\n\nclass User(BaseModel):\n    id: int\n    name: str\n\n@rpc\nasync def get_user(id: int) -> User:\n    return User(id=id, name="pyRPC User")`,
+        server: `from pydantic import BaseModel\nfrom pyrpc_server_fastapi import rpc\n\nclass User(BaseModel):\n    id: int\n    name: str\n\n@rpc\nasync def get_user(id: int) -> User:\n    return User(id=id, name="pyRPC User")`,
         client: {
             NextJS: {
                 TypeScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const user = await client.get_user(1);\n  return { props: { user } };\n}`,
@@ -25,7 +25,7 @@ const TEMPLATES: any = {
         }
     },
     Flask: {
-        server: `from pyrpc import rpc\n\n@rpc\ndef add(a: int, b: int) -> int:\n    return a + b`,
+        server: `from pyrpc_server_flask import rpc\n\n@rpc\ndef add(a: int, b: int) -> int:\n    return a + b`,
         client: {
             NextJS: {
                 TypeScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const result = await client.add(10, 5);\n  return { props: { result } };\n}`,
@@ -38,7 +38,7 @@ const TEMPLATES: any = {
         }
     },
     Django: {
-        server: `from pyrpc import rpc\n\n@rpc\ndef greet(name: str) -> str:\n    return f"Hello {name}"`,
+        server: `from pyrpc_server_django import rpc\n\n@rpc\ndef greet(name: str) -> str:\n    return f"Hello {name}"`,
         client: {
             NextJS: {
                 TypeScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const msg = await client.greet("pyRPC");\n  return { props: { msg } };\n}`,
@@ -308,7 +308,7 @@ export default function PlaygroundPage() {
         <div className="flex flex-col min-h-screen bg-background pt-12">
             {/* Minimalist Header for playground */}
             <div className="max-w-5xl mx-auto px-4 py-4 w-full">
-               <h1 className="text-xl font-bold tracking-tight uppercase font-mono opacity-50">Interactive Playground</h1>
+                <h1 className="text-xl font-bold tracking-tight uppercase font-mono opacity-50">Interactive Playground</h1>
             </div>
 
             {/* Toolbar */}
