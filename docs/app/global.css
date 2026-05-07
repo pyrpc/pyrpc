@@ -16,9 +16,37 @@ body {
   margin: 0;
 }
 
-/* Dark mode Pitch Black override */
+/* =============================================
+   pRPC Design System — Dark Mode Token Override
+   ============================================= */
 html.dark {
+  /* Core surfaces */
+  --background: #000000;
+  --foreground: #FAFAF9;
+
+  /* Fumadocs overrides — raw RGB channel values */
   --fd-background: 0 0 0;
+  --fd-foreground: 250 250 249;
+  --fd-muted: 40 40 40;
+  --fd-muted-foreground: 167 160 154;
+  --fd-accent: 40 40 40;
+  --fd-accent-foreground: 250 250 249;
+  --fd-border: 40 40 40;
+  --fd-input: 40 40 40;
+  --fd-primary: 250 250 249;
+  --fd-primary-foreground: 28 25 23;
+  --fd-secondary: 40 40 40;
+  --fd-secondary-foreground: 250 250 249;
+
+  color-scheme: dark;
+  background-color: #000000 !important;
+}
+
+html.dark body,
+html.dark #__next,
+html.dark main,
+html.dark header {
+  background-color: #000000 !important;
 }
 
 /* Header full width and left aligned */
@@ -53,13 +81,22 @@ aside button[aria-label*="Search"] {
 /* Ensure DocsLayout accounts for the top header space and occupies full width */
 #nd-docs-layout {
   --fd-nav-height: 3.5rem;
-  --fd-layout-width: 100% !important;
-  width: 100% !important;
-  max-width: none !important;
+  --fd-layout-width: 100%;
+  width: 100%;
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 
+    "header"
+    "main";
 }
 
 @media (min-width: 768px) {
   #nd-docs-layout {
+    grid-template-columns: 268px minmax(0, 1fr);
+    grid-template-rows: 1fr;
+    grid-template-areas: "sidebar main";
     --fd-nav-height: 0px;
   }
 
