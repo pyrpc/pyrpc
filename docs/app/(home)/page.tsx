@@ -83,7 +83,7 @@ export default function HomePage() {
 
                 {/* View on GitHub Button */}
                 <Link
-                  href="https://github.com/pRPC-dev/prpc"
+                  href="https://github.com/pyrpc/pyrpc"
                   className="flex items-center gap-2.5 text-fd-muted-foreground hover:text-fd-foreground transition-colors group px-6 py-2.5 rounded-none border border-fd-border hover:bg-fd-accent/50 font-medium text-base"
                 >
                   <Github className="w-5 h-5" />
