@@ -31,58 +31,56 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-white dark:bg-[#000000] text-fd-foreground font-sans min-h-screen">
+    <div className="bg-white dark:bg-[#000000] text-fd-foreground font-sans min-h-screen overflow-x-hidden">
       {/* Subtle radial glow top center */}
       <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_80%_40%_at_50%_-10%,rgba(250,250,249,0.04)_0%,transparent_100%)]" />
 
-      {/* Outer wrapper with margins — allows grid lines to cross */}
-      <div className="relative z-10 mx-4 md:mx-8 lg:mx-12">
-
-        {/* Vertical edge grid lines */}
-        <div className="absolute left-0 top-[-56px] bottom-0 w-[1px] bg-neutral-200 dark:bg-white/[0.06]" />
-        <div className="absolute right-0 top-[-56px] bottom-0 w-[1px] bg-neutral-200 dark:bg-white/[0.06]" />
+      {/* Main Content Container */}
+      <div className="relative z-10 max-w-[1400px] mx-auto min-h-screen">
         
-        {/* Top Horizontal line */}
-        <div className="absolute top-0 left-[-48px] right-[-48px] h-[1px] bg-neutral-200 dark:bg-white/[0.06]" />
+        {/* Vertical architectural grid lines — pinned to container edges */}
+        <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-neutral-200 dark:bg-white/[0.08]" />
+        <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-neutral-200 dark:bg-white/[0.08]" />
+        
+        {/* Horizontal divider lines — using w-screen to ensure full-width regardless of container */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-neutral-200 dark:bg-white/[0.08]" />
 
-        <div className="px-6 md:px-8 lg:px-12">
-
+        <div className="px-6 md:px-12 lg:px-20">
           {/* Hero Section */}
-          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-24 md:pt-36 pb-24">
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-20 md:pt-32 pb-24">
 
             {/* Left Column */}
-            <div className="flex flex-col items-start gap-8">
+            <div className="flex flex-col items-start gap-10">
 
               {/* Beta Pill */}
               <div
-                className="inline-flex items-center gap-2.5 px-3 py-1 rounded-full border border-fd-border bg-neutral-100 dark:bg-[#282828]"
+                className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-fd-border bg-neutral-100 dark:bg-white/[0.03]"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
-                <span className="text-neutral-600 dark:text-[#F6F6F6]" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif', fontSize: '14px', fontWeight: 400, lineHeight: '20px' }}>
+                <span className="text-neutral-600 dark:text-neutral-400 font-mono text-[11px] uppercase tracking-widest">
                   Public Beta
                 </span>
               </div>
 
               {/* Headline */}
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tighter text-fd-foreground max-w-[12ch]">
-                End-to-end{' '}
-                <span className="text-fd-muted-foreground">type safety.</span>
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter text-fd-foreground max-w-[15ch]">
+                End-to-end <br />
+                <span className="text-fd-muted-foreground/40">type safety.</span>
               </h1>
 
               {/* Description */}
               <p
-                className="max-w-md text-neutral-600 dark:text-[#FAFAFA]"
-                style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif', fontSize: '16px', fontWeight: 400, lineHeight: '24px' }}
+                className="max-w-lg text-neutral-600 dark:text-neutral-400 text-sm md:text-base leading-relaxed"
+                style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}
               >
-                Seamless bridge between your Python backend and TypeScript frontend with zero-cost abstractions.
+                Seamless bridge between your Python backend and TypeScript frontend with zero-cost abstractions. Build faster, break less.
               </p>
 
-              <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-4 flex-wrap mt-2">
                 {/* Get Started */}
                 <Link href="/docs/get-started/installation">
                   <button
-                    className="px-7 py-2.5 bg-fd-foreground text-fd-background dark:text-[#141414] rounded-none hover:opacity-90 transition-all active:scale-[0.98]"
-                    style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif', fontSize: '14px', fontWeight: 500, lineHeight: '20px' }}
+                    className="px-8 py-3 bg-fd-foreground text-fd-background dark:text-black font-bold uppercase tracking-widest text-[11px] hover:opacity-90 transition-all active:scale-[0.98]"
                   >
                     Get Started
                   </button>
@@ -91,10 +89,10 @@ export default function HomePage() {
                 {/* GitHub */}
                 <Link
                   href="https://github.com/pyrpc/pyrpc"
-                  className="inline-flex items-center gap-2 text-fd-muted-foreground hover:text-fd-foreground transition-colors px-5 py-2.5 rounded-none border border-fd-border hover:bg-fd-accent/50 text-sm font-medium"
+                  className="inline-flex items-center gap-2 text-neutral-500 hover:text-fd-foreground transition-colors px-6 py-3 border border-fd-border hover:bg-white/[0.03] uppercase tracking-widest text-[11px] font-bold"
                 >
                   <Github className="w-4 h-4" />
-                  <span>View on GitHub</span>
+                  <span>GitHub</span>
                 </Link>
               </div>
             </div>
@@ -224,9 +222,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Top Frameworks Divider — Crossing vertical lines */}
+          {/* Top Frameworks Divider */}
           <div className="relative h-px w-full my-12">
-            <div className="absolute left-[-2000px] right-[-2000px] top-0 h-px bg-neutral-200 dark:bg-white/[0.08]" />
+            <div className="absolute left-1/2 -translate-x-1/2 w-screen top-0 h-px bg-neutral-200 dark:bg-white/[0.08]" />
           </div>
 
           {/* Works With Section */}
@@ -303,12 +301,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* RE-IMPLEMENTED FOOTER LINE — Crossing vertical ones at the absolute bottom */}
+        {/* RE-IMPLEMENTED FOOTER LINE */}
         <div className="relative h-px w-full mt-32">
-           <div className="absolute bottom-0 left-[-2000px] right-[-2000px] h-px bg-neutral-200 dark:bg-white/[0.08]" />
+           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-screen h-px bg-neutral-200 dark:bg-white/[0.08]" />
         </div>
 
-        {/* Extra space below the line to show the vertical lines continuing */}
+        {/* Extra space below */}
         <div className="h-16" />
       </div>
     </div>
