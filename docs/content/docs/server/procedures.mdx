@@ -6,7 +6,7 @@ description: Define RPC procedures with types, validation, and async support.
 
 # Procedures
 
-Procedures are Python functions decorated with `@rpc`. They receive params from the client and return a result (or raise an error).
+Procedures are Python functions decorated with `@rpc`. They receive validated parameters from the client and return a result.
 
 ## Basic Definition
 
@@ -16,48 +16,66 @@ from pyrpc_server import rpc
 @rpc
 def add(a: int, b: int) -> int:
     return a + b
-
-@rpc
-def greet(name: str = "World") -> str:
-    return f"Hello, {name}!"
 ```
 
-The client sends `{"jsonrpc": "2.0", "method": "add", "params": {"a": 1, "b": 2}, "id": 1}`. pyRPC deserializes params, calls `add(a=1, b=2)`, and returns the result in the JSON-RPC response.
+## Universal Pydantic Validation
 
-## Types and Validation
+pyRPC uses Pydantic's `TypeAdapter` to automatically validate **every** parameter and return type. This means you get production-grade validation for free.
 
-Params are validated from the JSON payload using the request model. Type hints on your function parameters define the expected structure. Use standard Python types (`int`, `str`, `list`, `dict`, etc.) and Pydantic models where helpful.
+### Primitives and Complex Types
+
+You can use any standard Python type, and pyRPC will ensure the incoming JSON matches perfectly.
+
+```python
+from typing import List, Optional
+from pydantic import BaseModel
+
+class User(BaseModel):
+    id: int
+    name: str
+
+@rpc
+def process_users(users: List[User], dry_run: bool = False) -> int:
+    # 'users' is already a list of Pydantic User objects here
+    return len(users)
+```
+
+### Return Type Validation
+
+If you specify a return type hint, pyRPC validates the result **before** sending it to the client. If your function returns the wrong data type, pyRPC will raise an Internal Error (-32603) instead of sending invalid data to the client.
 
 ## Sync vs Async
 
-Procedures can be sync or async. pyRPC detects awaitables and awaits them:
+Procedures can be synchronous or asynchronous. pyRPC automatically detects and awaits coroutines.
 
 ```python
 @rpc
-def sync_proc(x: int) -> int:
-    return x * 2
-
-@rpc
-async def async_proc(x: int) -> int:
-    await asyncio.sleep(0.1)
-    return x * 2
+async def get_data_async(id: str):
+    await asyncio.sleep(1)
+    return {"id": id}
 ```
 
-## Naming
+## Error Handling
 
-Procedure names default to the function name. Use `name` to expose a different name:
+If validation fails, pyRPC returns a standard JSON-RPC `Invalid Params` error (-32602) with a detailed `data` field explaining exactly which field failed and why.
 
-```python
-@rpc(name="getUser")
-def get_user(user_id: int) -> dict:
-    ...
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32602,
+    "message": "Validation failed",
+    "data": {
+      "field": "users.0.id",
+      "message": "Input should be a valid integer",
+      "type": "int_parsing"
+    }
+  }
+}
 ```
-
-## Errors
-
-Exceptions in a procedure are caught and returned as JSON-RPC errors. See [Error Handling](/docs/concepts/error-handling) for the protocol details.
 
 ## Next Steps
 
-- [Context](/docs/server/context) — Accessing request context
-- [Adapters](/docs/server/adapters) — Mounting your procedures
+- [Routers](/docs/server/routers) — Organize your procedures into modules
+- [Adapters](/docs/server/adapters) — FastAPI, Flask, and ASGI
