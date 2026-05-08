@@ -4,11 +4,11 @@ requires-python = ">=3.11"
 
 [manifest]
 members = [
-    "prpc",
-    "prpc-codegen",
-    "prpc-fastapi",
-    "prpc-flask",
-    "prpc-workspace",
+    "pyrpc-server",
+    "pyrpc-server-codegen",
+    "pyrpc-server-fastapi",
+    "pyrpc-server-flask",
+    "pyrpc-server-workspace",
 ]
 
 [[package]]
@@ -304,108 +304,6 @@ wheels = [
 ]
 
 [[package]]
-name = "prpc"
-version = "0.1.0"
-source = { editable = "packages/prpc" }
-dependencies = [
-    { name = "anyio" },
-    { name = "httpx" },
-    { name = "pydantic" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "anyio", specifier = ">=4.0" },
-    { name = "httpx", specifier = ">=0.24.0" },
-    { name = "pydantic", specifier = ">=2.0" },
-]
-
-[[package]]
-name = "prpc-codegen"
-version = "0.1.0"
-source = { editable = "packages/prpc-codegen" }
-dependencies = [
-    { name = "jinja2" },
-    { name = "prpc" },
-    { name = "rich" },
-    { name = "typer" },
-    { name = "uvicorn" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "jinja2", specifier = ">=3.1.0" },
-    { name = "prpc", editable = "packages/prpc" },
-    { name = "rich", specifier = ">=13.0.0" },
-    { name = "typer", extras = ["all"], specifier = ">=0.9.0" },
-    { name = "uvicorn", specifier = ">=0.23.0" },
-]
-
-[[package]]
-name = "prpc-fastapi"
-version = "0.1.0"
-source = { editable = "packages/prpc-fastapi" }
-dependencies = [
-    { name = "fastapi" },
-    { name = "prpc" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "fastapi", specifier = ">=0.100.0" },
-    { name = "prpc", editable = "packages/prpc" },
-]
-
-[[package]]
-name = "prpc-flask"
-version = "0.1.0"
-source = { editable = "packages/prpc-flask" }
-dependencies = [
-    { name = "flask" },
-    { name = "prpc" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "flask", specifier = ">=3.0.0" },
-    { name = "prpc", editable = "packages/prpc" },
-]
-
-[[package]]
-name = "prpc-workspace"
-version = "0.1.0"
-source = { editable = "." }
-
-[package.optional-dependencies]
-dev = [
-    { name = "anyio" },
-    { name = "fastapi" },
-    { name = "flask" },
-    { name = "httpx" },
-    { name = "jinja2" },
-    { name = "pydantic" },
-    { name = "pytest" },
-    { name = "rich" },
-    { name = "typer" },
-    { name = "uvicorn" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "anyio", marker = "extra == 'dev'", specifier = ">=4.0" },
-    { name = "fastapi", marker = "extra == 'dev'", specifier = ">=0.100.0" },
-    { name = "flask", marker = "extra == 'dev'", specifier = ">=3.0.0" },
-    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.24.0" },
-    { name = "jinja2", marker = "extra == 'dev'", specifier = ">=3.1.0" },
-    { name = "pydantic", marker = "extra == 'dev'", specifier = ">=2.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
-    { name = "rich", marker = "extra == 'dev'", specifier = ">=13.0.0" },
-    { name = "typer", extras = ["all"], marker = "extra == 'dev'", specifier = ">=0.9.0" },
-    { name = "uvicorn", marker = "extra == 'dev'", specifier = ">=0.23.0" },
-]
-provides-extras = ["dev"]
-
-[[package]]
 name = "pydantic"
 version = "2.12.5"
 source = { registry = "https://pypi.org/simple" }
@@ -525,6 +423,108 @@ sdist = { url = "https://files.pythonhosted.org/packages/b0/77/a5b8c569bf593b014
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b", size = 1225217, upload-time = "2025-06-21T13:39:07.939Z" },
 ]
+
+[[package]]
+name = "pyrpc-server"
+version = "0.1.0"
+source = { editable = "packages/pyrpc-server" }
+dependencies = [
+    { name = "anyio" },
+    { name = "httpx" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "anyio", specifier = ">=4.0" },
+    { name = "httpx", specifier = ">=0.24.0" },
+    { name = "pydantic", specifier = ">=2.0" },
+]
+
+[[package]]
+name = "pyrpc-server-codegen"
+version = "0.1.0"
+source = { editable = "packages/pyrpc-server-codegen" }
+dependencies = [
+    { name = "jinja2" },
+    { name = "pyrpc-server" },
+    { name = "rich" },
+    { name = "typer" },
+    { name = "uvicorn" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "jinja2", specifier = ">=3.1.0" },
+    { name = "pyrpc-server", editable = "packages/pyrpc-server" },
+    { name = "rich", specifier = ">=13.0.0" },
+    { name = "typer", extras = ["all"], specifier = ">=0.9.0" },
+    { name = "uvicorn", specifier = ">=0.23.0" },
+]
+
+[[package]]
+name = "pyrpc-server-fastapi"
+version = "0.1.0"
+source = { editable = "packages/pyrpc-server-fastapi" }
+dependencies = [
+    { name = "fastapi" },
+    { name = "pyrpc-server" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fastapi", specifier = ">=0.100.0" },
+    { name = "pyrpc-server", editable = "packages/pyrpc-server" },
+]
+
+[[package]]
+name = "pyrpc-server-flask"
+version = "0.1.0"
+source = { editable = "packages/pyrpc-server-flask" }
+dependencies = [
+    { name = "flask" },
+    { name = "pyrpc-server" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "flask", specifier = ">=3.0.0" },
+    { name = "pyrpc-server", editable = "packages/pyrpc-server" },
+]
+
+[[package]]
+name = "pyrpc-server-workspace"
+version = "0.1.0"
+source = { editable = "." }
+
+[package.optional-dependencies]
+dev = [
+    { name = "anyio" },
+    { name = "fastapi" },
+    { name = "flask" },
+    { name = "httpx" },
+    { name = "jinja2" },
+    { name = "pydantic" },
+    { name = "pytest" },
+    { name = "rich" },
+    { name = "typer" },
+    { name = "uvicorn" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "anyio", marker = "extra == 'dev'", specifier = ">=4.0" },
+    { name = "fastapi", marker = "extra == 'dev'", specifier = ">=0.100.0" },
+    { name = "flask", marker = "extra == 'dev'", specifier = ">=3.0.0" },
+    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.24.0" },
+    { name = "jinja2", marker = "extra == 'dev'", specifier = ">=3.1.0" },
+    { name = "pydantic", marker = "extra == 'dev'", specifier = ">=2.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
+    { name = "rich", marker = "extra == 'dev'", specifier = ">=13.0.0" },
+    { name = "typer", extras = ["all"], marker = "extra == 'dev'", specifier = ">=0.9.0" },
+    { name = "uvicorn", marker = "extra == 'dev'", specifier = ">=0.23.0" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "pytest"

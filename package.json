@@ -1,0 +1,11 @@
+{
+  "name": "pyrpc-client-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "docs"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

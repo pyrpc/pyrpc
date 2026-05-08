@@ -9,7 +9,8 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "lib": ["ESNext", "DOM"],
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": []
   },
   "include": ["src/**/*"]
 }

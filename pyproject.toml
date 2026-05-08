@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pyrpc-workspace"
+name = "pyrpc-server-workspace"
 version = "0.1.0"
 description = "pyRPC Monorepo Workspace"
 requires-python = ">=3.11"
@@ -26,7 +26,12 @@ dev = [
 
 
 [tool.uv.workspace]
-members = ["packages/*"]
+members = [
+    "packages/pyrpc-server",
+    "packages/pyrpc-server-codegen",
+    "packages/pyrpc-server-fastapi",
+    "packages/pyrpc-server-flask",
+]
 
 [tool.uv.sources]
 pyrpc-server = { workspace = true }
