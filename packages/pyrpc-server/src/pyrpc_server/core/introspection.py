@@ -1,7 +1,7 @@
 import inspect
-from typing import Any, Callable, Dict, List, Optional, Type
-
-from pydantic import BaseModel, TypeAdapter
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel
+from .procedure import Procedure
 
 
 class ParameterSchema(BaseModel):
@@ -20,22 +20,21 @@ class ProcedureSchema(BaseModel):
     doc: Optional[str] = None
 
 
-def get_procedure_schema(func: Callable[..., Any], name: Optional[str] = None) -> ProcedureSchema:
+def get_procedure_schema(proc: Procedure) -> ProcedureSchema:
     """
-    Introspect a function and return its schema.
+    Generate a schema from a compiled Procedure.
     """
-    sig = inspect.signature(func)
     parameters = []
 
-    for param_name, param in sig.parameters.items():
+    for param_name, param in proc.sig.parameters.items():
         # Get parameter type
         param_type = param.annotation if param.annotation is not inspect.Parameter.empty else Any
         
-        # Generate JSON schema for the type using Pydantic
-        try:
-            adapter = TypeAdapter(param_type)
+        # Use pre-built adapter if available
+        adapter = proc.arg_adapters.get(param_name)
+        if adapter:
             param_json_schema = adapter.json_schema()
-        except Exception:
+        else:
             param_json_schema = {"type": "any"}
 
         parameters.append(
@@ -49,28 +48,26 @@ def get_procedure_schema(func: Callable[..., Any], name: Optional[str] = None) -
         )
 
     # Get return type
-    return_type = sig.return_annotation if sig.return_annotation is not inspect.Signature.empty else Any
-    try:
-        return_adapter = TypeAdapter(return_type)
-        return_json_schema = return_adapter.json_schema()
-    except Exception:
+    return_type = proc.sig.return_annotation if proc.sig.return_annotation is not inspect.Signature.empty else Any
+    if proc.return_adapter:
+        return_json_schema = proc.return_adapter.json_schema()
+    else:
         return_json_schema = {"type": "any"}
 
     return ProcedureSchema(
-        name=name or func.__name__,
+        name=proc.name,
         parameters=parameters,
         return_type=str(return_type),
         return_schema=return_json_schema,
-        doc=inspect.getdoc(func),
+        doc=inspect.getdoc(proc.fn),
     )
 
 
-def get_registry_schema(registry: Any) -> Dict[str, ProcedureSchema]:
+def get_registry_schema(router: Any) -> Dict[str, ProcedureSchema]:
     """
-    Generate schemas for all procedures in a registry.
+    Generate schemas for all procedures in a router.
     """
     schemas = {}
-    # registry._procedures is a dict mapping name to func
-    for name, func in registry._procedures.items():
-        schemas[name] = get_procedure_schema(func, name=name)
+    for name, proc in router._procedures.items():
+        schemas[name] = get_procedure_schema(proc)
     return schemas

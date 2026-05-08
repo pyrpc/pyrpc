@@ -1,7 +1,7 @@
 import pytest
 from typing import List, Optional
 from pydantic import BaseModel
-from pyrpc_server.core.registry import Router
+from pyrpc_server.core.registry import Router, Procedure
 from pyrpc_server.core.introspection import get_procedure_schema, get_registry_schema
 from pyrpc_server.transport.asgi import PyRPCAsgiApp
 import json
@@ -17,7 +17,8 @@ def test_procedure_introspection():
         """My docstring"""
         return True
     
-    schema = get_procedure_schema(my_func)
+    proc = Procedure(my_func)
+    schema = get_procedure_schema(proc)
     assert schema.name == "my_func"
     assert schema.doc == "My docstring"
     assert schema.return_type == "<class 'bool'>"
