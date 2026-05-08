@@ -21,16 +21,23 @@ class RPCClient:
     Allows calling remote procedures as if they were local methods.
     """
 
-    def __init__(self, base_url: str) -> None:
+    def __init__(
+        self, 
+        base_url: str, 
+        async_client: Optional[httpx.AsyncClient] = None,
+        sync_client: Optional[httpx.Client] = None
+    ) -> None:
         """
         Initialize the RPC client.
 
         Args:
             base_url: The base URL of the pyRPC server.
+            async_client: Optional custom async httpx client.
+            sync_client: Optional custom sync httpx client.
         """
         self.base_url = base_url.rstrip("/")
-        self._async_client = httpx.AsyncClient(base_url=self.base_url)
-        self._sync_client = httpx.Client(base_url=self.base_url)
+        self._async_client = async_client or httpx.AsyncClient(base_url=self.base_url)
+        self._sync_client = sync_client or httpx.Client(base_url=self.base_url)
 
     def __getattr__(self, name: str) -> Any:
         """
