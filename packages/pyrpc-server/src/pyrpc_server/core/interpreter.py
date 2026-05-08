@@ -4,30 +4,18 @@ from typing import Any, Dict, Optional
 
 from .decorators import default_router
 from .registry import Router
+from pydantic import ValidationError
+
 from .models import RpcErrorModel, RpcRequest, RpcResponse
 
-
-from pydantic import TypeAdapter, ValidationError
-
-def _format_validation_error(e: ValidationError) -> Dict[str, Any]:
-    errors = e.errors()
-    if not errors:
-        return {"field": "unknown", "message": "Validation failed"}
-    
-    first_error = errors[0]
-    loc = ".".join(str(l) for l in first_error.get("loc", []))
-    return {
-        "field": loc,
-        "message": first_error.get("msg", "Validation failed"),
-        "type": first_error.get("type", "unknown")
-    }
+from .procedure import Procedure, ProcedureError, _format_validation_error
 
 async def handle_request(
     payload: Dict[str, Any], 
     router: Optional[Router] = None
 ) -> Dict[str, Any]:
     """
-    Handle an incoming RPC request with automatic Pydantic validation.
+    Handle an incoming RPC request using pre-compiled Procedures.
     """
     if router is None:
         router = default_router
@@ -55,68 +43,18 @@ async def handle_request(
                 error=RpcErrorModel(code=-32601, message=f"Method not found: {request.method}"),
             ).model_dump()
 
-        # 3. Validation Logic
-        params = request.params if request.params is not None else {}
-        sig = inspect.signature(procedure)
-        bound_args = None
-
+        # 3. Execute Procedure (Validation and Call happens inside)
         try:
-            # Match params to signature
-            if isinstance(params, list):
-                bound_args = sig.bind(*params)
-            elif isinstance(params, dict):
-                bound_args = sig.bind(**params)
-            else:
-                raise TypeError("Params must be a list or dict")
-            
-            # Apply universal validation
-            for name, value in bound_args.arguments.items():
-                param_type = sig.parameters[name].annotation
-                if param_type is not inspect.Parameter.empty and param_type is not Any:
-                    adapter = TypeAdapter(param_type)
-                    try:
-                        bound_args.arguments[name] = adapter.validate_python(value)
-                    except ValidationError as ve:
-                        # Re-format error to include the parameter name
-                        error_data = _format_validation_error(ve)
-                        if not error_data.get("field"):
-                            error_data["field"] = name
-                        return RpcResponse(
-                            id=request_id,
-                            error=RpcErrorModel(
-                                code=-32602, 
-                                message="Validation failed",
-                                data=error_data
-                            ),
-                        ).model_dump()
-
-        except TypeError as e:
-            return RpcResponse(
-                id=request_id,
-                error=RpcErrorModel(code=-32602, message=f"Invalid params: {str(e)}"),
-            ).model_dump()
-
-        # 4. Call Function
-        try:
-            result = procedure(*bound_args.args, **bound_args.kwargs)
-            if inspect.isawaitable(result):
-                result = await result
-
-            # 5. Validate Return Type (if specified)
-            return_type = sig.return_annotation
-            if return_type is not inspect.Signature.empty and return_type is not Any:
-                adapter = TypeAdapter(return_type)
-                result = adapter.validate_python(result)
-
+            result = await procedure.execute(request.params if request.params is not None else {})
             return RpcResponse(id=request_id, result=result).model_dump()
 
-        except ValidationError as e:
-             return RpcResponse(
+        except ProcedureError as pe:
+            return RpcResponse(
                 id=request_id,
                 error=RpcErrorModel(
-                    code=-32603, 
-                    message="Internal Error: Return type validation failed",
-                    data=_format_validation_error(e)
+                    code=pe.code, 
+                    message=pe.message,
+                    data=pe.data
                 ),
             ).model_dump()
         except Exception as e:
