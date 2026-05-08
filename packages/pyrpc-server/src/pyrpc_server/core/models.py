@@ -16,6 +16,7 @@ class RpcRequest(BaseModel):
 class RpcErrorModel(BaseModel):
     code: int
     message: str
+    data: Optional[Any] = None
 
 
 class RpcResponse(BaseModel):
