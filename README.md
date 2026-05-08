@@ -23,6 +23,7 @@ Inspired by giving you the best DX, pyRPC focuses on giving you a type-safe brid
 - **Dead simple install**: Zero config, zero ceremony.
 - **Works everywhere**: Plugs into FastAPI, Flask, or any ASGI server.
 - **Batteries included but modular**: Install only what you need.
+- **Universal Validation**: Powered by Pydantic v2—automatic validation for primitives and models.
 - **Type-safe bridge**: Get a tRPC-like experience with Python and TypeScript.
 
 ---

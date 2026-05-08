@@ -2,45 +2,51 @@ import threading
 from typing import Any, Callable, Dict, List, Optional
 
 
-class ProcedureRegistry:
+class Router:
     """
-    A thread-safe registry for storing and retrieving procedures by name.
+    A Router manages a set of RPC procedures. 
+    It can be used as a decorator and merged with other routers.
     """
 
     def __init__(self) -> None:
         self._procedures: Dict[str, Callable[..., Any]] = {}
         self._lock = threading.Lock()
 
-    def register(self, name: str, fn: Callable[..., Any]) -> None:
+    def rpc(self, name_or_fn: Any = None) -> Any:
         """
-        Register a procedure with the given name.
+        Decorator to register a function as an RPC procedure.
+        Usage: 
+            @router.rpc
+            def my_func(): ...
+            
+            @router.rpc(name="custom_name")
+            def my_func(): ...
+        """
+        def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
+            name = name_or_fn if isinstance(name_or_fn, str) else fn.__name__
+            self.register(name, fn)
+            return fn
 
-        Args:
-            name: The name of the procedure.
-            fn: The function/callable to register.
-        """
+        if callable(name_or_fn):
+            return decorator(name_or_fn)
+        return decorator
+
+    def register(self, name: str, fn: Callable[..., Any]) -> None:
         with self._lock:
             self._procedures[name] = fn
 
+    def merge(self, other: "Router", prefix: str = "") -> None:
+        """Merge another router into this one, optionally with a prefix."""
+        with other._lock:
+            with self._lock:
+                for name, fn in other._procedures.items():
+                    new_name = f"{prefix}{name}" if prefix else name
+                    self._procedures[new_name] = fn
+
     def get(self, name: str) -> Optional[Callable[..., Any]]:
-        """
-        Retrieve a procedure by name.
-
-        Args:
-            name: The name of the procedure.
-
-        Returns:
-            The registered function if found, otherwise None.
-        """
         with self._lock:
             return self._procedures.get(name)
 
     def list(self) -> List[str]:
-        """
-        List all registered procedure names.
-
-        Returns:
-            A list of names.
-        """
         with self._lock:
             return list(self._procedures.keys())
