@@ -1,5 +1,5 @@
 import json
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional
 
 from ..core.interpreter import handle_request
 
@@ -9,8 +9,8 @@ class PyRPCAsgiApp:
     A minimal ASGI application for serving pyRPC requests.
     """
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, router: Optional[Any] = None) -> None:
+        self.router = router
 
     async def __call__(self, scope: Dict[str, Any], receive: Callable, send: Callable) -> None:
         """
@@ -49,7 +49,7 @@ class PyRPCAsgiApp:
             await self.send_response(send, 400, {"error": "Invalid JSON"})
             return
 
-        response_dict = await handle_request(payload)
+        response_dict = await handle_request(payload, router=self.router)
         await self.send_response(send, 200, response_dict)
 
     async def send_response(self, send: Callable, status_code: int, content: Dict[str, Any]) -> None:
