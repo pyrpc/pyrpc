@@ -3,62 +3,11 @@
  * DO NOT EDIT MANUALLY
  */
 
-export interface RPCError {
-  code: number;
-  message: string;
-}
-
-export class PyRPCError extends Error {
-  code: number;
-  constructor(code: number, message: string) {
-    super(message);
-    this.name = "PyRPCError";
-    this.code = code;
-  }
-}
-
-export class PyRPCClient {
-  private baseUrl: string;
-
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl.replace(/\/$/, "");
-  }
-
-  private async execute(method: string, params: any): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/rpc`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: Math.random().toString(36).substring(7),
-        method,
-        params,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    if (data.error) {
-      throw new PyRPCError(data.error.code, data.error.message);
-    }
-
-    return data.result;
-  }
-
+export interface Types {
   {% for name, schema in schemas.items() %}
   /**
    * {{ schema.doc or "No documentation available." }}
    */
-  async {{ name }}({% for param in schema.parameters %}{{ param.name }}: any{% if not loop.last %}, {% endif %}{% endfor %}): Promise<any> {
-    return this.execute("{{ name }}", {
-      {% for param in schema.parameters %}
-      "{{ param.name }}": {{ param.name }}{% if not loop.last %},{% endif %}
-      {% endfor %}
-    });
-  }
+  {{ name }}({% for param in schema.parameters %}{{ param.name }}: any{% if not loop.last %}, {% endif %}{% endfor %}): Promise<any>;
   {% endfor %}
 }

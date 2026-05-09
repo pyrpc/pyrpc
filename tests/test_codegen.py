@@ -1,10 +1,10 @@
 import pytest
-from pyrpc_server import rpc, default_registry
+from pyrpc_server import rpc, default_router, get_registry_schema
 from pyrpc_server_codegen import generate_typescript_client
 
 @pytest.fixture(autouse=True)
 def clear_registry():
-    default_registry._procedures.clear()
+    default_router._procedures.clear()
 
 def test_generate_typescript_client():
     @rpc
@@ -12,16 +12,13 @@ def test_generate_typescript_client():
         """Add two numbers."""
         return a + b
     
-    content = generate_typescript_client(default_registry)
+    schemas = get_registry_schema(default_router)
+    content = generate_typescript_client(schemas)
     
-    assert "export class PyRPCClient" in content
-    assert "async add(a: any, b: any): Promise<any>" in content
-    assert 'return this.execute("add", {' in content
-    assert '"a": a,' in content
-    assert '"b": b' in content
+    assert "export interface Types" in content
+    assert "add(a: any, b: any): Promise<any>;" in content
 
 def test_generate_typescript_client_empty():
-    content = generate_typescript_client(default_registry)
-    assert "class PyRPCClient" in content
-    # Should not have any methods other than constructor and execute
-    assert "async " not in content.split("private async execute")[1]
+    schemas = get_registry_schema(default_router)
+    content = generate_typescript_client(schemas)
+    assert "export interface Types {" in content
