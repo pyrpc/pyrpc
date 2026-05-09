@@ -50,11 +50,27 @@ Content-Type: application/json
 }
 ```
 
+## Introspection
+
+One of pyRPC's most powerful features is built-in introspection. By default, your RPC endpoint also responds to `GET` requests:
+
+```
+GET /rpc
+```
+
+The server returns a full JSON schema of every registered procedure, including:
+- Parameter names and types
+- Return types
+- Docstrings
+- Namespaces
+
+This is the "Source of Truth" that `pyrpc codegen` uses to synchronize your TypeScript contracts.
+
 ## Why JSON-RPC?
 
-- **Standard** — Well-specified, widely understood
-- **Simple** — No custom wire format, easy to debug
-- **Compatible** — Works with any HTTP client; adapters handle the details
+- **Zero Ambiguity** — Unlike REST, where status codes (200, 201, 204) and methods (PUT vs PATCH) are often debated, JSON-RPC has one way to succeed and one way to fail.
+- **Easy Debugging** — Requests are plain JSON objects. You can copy-paste them from your browser's network tab directly into a test script.
+- **Batched Requests** — The protocol natively supports sending multiple calls in a single HTTP request (coming soon to pyRPC).
 
 ## Next
 

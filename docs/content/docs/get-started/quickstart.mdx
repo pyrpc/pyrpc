@@ -51,38 +51,58 @@ INFO:     Uvicorn running on http://127.0.0.1:8000
 INFO:     Application startup complete.
 ```
 
-## 3. Client
+## 3. Client (TypeScript)
 
-Create `client.py` (in another terminal):
+This is where the magic happens. pyRPC synchronizes your Python types into TypeScript contracts.
+
+### Install Client
+
+```bash
+npm install @pyrpc/client
+```
+
+### Sync Contracts
+
+Synchronize your Python procedures into TypeScript types using the CLI:
+
+```bash
+# Synchronize the contract from your running server
+npx pyrpc codegen --url http://localhost:8000
+```
+
+### Call Procedures
+
+```ts
+import { createClient } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+const client = createClient<Types>()
+
+// Fully typed result and parameters!
+const result = await client.add(10, 5)
+const message = await client.greet("pyRPC")
+
+console.log(result, message)
+```
+
+## 4. Client (Python)
+
+You can also call your procedures from other Python services or scripts with zero codegen required.
 
 ```python
 from pyrpc_server import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
+    # Everything is dynamic and introspected at runtime
     result = client.add(a=10, b=5)
     print(result)  # 15
-
-    msg = client.greet(name="pyRPC")
-    print(msg)  # Hello, pyRPC!
 ```
 
-Run it:
+## Done 🎉
 
-```bash
-python client.py
-```
+You now have a working pyRPC server + end-to-end typed contracts. Next:
 
-**Expected output:**
-
-```
-15
-Hello, pyRPC!
-```
-
-## Done
-
-You now have a working pyRPC server + client. Next:
-
-- [Installation](/docs/get-started/installation) — Adapters (Flask, codegen)
-- [Concepts](/docs/concepts) — Mental model, protocol, error handling
-- [Server](/docs/server) — Routers, procedures, context
+- [Installation](/docs/get-started/installation) — Adapters and CLI tools
+- [Concepts](/docs/concepts) — Mental model and error handling
+- [Server Guide](/docs/server) — Routers and procedures
+- [Client Guide](/docs/client) — TypeScript and Python usage

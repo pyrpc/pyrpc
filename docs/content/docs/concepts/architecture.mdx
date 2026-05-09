@@ -1,0 +1,50 @@
+---
+title: Architecture
+description: How the magic happens under the hood.
+
+---
+
+# Architecture
+
+pyRPC is designed to be as "invisible" as possible. To achieve this, it relies on a simple three-tier architecture: **Registry**, **Introspection**, and **Contract**.
+
+## 1. The Registry (Source of Truth)
+
+When you use the `@rpc` decorator, you are adding your function to a central **Registry**. 
+
+```python
+@rpc
+def add(a: int, b: int) -> int: ...
+```
+
+The registry captures the function's signature using Python's `inspect` module and Pydantic's `TypeAdapter`. It knows exactly what inputs it expects and what output it promises.
+
+## 2. The Introspection Engine
+
+The registry is connected to an **Introspection Engine**. This engine can turn the Python signatures into a structured JSON schema at any time.
+
+This engine is exposed via the `GET /rpc` endpoint. It allows tools (and other pyRPC clients) to "see" your backend as if it were a typed library.
+
+## 3. Contract Synchronization
+
+The final tier is the **Contract**. This is the bridge to other ecosystems like TypeScript.
+
+Instead of generating a bulky SDK with custom classes and logic, `pyrpc codegen` simply fetches the introspection schema and translates it into TypeScript `interface` and `type` definitions.
+
+### Why this works:
+- **Decoupled**: Your server doesn't need to know about TypeScript.
+- **Fast**: The client runtime is tiny because the "logic" is just standard fetch calls.
+- **Accurate**: The types are generated directly from your running Python code.
+
+## The Journey of a Request
+
+1. **Client**: Calls `client.add(1, 2)`.
+2. **Runtime**: Packages the call into a JSON-RPC 2.0 object.
+3. **Transport**: Sends a `POST /rpc` to the server.
+4. **Adapter**: (FastAPI/Flask) receives the request and passes it to pyRPC.
+5. **Interpreter**: Validates the parameters via Pydantic, calls the Python function, and catches any errors.
+6. **Response**: The result is packaged and sent back to the client.
+
+---
+
+By understanding this flow, you can see why pyRPC is so reliable—there is no manual translation layer where types can drift.

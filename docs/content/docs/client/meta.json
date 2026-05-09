@@ -3,9 +3,9 @@
     "description": "Consume your pyRPC API from the client",
     "icon": "Laptop",
     "pages": [
-        "index",
+        "overview",
+        "typescript",
         "vanilla",
-        "nextjs",
         "advanced"
     ]
 }

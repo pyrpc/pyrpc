@@ -15,11 +15,11 @@ You can test the Python client against the in‑memory ASGI app instead of a rea
 ```python
 import httpx
 import pytest
-from pyrpc_server import rpc, asgi_app, RPCClient, default_registry
+from pyrpc_server import rpc, asgi_app, RPCClient, default_router
 
 @pytest.fixture(autouse=True)
 def clear_registry():
-    default_registry._procedures.clear()
+    default_router._procedures.clear()
 
 @pytest.mark.anyio
 async def test_client_async():
@@ -53,23 +53,26 @@ client._sync_client = httpx.Client(
 )
 ```
 
-For TypeScript, you can wrap `pyRPCClient` to inject custom headers or use a different `fetch` implementation.
+For TypeScript, you can wrap `createClient` to inject custom headers or use a different `fetch` implementation.
 
 ## Codegen Tips
 
 - Re‑run `pyrpc codegen` whenever you add or change procedures.
-- Commit the generated client to your repo so frontend builds don't depend on Python tooling.
+- By default, `pyrpc codegen` generates types in `.pyrpc/types.ts`. You can map this to `@pyrpc/types` using TS path aliases.
+- Commit the generated types to your repo so frontend builds don't depend on Python tooling.
 
 ## Error Handling Patterns
 
-- Wrap RPC calls in a small helper that normalizes `RPCError` / `pyRPCError`.
+- Wrap RPC calls in a small helper that normalizes `RPCError` / `PyRPCError`.
 - Map error codes to user‑facing messages in one place.
 
 ```ts
+import { PyRPCError } from "@pyrpc/client";
+
 export function handleRpcError(e: unknown): string {
-  if (e instanceof pyRPCError) {
-    if (e.code === 401) return "You must be signed in.";
-    if (e.code === 403) return "You don't have permission.";
+  if (e instanceof PyRPCError) {
+    if (e.code === -32601) return "Method not found.";
+    if (e.code === -32603) return "Internal server error.";
     return e.message;
   }
   return "Something went wrong. Please try again.";
