@@ -1,12 +1,12 @@
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from pyrpc_server import rpc, default_registry
+from pyrpc_server import rpc, default_router
 from pyrpc_server_fastapi import mount_fastapi
 
 @pytest.fixture(autouse=True)
 def clear_registry():
-    default_registry._procedures.clear()
+    default_router._procedures.clear()
 
 def test_fastapi_mount_success():
     @rpc
