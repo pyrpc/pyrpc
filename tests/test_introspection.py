@@ -1,10 +1,11 @@
 import pytest
 from pydantic import BaseModel
-from pyrpc_server import rpc, default_registry, get_procedure_schema, get_registry_schema
+from pyrpc_server import rpc, default_router, get_procedure_schema, get_registry_schema
+from pyrpc_server.core.procedure import Procedure
 
 @pytest.fixture(autouse=True)
 def clear_registry():
-    default_registry._procedures.clear()
+    default_router._procedures.clear()
 
 class User(BaseModel):
     id: int
@@ -15,7 +16,7 @@ def test_get_procedure_schema_simple():
         """Add two numbers."""
         return a + b
     
-    schema = get_procedure_schema(add)
+    schema = get_procedure_schema(Procedure(add))
     
     assert schema.name == "add"
     assert schema.doc == "Add two numbers."
@@ -39,7 +40,7 @@ def test_get_procedure_schema_complex():
     def get_user(user_id: int) -> User:
         return User(id=user_id, name="Test")
     
-    schema = get_procedure_schema(get_user)
+    schema = get_procedure_schema(default_router.get("get_user"))
     
     assert schema.name == "get_user"
     assert schema.return_schema["type"] == "object"
@@ -55,7 +56,7 @@ def test_get_registry_schema():
     def greet(name: str):
         return f"Hello {name}"
     
-    registry_schema = get_registry_schema(default_registry)
+    registry_schema = get_registry_schema(default_router)
     
     assert "ping" in registry_schema
     assert "greet" in registry_schema

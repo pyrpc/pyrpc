@@ -1,3 +1,4 @@
+from pydantic.dataclasses import dataclass as model
 from .registry import Router
 
 # Global default router for easy use
