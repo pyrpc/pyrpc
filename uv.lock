@@ -446,6 +446,7 @@ name = "pyrpc-server-codegen"
 version = "0.1.0"
 source = { editable = "packages/pyrpc-server-codegen" }
 dependencies = [
+    { name = "httpx" },
     { name = "jinja2" },
     { name = "pyrpc-server" },
     { name = "rich" },
@@ -455,6 +456,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.0" },
     { name = "pyrpc-server", editable = "packages/pyrpc-server" },
     { name = "rich", specifier = ">=13.0.0" },
