@@ -256,73 +256,75 @@ export default function HomePage() {
             <div className="absolute left-1/2 -translate-x-1/2 w-screen top-0 h-px bg-neutral-200 dark:bg-white/[0.08]" />
           </div>
 
-          {/* Works With Section - Static Grid */}
+          {/* Works With Section - Infinite Marquee */}
           <div className="pb-20 relative">
             <h2 className="text-[22px] font-bold tracking-tight text-white mb-12">
               Compatible with your stack
             </h2>
             
-            <div className="flex flex-wrap gap-x-12 gap-y-8 items-center">
-              {/* PYTHON BACKENDS */}
-              <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.403 18.232l-2.035-6.52H6.942l6.505-8.544 1.83 5.48h3.78l-6.654 9.584z"/>
-                </svg>
-                <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">FastAPI</span>
-              </div>
+            <div className="relative overflow-hidden group">
+              {/* Masking Gradients */}
+              <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none opacity-100" />
+              <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none opacity-100" />
 
-              <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
-                  <path d="M7.746 12.336L3.102 20.37A2 2 0 004.834 23.4h14.331a2 2 0 001.732-3.03l-4.643-8.034V5.4H17a.6.6 0 000-1.2H7a.6.6 0 000 1.2h.746v6.936zM15.05 5.4v7.264l4.135 7.153a.8.8 0 01-.693 1.212H5.508a.8.8 0 01-.693-1.212l4.136-7.153V5.4h6.098z"/>
-                </svg>
-                <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Flask</span>
-              </div>
+              <div className="flex animate-marquee whitespace-nowrap gap-12 items-center py-4">
+                {[1, 2, 3].map((loop) => (
+                  <div key={loop} className="flex shrink-0 items-center gap-16">
+                    <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
+                        <path d="M14.25.3v3.151h-3.5c-3.61 0-3.5 1.539-3.5 1.539v2.712h7.101s3.81 0 3.81 5.338v5.651c0 5.338-4.11 5.338-4.11 5.338H11.75c-3.61 0-4-.534-4-3.725V20.15h3.5v-3.205c0-3.327-.149-3.327 3-3.327h3.635c.302 0 .5-.199.5-.499v-7.112c0-.3-.199-.5-.499-.5h-10s-4.001 0-4.001-5.338v-5.651c0-5.338 4.612-5.338 4.612-5.338h3.353zm-1.75 2.151c-.414 0-.75.336-.75.75s.336.75.75.75.75-.336.75-.75-.336-.75-.75-.75zm-3.5 16.5c.414 0 .75-.336.75-.75s-.336-.75-.75-.75-.75.336-.75.75.336.75.75.75z" />
+                      </svg>
+                      <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Python</span>
+                    </div>
 
-              <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
-                  <path d="M11.146 0h3.924v18.165c-2.013.382-3.491.535-5.096.535-4.791 0-7.288-2.166-7.288-6.32 0-4.002 2.65-6.6 6.753-6.6.637 0 1.121.05 1.707.203zm0 9.143a3.894 3.894 0 0 0-1.325-.204c-1.988 0-3.134 1.223-3.134 3.365 0 2.09 1.096 3.236 3.109 3.236.433 0 .79-.025 1.35-.102V9.142zM21.314 6.06v11.818c0 4.103-.306 6.07-1.197 7.77-.84 1.646-1.987 2.69-4.334 3.84l-3.644-1.732c2.347-1.1 3.493-2.043 4.182-3.511.739-1.52.968-3.29.968-7.876V6.061h4.025zM17.39.022h3.924v4.026H17.39z"/>
-                </svg>
-                <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Django</span>
-              </div>
+                    <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.403 18.232l-2.035-6.52H6.942l6.505-8.544 1.83 5.48h3.78l-6.654 9.584z"/>
+                      </svg>
+                      <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">FastAPI</span>
+                    </div>
 
-              <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
-                <svg viewBox="-11.5 -10.23174 23 20.46348" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
-                  <circle cx="0" cy="0" r="2.05" />
-                  <g stroke="currentColor" strokeWidth="1" fill="none">
-                    <ellipse rx="11" ry="4.2"/>
-                    <ellipse rx="11" ry="4.2" transform="rotate(60)"/>
-                    <ellipse rx="11" ry="4.2" transform="rotate(120)"/>
-                  </g>
-                </svg>
-                <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">React</span>
-              </div>
+                    <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
+                        <path d="M7.746 12.336L3.102 20.37A2 2 0 004.834 23.4h14.331a2 2 0 001.732-3.03l-4.643-8.034V5.4H17a.6.6 0 000-1.2H7a.6.6 0 000 1.2h.746v6.936zM15.05 5.4v7.264l4.135 7.153a.8.8 0 01-.693 1.212H5.508a.8.8 0 01-.693-1.212l4.136-7.153V5.4h6.098z"/>
+                      </svg>
+                      <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Flask</span>
+                    </div>
 
-              <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
-                  <path d="M11.572 0c-.176 0-.31.001-.358.007a19.76 19.76 0 0 1-.364.033C7.443.346 4.25 2.185 2.228 5.012a11.875 11.875 0 0 0-2.119 5.243c-.096.659-.108.854-.108 1.747s.012 1.089.108 1.748c.652 4.506 3.86 8.292 8.209 9.695.779.25 1.6.422 2.534.525.363.04 1.935.04 2.299 0 1.611-.178 2.977-.577 4.323-1.264.207-.106.247-.134.219-.158-.02-.013-.9-1.193-1.955-2.62l-1.919-2.592-2.404-3.558a338.739 338.739 0 0 0-2.422-3.556c-.009-.002-.018 1.579-.023 3.51-.007 3.38-.01 3.515-.052 3.595a.426.426 0 0 1-.206.214c-.075.037-.14.044-.495.044H7.81l-.108-.068a.438.438 0 0 1-.157-.171l-.05-.106.006-4.703.007-4.705.072-.092a.645.645 0 0 1 .174-.143c.096-.047.134-.051.54-.051.478 0 .558.018.682.154.035.038 1.337 1.999 2.895 4.361a10760.433 10760.433 0 0 0 4.735 7.17l1.9 2.879.096-.063a12.317 12.317 0 0 0 2.466-2.163 11.944 11.944 0 0 0 2.824-6.134c.096-.66.108-.854.108-1.748 0-.893-.012-1.088-.108-1.747-.652-4.506-3.859-8.292-8.208-9.695a12.597 12.597 0 0 0-2.499-.523A33.119 33.119 0 0 0 11.573 0z"/>
-                </svg>
-                <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Next.js</span>
-              </div>
+                    <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
+                        <path d="M11.146 0h3.924v18.165c-2.013.382-3.491.535-5.096.535-4.791 0-7.288-2.166-7.288-6.32 0-4.002 2.65-6.6 6.753-6.6.637 0 1.121.05 1.707.203zm0 9.143a3.894 3.894 0 0 0-1.325-.204c-1.988 0-3.134 1.223-3.134 3.365 0 2.09 1.096 3.236 3.109 3.236.433 0 .79-.025 1.35-.102V9.142zM21.314 6.06v11.818c0 4.103-.306 6.07-1.197 7.77-.84 1.646-1.987 2.69-4.334 3.84l-3.644-1.732c2.347-1.1 3.493-2.043 4.182-3.511.739-1.52.968-3.29.968-7.876V6.061h4.025zM17.39.022h3.924v4.026H17.39z"/>
+                      </svg>
+                      <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Django</span>
+                    </div>
 
-              <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
-                  <path d="M12 0L0 24h4.8L12 9.6L19.2 24H24L12 0z"/>
-                </svg>
-                <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Vue</span>
-              </div>
+                    <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
+                        <path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0H1.125zm17.363 9.75c.612 0 1.154.037 1.627.111v2.111c-.524-.149-1.067-.223-1.627-.223-1.214 0-1.82.448-1.82 1.343 0 .338.113.601.339.79.227.188.593.313 1.101.376l.951.111c.825.09 1.477.322 1.956.699.479.377.718.919.718 1.626 0 .962-.321 1.726-.962 2.292-.641.566-1.534.848-2.679.848-.68 0-1.333-.054-1.959-.161v-2.223c.657.248 1.43.371 2.32.371 1.056 0 1.583-.349 1.583-1.048 0-.315-.159-.554-.477-.717-.318-.162-.793-.274-1.426-.336l-.852-.09c-.866-.105-1.547-.361-2.043-.769-.496-.408-.744-.991-.744-1.748 0-.895.312-1.583.938-2.065.626-.482 1.493-.723 2.602-.723zm-11.859.186h7.626v1.988h-2.73v9.088h-2.164v-9.088h-2.732V9.936z"/>
+                      </svg>
+                      <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">TypeScript</span>
+                    </div>
 
-              <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
-                  <path d="M12 0L0 24h4.8L12 9.6L19.2 24H24L12 0z"/>
-                </svg>
-                <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Nuxt</span>
-              </div>
+                    <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
+                      <svg viewBox="-11.5 -10.23174 23 20.46348" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
+                        <circle cx="0" cy="0" r="2.05" />
+                        <g stroke="currentColor" strokeWidth="1" fill="none">
+                          <ellipse rx="11" ry="4.2"/>
+                          <ellipse rx="11" ry="4.2" transform="rotate(60)"/>
+                          <ellipse rx="11" ry="4.2" transform="rotate(120)"/>
+                        </g>
+                      </svg>
+                      <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">React</span>
+                    </div>
 
-              <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
-                  <path d="M23.498 6.186a11.393 11.393 0 00-6.186-5.688L12.186 0 6.186.498a11.393 11.393 0 00-5.688 6.186L0 11.814l.498 6.002a11.393 11.393 0 00 6.186 5.688l5.5 1.496 6.002-.498a11.393 11.393 0 00 5.688-6.186l1.126-5.502-.502-6.628z"/>
-                </svg>
-                <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Svelte</span>
+                    <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
+                        <path d="M11.572 0c-.176 0-.31.001-.358.007a19.76 19.76 0 0 1-.364.033C7.443.346 4.25 2.185 2.228 5.012a11.875 11.875 0 0 0-2.119 5.243c-.096.659-.108.854-.108 1.747s.012 1.089.108 1.748c.652 4.506 3.86 8.292 8.209 9.695.779.25 1.6.422 2.534.525.363.04 1.935.04 2.299 0 1.611-.178 2.977-.577 4.323-1.264.207-.106.247-.134.219-.158-.02-.013-.9-1.193-1.955-2.62l-1.919-2.592-2.404-3.558a338.739 338.739 0 0 0-2.422-3.556c-.009-.002-.018 1.579-.023 3.51-.007 3.38-.01 3.515-.052 3.595a.426.426 0 0 1-.206.214c-.075.037-.14.044-.495.044H7.81l-.108-.068a.438.438 0 0 1-.157-.171l-.05-.106.006-4.703.007-4.705.072-.092a.645.645 0 0 1 .174-.143c.096-.047.134-.051.54-.051.478 0 .558.018.682.154.035.038 1.337 1.999 2.895 4.361a10760.433 10760.433 0 0 0 4.735 7.17l1.9 2.879.096-.063a12.317 12.317 0 0 0 2.466-2.163 11.944 11.944 0 0 0 2.824-6.134c.096-.66.108-.854.108-1.748 0-.893-.012-1.088-.108-1.747-.652-4.506-3.859-8.292-8.208-9.695a12.597 12.597 0 0 0-2.499-.523A33.119 33.119 0 0 0 11.573 0z"/>
+                      </svg>
+                      <span className="font-semibold text-fd-foreground text-[15px] tracking-tight">Next.js</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -449,8 +451,8 @@ export default function HomePage() {
         </div>
 
         {/* CTA Section */}
-        <div className="mt-24 mb-32 px-6">
-          <div className="relative overflow-hidden border border-white/[0.08] bg-[#030303] p-10 md:p-14 text-center">
+        <div className="mt-12 mb-32 max-w-[1240px] mx-auto">
+          <div className="relative overflow-hidden rounded-none border border-white/[0.08] bg-[#030303] p-8 md:p-12 text-center">
             {/* Trippy Background Pattern */}
             <div className="absolute inset-0 z-0 opacity-20">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.1),transparent)]" />
@@ -481,8 +483,11 @@ export default function HomePage() {
                   </button>
                 </Link>
                 <a href="https://github.com/pyrpc/pyrpc" target="_blank" rel="noreferrer">
-                  <button className="px-10 py-4 border border-white/10 text-white font-bold uppercase tracking-widest text-[11px] hover:bg-white/5 transition-all">
-                    View GitHub
+                  <button className="flex items-center px-10 py-4 border border-white/10 text-white font-bold uppercase tracking-widest text-[11px] hover:bg-white/5 transition-all">
+                    <svg viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 mr-2.5">
+                      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    View on GitHub
                   </button>
                 </a>
               </div>
@@ -499,7 +504,15 @@ export default function HomePage() {
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-screen h-px bg-neutral-200 dark:bg-white/[0.08]" />
         </div>
 
-        <div className="h-16" />
+        <div 
+          className="max-w-[1240px] mx-auto flex justify-between items-center py-16 text-white/10 text-[9px] tracking-[0.3em] uppercase"
+          style={{ fontFamily: 'Geist Mono, "Geist Mono Fallback", monospace' }}
+        >
+          <div>© 2026 pyRPC — Licensed under MIT</div>
+          <a href="https://x.com" className="hover:text-white/30 transition-colors">X / Twitter</a>
+        </div>
+
+        <div className="h-4" />
       </div>
     </div>
   );
