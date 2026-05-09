@@ -1,9 +1,9 @@
 import pytest
-from pyrpc_server import handle_request, rpc, default_registry
+from pyrpc_server import handle_request, rpc, default_router
 
 @pytest.fixture(autouse=True)
 def clear_registry():
-    default_registry._procedures.clear()
+    default_router._procedures.clear()
 
 @pytest.mark.anyio
 async def test_handle_request_sync():
@@ -38,7 +38,7 @@ async def test_handle_request_not_found():
     
     assert response["id"] == 1
     assert response["result"] is None
-    assert response["error"]["code"] == 404
+    assert response["error"]["code"] == -32601
     assert "Method not found" in response["error"]["message"]
 
 @pytest.mark.anyio
@@ -52,7 +52,7 @@ async def test_handle_request_exception():
     
     assert response["id"] == "err"
     assert response["result"] is None
-    assert response["error"]["code"] == 500
+    assert response["error"]["code"] == -32603
     assert "Boom" in response["error"]["message"]
 
 @pytest.mark.anyio
@@ -61,7 +61,5 @@ async def test_handle_request_invalid_payload():
     response = await handle_request(payload)
     
     assert response["id"] == 1
-    assert response["error"]["code"] == 400
+    assert response["error"]["code"] == -32600
     assert "Invalid request" in response["error"]["message"]
-
-
