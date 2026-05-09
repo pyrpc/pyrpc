@@ -253,19 +253,19 @@ export default function HomePage() {
 
           {/* Top Frameworks Divider */}
           <div className="relative h-px w-full my-12">
-            <div className="absolute left-1/2 -translate-x-1/2 w-screen top-0 h-px bg-neutral-200 dark:bg-white/[0.08]" />
+            <div className="absolute left-1/2 -translate-x-1/2 w-screen top-0 h-px bg-fd-border" />
           </div>
 
           {/* Works With Section - Infinite Marquee */}
           <div className="pb-20 relative">
-            <h2 className="text-[22px] font-bold tracking-tight text-white mb-12">
+            <h2 className="text-[22px] font-bold tracking-tight text-fd-foreground mb-12">
               Compatible with your stack
             </h2>
             
             <div className="relative overflow-hidden group">
               {/* Masking Gradients */}
-              <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none opacity-100" />
-              <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none opacity-100" />
+              <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white dark:from-black to-transparent z-10 pointer-events-none opacity-100" />
+              <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white dark:from-black to-transparent z-10 pointer-events-none opacity-100" />
 
               <div className="flex animate-marquee whitespace-nowrap gap-12 items-center py-4">
                 {[1, 2, 3].map((loop) => (
@@ -330,16 +330,16 @@ export default function HomePage() {
           </div>
           {/* Features Section Header */}
           <div className="mt-12 mb-12">
-            <h2 className="text-[22px] font-bold tracking-tight text-white mb-4">
+            <h2 className="text-[22px] font-bold tracking-tight text-fd-foreground mb-4">
               Features
             </h2>
-            <p className="max-w-xl text-white/40 text-sm md:text-base leading-relaxed font-sans">
+            <p className="max-w-xl text-fd-foreground/40 text-sm md:text-base leading-relaxed font-sans">
               Everything you need to bridge Python and TypeScript with total type safety.
             </p>
           </div>
 
           {/* Features Grid */}
-          <div className="mb-32 border-t border-l border-white/[0.08] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative">
+          <div className="mb-32 border-t border-l border-fd-border grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative">
             
             {/* pyRPC Branding Intersection Glows - Persistent */}
             <div className="hidden lg:block absolute -top-[3px] left-[33.33%] w-[6px] h-[6px] bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.8)] border border-blue-400 rounded-full z-10 -translate-x-1/2" />
@@ -375,9 +375,9 @@ export default function HomePage() {
                 description: "Drop pyRPC into FastAPI, Flask, Django, or any standard ASGI server.",
                 visual: (
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-bold">FA</div>
-                    <div className="w-6 h-6 rounded bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-bold">FL</div>
-                    <div className="w-6 h-6 rounded bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-bold">DJ</div>
+                    <div className="w-6 h-6 rounded bg-fd-foreground/5 border border-fd-border flex items-center justify-center text-[10px] font-bold">FA</div>
+                    <div className="w-6 h-6 rounded bg-fd-foreground/5 border border-fd-border flex items-center justify-center text-[10px] font-bold">FL</div>
+                    <div className="w-6 h-6 rounded bg-fd-foreground/5 border border-fd-border flex items-center justify-center text-[10px] font-bold">DJ</div>
                   </div>
                 )
               },
@@ -388,9 +388,9 @@ export default function HomePage() {
                 visual: (
                   <div className="flex items-center gap-2 text-[10px] font-mono text-blue-400/60">
                     <span>users</span>
-                    <span className="text-white/20">/</span>
+                    <span className="text-fd-foreground/20">/</span>
                     <span>auth</span>
-                    <span className="text-white/20">/</span>
+                    <span className="text-fd-foreground/20">/</span>
                     <span className="text-blue-400">login()</span>
                   </div>
                 )
@@ -412,15 +412,15 @@ export default function HomePage() {
                 title: "JSON-RPC 2.0.",
                 description: "Built on a predictable, standardized protocol for robust error handling.",
                 visual: (
-                  <div className="px-2 py-1 border border-white/10 bg-white/[0.02] rounded flex items-center gap-2">
-                    <span className="text-[9px] font-mono text-white/40 tracking-widest">code: -32601</span>
+                  <div className="px-2 py-1 border border-fd-border bg-fd-foreground/[0.02] rounded flex items-center gap-2">
+                    <span className="text-[9px] font-mono text-fd-foreground/40 tracking-widest">code: -32601</span>
                   </div>
                 )
               }
             ].map((feature) => (
               <div 
                 key={feature.id} 
-                className="group p-8 border-r border-b border-white/[0.08] relative transition-all overflow-hidden bg-gradient-to-br from-transparent to-transparent hover:to-blue-500/[0.02]"
+                className="group p-8 border-r border-b border-fd-border relative transition-all overflow-hidden bg-gradient-to-br from-transparent to-transparent hover:to-blue-500/[0.02]"
               >
                 {/* Individual Card Glow Accent - Persistent */}
                 <div className="absolute -right-16 -top-16 w-32 h-32 bg-blue-500/[0.03] blur-[40px]" />
@@ -428,7 +428,7 @@ export default function HomePage() {
                 {/* Individual Card Crosshair Dots (Internal) - Persistent Glow */}
                 <div className="absolute top-0 right-0 w-[4px] h-[4px] bg-blue-500 border border-blue-400/50 rounded-full translate-x-[2px] -translate-y-[2px] z-20 shadow-[0_0_8px_rgba(59,130,246,0.4)]" />
                 
-                <span className="text-white/20 font-mono text-[10px] mb-8 block uppercase tracking-widest group-hover:text-white/40 transition-colors">{feature.id}</span>
+                <span className="text-fd-foreground/20 font-mono text-[10px] mb-8 block uppercase tracking-widest group-hover:text-fd-foreground/40 transition-colors">{feature.id}</span>
                 <h3 
                   className="mb-2 tracking-tight"
                   style={{ 
@@ -436,12 +436,12 @@ export default function HomePage() {
                     fontSize: '17px',
                     fontWeight: 500,
                     lineHeight: '26px',
-                    color: 'oklab(0.984998 -0.000292599 0.000982165 / 0.8)'
+                    color: 'var(--fd-foreground)'
                   }}
                 >
                   {feature.title}
                 </h3>
-                <p className="text-white/40 text-[13px] leading-relaxed mb-12 max-w-[28ch]">{feature.description}</p>
+                <p className="text-fd-foreground/40 text-[13px] leading-relaxed mb-12 max-w-[28ch]">{feature.description}</p>
                 <div className="mt-auto">
                   {feature.visual}
                 </div>
@@ -451,39 +451,39 @@ export default function HomePage() {
         </div>
 
         {/* CTA Section */}
-        <div className="mt-12 mb-32 max-w-[1240px] mx-auto">
-          <div className="relative overflow-hidden rounded-none border border-white/[0.08] bg-[#030303] p-8 md:p-12 text-center">
+        <div className="mt-12 mb-32 max-w-[1240px] mx-auto px-6">
+          <div className="relative overflow-hidden rounded-none border border-fd-border bg-neutral-50 dark:bg-[#030303] p-8 md:p-12 text-center">
             {/* Trippy Background Pattern */}
-            <div className="absolute inset-0 z-0 opacity-20">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.1),transparent)]" />
+            <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-20">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(0,0,0,0.1),transparent)] dark:bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.1),transparent)]" />
               <div 
                 className="absolute inset-0" 
                 style={{ 
-                  backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)`,
+                  backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)`,
                   backgroundSize: '24px 24px'
                 }} 
               />
-              <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,transparent_0deg,rgba(255,255,255,0.02)_180deg,transparent_360deg)] animate-[spin_20s_linear_infinite]" />
+              <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,transparent_0deg,currentColor_180deg,transparent_360deg)] opacity-[0.02] dark:opacity-[0.02] animate-[spin_20s_linear_infinite]" />
             </div>
 
             <div className="relative z-10 flex flex-col items-center">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-white mb-6 max-w-2xl">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-6 max-w-2xl">
                 Bridge the gap <br /> 
-                <span className="text-white/30 text-3xl md:text-4xl">in minutes.</span>
+                <span className="text-fd-foreground/30 text-3xl md:text-4xl">in minutes.</span>
               </h2>
-              <p className="text-white/40 text-base md:text-lg mb-10 max-w-md leading-relaxed">
+              <p className="text-fd-foreground/40 text-base md:text-lg mb-10 max-w-md leading-relaxed">
                 Experience end-to-end type safety between Python and TypeScript today. 
                 Open source and ready for production.
               </p>
               
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <Link href="/docs/get-started/installation">
-                  <button className="px-10 py-4 bg-white text-black font-bold uppercase tracking-widest text-[11px] hover:bg-neutral-200 transition-all active:scale-[0.98]">
+                  <button className="px-10 py-4 bg-fd-foreground text-fd-background font-bold uppercase tracking-widest text-[11px] hover:opacity-90 transition-all active:scale-[0.98]">
                     Start Building
                   </button>
                 </Link>
                 <a href="https://github.com/pyrpc/pyrpc" target="_blank" rel="noreferrer">
-                  <button className="flex items-center px-10 py-4 border border-white/10 text-white font-bold uppercase tracking-widest text-[11px] hover:bg-white/5 transition-all">
+                  <button className="flex items-center px-10 py-4 border border-fd-border text-fd-foreground font-bold uppercase tracking-widest text-[11px] hover:bg-fd-foreground/5 transition-all">
                     <svg viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 mr-2.5">
                       <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
                     </svg>
@@ -499,18 +499,18 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Footer line */}
-        <div className="relative h-px w-full mt-32">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-screen h-px bg-neutral-200 dark:bg-white/[0.08]" />
-        </div>
-
-        <div 
-          className="max-w-[1240px] mx-auto flex justify-between items-center py-16 text-white/10 text-[9px] tracking-[0.3em] uppercase"
-          style={{ fontFamily: 'Geist Mono, "Geist Mono Fallback", monospace' }}
-        >
-          <div>© 2026 pyRPC — Licensed under MIT</div>
-          <a href="https://x.com" className="hover:text-white/30 transition-colors">X / Twitter</a>
-        </div>
+        {/* Footer */}
+        <footer className="relative mt-40 pb-24 px-6">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-px bg-fd-border" />
+          <div 
+            className="max-w-[1240px] mx-auto pt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-fd-foreground/40 text-[10px] font-mono uppercase tracking-[0.3em]"
+          >
+            <div className="text-fd-foreground/60 font-bold">© 2026 pyRPC — Licensed under MIT</div>
+            <div className="flex items-center gap-12">
+              <a href="https://x.com" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-all">Twitter</a>
+            </div>
+          </div>
+        </footer>
 
         <div className="h-4" />
       </div>
