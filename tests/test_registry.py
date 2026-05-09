@@ -1,26 +1,28 @@
-from pyrpc.core.registry import ProcedureRegistry
+from pyrpc_server.core.registry import Router
+from pyrpc_server.core.procedure import Procedure
 
 def test_registry_register_get():
-    registry = ProcedureRegistry()
+    router = Router()
     def my_fn(): return "hello"
     
-    registry.register("hello", my_fn)
-    assert registry.get("hello") == my_fn
-    assert registry.get("unknown") is None
+    proc = Procedure(my_fn)
+    router.register("hello", proc)
+    assert router.get("hello") == proc
+    assert router.get("unknown") is None
 
 def test_registry_list():
-    registry = ProcedureRegistry()
-    registry.register("a", lambda: 1)
-    registry.register("b", lambda: 2)
+    router = Router()
+    router.register("a", Procedure(lambda: 1))
+    router.register("b", Procedure(lambda: 2))
     
-    names = registry.list()
+    names = router.list()
     assert len(names) == 2
     assert "a" in names
     assert "b" in names
 
 def test_registry_overwrite():
-    registry = ProcedureRegistry()
-    registry.register("test", lambda: 1)
-    registry.register("test", lambda: 2)
+    router = Router()
+    router.register("test", Procedure(lambda: 1))
+    router.register("test", Procedure(lambda: 2))
     
-    assert registry.get("test")() == 2
+    assert router.get("test").fn() == 2

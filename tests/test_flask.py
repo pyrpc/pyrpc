@@ -1,11 +1,11 @@
 import pytest
 from flask import Flask
-from pyrpc_server import rpc, default_registry
+from pyrpc_server import rpc, default_router
 from pyrpc_server_flask import mount_flask
 
 @pytest.fixture(autouse=True)
 def clear_registry():
-    default_registry._procedures.clear()
+    default_router._procedures.clear()
 
 def test_flask_mount_success():
     @rpc

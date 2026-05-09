@@ -18,27 +18,28 @@ def add(a: int, b: int) -> int:
     return a + b
 ```
 
-## Universal Pydantic Validation
+### The @model Decorator
 
-pyRPC uses Pydantic's `TypeAdapter` to automatically validate **every** parameter and return type. This means you get production-grade validation for free.
-
-### Primitives and Complex Types
-
-You can use any standard Python type, and pyRPC will ensure the incoming JSON matches perfectly.
+The `@model` decorator is the preferred way to define complex data structures in pyRPC. It is a thin wrapper around Pydantic dataclasses that ensures your types are perfectly captured during introspection.
 
 ```python
-from typing import List, Optional
-from pydantic import BaseModel
+from pyrpc_server import model
 
-class User(BaseModel):
+@model
+class User:
     id: int
     name: str
 
 @rpc
-def process_users(users: List[User], dry_run: bool = False) -> int:
-    # 'users' is already a list of Pydantic User objects here
-    return len(users)
+def get_user(id: int) -> User:
+    return User(id=id, name="Paul Graham")
 ```
+
+When you run `pyrpc codegen`, this class is automatically synchronized as a TypeScript `interface`.
+
+### Universal Pydantic Validation
+
+pyRPC uses Pydantic's `TypeAdapter` to automatically validate **every** parameter and return type. This means you get production-grade validation for free.
 
 ### Return Type Validation
 

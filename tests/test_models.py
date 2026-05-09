@@ -26,7 +26,7 @@ def test_rpc_response_error():
     assert data == {
         "id": 1,
         "result": None,
-        "error": {"code": 404, "message": "Procedure not found"},
+        "error": {"code": 404, "message": "Procedure not found", "data": None},
     }
 
 

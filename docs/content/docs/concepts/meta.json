@@ -5,6 +5,7 @@
     "pages": [
         "index",
         "mental-model",
+        "architecture",
         "protocol-design",
         "error-handling"
     ]

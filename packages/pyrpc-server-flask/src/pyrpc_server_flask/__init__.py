@@ -1,4 +1,5 @@
-from pyrpc_server import handle_request, Router
+from pyrpc_server import handle_request, Router, rpc, model
+from typing import Any, Optional
 
 
 def mount_flask(app: Any, router: Optional[Router] = None) -> None:
@@ -19,3 +20,12 @@ def mount_flask(app: Any, router: Optional[Router] = None) -> None:
         # Flask is generally sync, so we use anyio.run to execute the async interpreter
         response_dict = anyio.run(handle_request, payload, router)
         return jsonify(response_dict)
+
+    @app.route("/rpc", methods=["GET"])
+    def introspection_endpoint():
+        from pyrpc_server import get_registry_schema
+        schemas = get_registry_schema(router)
+        return jsonify({
+            name: schema.model_dump() if hasattr(schema, "model_dump") else schema
+            for name, schema in schemas.items()
+        })

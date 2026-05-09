@@ -23,19 +23,21 @@ def get_user(user_id: int) -> dict:
     return user
 ```
 
-## Client-Side
+## Client-Side (TypeScript)
 
-Catch `RPCError` when calling procedures:
+Catch `PyRPCError` when calling procedures. The client ensures that server-side errors are caught and surfaced with their original codes and messages.
 
-```python
-from pyrpc_server import RPCClient, RPCError
+```ts
+import { PyRPCError } from "@pyrpc/client";
 
-with RPCClient("http://localhost:8000") as client:
-    try:
-        user = client.get_user(user_id=999)
-    except RPCError as e:
-        print(e.code)    # -404
-        print(e.message) # User not found
+try {
+  const user = await client.get_user(999);
+} catch (e) {
+  if (e instanceof PyRPCError) {
+    console.error(e.code);    // -404
+    console.error(e.message); // User not found
+  }
+}
 ```
 
 ## Standard Codes
