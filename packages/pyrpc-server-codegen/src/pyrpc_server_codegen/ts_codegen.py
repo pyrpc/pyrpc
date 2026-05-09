@@ -7,26 +7,23 @@ from jinja2 import Environment, FileSystemLoader
 from pyrpc_server import get_registry_schema
 
 
-def generate_typescript_client(registry: Any) -> str:
+def generate_typescript_client(schemas: Dict[str, Any]) -> str:
     """
-    Generate a TypeScript client from a pyRPC registry.
+    Generate a TypeScript client from a pyRPC registry schema.
     """
-    schemas = get_registry_schema(registry)
-    
     # Setup Jinja2
     template_dir = Path(__file__).parent / "templates"
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template("client.ts.j2")
 
-    
     return template.render(schemas=schemas)
 
 
-def save_typescript_client(registry: Any, output_path: str):
+def save_typescript_client(schemas: Dict[str, Any], output_path: str):
     """
     Generate and save the TypeScript client to a file.
     """
-    content = generate_typescript_client(registry)
+    content = generate_typescript_client(schemas)
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(content)
