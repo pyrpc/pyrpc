@@ -1,0 +1,78 @@
+---
+title: TypeScript
+description: Call your pyRPC server from any TypeScript environment with full type safety.
+
+---
+
+# TypeScript Client
+
+The `@pyrpc/client` package provides a lightweight, framework-agnostic runtime for calling your RPC procedures. Combined with generated **Typed Contracts**, it provides a first-class developer experience with zero boilerplate.
+
+## 1. Install
+
+```bash
+npm install @pyrpc/client
+```
+
+## 2. Generate Contracts
+
+Instead of generating a heavy SDK, pyRPC synchronizes your Python types into a simple TypeScript interface.
+
+```bash
+# Generate @pyrpc/types from your server
+npx pyrpc codegen --url http://localhost:8000
+```
+
+This creates a `pyrpc.d.ts` (or updates your `@pyrpc/types` package) containing the procedure signatures and Pydantic-mapped models.
+
+## 3. Create the Client
+
+Use the `createClient<Types>()` factory to initialize your typed client.
+
+```ts
+import { createClient } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+// Option 1: Automatic (defaults to current host in browser)
+export const client = createClient<Types>();
+
+// Option 2: Explicit (required for Node.js / SSR)
+export const client = createClient<Types>({
+  baseUrl: "https://api.example.com"
+});
+```
+
+> [!TIP]
+> If `baseUrl` is omitted, pyRPC will automatically use `window.location.origin`. In Server-Side environments (like Next.js Server Components), you must provide an explicit URL.
+
+## 4. Call Procedures
+
+Procedures are available as async methods with full autocompletion and type validation.
+
+```ts
+// Inside a React component or Server Action
+const user = await client.get_user({ id: 1 });
+console.log(user.name); // Typed as string!
+```
+
+## Error Handling
+
+The client throws `PyRPCError` for structured server-side errors.
+
+```ts
+import { PyRPCError } from "@pyrpc/client";
+
+try {
+  const result = await client.add(10, 20);
+} catch (e) {
+  if (e instanceof PyRPCError) {
+    console.error(`Error ${e.code}: ${e.message}`);
+  }
+}
+```
+
+## Next Steps
+
+- [Vanilla Python Client](/docs/client/vanilla)
+- [Advanced Usage](/docs/client/advanced)
+
