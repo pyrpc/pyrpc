@@ -350,3 +350,21 @@ aside button[aria-label*="Search"] {
 .tile:nth-child(11n + 10):hover {
   background-color: rgb(253 224 71);
 }
+
+/* Infinite Scroll Marquee */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: scroll 40s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

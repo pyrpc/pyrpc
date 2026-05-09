@@ -24,10 +24,30 @@ class PyRPCAsgiApp:
 
         if method == "POST" and path == "/rpc":
             await self.handle_rpc(receive, send)
+        elif method == "GET" and path == "/rpc":
+            await self.handle_introspection(send)
         else:
             await self.send_response(
                 send, 404, {"error": "Not Found", "message": f"Cannot {method} {path}"}
             )
+
+    async def handle_introspection(self, send: Callable) -> None:
+        """
+        Handle a GET /rpc request for introspection.
+        """
+        from ..core.introspection import get_registry_schema
+        # We need to convert the schema objects to dicts for JSON serialization
+        # Since get_registry_schema returns a dict of ProcedureSchema, 
+        # and ProcedureSchema is likely a Pydantic model.
+        schemas = get_registry_schema(self.router)
+        
+        # Convert Pydantic models to dicts
+        response_data = {
+            name: schema.model_dump() if hasattr(schema, "model_dump") else schema
+            for name, schema in schemas.items()
+        }
+        
+        await self.send_response(send, 200, response_data)
 
     async def handle_rpc(self, receive: Callable, send: Callable) -> None:
         """

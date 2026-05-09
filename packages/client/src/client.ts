@@ -1,12 +1,34 @@
 import { PyRPCError } from './error';
 import type { ClientOptions, RpcRequest, RpcResponse } from './types';
 
+const NO_BASE_URL_ERROR = `
+No baseUrl detected.
+
+pyRPC could not automatically determine your server location.
+
+If your frontend and backend are deployed separately, provide:
+
+createClient({
+  baseUrl: "https://api.example.com"
+})
+`;
+
 export class PyRPCClient {
   private baseUrl: string;
   private options: ClientOptions;
 
-  constructor(options: ClientOptions) {
-    this.baseUrl = options.baseUrl.replace(/\/$/, '');
+  constructor(options: ClientOptions = {}) {
+    let baseUrl = options.baseUrl;
+
+    if (!baseUrl) {
+      if (typeof window !== 'undefined' && window.location) {
+        baseUrl = window.location.origin;
+      } else {
+        throw new Error(NO_BASE_URL_ERROR);
+      }
+    }
+
+    this.baseUrl = baseUrl.replace(/\/$/, '');
     this.options = options;
   }
 
@@ -17,16 +39,18 @@ export class PyRPCClient {
     const id = Math.random().toString(36).substring(7);
     const body: RpcRequest = { id, method, params };
 
-    let headers: Record<string, string> = {
+    const baseHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
     };
 
+    let userHeaders: HeadersInit = {};
     if (this.options.headers) {
-      const extraHeaders = typeof this.options.headers === 'function' 
+      userHeaders = typeof this.options.headers === 'function' 
         ? await this.options.headers() 
         : this.options.headers;
-      headers = { ...headers, ...extraHeaders };
     }
+
+    const headers = { ...baseHeaders, ...Object.fromEntries(new Headers(userHeaders).entries()) };
 
     const response = await fetch(`${this.baseUrl}/rpc`, {
       method: 'POST',
@@ -67,12 +91,11 @@ export class PyRPCClient {
 }
 
 /**
- * Convenience factory function.
+ * Modern factory API for pyRPC.
  */
-export function createClient<TRouter = any>(options: ClientOptions): PyRPCClient & TRouter {
+export function createClient<TTypes = any>(options: ClientOptions = {}): PyRPCClient & TTypes {
   const client = new PyRPCClient(options);
   
-  // Return a proxy that merges the client instance with the rpc proxy
   return new Proxy(client, {
     get(target, prop: string, receiver) {
       if (prop in target) {

@@ -15,27 +15,25 @@ pyRPC is a modern, type-safe RPC framework for Python that eliminates the need f
 - **tRPC**: TypeScript-only, limited to Node.js ecosystem
 
 ### vs gRPC
-- **pyRPC**: Uses HTTP/JSON, no `.proto` files needed, developer-friendly
-- **gRPC**: Requires Protocol Buffers, steeper learning curve, binary protocol
+- **pyRPC**: Zero-config. No `.proto` files or IDLs. Uses standard Python functions as the source of truth over HTTP/JSON.
+- **gRPC**: Requires strict IDLs (Protocol Buffers) and binary serialization. More performant for inter-service communication, but carries much higher DX overhead for web-to-server apps.
 
 ### vs FastAPI
-- **pyRPC**: End-to-end type safety from server to client, automatic client generation
-- **FastAPI**: Manual client code, OpenAPI schemas as intermediary
+- **pyRPC**: Built for procedure-calls. End-to-end type safety via synchronized contracts with no intermediate spec files.
+- **FastAPI**: Built for REST. Requires manual client code or heavy OpenAPI-based generation.
 
 ## When to Use pyRPC
 
-✅ You want type-safe RPC without code generation  
-✅ You're building with Python on the backend  
-✅ You need seamless integration with FastAPI or Flask  
-✅ You prefer async/await patterns  
+✅ You want type-safe RPC without the overhead of OpenAPI.  
+✅ You're building a modern React/Next.js frontend with a Python backend.  
+✅ You need a "drop-in" solution for an existing FastAPI or Flask app.  
+✅ You prefer standard Python type hints over custom DSLs.
 
 ```python
-# Example: pyRPC server
-from pyrpc_server import Router
+# pyRPC: Your function is the API
+from pyrpc_server import rpc
 
-router = Router()
-
-@router.procedure()
+@rpc
 async def get_user(user_id: int) -> User:
     return await db.get_user(user_id)
 ```

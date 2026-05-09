@@ -34,12 +34,19 @@ uv add pyrpc-server-fastapi
 uv add pyrpc-server-flask
 ```
 
-## Codegen & CLI
+## Development Tools
 
-Tools for generating TypeScript clients and inspecting your registry.
+The `pyrpc-server-codegen` package provides the CLI for introspecting your server and synchronizing contracts.
 
 ```bash
 uv add pyrpc-server-codegen
+```
+
+### Contract Synchronization
+To generate TypeScript types/contracts from a running server:
+
+```bash
+npx pyrpc codegen --url http://localhost:8000
 ```
 
 ## Quick Start Example (FastAPI)

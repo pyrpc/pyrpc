@@ -80,31 +80,43 @@ def add(a: int, b: int) -> int:
 mount_fastapi(app)
 ```
 
-#### 2. Client-side (Python)
-Call your procedures with full type support and dynamic method discovery.
+#### 2. Client-side (TypeScript)
+Generate typed contracts from your server to enable end-to-end typed inference.
+
+```bash
+npx pyrpc codegen --url http://localhost:8000
+```
+
+```ts
+import { createClient } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+const client = createClient<Types>()
+
+// Fully typed result and parameters!
+const result = await client.add(10, 5)
+```
+
+#### 3. Client-side (Python)
+Call your procedures from other Python services or scripts with zero codegen required.
 
 ```python
 from pyrpc_server import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
+    # Everything is dynamic and introspected at runtime
     result = client.add(10, 5)
     print(f"Result: {result}")
-```
-
-#### 3. Client-side (TypeScript)
-Use the CLI to generate a type-safe TS client.
-
-```bash
-pyrpc codegen -m my_app.main -o client.ts
 ```
 
 ---
 
 ### CLI Utilities
-The `pyrpc` command (provided by `pyrpc-server-codegen`) allows you to:
-- `pyrpc serve`: Instantly host an RPC module.
-- `pyrpc inspect`: Visualize all registered procedures.
-- `pyrpc codegen`: Generate frontend clients.
+The `pyrpc` CLI provides tooling for serving, inspecting, and generating typed contracts from your RPC procedures.
+
+- `pyrpc serve`: Instantly host a Python RPC module for local development and testing.
+- `pyrpc inspect`: Explore registered procedures, inputs, outputs, and namespaces.
+- `pyrpc codegen`: Generate TypeScript types/contracts for end-to-end typed clients.
 
 ### Documentation & Examples
 Check out the [examples/](examples/) directory for complete server and client implementations.

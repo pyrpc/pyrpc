@@ -6,9 +6,16 @@ description: How pyRPC thinks about your API.
 
 # Mental Model
 
-pyRPC treats your backend as a **library of typed functions**. No schemas, no generated clients (for Python) — just call procedures like local methods.
+pyRPC treats your backend as a **library of typed functions**. It eliminates the need for heavy build steps by leveraging different strategies for each ecosystem:
 
-## Procedures = Functions
+- **Python**: Uses **dynamic runtime introspection**. Procedures are discovered as you call them. No build step required.
+- **TypeScript**: Uses **static contract synchronization**. Since TypeScript needs types at development-time for autocompletion, a one-step `codegen` is used to sync the contract.
+
+## Dynamic vs. Static
+
+The core of pyRPC is its ability to introspect itself. 
+
+When you use the Python client, it asks the server "what can you do?" and builds the client on the fly. When you use TypeScript, we use that same introspection power during development to generate a `Types` interface. This gives you the best of both worlds: zero-boilerplate Python and rock-solid TypeScript autocompletion.
 
 Every RPC procedure is a Python function decorated with `@rpc`:
 
@@ -32,7 +39,7 @@ Unlike REST or OpenAPI-based tools, pyRPC does not:
 - Require you to maintain `.yaml` or `.json` spec files
 - Force a separate client codegen step for Python
 
-Types flow directly from your functions. The protocol carries JSON; the client deserializes based on introspection.
+Instead of generating "SDKs", pyRPC synchronizes **typed contracts**. Types flow directly from your procedures; the protocol carries the data, and the client infers the rest.
 
 ## End-to-End Typing
 
@@ -40,5 +47,6 @@ When you add a procedure, the client can call it with full awareness of paramete
 
 ## Next
 
+- [Architecture](/docs/concepts/architecture) — Deep dive into the Registry, Introspection, and Contract tiers
 - [Protocol Design](/docs/concepts/protocol-design) — How requests and responses are structured
 - [Error Handling](/docs/concepts/error-handling) — How errors are represented and propagated
