@@ -104,7 +104,7 @@ export default function HomePage() {
                   className="inline-flex items-center gap-2 text-neutral-500 hover:text-fd-foreground transition-colors px-6 py-3 border border-fd-border hover:bg-white/[0.03] uppercase tracking-widest text-[11px] font-bold"
                 >
                   <Github className="w-4 h-4" />
-                  <span>GitHub</span>
+                  <span>View on GitHub</span>
                 </Link>
               </div>
             </div>
