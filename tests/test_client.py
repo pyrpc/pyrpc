@@ -1,9 +1,9 @@
 import pytest
-from pyrpc_server import rpc, asgi_app, default_registry, RPCClient
+from pyrpc_server import rpc, asgi_app, default_router, RPCClient
 
 @pytest.fixture(autouse=True)
 def clear_registry():
-    default_registry._procedures.clear()
+    default_router._procedures.clear()
 
 @pytest.mark.anyio
 async def test_client_async_success():
@@ -75,7 +75,7 @@ async def test_client_error():
         
         with pytest.raises(RPCError) as exc:
             await client.fail.aio()
-        assert exc.value.code == 500
+        assert exc.value.code == -32603
         assert "RPC Error Test" in exc.value.message
 
 

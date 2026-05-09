@@ -12,52 +12,19 @@ import { cn } from '@/lib/cn'
 
 const TEMPLATES: any = {
     FastAPI: {
-        server: `from pydantic import BaseModel\nfrom pyrpc_server_fastapi import rpc\n\nclass User(BaseModel):\n    id: int\n    name: str\n\n@rpc\nasync def get_user(id: int) -> User:\n    return User(id=id, name="pyRPC User")`,
-        client: {
-            NextJS: {
-                TypeScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const user = await client.get_user(1);\n  return { props: { user } };\n}`,
-                JavaScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const user = await client.get_user(1);\n  return { props: { user } };\n}`,
-            },
-            React: {
-                TypeScript: `const { data: user } = useQuery(['user'], () => client.get_user(1));`,
-                JavaScript: `const { data: user } = useQuery(['user'], () => client.get_user(1));`,
-            }
-        }
+        server: `from pyrpc_server_fastapi import rpc, model\n\n@model\nclass User:\n    id: int\n    name: str\n\n@rpc\ndef get_user(id: int) -> User:\n    return User(id=id, name="pyRPC User")`,
+        client: `import { createClient } from "@pyrpc/client"\nimport type { Types } from "@pyrpc/types"\n\nconst client = createClient<Types>()\n\nconst user = await client.get_user(1);\n\nconsole.log(user.name);`
     },
     Flask: {
-        server: `from pyrpc_server_flask import rpc\n\n@rpc\ndef add(a: int, b: int) -> int:\n    return a + b`,
-        client: {
-            NextJS: {
-                TypeScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const result = await client.add(10, 5);\n  return { props: { result } };\n}`,
-                JavaScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const result = await client.add(10, 5);\n  return { props: { result } };\n}`,
-            },
-            React: {
-                TypeScript: `const { data: result } = useQuery(['add'], () => client.add(10, 5));`,
-                JavaScript: `const { data: result } = useQuery(['add'], () => client.add(10, 5));`,
-            }
-        }
-    },
-    Django: {
-        server: `from pyrpc_server_django import rpc\n\n@rpc\ndef greet(name: str) -> str:\n    return f"Hello {name}"`,
-        client: {
-            NextJS: {
-                TypeScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const msg = await client.greet("pyRPC");\n  return { props: { msg } };\n}`,
-                JavaScript: `export async function getServerSideProps() {\n  const client = new PyRPCClient("http://api.internal");\n  const msg = await client.greet("pyRPC");\n  return { props: { msg } };\n}`,
-            },
-            React: {
-                TypeScript: `const { data: msg } = useQuery(['greet'], () => client.greet("pyRPC"));`,
-                JavaScript: `const { data: msg } = useQuery(['greet'], () => client.greet("pyRPC"));`,
-            }
-        }
+        server: `from pyrpc_server_flask import rpc, model\n\n@model\nclass User:\n    id: int\n    name: str\n\n@rpc\ndef get_user(id: int) -> User:\n    return User(id=id, name="pyRPC User")`,
+        client: `import { createClient } from "@pyrpc/client"\nimport type { Types } from "@pyrpc/types"\n\nconst client = createClient<Types>()\n\nconst user = await client.get_user(1);\n\nconsole.log(user.name);`
     }
 }
 
 export default function PlaygroundPage() {
     const [serverLang, setServerLang] = useState('FastAPI')
-    const [clientFramework, setClientFramework] = useState('React')
-    const [clientLanguage, setClientLanguage] = useState('TypeScript')
     const [serverCode, setServerCode] = useState(TEMPLATES.FastAPI.server)
-    const [clientCode, setClientCode] = useState(TEMPLATES.FastAPI.client.React.TypeScript)
+    const [clientCode, setClientCode] = useState(TEMPLATES.FastAPI.client)
     const [status, setStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle')
     const [logs, setLogs] = useState<string[]>([])
     const parseClientCode = (code: string) => {
@@ -198,7 +165,6 @@ export default function PlaygroundPage() {
             }
         }
 
-        // Fallback to template results if parsing fails or return is too complex
         switch (method) {
             case 'get_user':
                 const id = Array.isArray(params) ? params[0] : (params?.id || 1);
@@ -230,7 +196,7 @@ export default function PlaygroundPage() {
     }
 
     const [request, setRequest] = useState<any>(() => {
-        const extracted = parseClientCode(TEMPLATES.FastAPI.client.React.TypeScript) || { method: 'get_user', params: [1] };
+        const extracted = parseClientCode(TEMPLATES.FastAPI.client) || { method: 'get_user', params: [1] };
         return { method: extracted.method, params: extracted.params, id: 'rpc-1' };
     });
     const [response, setResponse] = useState<any>(null)
@@ -246,7 +212,7 @@ export default function PlaygroundPage() {
         setStatus('running')
 
         // 1. Extract call from client code
-        const extracted = parseClientCode(clientCode) || { method: 'add', params: [1, 2] }
+        const extracted = parseClientCode(clientCode) || { method: 'get_user', params: [1] }
 
         // 2. Extract signature from server code to map positional args to named ones
         const sigRegex = new RegExp(`(?:async\\s+)?def\\s+${extracted.method}\\s*\\((.*?)\\)`, 'm');
@@ -300,10 +266,6 @@ export default function PlaygroundPage() {
         setRequest({ method: extracted.method, params: extracted.params, id: 'rpc-1' })
     }
 
-    const updateClientCode = (framework: string, language: string) => {
-        setClientCode(TEMPLATES[serverLang].client[framework][language]);
-    }
-
     return (
         <div className="flex flex-col min-h-screen bg-background pt-12">
             {/* Minimalist Header for playground */}
@@ -313,29 +275,10 @@ export default function PlaygroundPage() {
 
             {/* Toolbar */}
             <div className="sticky top-[--fd-header-height] z-20 w-full border-b border-edge bg-background/80 backdrop-blur-md">
-                <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-2 px-3 py-1.5 border border-edge bg-muted/30 text-[10px] font-bold uppercase tracking-[0.2em] font-mono text-fd-foreground">
-                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                            Live Session
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={handleReset}
-                            className="p-2 border border-edge hover:bg-muted/50 transition-colors"
-                            title="Reset"
-                        >
-                            <RotateCcw className="w-4 h-4" />
-                        </button>
-                        <AnimatedButton
-                            onClick={handleRun}
-                            disabled={status === 'running'}
-                            className="px-6 py-2 uppercase tracking-[0.2em] font-mono text-xs font-bold gap-2 flex items-center"
-                        >
-                            <Play className={cn("w-3 h-3 fill-current", status === 'running' && "animate-pulse")} />
-                            {status === 'running' ? 'Running...' : 'Run RPC'}
-                        </AnimatedButton>
+                <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-end gap-4">
+                    <div className="flex items-center gap-2 px-3 py-1.5 border border-edge bg-muted/30 text-[10px] font-bold uppercase tracking-[0.2em] font-mono text-fd-foreground">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                        Live Session
                     </div>
                 </div>
             </div>
@@ -354,7 +297,7 @@ export default function PlaygroundPage() {
                                     onChange={(v: string) => {
                                         setServerLang(v);
                                         setServerCode(TEMPLATES[v].server);
-                                        const newClientCode = TEMPLATES[v].client[clientFramework][clientLanguage];
+                                        const newClientCode = TEMPLATES[v].client;
                                         setClientCode(newClientCode);
                                         const extracted = parseClientCode(newClientCode) || { method: 'get_user', params: { id: 1 } };
                                         setRequest({ method: extracted.method, params: extracted.params, id: 'rpc-1' });
@@ -375,16 +318,9 @@ export default function PlaygroundPage() {
                             <div className="px-4 py-2 border-b border-edge bg-fd-muted/30 flex items-center justify-between shrink-0">
                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] font-mono text-fd-foreground">Client Implementation</span>
                                 <div className="flex items-center gap-3">
-                                    <FrameworkSelect
-                                        value={clientFramework}
-                                        options={['React', 'NextJS']}
-                                        onChange={(v: string) => { setClientFramework(v); updateClientCode(v, clientLanguage); }}
-                                    />
-                                    <FrameworkSelect
-                                        value={clientLanguage}
-                                        options={['TypeScript', 'JavaScript']}
-                                        onChange={(v: string) => { setClientLanguage(v); updateClientCode(clientFramework, v); }}
-                                    />
+                                    <div className="px-2 py-0.5 border border-edge bg-fd-secondary/30 text-[9px] font-bold uppercase tracking-[0.2em] font-mono text-fd-muted-foreground select-none">
+                                        TypeScript
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex-1">

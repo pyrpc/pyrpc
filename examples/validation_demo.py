@@ -2,7 +2,7 @@ from typing import List, Optional, Dict
 from pydantic import BaseModel, Field
 import asyncio
 
-from pyrpc_server.core.decorators import rpc, default_registry
+from pyrpc_server.core.decorators import rpc, default_router
 from pyrpc_server.core.interpreter import handle_request
 import json
 

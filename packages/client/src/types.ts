@@ -15,6 +15,13 @@ export interface RpcResponse<T = any> {
 }
 
 export interface ClientOptions {
-  baseUrl: string;
-  headers?: Record<string, string> | (() => Record<string, string> | Promise<Record<string, string>>);
+  /**
+   * The base URL of the pyRPC server.
+   * If omitted in a browser environment, it defaults to the current origin + '/rpc'.
+   */
+  baseUrl?: string;
+  /**
+   * Optional custom headers to send with each request.
+   */
+  headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
 }
