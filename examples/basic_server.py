@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from pyrpc_server import rpc
-from pyrpc_server_fastapi import mount_fastapi
+from pyrpc_fastapi import mount_fastapi
 
 
 app = FastAPI(title="pyRPC Basic Example")
