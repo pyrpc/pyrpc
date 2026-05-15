@@ -25,7 +25,7 @@ Install the adapter for your favorite web framework.
 ### FastAPI
 
 ```bash
-uv add pyrpc-server-fastapi
+uv add pyrpc-fastapi
 ```
 
 ### Flask
@@ -54,7 +54,7 @@ npx pyrpc codegen --url http://localhost:8000
 ```python
 from fastapi import FastAPI
 from pyrpc_server import rpc
-from pyrpc_server_fastapi import mount_fastapi
+from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()
 
