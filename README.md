@@ -45,18 +45,18 @@ Install the adapter for your favorite framework.
 
 **FastAPI**
 ```bash
-uv add pyrpc-server-fastapi
+uv add pyrpc-fastapi
 ```
 
 **Flask**
 ```bash
-uv add pyrpc-server-flask
+uv add pyrpc-flask
 ```
 
 #### 3. Codegen (Optional)
 Tools for generating TypeScript clients.
 ```bash
-uv add pyrpc-server-codegen
+uv add pyrpc-codegen
 ```
 
 ---
@@ -68,7 +68,7 @@ Define your procedures and mount the RPC layer.
 
 ```python
 from pyrpc_server import rpc
-from pyrpc_server_fastapi import mount_fastapi
+from pyrpc_fastapi import mount_fastapi
 from fastapi import FastAPI
 
 app = FastAPI()
