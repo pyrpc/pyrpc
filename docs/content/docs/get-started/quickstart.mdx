@@ -11,7 +11,7 @@ Copy, paste, run. No fluff — just a working pyRPC server and client call.
 ## 1. Install
 
 ```bash
-uv add pyrpc-server pyrpc-fastapi uvicorn
+uv add pyrpc-core pyrpc-fastapi uvicorn
 ```
 
 ## 2. Server
@@ -20,7 +20,7 @@ Create `server.py`:
 
 ```python
 from fastapi import FastAPI
-from pyrpc_server import rpc
+from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()
@@ -90,7 +90,7 @@ console.log(result, message)
 You can also call your procedures from other Python services or scripts with zero codegen required.
 
 ```python
-from pyrpc_server import RPCClient
+from pyrpc_core import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
     # Everything is dynamic and introspected at runtime

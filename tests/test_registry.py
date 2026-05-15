@@ -1,5 +1,5 @@
-from pyrpc_server.core.registry import Router
-from pyrpc_server.core.procedure import Procedure
+from pyrpc_core.core.registry import Router
+from pyrpc_core.core.procedure import Procedure
 
 def test_registry_register_get():
     router = Router()

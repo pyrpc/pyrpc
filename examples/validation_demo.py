@@ -2,8 +2,8 @@ from typing import List, Optional, Dict
 from pydantic import BaseModel, Field
 import asyncio
 
-from pyrpc_server.core.decorators import rpc, default_router
-from pyrpc_server.core.interpreter import handle_request
+from pyrpc_core.core.decorators import rpc, default_router
+from pyrpc_core.core.interpreter import handle_request
 import json
 
 # 1. Simple primitives

@@ -35,9 +35,9 @@ pyRPC follows a modular packaging strategy. You only pay for what you use.
 #### 1. Core (Required)
 The tiny core protocol and runtime.
 ```bash
-uv add pyrpc-server
+uv add pyrpc-core
 # or
-pip install pyrpc-server
+pip install pyrpc-core
 ```
 
 #### 2. Adapters (Optional)
@@ -67,7 +67,7 @@ uv add pyrpc-codegen
 Define your procedures and mount the RPC layer.
 
 ```python
-from pyrpc_server import rpc
+from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 from fastapi import FastAPI
 
@@ -101,7 +101,7 @@ const result = await client.add(10, 5)
 Call your procedures from other Python services or scripts with zero codegen required.
 
 ```python
-from pyrpc_server import RPCClient
+from pyrpc_core import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
     # Everything is dynamic and introspected at runtime
