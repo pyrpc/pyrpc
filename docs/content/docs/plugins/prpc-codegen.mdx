@@ -4,14 +4,14 @@ description: Generate TypeScript and Python client SDKs from your pyRPC router
 
 ---
 
-# pyrpc-server-codegen
+# pyrpc-codegen
 
 Automatically generate type-safe client SDKs for TypeScript and Python from your pyRPC server definition.
 
 ## Installation
 
 ```bash
-pip install pyrpc-server-codegen
+pip install pyrpc-codegen
 ```
 
 ## CLI Usage
@@ -19,13 +19,13 @@ pip install pyrpc-server-codegen
 Generate a TypeScript client:
 
 ```bash
-pyrpc-server-codegen --input myapp/router.py --output ./generated/client.ts --lang typescript
+pyrpc-codegen --input myapp/router.py --output ./generated/client.ts --lang typescript
 ```
 
 Generate a Python client:
 
 ```bash
-pyrpc-server-codegen --input myapp/router.py --output ./generated/client.py --lang python
+pyrpc-codegen --input myapp/router.py --output ./generated/client.py --lang python
 ```
 
 ## Features
@@ -88,7 +88,7 @@ Create a `pyRPC.config.json`:
 Run with:
 
 ```bash
-pyrpc-server-codegen --config pyRPC.config.json
+pyrpc-codegen --config pyRPC.config.json
 ```
 
 ## CI/CD Integration
@@ -98,8 +98,8 @@ Add to your GitHub Actions workflow:
 ```yaml
 - name: Generate pyRPC Clients
   run: |
-    pip install pyrpc-server-codegen
-    pyrpc-server-codegen --config pyRPC.config.json
+    pip install pyrpc-codegen
+    pyrpc-codegen --config pyRPC.config.json
 ```
 
 ## Next Steps

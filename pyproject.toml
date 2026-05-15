@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pyrpc-server-workspace"
+name = "pyrpc-workspace"
 version = "0.1.0"
 description = "pyRPC Monorepo Workspace"
 requires-python = ">=3.11"
@@ -52,8 +52,8 @@ target-version = "py311"
 testpaths = ["tests"]
 pythonpath = [
     "packages/pyrpc-server/src",
-    "packages/pyrpc-server-fastapi/src",
-    "packages/pyrpc-server-flask/src",
-    "packages/pyrpc-server-codegen/src"
+    "packages/pyrpc-fastapi/src",
+    "packages/pyrpc-flask/src",
+    "packages/pyrpc-codegen/src"
 ]
 asyncio_mode = "auto"
