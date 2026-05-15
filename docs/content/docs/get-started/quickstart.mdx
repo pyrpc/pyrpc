@@ -11,7 +11,7 @@ Copy, paste, run. No fluff — just a working pyRPC server and client call.
 ## 1. Install
 
 ```bash
-uv add pyrpc-server pyrpc-server-fastapi uvicorn
+uv add pyrpc-server pyrpc-fastapi uvicorn
 ```
 
 ## 2. Server
@@ -21,7 +21,7 @@ Create `server.py`:
 ```python
 from fastapi import FastAPI
 from pyrpc_server import rpc
-from pyrpc_server_fastapi import mount_fastapi
+from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()
 

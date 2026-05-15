@@ -12,7 +12,7 @@ import { cn } from '@/lib/cn'
 
 const TEMPLATES: any = {
     FastAPI: {
-        server: `from pyrpc_server_fastapi import rpc, model\n\n@model\nclass User:\n    id: int\n    name: str\n\n@rpc\ndef get_user(id: int) -> User:\n    return User(id=id, name="pyRPC User")`,
+        server: `from pyrpc_fastapi import rpc, model\n\n@model\nclass User:\n    id: int\n    name: str\n\n@rpc\ndef get_user(id: int) -> User:\n    return User(id=id, name="pyRPC User")`,
         client: `import { createClient } from "@pyrpc/client"\nimport type { Types } from "@pyrpc/types"\n\nconst client = createClient<Types>()\n\nconst user = await client.get_user(1);\n\nconsole.log(user.name);`
     },
     Flask: {
