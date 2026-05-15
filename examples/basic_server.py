@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from pyrpc_server import rpc
+from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 
 

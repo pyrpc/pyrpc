@@ -1,5 +1,5 @@
 import pytest
-from pyrpc_server import handle_request, rpc, default_router
+from pyrpc_core import handle_request, rpc, default_router
 
 @pytest.fixture(autouse=True)
 def clear_registry():

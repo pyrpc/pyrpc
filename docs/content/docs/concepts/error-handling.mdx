@@ -13,7 +13,7 @@ pyRPC uses structured errors that flow from your procedures to the client. No op
 Raise `RPCError` in your procedures:
 
 ```python
-from pyrpc_server import rpc, RPCError
+from pyrpc_core import rpc, RPCError
 
 @rpc
 def get_user(user_id: int) -> dict:

@@ -1,6 +1,6 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
-from pyrpc_server import rpc, asgi_app, default_router
+from pyrpc_core import rpc, asgi_app, default_router
 
 @pytest.fixture(autouse=True)
 def clear_registry():

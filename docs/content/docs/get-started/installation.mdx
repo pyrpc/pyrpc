@@ -12,10 +12,10 @@ The tiny core protocol and runtime. This is always required.
 
 ```bash
 # Using uv
-uv add pyrpc-server
+uv add pyrpc-core
 
 # Using pip
-pip install pyrpc-server
+pip install pyrpc-core
 ```
 
 ## Adapters
@@ -53,7 +53,7 @@ npx pyrpc codegen --url http://localhost:8000
 
 ```python
 from fastapi import FastAPI
-from pyrpc_server import rpc
+from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()

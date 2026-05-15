@@ -1,7 +1,7 @@
 import pytest
 from typer.testing import CliRunner
 from pyrpc_codegen.main import app
-from pyrpc_server import rpc, default_router
+from pyrpc_core import rpc, default_router
 import unittest.mock as mock
 
 runner = CliRunner()
@@ -17,7 +17,7 @@ def test_cli_version():
 
 def test_cli_inspect_empty():
     # We need a module that can be imported. Let's use 'pyrpc.core.models' as it doesn't have RPCs usually
-    result = runner.invoke(app, ["inspect", "pyrpc_server.core.models"])
+    result = runner.invoke(app, ["inspect", "pyrpc_core.core.models"])
     assert result.exit_code == 0
     assert "No procedures found" in result.output
 

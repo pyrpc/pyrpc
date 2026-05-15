@@ -11,14 +11,14 @@ The FastAPI adapter exposes your pyRPC procedures at `POST /rpc` on a FastAPI ap
 ## Installation
 
 ```bash
-uv add pyrpc-server pyrpc-fastapi
+uv add pyrpc-core pyrpc-fastapi
 ```
 
 ## Basic Setup
 
 ```python
 from fastapi import FastAPI
-from pyrpc_server import rpc
+from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()

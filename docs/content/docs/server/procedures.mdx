@@ -11,7 +11,7 @@ Procedures are Python functions decorated with `@rpc`. They receive validated pa
 ## Basic Definition
 
 ```python
-from pyrpc_server import rpc
+from pyrpc_core import rpc
 
 @rpc
 def add(a: int, b: int) -> int:
@@ -23,7 +23,7 @@ def add(a: int, b: int) -> int:
 The `@model` decorator is the preferred way to define complex data structures in pyRPC. It is a thin wrapper around Pydantic dataclasses that ensures your types are perfectly captured during introspection.
 
 ```python
-from pyrpc_server import model
+from pyrpc_core import model
 
 @model
 class User:
