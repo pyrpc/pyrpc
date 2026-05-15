@@ -1,5 +1,5 @@
 [project]
-name = "pyrpc-server"
+name = "pyrpc-core"
 version = "0.1.0"
 description = "pyRPC Core - tRPC-style RPC protocol and runtime for Python"
 requires-python = ">=3.11"
@@ -14,4 +14,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/pyrpc_server"]
+packages = ["src/pyrpc_core"]

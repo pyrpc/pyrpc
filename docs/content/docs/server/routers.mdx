@@ -13,7 +13,7 @@ pyRPC allows you to organize your API into modular **Routers**. This is essentia
 For simple applications, you can use the global `rpc` decorator. All procedures registered this way go into the `default_router`.
 
 ```python
-from pyrpc_server import rpc
+from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 
 @rpc
@@ -29,7 +29,7 @@ mount_fastapi(app)
 As your app grows, you can create isolated `Router` instances.
 
 ```python
-from pyrpc_server import Router
+from pyrpc_core import Router
 
 # Create a scoped router
 user_router = Router()
@@ -44,7 +44,7 @@ def get_profile(user_id: int):
 You can merge multiple routers into a single "root" router. This supports **prefixes**, which is a powerful way to namespace your API.
 
 ```python
-from pyrpc_server import Router, mount_fastapi
+from pyrpc_core import Router, mount_fastapi
 
 # Sub-routers
 auth_router = Router()

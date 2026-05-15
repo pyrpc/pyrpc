@@ -1,7 +1,7 @@
 import pytest
 from typer.testing import CliRunner
-from pyrpc_server_codegen.main import app
-from pyrpc_server import rpc, default_router
+from pyrpc_codegen.main import app
+from pyrpc_core import rpc, default_router
 import unittest.mock as mock
 
 runner = CliRunner()
@@ -17,7 +17,7 @@ def test_cli_version():
 
 def test_cli_inspect_empty():
     # We need a module that can be imported. Let's use 'pyrpc.core.models' as it doesn't have RPCs usually
-    result = runner.invoke(app, ["inspect", "pyrpc_server.core.models"])
+    result = runner.invoke(app, ["inspect", "pyrpc_core.core.models"])
     assert result.exit_code == 0
     assert "No procedures found" in result.output
 
@@ -27,7 +27,7 @@ def test_cli_inspect_with_procs():
         return x
     
     # We need to mock _import_module because 'tests.test_cli_commands' might not be importable easily by name here
-    with mock.patch("pyrpc_server_codegen.main._import_module"):
+    with mock.patch("pyrpc_codegen.main._import_module"):
         result = runner.invoke(app, ["inspect", "anything"])
         assert result.exit_code == 0
         assert "test_proc" in result.output
@@ -37,15 +37,15 @@ def test_cli_codegen():
     @rpc
     def add(a: int): return a
     
-    with mock.patch("pyrpc_server_codegen.main._import_module"):
-        with mock.patch("pyrpc_server_codegen.main.save_typescript_client") as mock_save:
+    with mock.patch("pyrpc_codegen.main._import_module"):
+        with mock.patch("pyrpc_codegen.main.save_typescript_client") as mock_save:
             result = runner.invoke(app, ["codegen", "-m", "any", "-o", "test.ts"])
             assert result.exit_code == 0
             assert "Successfully generated test.ts" in result.output
             mock_save.assert_called_once()
 
 def test_cli_serve():
-    with mock.patch("pyrpc_server_codegen.main._import_module"):
+    with mock.patch("pyrpc_codegen.main._import_module"):
         with mock.patch("uvicorn.run") as mock_run:
 
             result = runner.invoke(app, ["serve", "my_module", "--port", "9000"])

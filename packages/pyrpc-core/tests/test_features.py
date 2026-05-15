@@ -2,8 +2,8 @@ import pytest
 import asyncio
 from typing import List, Optional
 from pydantic import BaseModel
-from pyrpc_server.core.registry import Router
-from pyrpc_server.core.interpreter import handle_request
+from pyrpc_core.core.registry import Router
+from pyrpc_core.core.interpreter import handle_request
 
 # --- Setup Procedures ---
 

@@ -1,8 +1,8 @@
 import pytest
 import httpx
-from pyrpc_server.client.python_client import RPCClient, RPCError
-from pyrpc_server.transport.asgi import PyRPCAsgiApp
-from pyrpc_server.core.registry import Router
+from pyrpc_core.client.python_client import RPCClient, RPCError
+from pyrpc_core.transport.asgi import PyRPCAsgiApp
+from pyrpc_core.core.registry import Router
 
 @pytest.mark.asyncio
 async def test_rpc_client_integration():

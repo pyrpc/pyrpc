@@ -11,15 +11,15 @@ The Flask adapter exposes your pyRPC procedures at `POST /rpc` on a Flask app.
 ## Installation
 
 ```bash
-uv add pyrpc-server pyrpc-server-flask
+uv add pyrpc-core pyrpc-flask
 ```
 
 ## Basic Setup
 
 ```python
 from flask import Flask
-from pyrpc_server import rpc
-from pyrpc_server_flask import mount_flask
+from pyrpc_core import rpc
+from pyrpc_flask import mount_flask
 
 app = Flask(__name__)
 

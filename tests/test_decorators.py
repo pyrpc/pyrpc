@@ -1,4 +1,4 @@
-from pyrpc_server import default_router, rpc
+from pyrpc_core import default_router, rpc
 
 def test_rpc_decorator_default_name():
     # Clear registry for clean test

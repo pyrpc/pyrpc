@@ -1,9 +1,9 @@
 import pytest
 from typing import List, Optional
 from pydantic import BaseModel
-from pyrpc_server.core.registry import Router, Procedure
-from pyrpc_server.core.introspection import get_procedure_schema, get_registry_schema
-from pyrpc_server.transport.asgi import PyRPCAsgiApp
+from pyrpc_core.core.registry import Router, Procedure
+from pyrpc_core.core.introspection import get_procedure_schema, get_registry_schema
+from pyrpc_core.transport.asgi import PyRPCAsgiApp
 import json
 
 # --- Introspection Tests ---

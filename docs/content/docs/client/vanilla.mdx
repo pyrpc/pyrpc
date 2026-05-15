@@ -11,7 +11,7 @@ The Python client gives you a dynamic, ergonomic way to call your pyRPC server.
 ## RPCClient Basics
 
 ```python
-from pyrpc_server import RPCClient, RPCError
+from pyrpc_core import RPCClient, RPCError
 
 with RPCClient("http://localhost:8000") as client:
     try:
@@ -78,7 +78,7 @@ finally:
 Server-side errors become `RPCError` instances:
 
 ```python
-from pyrpc_server import RPCError
+from pyrpc_core import RPCError
 
 try:
     client.fail()
