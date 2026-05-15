@@ -5,6 +5,6 @@
     "pages": [
         "pyRPC-client",
         "pyRPC-next",
-        "pyRPC-server"
+        "pyrpc-core"
     ]
 }
