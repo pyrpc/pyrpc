@@ -14,7 +14,7 @@ Add middleware to the FastAPI app. It runs for all routes, including the RPC end
 
 ```python
 from fastapi import FastAPI
-from pyrpc_server import rpc
+from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()
@@ -38,7 +38,7 @@ Use Flask's `before_request`, `after_request`, or extensions like Flask-CORS:
 
 ```python
 from flask import Flask
-from pyrpc_server import rpc
+from pyrpc_core import rpc
 from pyrpc_flask import mount_flask
 
 app = Flask(__name__)

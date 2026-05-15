@@ -1,4 +1,4 @@
-from pyrpc_server import handle_request, Router, rpc, model
+from pyrpc_core import handle_request, Router, rpc, model
 from typing import Any, Optional, Dict
 
 
@@ -17,7 +17,7 @@ def mount_fastapi(app: Any, router: Optional[Router] = None) -> None:
 
     @app.get("/rpc")
     async def introspection_endpoint():
-        from pyrpc_server import get_registry_schema
+        from pyrpc_core import get_registry_schema
         schemas = get_registry_schema(router)
         return {
             name: schema.model_dump() if hasattr(schema, "model_dump") else schema
