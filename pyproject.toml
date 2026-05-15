@@ -27,14 +27,14 @@ dev = [
 
 [tool.uv.workspace]
 members = [
-    "packages/pyrpc-server",
+    "packages/pyrpc-core",
     "packages/pyrpc-codegen",
     "packages/pyrpc-fastapi",
     "packages/pyrpc-flask",
 ]
 
 [tool.uv.sources]
-pyrpc-server = { workspace = true }
+pyrpc-core = { workspace = true }
 pyrpc-fastapi = { workspace = true }
 pyrpc-flask = { workspace = true }
 pyrpc-codegen = { workspace = true }
@@ -51,7 +51,7 @@ target-version = "py311"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = [
-    "packages/pyrpc-server/src",
+    "packages/pyrpc-core/src",
     "packages/pyrpc-fastapi/src",
     "packages/pyrpc-flask/src",
     "packages/pyrpc-codegen/src"
