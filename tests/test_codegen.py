@@ -1,6 +1,6 @@
 import pytest
 from pyrpc_server import rpc, default_router, get_registry_schema
-from pyrpc_server_codegen import generate_typescript_client
+from pyrpc_codegen import generate_typescript_client
 
 @pytest.fixture(autouse=True)
 def clear_registry():
