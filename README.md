@@ -139,6 +139,19 @@ Check out the [examples/](examples/) directory for complete server and client im
 ### License
 MIT
 
+### Contribution
+pyRPC is a free and open source project licensed under the MIT License. You are free to do whatever you want with it.
+
+You can help by:
+
+- [Contributing to the source code](./CONTRIBUTING.md)
+- [Suggesting new features and reporting issues](https://github.com/pyrpc/pyrpc/issues)
+
+### Security
+If you discover a security vulnerability within pyRPC, please email **security@pyrpc.com**.
+
+All reports will be promptly addressed, and you'll be credited accordingly.
+
 ### CLI Usage
 
 ```bash
