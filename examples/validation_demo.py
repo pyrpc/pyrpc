@@ -1,26 +1,26 @@
-from typing import List, Optional, Dict
-from pydantic import BaseModel, Field
+from typing import Optional, Dict
 import asyncio
-
-from pyrpc_core.core.decorators import rpc, default_router
-from pyrpc_core.core.interpreter import handle_request
 import json
+
+from pyrpc_core import rpc, model, handle_request
 
 # 1. Simple primitives
 @rpc
 def greet(name: str, age: int) -> str:
     return f"Hello {name}, you are {age} years old."
 
-# 2. Complex nested types
-class Address(BaseModel):
+# 2. Complex nested types using @model
+@model
+class Address:
     city: str
     zip_code: str
 
-class User(BaseModel):
+@model
+class User:
     id: int
     name: str
     address: Address
-    tags: Optional[List[str]] = None
+    tags: Optional[list[str]] = None
 
 @rpc
 def create_user(user: User) -> Dict[str, str]:
