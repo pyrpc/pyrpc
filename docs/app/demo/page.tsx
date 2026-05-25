@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react'
+import { createClient } from '@pyrpc/client'
 import { PlaygroundEditor } from '@/components/playground/PlaygroundEditor'
 import * as Select from '@radix-ui/react-select'
 import { ChevronDown, RotateCcw, Server, Play, Loader2 } from 'lucide-react'
@@ -202,21 +203,16 @@ export default function PlaygroundPage() {
         setLogs(['$ pyRPC bridge active', `$ Encoding ${serverLang} source...`, '$ Dispatching to sandbox...'])
 
         try {
+            const client = createClient({
+                baseUrl: '/api/sandbox',
+                headers: {
+                    'X-Server-Code': btoa(unescape(encodeURIComponent(serverCode)))
+                }
+            });
             const allResults: Record<string, any> = {};
             for (const call of calls) {
-                const res = await fetch('/api/sandbox/rpc', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Server-Code': btoa(unescape(encodeURIComponent(serverCode)))
-                    },
-                    body: JSON.stringify({ method: call.method, params: call.params })
-                })
-                const data = await res.json()
-                if (!res.ok || data.error) {
-                    throw new Error(data.error?.message || `HTTP ${res.status}`)
-                }
-                allResults[call.method] = data.result
+                const result = await (client as any)[call.method](...call.params);
+                allResults[call.method] = result;
             }
             const consoleLines = simulateConsoleLogs(clientCode, allResults)
             setLogs((prev: string[]) => [...prev, ...consoleLines])
