@@ -2,12 +2,33 @@ import Link from 'next/link'
 
 const posts = [
     {
+        slug: 'building-a-full-stack-app-with-pyrpc',
+        title: 'Building a full-stack app with pyRPC',
+        description: 'A step-by-step tutorial: FastAPI backend, TypeScript React frontend, end-to-end type safety with pyRPC.',
+        date: '2026-05-25',
+        readTime: '10 min',
+    },
+    {
+        slug: 'from-raw-fastapi-to-pyrpc',
+        title: 'From raw FastAPI to pyRPC',
+        description: 'A before-and-after migration guide showing how to convert a traditional FastAPI application to pyRPC — and why you might want to.',
+        date: '2026-05-25',
+        readTime: '7 min',
+    },
+    {
+        slug: 'why-pyrpc',
+        title: 'Why pyRPC?',
+        description: 'The philosophy behind pyRPC, what tRPC-style typing means for Python backends, and why we built it.',
+        date: '2026-05-25',
+        readTime: '6 min',
+    },
+    {
         slug: 'demo-sandbox-design',
         title: 'Inside the Interactive Demo Sandbox',
         description: 'A deep dive into how the pyrpc playground works — design decisions, architecture, and a comparison with the real pyrpc implementation.',
         date: '2026-05-25',
         readTime: '8 min',
-    }
+    },
 ]
 
 export default function BlogPage() {
