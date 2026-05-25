@@ -148,7 +148,7 @@ You can help by:
 - [Suggesting new features and reporting issues](https://github.com/pyrpc/pyrpc/issues)
 
 ### Security
-If you discover a security vulnerability within pyRPC, please email **security@pyrpc.com**.
+If you discover a security vulnerability within pyRPC, please open a [privately reported issue](https://github.com/pyrpc/pyrpc/security/advisories/new) on GitHub.
 
 All reports will be promptly addressed, and you'll be credited accordingly.
 
