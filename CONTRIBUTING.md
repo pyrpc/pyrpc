@@ -73,19 +73,6 @@ npm run dev
 4. Link any related issues.
 5. A maintainer will review your PR.
 
-## Release Process
-
-Releases are handled by maintainers via tags:
-
-```bash
-node scripts/release.mjs <version>
-git commit -am "chore: release v<version>"
-git tag v<version>
-git push origin v<version> && git push
-```
-
-This publishes all Python packages to PyPI (via OIDC trusted publishing) and the TypeScript client to npm.
-
 ## Code of Conduct
 
 Be respectful and constructive. We're all here to build something great.
