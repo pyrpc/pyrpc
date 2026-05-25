@@ -1,12 +1,27 @@
 <div align="center">
   <picture>
-    <img alt="banner-dark" src="https://github.com/user-attachments/assets/6f7b3e8e-2e66-4135-a89d-c84b3cefcfe1" />
+    <img alt="pyRPC" src="https://github.com/user-attachments/assets/6f7b3e8e-2e66-4135-a89d-c84b3cefcfe1" />
   </picture>
-  
+
+  <br/>
+
+  <a href="https://www.npmjs.com/package/@pyrpc/client">
+    <img src="https://img.shields.io/npm/dm/@pyrpc/client?style=flat&colorA=000000&colorB=000000" alt="npm downloads"/>
+  </a>
+  <a href="https://pepy.tech/project/pyrpc-core">
+    <img src="https://img.shields.io/pypi/dm/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI downloads"/>
+  </a>
+  <a href="https://github.com/pyrpc/pyrpc/stargazers">
+    <img src="https://img.shields.io/github/stars/pyrpc/pyrpc?style=flat&colorA=000000&colorB=000000" alt="GitHub stars"/>
+  </a>
+  <a href="https://www.npmjs.com/package/@pyrpc/client">
+    <img src="https://img.shields.io/npm/v/@pyrpc/client.svg?style=flat&colorA=000000&colorB=000000" alt="npm version"/>
+  </a>
+
   <p>
-    <a href="https://pyrpc.com">Website</a>
+    <a href="https://pyrpc.com"><b>Website</b></a>
     ·
-    <a href="https://github.com/pyrpc/pyrpc/issues">Issues</a>
+    <a href="https://github.com/pyrpc/pyrpc/issues"><b>Issues</b></a>
   </p>
 </div>
 
@@ -123,6 +138,19 @@ Check out the [examples/](examples/) directory for complete server and client im
 
 ### License
 MIT
+
+### Contribution
+pyRPC is a free and open source project licensed under the MIT License. You are free to do whatever you want with it.
+
+You can help by:
+
+- [Contributing to the source code](./CONTRIBUTING.md)
+- [Suggesting new features and reporting issues](https://github.com/pyrpc/pyrpc/issues)
+
+### Security
+If you discover a security vulnerability within pyRPC, please open a [privately reported issue](https://github.com/pyrpc/pyrpc/security/advisories/new) on GitHub.
+
+All reports will be promptly addressed, and you'll be credited accordingly.
 
 ### CLI Usage
 
