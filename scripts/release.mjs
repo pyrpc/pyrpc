@@ -54,17 +54,6 @@ if (fs.existsSync(rootPyprojectPath)) {
   console.log(`✅ Updated root pyproject.toml`);
 }
 
-// 4. Update docs/package.json dependency on @pyrpc/client to match
-const docsPackageJsonPath = path.join(rootDir, 'docs', 'package.json');
-if (fs.existsSync(docsPackageJsonPath)) {
-  const docsPkg = JSON.parse(fs.readFileSync(docsPackageJsonPath, 'utf8'));
-  if (docsPkg.dependencies && docsPkg.dependencies['@pyrpc/client']) {
-    docsPkg.dependencies['@pyrpc/client'] = `^${cleanVersion}`;
-    fs.writeFileSync(docsPackageJsonPath, JSON.stringify(docsPkg, null, 2) + '\n');
-    console.log(`✅ Updated docs/package.json @pyrpc/client dependency to ^${cleanVersion}`);
-  }
-}
-
 console.log(`\n✨ All packages successfully updated to ${cleanVersion}!`);
 console.log('\nTo complete the release, run the following commands:');
 console.log(`\x1b[36m  git commit -am "chore: release v${cleanVersion}"`);
