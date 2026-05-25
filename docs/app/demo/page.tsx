@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react'
-import { createClient } from '@pyrpc/client'
 import { PlaygroundEditor } from '@/components/playground/PlaygroundEditor'
 import * as Select from '@radix-ui/react-select'
 import { ChevronDown, RotateCcw, Server, Play, Loader2 } from 'lucide-react'
@@ -192,6 +191,26 @@ export default function PlaygroundPage() {
         return lines
     }
 
+    function createSandboxClient(serverCode: string) {
+        return new Proxy({} as Record<string, (...args: any[]) => Promise<any>>, {
+            get: (_, method: string) => {
+                return async (...params: any[]) => {
+                    const res = await fetch('/api/sandbox/rpc', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Server-Code': btoa(unescape(encodeURIComponent(serverCode)))
+                        },
+                        body: JSON.stringify({ method, params })
+                    })
+                    const data = await res.json()
+                    if (!res.ok || data.error) throw new Error(data.error?.message || `HTTP ${res.status}`)
+                    return data.result
+                }
+            }
+        })
+    }
+
     const handleRun = async () => {
         const calls = parseClientCalls(clientCode)
         if (calls.length === 0) {
@@ -203,16 +222,10 @@ export default function PlaygroundPage() {
         setLogs(['$ pyRPC bridge active', `$ Encoding ${serverLang} source...`, '$ Dispatching to sandbox...'])
 
         try {
-            const client = createClient({
-                baseUrl: '/api/sandbox',
-                headers: {
-                    'X-Server-Code': btoa(unescape(encodeURIComponent(serverCode)))
-                }
-            });
+            const sandbox = createSandboxClient(serverCode)
             const allResults: Record<string, any> = {};
             for (const call of calls) {
-                const result = await (client as any)[call.method](...call.params);
-                allResults[call.method] = result;
+                allResults[call.method] = await sandbox[call.method](...call.params);
             }
             const consoleLines = simulateConsoleLogs(clientCode, allResults)
             setLogs((prev: string[]) => [...prev, ...consoleLines])
