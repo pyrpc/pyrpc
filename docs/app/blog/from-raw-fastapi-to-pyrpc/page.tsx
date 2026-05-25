@@ -96,7 +96,7 @@ async function createUser(name: string, email: string): Promise<User> {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 2: Replace routes with procedures</h2>
                 <p>
-                    Instead of route decorators, you use <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code>. Instead of <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">BaseModel</code>, you use <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code>. And instead of running <code classname="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">uvicorn app:app</code> directly, you call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">mount_fastapi(app)</code>:
+                    Instead of route decorators, you use <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code>. Instead of <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">BaseModel</code>, you use <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code>. And instead of running <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">uvicorn app:app</code> directly, you call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">mount_fastapi(app)</code>:
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`from pyrpc_core import rpc, model
@@ -169,7 +169,7 @@ const newUser = await client.create_user("Alice", "alice@example.com")`}
                     <tbody>
                         <tr className="border-b border-edge">
                             <td className="py-2 pr-4">Route</td>
-                            <td className="py-2 pr-4"><code className="text-[10px]">@app.get("/users/{id}")</code></td>
+                            <td className="py-2 pr-4"><code className="text-[10px]">{'@app.get("/users/{id}")'}</code></td>
                             <td className="py-2"><code className="text-[10px]">@rpc</code></td>
                         </tr>
                         <tr className="border-b border-edge">
@@ -184,7 +184,7 @@ const newUser = await client.create_user("Alice", "alice@example.com")`}
                         </tr>
                         <tr className="border-b border-edge">
                             <td className="py-2 pr-4">Client call</td>
-                            <td className="py-2 pr-4"><code className="text-[10px]">fetch(...).then(r => r.json())</code></td>
+                            <td className="py-2 pr-4"><code className="text-[10px]">{'fetch(...).then(r => r.json())'}</code></td>
                             <td className="py-2"><code className="text-[10px]">client.get_user(1)</code></td>
                         </tr>
                         <tr>
