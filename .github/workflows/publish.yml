@@ -58,6 +58,16 @@ jobs:
         
       - name: Publish to npm
         working-directory: ./packages/client
-        run: npm publish --access public
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [[ "$VERSION" == *"-"* ]]; then
+            # Extracts 'alpha' from '0.1.0-alpha.1'
+            TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
+            echo "Publishing prerelease with tag: $TAG"
+            npm publish --access public --tag "$TAG"
+          else
+            echo "Publishing stable release"
+            npm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
