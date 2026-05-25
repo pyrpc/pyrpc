@@ -1,12 +1,10 @@
-import anyio
-from rich.console import Console
+from pyrpc_core import rpc
 
-console = Console()
+"""
+This file shows the minimal imports needed for pyRPC.
+Run it alongside basic_client.py to see the full flow.
+"""
 
-async def main():
-    console.print("[bold green]Running pyrpc example...[/bold green]")
-    # Example logic will go here
-    console.print("Integration complete!")
-
-if __name__ == "__main__":
-    anyio.run(main)
+@rpc
+def ping() -> str:
+    return "pong"
