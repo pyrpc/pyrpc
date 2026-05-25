@@ -46,6 +46,15 @@ export function SiteHeader() {
           Blog
         </Link>
         <Link 
+          href="/changelog" 
+          className={cn(
+            "h-full px-6 flex items-center border-l border-fd-border text-[10px] font-black uppercase tracking-[0.2em] transition-colors hover:bg-fd-accent/50",
+            pathname?.startsWith('/changelog') ? "text-fd-foreground" : "text-fd-muted-foreground hover:text-fd-foreground"
+          )}
+        >
+          Changelog
+        </Link>
+        <Link 
           href="/docs" 
           className={cn(
             "h-full px-6 flex items-center border-l border-fd-border text-[10px] font-black uppercase tracking-[0.2em] transition-colors hover:bg-fd-accent/50 relative",
