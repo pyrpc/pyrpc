@@ -11,7 +11,7 @@ export default function WhyPyrpcPage() {
                     Why pyRPC?
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>2026-05-25</time>
+                    <time>May 25, 2026</time>
                     <span>&middot;</span>
                     <span>6 min read</span>
                 </div>
@@ -19,7 +19,7 @@ export default function WhyPyrpcPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    If you've worked with FastAPI or Flask, you know the pattern: define a route, define a Pydantic model, wire up the request handler, document it with OpenAPI, and then write your frontend calls by hand — hoping the types match. It works, but there's a gap between your backend and frontend that you have to manage manually.
+                    If you've worked with FastAPI or Flask, you know the pattern: define a route, define a Pydantic model, wire up the request handler, document it with OpenAPI, and then write your frontend calls by hand  -  hoping the types match. It works, but there's a gap between your backend and frontend that you have to manage manually.
                 </p>
                 <p>
                     pyRPC closes that gap. It gives you a tRPC-style experience for Python backends: write a function, slap an <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> decorator on it, and call it from TypeScript with full type safety. No OpenAPI codegen step, no manual type duplication, no runtime surprises.
@@ -45,7 +45,7 @@ async def get_user(user_id: int) -> User:
     body: JSON.stringify({ user_id: 1 }),
 })
 const user = await res.json()
-// user.name could be anything — no type safety`}
+// user.name could be anything  -  no type safety`}
                 </pre>
                 <p>
                     The types are documented in OpenAPI, but you have to manually regenerate the TypeScript client, or write your own fetch wrappers, or rely on a codegen step that generates hundreds of lines of boilerplate. None of these are terrible, but they add friction to every change.
@@ -53,10 +53,10 @@ const user = await res.json()
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What tRPC showed us</h2>
                 <p>
-                    tRPC proved that you don't need a separate API layer at all. Define a procedure, call it from the client — the types flow through automatically. No REST endpoints to design, no GraphQL schema to maintain, no codegen to run. The function <em>is</em> the API.
+                    tRPC proved that you don't need a separate API layer at all. Define a procedure, call it from the client  -  the types flow through automatically. No REST endpoints to design, no GraphQL schema to maintain, no codegen to run. The function <em>is</em> the API.
                 </p>
                 <p>
-                    The TypeScript ecosystem embraced this immediately. But Python — despite being the language of choice for countless backends — had no equivalent. You either used raw REST, or you adopted GraphQL, or you accepted the type gap.
+                    The TypeScript ecosystem embraced this immediately. But Python  -  despite being the language of choice for countless backends  -  had no equivalent. You either used raw REST, or you adopted GraphQL, or you accepted the type gap.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Enter pyRPC</h2>
@@ -101,11 +101,11 @@ const user = await client.get_user(1)
                     pyRPC is built on a few core ideas:
                 </p>
                 <ul>
-                    <li><strong>Dead simple install</strong> — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pip install pyrpc-core</code> and you're done. No config files, no boilerplate.</li>
-                    <li><strong>Works everywhere</strong> — FastAPI, Flask, or any ASGI server. Pick your framework, pyRPC adapts.</li>
-                    <li><strong>Batteries included but modular</strong> — Core is tiny. Add adapters and codegen as you need them.</li>
-                    <li><strong>Universal validation</strong> — Pydantic v2 under the hood, automatic for primitives and models.</li>
-                    <li><strong>Type-safe bridge</strong> — Python to TypeScript, end to end, without leaving your editor.</li>
+                    <li><strong>Dead simple install</strong>  -  <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pip install pyrpc-core</code> and you're done. No config files, no boilerplate.</li>
+                    <li><strong>Works everywhere</strong>  -  FastAPI, Flask, or any ASGI server. Pick your framework, pyRPC adapts.</li>
+                    <li><strong>Batteries included but modular</strong>  -  Core is tiny. Add adapters and codegen as you need them.</li>
+                    <li><strong>Universal validation</strong>  -  Pydantic v2 under the hood, automatic for primitives and models.</li>
+                    <li><strong>Type-safe bridge</strong>  -  Python to TypeScript, end to end, without leaving your editor.</li>
                 </ul>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Where we are</h2>

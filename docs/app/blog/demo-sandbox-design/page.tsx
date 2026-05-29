@@ -12,7 +12,7 @@ export default function DemoSandboxDesignPage() {
                     Inside the Interactive Demo Sandbox
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>2026-05-25</time>
+                    <time>May 25, 2026</time>
                     <span>&middot;</span>
                     <span>8 min read</span>
                 </div>
@@ -21,7 +21,7 @@ export default function DemoSandboxDesignPage() {
             {/* Intro */}
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The pyrpc playground at <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/demo</code> lets you write Python server code with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> decorators, then call those procedures from TypeScript — all in the browser, with real-time autocomplete and type checking, no server required.
+                    The pyrpc playground at <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/demo</code> lets you write Python server code with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> decorators, then call those procedures from TypeScript  -  all in the browser, with real-time autocomplete and type checking, no server required.
                 </p>
                 <p>
                     This post explains how the sandbox works under the hood, the key design decisions that shaped it, and how it compares to the actual pyrpc implementation (v<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">0.1.0-alpha.1</code> across all packages).
@@ -38,16 +38,16 @@ export default function DemoSandboxDesignPage() {
                         The playground processes user code in three phases:
                     </p>
                     <ol>
-                        <li><strong>Type Generation</strong> — Python server code is parsed client-side (regex-based) to extract <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> class fields and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> function signatures, then converted to TypeScript declarations.</li>
-                        <li><strong>Monaco Integration</strong> — The generated types are injected into Monaco Editor as virtual files at <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/node_modules/@pyrpc/types/index.d.ts</code>, enabling real-time autocomplete and type errors on <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.*</code> calls.</li>
-                        <li><strong>Sandbox Execution</strong> — When the user clicks Run, client calls are extracted via regex, dispatched to a local API endpoint that parses the server code to construct mock return values, and the results are fed through a simulated <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">console.log</code>.</li>
+                        <li><strong>Type Generation</strong>  -  Python server code is parsed client-side (regex-based) to extract <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> class fields and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> function signatures, then converted to TypeScript declarations.</li>
+                        <li><strong>Monaco Integration</strong>  -  The generated types are injected into Monaco Editor as virtual files at <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/node_modules/@pyrpc/types/index.d.ts</code>, enabling real-time autocomplete and type errors on <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.*</code> calls.</li>
+                        <li><strong>Sandbox Execution</strong>  -  When the user clicks Run, client calls are extracted via regex, dispatched to a local API endpoint that parses the server code to construct mock return values, and the results are fed through a simulated <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">console.log</code>.</li>
                     </ol>
                 </div>
             </section>
 
             <hr className="my-12 border-edge" />
 
-            {/* Section 2: Phase 1 — Type Generation */}
+            {/* Section 2: Phase 1  -  Type Generation */}
             <section className="space-y-5">
                 <h2 className="text-lg font-bold tracking-tight">Phase 1: Client-Side Type Generation</h2>
                 <div className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-4 text-fd-muted-foreground [&_strong]:text-fd-foreground">
@@ -55,9 +55,9 @@ export default function DemoSandboxDesignPage() {
                         The type pipeline lives in <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">docs/lib/parsePythonTypes.ts</code>. Three functions form the core:
                     </p>
                     <ul>
-                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">parseServerCode(code)</code> — Uses regex to find <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> classes and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> functions. Extracts field names and types for models, parameter names/types and return type for procedures.</li>
-                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">introspectionToTypes(schema)</code> — Converts the parsed schema into TypeScript declaration strings. Python types like <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">int</code> become <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">number</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">list[X]</code> becomes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">X[]</code>, model names reference the generated interfaces.</li>
-                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">validateServerCode(code)</code> — Detects unknown decorators (e.g. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@procedure</code>), missing return type annotations, and empty model classes.</li>
+                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">parseServerCode(code)</code>  -  Uses regex to find <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> classes and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> functions. Extracts field names and types for models, parameter names/types and return type for procedures.</li>
+                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">introspectionToTypes(schema)</code>  -  Converts the parsed schema into TypeScript declaration strings. Python types like <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">int</code> become <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">number</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">list[X]</code> becomes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">X[]</code>, model names reference the generated interfaces.</li>
+                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">validateServerCode(code)</code>  -  Detects unknown decorators (e.g. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@procedure</code>), missing return type annotations, and empty model classes.</li>
                     </ul>
                     <p>
                         The output is a TypeScript source string containing <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">export interface User &#123; ... &#125;</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">export interface Types &#123; get_user(id: number): Promise&lt;User&gt;; ... &#125;</code>.
@@ -67,22 +67,22 @@ export default function DemoSandboxDesignPage() {
 
             <hr className="my-12 border-edge" />
 
-            {/* Section 3: Phase 2 — Monaco Integration */}
+            {/* Section 3: Phase 2  -  Monaco Integration */}
             <section className="space-y-5">
                 <h2 className="text-lg font-bold tracking-tight">Phase 2: Monaco Editor Integration</h2>
                 <div className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-4 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                     <p>
-                        The critical design decision was <em>how</em> to feed these types into Monaco so that TypeScript's compiler can see them. Monaco provides <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">setExtraLibs</code> for declaring ambient types, but we found that files added via <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">setExtraLibs</code> are <strong>not</strong> visible to TypeScript's module resolution — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">import type &#123; Types &#125; from &quot;@pyrpc/types&quot;</code> would fail to resolve.
+                        The critical design decision was <em>how</em> to feed these types into Monaco so that TypeScript's compiler can see them. Monaco provides <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">setExtraLibs</code> for declaring ambient types, but we found that files added via <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">setExtraLibs</code> are <strong>not</strong> visible to TypeScript's module resolution  -  <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">import type &#123; Types &#125; from &quot;@pyrpc/types&quot;</code> would fail to resolve.
                     </p>
                     <p>
                         The solution: use <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">monaco.editor.createModel()</code> to create actual editor models at the exact file paths TypeScript expects:
                     </p>
                     <ul>
-                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/node_modules/@pyrpc/types/index.d.ts</code> — Generated type declarations (updated live as server code changes)</li>
-                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/node_modules/@pyrpc/client/index.d.ts</code> — Static client SDK stubs (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createClient</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">PyRPCClient</code>, etc.)</li>
+                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/node_modules/@pyrpc/types/index.d.ts</code>  -  Generated type declarations (updated live as server code changes)</li>
+                        <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/node_modules/@pyrpc/client/index.d.ts</code>  -  Static client SDK stubs (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createClient</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">PyRPCClient</code>, etc.)</li>
                     </ul>
                     <p>
-                        The client editor model is set with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">path=&quot;/model.ts&quot;</code> so that TypeScript's NodeJs module resolution finds the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/node_modules/...</code> models. After updating the types model, a no-op edit (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pushEditOperations</code>) forces the TypeScript worker to re-evaluate the program, updating diagnostics and completion data immediately — <strong>at compile time, not after clicking Run</strong>.
+                        The client editor model is set with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">path=&quot;/model.ts&quot;</code> so that TypeScript's NodeJs module resolution finds the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/node_modules/...</code> models. After updating the types model, a no-op edit (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pushEditOperations</code>) forces the TypeScript worker to re-evaluate the program, updating diagnostics and completion data immediately  -  <strong>at compile time, not after clicking Run</strong>.
                     </p>
                     <p>
                         The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Omit&lt;PyRPCClient, &#39;rpc&#39;&gt;</code> type in the stubs hides the internal <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">.rpc</code> property from autocomplete, so <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.</code> shows only user-defined methods.
@@ -92,7 +92,7 @@ export default function DemoSandboxDesignPage() {
 
             <hr className="my-12 border-edge" />
 
-            {/* Section 4: Phase 3 — Sandbox Execution */}
+            {/* Section 4: Phase 3  -  Sandbox Execution */}
             <section className="space-y-5">
                 <h2 className="text-lg font-bold tracking-tight">Phase 3: Mock Sandbox Execution</h2>
                 <div className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-4 text-fd-muted-foreground [&_strong]:text-fd-foreground">
@@ -100,16 +100,16 @@ export default function DemoSandboxDesignPage() {
                         When the user clicks Run, the playground:
                     </p>
                     <ol>
-                        <li><strong>Extracts client calls</strong> — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">parseClientCalls</code> uses a global <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">matchAll</code> regex to find every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.method(...)</code> call in the client code.</li>
-                        <li><strong>Dispatches to mock API</strong> — A lightweight proxy (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createSandboxClient</code>) sends each call as a POST to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/api/sandbox/rpc</code> with the server code in a header.</li>
-                        <li><strong>Parses server code</strong> — The mock endpoint re-parses the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> function signatures and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> fields, then builds mock return values:</li>
+                        <li><strong>Extracts client calls</strong>  -  <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">parseClientCalls</code> uses a global <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">matchAll</code> regex to find every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.method(...)</code> call in the client code.</li>
+                        <li><strong>Dispatches to mock API</strong>  -  A lightweight proxy (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createSandboxClient</code>) sends each call as a POST to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/api/sandbox/rpc</code> with the server code in a header.</li>
+                        <li><strong>Parses server code</strong>  -  The mock endpoint re-parses the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> function signatures and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> fields, then builds mock return values:</li>
                     </ol>
                     <ul>
                         <li>For <strong>model return types</strong>: creates an object with default-typed fields (e.g., <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">str</code> becomes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&quot;Sample fieldName&quot;</code>), overrides with matching parameter values, then overrides with return value literals parsed from the function body (e.g. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">return User(id=id, name=&quot;Core User&quot;)</code> sets <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">name</code> to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&quot;Core User&quot;</code>).</li>
                         <li>For <strong>primitive return types</strong>: returns sensible defaults (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">int</code> = <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">42</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">str</code> = <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&quot;mock_result&quot;</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">any</code> = computed from input).</li>
                     </ul>
                     <p>
-                        Finally, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">simulateConsoleLogs</code> processes each <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">console.log(...)</code> call — supporting template literals (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{`Hello $\{name}`}</code>), <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">typeof()</code> expressions, dot-path resolution (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">user.name</code>), and proper handling of nested parentheses — and displays the output in a theme-aware terminal.
+                        Finally, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">simulateConsoleLogs</code> processes each <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">console.log(...)</code> call  -  supporting template literals (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{`Hello $\{name}`}</code>), <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">typeof()</code> expressions, dot-path resolution (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">user.name</code>), and proper handling of nested parentheses  -  and displays the output in a theme-aware terminal.
                     </p>
                 </div>
             </section>
@@ -124,9 +124,9 @@ export default function DemoSandboxDesignPage() {
                         The server editor validates code on every keystroke via a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useEffect</code> that calls <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">validateServerCode</code>. Detected issues are surfaced as Monaco error markers (red underlines) and also block the Start Server button:
                     </p>
                     <ul>
-                        <li><strong>Unknown decorators</strong> — Any <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@name</code> that isn&apos;t <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> or <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> triggers an error.</li>
-                        <li><strong>Missing return type</strong> — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc def foo()</code> without a return type annotation is flagged.</li>
-                        <li><strong>Empty model</strong> — A <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> class with no typed fields is flagged.</li>
+                        <li><strong>Unknown decorators</strong>  -  Any <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@name</code> that isn&apos;t <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> or <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> triggers an error.</li>
+                        <li><strong>Missing return type</strong>  -  <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc def foo()</code> without a return type annotation is flagged.</li>
+                        <li><strong>Empty model</strong>  -  A <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> class with no typed fields is flagged.</li>
                     </ul>
                     <p>
                         This validation mirrors what pyrpc-core would enforce at runtime, but shifted to edit-time for immediate feedback.
@@ -190,7 +190,7 @@ export default function DemoSandboxDesignPage() {
                             <tr className="border-b border-edge">
                                 <td className="py-2 pr-4">Runtime</td>
                                 <td className="py-2 pr-4">None (mock results)</td>
-                                <td className="py-2">Python — ASGI/Flask/FastAPI server</td>
+                                <td className="py-2">Python  -  ASGI/Flask/FastAPI server</td>
                             </tr>
                             <tr className="border-b border-edge">
                                 <td className="py-2 pr-4">Procedure execution</td>
