@@ -9,7 +9,7 @@ const rootDir = path.resolve(__dirname, '..');
 const newVersion = process.argv[2];
 
 if (!newVersion) {
-  console.error('❌ Please provide a version (e.g., node scripts/release.mjs 0.2.0)');
+  console.error('Please provide a version (e.g., node scripts/release.mjs 0.2.0)');
   process.exit(1);
 }
 
@@ -19,7 +19,7 @@ const cleanVersion = newVersion.replace(/^v/, '');
 const packagesDir = path.join(rootDir, 'packages');
 const packages = fs.readdirSync(packagesDir);
 
-console.log(`🚀 Synchronizing all packages to version: ${cleanVersion}\n`);
+console.log(`Synchronizing all packages to version: ${cleanVersion}\n`);
 
 for (const pkg of packages) {
   const pkgDir = path.join(packagesDir, pkg);
@@ -31,7 +31,7 @@ for (const pkg of packages) {
     const pkgJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     pkgJson.version = cleanVersion;
     fs.writeFileSync(packageJsonPath, JSON.stringify(pkgJson, null, 2) + '\n');
-    console.log(`✅ Updated ${pkg}/package.json`);
+    console.log(`Updated ${pkg}/package.json`);
   }
 
   // 2. Update Python pyproject.toml if it exists
@@ -41,7 +41,7 @@ for (const pkg of packages) {
     // Replace version = "..." with version = "cleanVersion"
     tomlContent = tomlContent.replace(/version\s*=\s*"[^"]+"/, `version = "${cleanVersion}"`);
     fs.writeFileSync(pyprojectPath, tomlContent);
-    console.log(`✅ Updated ${pkg}/pyproject.toml`);
+    console.log(`Updated ${pkg}/pyproject.toml`);
   }
 }
 
@@ -51,10 +51,10 @@ if (fs.existsSync(rootPyprojectPath)) {
   let tomlContent = fs.readFileSync(rootPyprojectPath, 'utf8');
   tomlContent = tomlContent.replace(/version\s*=\s*"[^"]+"/, `version = "${cleanVersion}"`);
   fs.writeFileSync(rootPyprojectPath, tomlContent);
-  console.log(`✅ Updated root pyproject.toml`);
+    console.log(`Updated root pyproject.toml`);
 }
 
-console.log(`\n✨ All packages successfully updated to ${cleanVersion}!`);
+console.log(`\nAll packages successfully updated to ${cleanVersion}!`);
 console.log('\nTo complete the release, run the following commands:');
 console.log(`\x1b[36m  git commit -am "chore: release v${cleanVersion}"`);
 console.log(`  git tag v${cleanVersion}`);

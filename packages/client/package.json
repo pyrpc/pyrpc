@@ -23,6 +23,9 @@
   ],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "@pyrpc/types": "^0.1.0-alpha.1"
+  },
   "devDependencies": {
     "@types/node": "^20.19.39",
     "tsup": "^8.5.1",
