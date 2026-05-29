@@ -3,7 +3,6 @@ import Link from 'next/link'
 export default function DemoSandboxDesignPage() {
     return (
         <article className="max-w-3xl mx-auto px-6 py-20">
-            <div className="rounded-xl border border-fd-border bg-white/70 dark:bg-black/70 backdrop-blur-xl p-8 md:p-12">
             {/* Header */}
             <div className="mb-12">
                 <Link href="/blog" className="text-[10px] font-mono uppercase tracking-[0.2em] text-fd-muted-foreground hover:text-fd-foreground transition-colors">
@@ -308,7 +307,6 @@ export default function DemoSandboxDesignPage() {
             <footer className="text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
                 <Link href="/blog" className="hover:text-fd-foreground transition-colors">&larr; Back to Blog</Link>
             </footer>
-            </div>
         </article>
     )
 }

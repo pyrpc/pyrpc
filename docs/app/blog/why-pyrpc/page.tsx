@@ -3,7 +3,6 @@ import Link from 'next/link'
 export default function WhyPyrpcPage() {
     return (
         <article className="max-w-3xl mx-auto px-6 py-20">
-            <div className="rounded-xl border border-fd-border bg-white/70 dark:bg-black/70 backdrop-blur-xl p-8 md:p-12">
             <div className="mb-12">
                 <Link href="/blog" className="text-[10px] font-mono uppercase tracking-[0.2em] text-fd-muted-foreground hover:text-fd-foreground transition-colors">
                     &larr; Back to Blog
@@ -117,7 +116,6 @@ const user = await client.get_user(1)
                     Try it on the <Link href="/demo" className="text-fd-foreground underline underline-offset-2">interactive playground</Link>, check out the <Link href="/blog/demo-sandbox-design" className="text-fd-foreground underline underline-offset-2">sandbox architecture post</Link>, and open issues on <Link href="https://github.com/pyrpc/pyrpc" className="text-fd-foreground underline underline-offset-2">GitHub</Link> if something breaks.
                 </p>
             </section>
-            </div>
         </article>
     )
 }
