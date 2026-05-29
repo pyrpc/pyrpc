@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 from typing import Any, Dict, List, Optional, Union
 
@@ -39,35 +40,7 @@ class RPCClient:
         self._async_client = async_client or httpx.AsyncClient(base_url=self.base_url)
         self._sync_client = sync_client or httpx.Client(base_url=self.base_url)
 
-    def __getattr__(self, name: str) -> Any:
-        """
-        Returns a callable that executes the RPC.
-        Defaults to sync execution unless used in an async context or explicitly called.
-        """
-
-        class CallableRPC:
-            def __init__(self, client: "RPCClient", method: str):
-                self.client = client
-                self.method = method
-
-            def __call__(self, *args: Any, **kwargs: Any) -> Any:
-                return self.client.call_sync(self.method, *args, **kwargs)
-
-            def __await__(self):
-                # This is a bit tricky for a dual-purpose object.
-                # Usually, we'd want `await client.add(1, 2)` to work.
-                # However, `client.add(1, 2)` is already called.
-                # So we return the result of call_async if it was awaited.
-                # But `client.add(1, 2)` returns a result, not a coroutine.
-                # To support both, we'd need the __getattr__ to return an object 
-                # that is both a callable and awaitable.
-                pass
-
-        # Simplified approach: expose explicit call_async and call_sync, 
-        # and make __getattr__ return an object that decides based on usage?
-        # Actually, let's stick to the original robust suggestion of clear separation 
-        # but keep the convenience of dynamic calls by returning a helper.
-        
+    def __getattr__(self, name: str) -> "RPCCallable":
         return RPCCallable(self, name)
 
     async def call_async(self, method: str, *args: Any, **kwargs: Any) -> Any:
@@ -123,7 +96,7 @@ class RPCClient:
 class RPCCallable:
     """
     Helper for dynamic method calls.
-    Supports both sync call and async call (via .aio() or similar).
+    Supports sync call, async call (via .aio()), and direct await.
     """
 
     def __init__(self, client: RPCClient, method: str):
@@ -131,9 +104,17 @@ class RPCCallable:
         self.method = method
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Sync call by default."""
-        return self.client.call_sync(self.method, *args, **kwargs)
+        """
+        If a running event loop is detected, returns an awaitable that calls call_async.
+        Otherwise, calls call_sync and returns the result.
+        """
+        self._args = args
+        self._kwargs = kwargs
+        try:
+            asyncio.get_running_loop()
+            return self.client.call_async(self.method, *args, **kwargs)
+        except RuntimeError:
+            return self.client.call_sync(self.method, *args, **kwargs)
 
     async def aio(self, *args: Any, **kwargs: Any) -> Any:
-        """Explicit async call."""
         return await self.client.call_async(self.method, *args, **kwargs)
