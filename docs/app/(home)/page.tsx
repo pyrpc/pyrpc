@@ -50,11 +50,11 @@ export default function HomePage() {
       {/* Main Content Container */}
       <div className="relative z-10 max-w-[1400px] mx-auto min-h-screen">
         
-        {/* Vertical architectural grid lines — pinned to container edges */}
+        {/* Vertical architectural grid lines - pinned to container edges */}
         <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-neutral-200 dark:bg-white/[0.08]" />
         <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-neutral-200 dark:bg-white/[0.08]" />
         
-        {/* Horizontal divider lines — using w-screen to ensure full-width regardless of container */}
+        {/* Horizontal divider lines - using w-screen to ensure full-width regardless of container */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-neutral-200 dark:bg-white/[0.08]" />
 
         <div className="px-6 md:px-12 lg:px-20">
@@ -76,8 +76,8 @@ export default function HomePage() {
 
               {/* Headline */}
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter text-fd-foreground max-w-[15ch]">
-                End-to-end <br />
-                <span className="text-fd-muted-foreground/40">type safety.</span>
+                Python backend. <br />
+                <span className="text-fd-muted-foreground/40">TypeScript frontend.</span>
               </h1>
 
               {/* Description */}
@@ -85,7 +85,7 @@ export default function HomePage() {
                 className="max-w-lg text-neutral-600 dark:text-neutral-400 text-sm md:text-base leading-relaxed"
                 style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}
               >
-                Seamless bridge between your Python backend and TypeScript frontend with zero-cost abstractions. Build faster, break less.
+                One type system across both languages. pyRPC syncs your Python procedure signatures into TypeScript contracts automatically. No codegen hassle, no schema drift.
               </p>
 
               <div className="flex items-center gap-4 flex-wrap mt-2">
@@ -109,7 +109,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Column — Code Window */}
+            {/* Right Column - Code Window */}
             <div className="relative w-full max-w-[600px] lg:ml-auto">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-indigo-500/[0.07] blur-[80px] rounded-full pointer-events-none" />
 
@@ -240,7 +240,7 @@ export default function HomePage() {
                   <div className="flex w-full justify-between items-center border border-neutral-800/50 bg-[#080808] px-4 py-2.5 font-mono text-[13px] text-neutral-500 group/codegen hover:border-neutral-700 transition-colors">
                     <div className="flex items-center gap-3">
                       <span className="text-emerald-500/30 select-none">$</span>
-                      <span className="text-neutral-400/80 tracking-tight">pyrpc codegen --url 'http://localhost:8000'</span>
+                      <span className="text-neutral-400/80 tracking-tight">pyrpc codegen http://localhost:8000</span>
                     </div>
                     <div className="text-[10px] uppercase tracking-widest text-neutral-700 font-bold select-none">
                       Codegen
@@ -331,10 +331,10 @@ export default function HomePage() {
           {/* Features Section Header */}
           <div className="mt-12 mb-12">
             <h2 className="text-[22px] font-bold tracking-tight text-fd-foreground mb-4">
-              Features
+              Why pyRPC
             </h2>
             <p className="max-w-xl text-fd-foreground/40 text-sm md:text-base leading-relaxed font-sans">
-              Everything you need to bridge Python and TypeScript with total type safety.
+              tRPC-level type safety for teams shipping Python backends with TypeScript frontends.
             </p>
           </div>
 
@@ -350,12 +350,13 @@ export default function HomePage() {
             {[
               {
                 id: "01",
-                title: "Contract-First Bridge.",
-                description: "Seamlessly translate your Python procedure signatures into TypeScript contracts.",
+                title: "Cross-Language Contracts.",
+                description: "Python @rpc decorators generate TypeScript types automatically. One source of truth, two languages.",
                 visual: (
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                    <span className="text-[10px] font-mono text-blue-400/80 tracking-tighter">contract.synced</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[10px] font-mono text-sky-400 font-bold">.py</span>
+                    <span className="text-neutral-600 text-[10px]">→</span>
+                    <span className="text-[10px] font-mono text-blue-400 font-bold">.ts</span>
                   </div>
                 )
               },
@@ -468,12 +469,11 @@ export default function HomePage() {
 
             <div className="relative z-10 flex flex-col items-center">
               <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-6 max-w-2xl">
-                Bridge the gap <br /> 
-                <span className="text-fd-foreground/30 text-3xl md:text-4xl">in minutes.</span>
+                Python + TypeScript <br /> 
+                <span className="text-fd-foreground/30 text-3xl md:text-4xl">one type system.</span>
               </h2>
               <p className="text-fd-foreground/40 text-base md:text-lg mb-10 max-w-md leading-relaxed">
-                Experience end-to-end type safety between Python and TypeScript today. 
-                Open source and ready for production.
+                Ship type-safe apps across Python and TypeScript without OpenAPI, gRPC, or manual contract files. Open source and ready for production.
               </p>
               
               <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -505,7 +505,7 @@ export default function HomePage() {
           <div 
             className="max-w-[1240px] mx-auto pt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-fd-foreground/40 text-[10px] font-mono uppercase tracking-[0.3em]"
           >
-            <div className="text-fd-foreground/60 font-bold">© 2026 pyRPC — Licensed under MIT</div>
+            <div className="text-fd-foreground/60 font-bold">(c) 2026 pyRPC - Licensed under MIT</div>
             <div className="flex items-center gap-12">
               <a href="https://x.com" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-all">Twitter</a>
             </div>
