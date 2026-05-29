@@ -43,10 +43,19 @@ uv add pyrpc-codegen
 ```
 
 ### Contract Synchronization
-To generate TypeScript types/contracts from a running server:
+
+The frontend package generates types automatically on install:
 
 ```bash
-npx pyrpc codegen --url http://localhost:8000
+npm install @pyrpc/client
+```
+
+The postinstall script prompts for your server URL, fetches the schema from `GET /rpc`, and writes types to `node_modules/@pyrpc/types/src/index.ts`.
+
+For server-side or CI workflows, the CLI can generate types explicitly:
+
+```bash
+uv run pyrpc codegen http://localhost:8000
 ```
 
 ## Quick Start Example (FastAPI)
@@ -67,5 +76,5 @@ mount_fastapi(app)
 
 ## Next
 
-- [Quickstart](/docs/get-started/quickstart) — Full server + client example
-- [Concepts](/docs/concepts) — Mental model and protocol design
+- [Quickstart](/docs/get-started/quickstart)  -  Full server + client example
+- [Concepts](/docs/concepts)  -  Mental model and protocol design

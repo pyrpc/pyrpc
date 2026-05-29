@@ -14,18 +14,17 @@ The `@pyrpc/client` package provides a lightweight, framework-agnostic runtime f
 npm install @pyrpc/client
 ```
 
-## 2. Generate Contracts
+The install triggers a postinstall script that prompts for your server URL, fetches the introspection schema from `GET /rpc`, and generates typed contracts into `node_modules/@pyrpc/types/src/index.ts`.
 
-Instead of generating a heavy SDK, pyRPC synchronizes your Python types into a simple TypeScript interface.
+For non-interactive environments (CI), set `PYRPC_URL`:
 
 ```bash
-# Generate @pyrpc/types from your server
-npx pyrpc codegen --url http://localhost:8000
+PYRPC_URL=https://api.example.com npm install @pyrpc/client
 ```
 
-This creates a `pyrpc.d.ts` (or updates your `@pyrpc/types` package) containing the procedure signatures and Pydantic-mapped models.
+If you need to regenerate types later (e.g. after adding procedures), re-run the same command or pass `PYRPC_URL` again.
 
-## 3. Create the Client
+## 2. Create the Client
 
 Use the `createClient<Types>()` factory to initialize your typed client.
 
@@ -45,7 +44,7 @@ export const client = createClient<Types>({
 > [!TIP]
 > If `baseUrl` is omitted, pyRPC will automatically use `window.location.origin`. In Server-Side environments (like Next.js Server Components), you must provide an explicit URL.
 
-## 4. Call Procedures
+## 3. Call Procedures
 
 Procedures are available as async methods with full autocompletion and type validation.
 

@@ -1,12 +1,12 @@
 ---
 title: Code Generation
-description: Generate TypeScript and Python client SDKs from your pyRPC router
+description: Generate a TypeScript types interface from your pyRPC router.
 
 ---
 
 # pyrpc-codegen
 
-Automatically generate type-safe client SDKs for TypeScript and Python from your pyRPC server definition.
+Automatically generate a TypeScript types interface from your pyRPC server definition.
 
 ## Installation
 
@@ -14,92 +14,123 @@ Automatically generate type-safe client SDKs for TypeScript and Python from your
 pip install pyrpc-codegen
 ```
 
+## Quick Setup
+
+The `@pyrpc/types` package runs a setup prompt automatically when you install `@pyrpc/client`:
+
+```bash
+npm install @pyrpc/client
+```
+
+If you're in an interactive terminal, it will prompt for your backend URL,
+fetch the schema, and generate types. In CI, set the `PYRPC_URL` environment
+variable to skip the prompt.
+
+```bash
+PYRPC_URL=https://api.example.com npm install @pyrpc/client
+```
+
 ## CLI Usage
 
-Generate a TypeScript client:
+The `pyrpc` CLI provides five subcommands:
+
+| Command | Description |
+|---------|-------------|
+| `pull`  | Extract RPC schema from a Python module and save as JSON |
+| `codegen` | Generate TypeScript types from a schema file or running server |
+| `serve` | Start the pyRPC ASGI server |
+| `inspect` | List all registered RPC procedures in a module |
+| `version` | Show pyRPC version |
+
+### `pyrpc pull`
+
+Extract the RPC schema from your Python module into a JSON file:
 
 ```bash
-pyrpc-codegen --input myapp/router.py --output ./generated/client.ts --lang typescript
+pyrpc pull my_app.main -o pyrpc-schema.json
 ```
 
-Generate a Python client:
+This is useful for CI workflows — commit the schema file to your repo so
+frontend builds can generate types without a running Python server:
 
 ```bash
-pyrpc-codegen --input myapp/router.py --output ./generated/client.py --lang python
+git add pyrpc-schema.json
+git commit -m "chore(codegen): update RPC schema"
 ```
+
+> **For frontend projects:** Just `npm install @pyrpc/client`. The postinstall
+> script prompts for your server URL and generates types automatically.
+> No CLI needed.
+
+### `pyrpc codegen`
+
+Generate TypeScript types from a schema file:
+
+```bash
+pyrpc codegen pyrpc-schema.json
+```
+
+Or directly from a running server (no `pull` required):
+
+```bash
+pyrpc codegen http://localhost:8000
+```
+
+Use `--output` to write to a custom path:
+
+```bash
+pyrpc codegen pyrpc-schema.json --output ./src/pyrpc-types.ts
+```
+
+### Full Workflow (CLI)
+
+```bash
+# Install the CLI
+pip install pyrpc-codegen
+
+# Pull schema from your Python module (for CI/offline)
+pyrpc pull my_app.main -o pyrpc-schema.json
+
+# Generate types from the schema file
+pyrpc codegen pyrpc-schema.json
+
+# Or skip the file and use a running server
+pyrpc codegen http://localhost:8000
+```
+
+For frontend-only projects, skip this entirely and just install the client:
+
+```bash
+npm install @pyrpc/client
+```
+
+The install prompts for your server URL and handles codegen automatically.
 
 ## Features
 
-✅ TypeScript SDK generation  
-✅ Python SDK generation  
-✅ Full type inference  
-✅ Tree-shakeable modular output  
-✅ Documentation comments  
+TypeScript types interface generation  
+Full type inference (int ↔ number, str ↔ string, etc.)  
+Postinstall setup  -  one command installs and configures  
+Documentation comments  
 
-## Generated Client Example
-
-### TypeScript
+## Generated Output
 
 ```typescript
-// generated/client.ts
-import { createClient } from '@pyRPC/client';
-
-const client = createClient({ baseUrl: 'http://localhost:8000' });
-
-// Fully typed!
-const user = await client.getUser({ userId: 1 });
-console.log(user.name); // TypeScript knows this is a string
-```
-
-### Python
-
-```python
-# generated/client.py
-from pyrpc_core import Client
-
-client = Client("http://localhost:8000")
-
-# Type hints included
-user = await client.get_user(user_id=1)
-print(user.name)  # IDE autocomplete works!
-```
-
-## Configuration
-
-Create a `pyRPC.config.json`:
-
-```json
-{
-  "input": "myapp/router.py",
-  "outputs": [
-    {
-      "path": "./clients/typescript/index.ts",
-      "lang": "typescript"
-    },
-    {
-      "path": "./clients/python/client.py",
-      "lang": "python"
-    }
-  ],
-  "includeDocstrings": true
+// node_modules/@pyrpc/types/src/index.ts
+export interface Types {
+  add(a: number, b: number): Promise<number>;
+  greet(name: string): Promise<string>;
 }
 ```
 
-Run with:
+Use it with `@pyrpc/client`:
 
-```bash
-pyrpc-codegen --config pyRPC.config.json
-```
+```typescript
+import { createClient } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
 
-## CI/CD Integration
-
-Add to your GitHub Actions workflow:
-
-```yaml
-- name: Generate pyRPC Clients
-  run: |
-    pip install pyrpc-codegen
-    pyrpc-codegen --config pyRPC.config.json
+const client = createClient<Types>({ baseUrl: "http://localhost:8000" })
+const result = await client.add(10, 5) // Fully typed, with autocompletion!
 ```
 
 ## Next Steps
