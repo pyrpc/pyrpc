@@ -1,6 +1,6 @@
 ---
 title: Protocol Design
-description: JSON-RPC over HTTP — simple and predictable.
+description: JSON-RPC over HTTP  -  simple and predictable.
 
 ---
 
@@ -23,9 +23,9 @@ Content-Type: application/json
 }
 ```
 
-- `id` — Unique identifier for the request (UUID or string)
-- `method` — Procedure name
-- `params` — Object (named) or array (positional) of arguments
+- `id`  -  Unique identifier for the request (UUID or string)
+- `method`  -  Procedure name
+- `params`  -  Object (named) or array (positional) of arguments
 
 ## Response
 
@@ -68,11 +68,11 @@ This is the "Source of Truth" that `pyrpc codegen` uses to synchronize your Type
 
 ## Why JSON-RPC?
 
-- **Zero Ambiguity** — Unlike REST, where status codes (200, 201, 204) and methods (PUT vs PATCH) are often debated, JSON-RPC has one way to succeed and one way to fail.
-- **Easy Debugging** — Requests are plain JSON objects. You can copy-paste them from your browser's network tab directly into a test script.
-- **Batched Requests** — The protocol natively supports sending multiple calls in a single HTTP request (coming soon to pyRPC).
+- **Zero Ambiguity**  -  Unlike REST, where status codes (200, 201, 204) and methods (PUT vs PATCH) are often debated, JSON-RPC has one way to succeed and one way to fail.
+- **Easy Debugging**  -  Requests are plain JSON objects. You can copy-paste them from your browser's network tab directly into a test script.
+- **Batched Requests**  -  The protocol natively supports sending multiple calls in a single HTTP request (coming soon to pyRPC).
 
 ## Next
 
-- [Error Handling](/docs/concepts/error-handling) — Error codes and propagation
-- [Server](/docs/server) — Mounting, procedures, context
+- [Error Handling](/docs/concepts/error-handling)  -  Error codes and propagation
+- [Server](/docs/server)  -  Mounting, procedures, context

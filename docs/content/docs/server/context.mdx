@@ -12,9 +12,9 @@ Procedures receive only the JSON-RPC params. pyRPC's core does not pass HTTP req
 
 If you need request context, use your adapter's features:
 
-**FastAPI** — Use `Depends` to inject request-scoped data. Your RPC endpoint is a FastAPI route, so you can depend on `Request`, auth, or custom dependencies. How this integrates with pyRPC's handler depends on the adapter implementation.
+**FastAPI**  -  Use `Depends` to inject request-scoped data. Your RPC endpoint is a FastAPI route, so you can depend on `Request`, auth, or custom dependencies. How this integrates with pyRPC's handler depends on the adapter implementation.
 
-**Flask** — Use `flask.g` or `flask.request` inside procedures. Ensure your procedure runs in a request context (it will when invoked via the Flask-mounted endpoint).
+**Flask**  -  Use `flask.g` or `flask.request` inside procedures. Ensure your procedure runs in a request context (it will when invoked via the Flask-mounted endpoint).
 
 ## Example (Flask)
 
