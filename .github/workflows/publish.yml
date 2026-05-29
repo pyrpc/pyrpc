@@ -74,3 +74,19 @@ jobs:
             echo "Publishing stable release"
             npm publish --access public
           fi
+
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: [publish-pypi, publish-npm]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          make_latest: ${{ !contains(github.ref_name, '-') }}
+          name: pyRPC ${{ github.ref_name }}

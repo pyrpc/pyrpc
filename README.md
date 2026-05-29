@@ -26,20 +26,21 @@
 </div>
 
 > [!WARNING]
-> pyRPC is in beta. APIs may change as development continues. If you run into issues, please open an issue.
+> pyRPC is in active development. APIs may change as we approach a stable release. Read the [changelog](https://pyrpc.com/changelog) and [roadmap](./ROADMAP.md) for direction.
 
 ## pyRPC
 
-**pyRPC** is a modern, tRPC-inspired "drop-in RPC layer" for Python. It's designed to be dead simple, type-safe, and framework-agnostic.
+**pyRPC** is type-safe RPC for Python and TypeScript. It gives you a tRPC-like experience with a Python backend: one `@rpc` decorator defines the endpoint, generates the TypeScript types, and validates every request at runtime.
 
-Inspired by giving you the best DX, pyRPC focuses on giving you a type-safe bridge between your backend and frontend without forcing a specific architecture or framework.
+Unlike REST, there are no URL conventions, no status code mapping, no manual fetch wrappers. Unlike GraphQL, there is no query language, no schema file, no resolver tree. Unlike gRPC, there is no IDL, no codegen-first workflow, no protobuf compilation step. pyRPC starts from Python code and reaches into TypeScript  -  not the other way around.
 
 ### Philosophy
-- **Dead simple install**: Zero config, zero ceremony.
-- **Works everywhere**: Plugs into FastAPI, Flask, or any ASGI server.
-- **Batteries included but modular**: Install only what you need.
-- **Universal Validation**: Powered by Pydantic v2—automatic validation for primitives and models.
-- **Type-safe bridge**: Get a tRPC-like experience with Python and TypeScript.
+- **Python-first, TypeScript reach**  -  your Python functions are the source of truth. TypeScript types are derived from them.
+- **Low ceremony**  -  one install, one decorator, one import on the client side. No schema files, no config, no CLI required for Python-to-Python.
+- **Framework-agnostic core**  -  `pyrpc-core` knows nothing about FastAPI or Flask. Adapters translate HTTP into core calls.
+- **Validation at runtime**  -  every parameter and return value is validated by Pydantic v2. The type definitions in TypeScript are derived from the same introspection that powers validation.
+- **Standards-based transport**  -  JSON-RPC 2.0 on the wire. The protocol is explicit and language-agnostic.
+- **Lockstep versioning**  -  all Python and npm packages release together at the same version. No ecosystem drift.
 
 ---
 
@@ -99,7 +100,8 @@ mount_fastapi(app)
 Generate typed contracts from your server to enable end-to-end typed inference.
 
 ```bash
-npx pyrpc codegen --url http://localhost:8000
+pip install pyrpc-codegen
+pyrpc codegen http://localhost:8000
 ```
 
 ```ts
@@ -133,27 +135,29 @@ The `pyrpc` CLI provides tooling for serving, inspecting, and generating typed c
 - `pyrpc inspect`: Explore registered procedures, inputs, outputs, and namespaces.
 - `pyrpc codegen`: Generate TypeScript types/contracts for end-to-end typed clients.
 
+### Versioning
+
+pyRPC uses `0.x.y` versioning while the API stabilizes. Pre-release tags use `-alpha.N`, `-beta.N`, and `-rc.N` suffixes. All packages - Python and npm - release in lockstep at the same version.
+
+See the [changelog](https://pyrpc.com/changelog) for per-release details and [ROADMAP.md](./ROADMAP.md) for direction and non-goals.
+
 ### Documentation & Examples
-Check out the [examples/](examples/) directory for complete server and client implementations.
+
+- [Docs site](https://pyrpc.com/docs) - guides, API reference, mental model
+- [examples/](./examples/) - complete server and client implementations
+- [PYRPC.md](./PYRPC.md) - architecture, invariants, and contributor policy
+- [Changelog](https://pyrpc.com/changelog) - per-release changes
 
 ### License
+
 MIT
 
-### Contribution
-pyRPC is a free and open source project licensed under the MIT License. You are free to do whatever you want with it.
+### Contributing
 
-You can help by:
-
-- [Contributing to the source code](./CONTRIBUTING.md)
-- [Suggesting new features and reporting issues](https://github.com/pyrpc/pyrpc/issues)
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the PR workflow and [PYRPC.md](./PYRPC.md) for subsystem boundaries.
 
 ### Security
-If you discover a security vulnerability within pyRPC, please open a [privately reported issue](https://github.com/pyrpc/pyrpc/security/advisories/new) on GitHub.
 
-All reports will be promptly addressed, and you'll be credited accordingly.
+Report vulnerabilities privately: https://github.com/pyrpc/pyrpc/security/advisories/new
 
-### CLI Usage
-
-```bash
-pyrpc --help
-```
+See [SECURITY.md](./SECURITY.md) for scope and supported versions.
