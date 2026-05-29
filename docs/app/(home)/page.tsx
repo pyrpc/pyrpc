@@ -59,7 +59,7 @@ export default function HomePage() {
 
         <div className="px-6 md:px-12 lg:px-20">
           {/* Hero Section */}
-          <div className="grid lg:grid-cols-[58%_42%] gap-16 lg:gap-24 w-full pt-20 md:pt-32 pb-24">
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-20 md:pt-32 pb-24">
  
              {/* Left Column */}
              <div className="flex flex-col items-start gap-10">
