@@ -11,7 +11,7 @@ export default function FullStackAppPage() {
                     Building a full-stack app with pyRPC
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>2026-05-25</time>
+                    <time>May 25, 2026</time>
                     <span>&middot;</span>
                     <span>10 min read</span>
                 </div>
@@ -19,7 +19,7 @@ export default function FullStackAppPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    In this tutorial, we'll build a complete full-stack application: a task management API with a FastAPI backend and a TypeScript React frontend — all connected through pyRPC with end-to-end type safety.
+                    In this tutorial, we'll build a complete full-stack application: a task management API with a FastAPI backend and a TypeScript React frontend  -  all connected through pyRPC with end-to-end type safety.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What we're building</h2>
@@ -94,7 +94,8 @@ mount_fastapi(app)`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 2: Generate the TypeScript types</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
-{`npx pyrpc codegen --url http://localhost:8000 --out ./src/types`}
+{`pip install pyrpc-codegen
+pyrpc codegen http://localhost:8000 --output ./src/types`}
                 </pre>
                 <p>
                     This generates the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> module with inferred types for <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Task</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">list_tasks</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">create_task</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">toggle_task</code>, and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">delete_task</code>.
@@ -207,12 +208,12 @@ export default function App() {
 }`}
                 </pre>
                 <p>
-                    Notice that every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.*</code> call is fully typed. If you change the return type of <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">list_tasks</code> in Python, TypeScript will flag the mismatch immediately. There's no API response to reverse-engineer, no OpenAPI spec to consult — the types are the truth.
+                    Notice that every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.*</code> call is fully typed. If you change the return type of <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">list_tasks</code> in Python, TypeScript will flag the mismatch immediately. There's no API response to reverse-engineer, no OpenAPI spec to consult  -  the types are the truth.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What this looks like in practice</h2>
                 <p>
-                    When you type <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.</code>, your editor shows autocomplete for all four procedures: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">list_tasks</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">create_task</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">toggle_task</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">delete_task</code>. Each one shows the expected parameters and return type. If you pass a string where a number is expected, TypeScript gives you a red squiggly line — before you ever run the code.
+                    When you type <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.</code>, your editor shows autocomplete for all four procedures: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">list_tasks</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">create_task</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">toggle_task</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">delete_task</code>. Each one shows the expected parameters and return type. If you pass a string where a number is expected, TypeScript gives you a red squiggly line  -  before you ever run the code.
                 </p>
                 <p>
                     This is the same experience you'd get with tRPC on a TypeScript backend, but now your backend is Python. The type bridge works in both directions: the Python functions are validated with Pydantic, and the TypeScript client mirrors those constraints at compile time.
@@ -226,7 +227,7 @@ export default function App() {
                     <li>Add a database (SQLAlchemy, Prisma, etc.) behind the procedures</li>
                     <li>Add authentication with a middleware or decorator</li>
                     <li>Switch to Flask by changing one import</li>
-                    <li>Deploy with Docker — the FastAPI app is a standard ASGI application</li>
+                    <li>Deploy with Docker  -  the FastAPI app is a standard ASGI application</li>
                 </ul>
                 <p>
                     The full source code for this tutorial is available in the <Link href="https://github.com/pyrpc/pyrpc/tree/main/examples" className="text-fd-foreground underline underline-offset-2">examples directory</Link>.

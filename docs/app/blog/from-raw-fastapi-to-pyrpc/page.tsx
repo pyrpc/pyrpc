@@ -11,7 +11,7 @@ export default function FromRawFastapiPage() {
                     From raw FastAPI to pyRPC
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>2026-05-25</time>
+                    <time>May 25, 2026</time>
                     <span>&middot;</span>
                     <span>7 min read</span>
                 </div>
@@ -19,7 +19,7 @@ export default function FromRawFastapiPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    You have a working FastAPI app. Routes are organized, Pydantic models validate your inputs, OpenAPI documents your endpoints. But every time you add a new endpoint, you need to update your frontend types, write a new fetch call, and make sure the URL matches. It's not broken — it's just manual.
+                    You have a working FastAPI app. Routes are organized, Pydantic models validate your inputs, OpenAPI documents your endpoints. But every time you add a new endpoint, you need to update your frontend types, write a new fetch call, and make sure the URL matches. It's not broken  -  it's just manual.
                 </p>
                 <p>
                     This post walks through migrating a real FastAPI application to pyRPC, showing the before and after for each piece.
@@ -128,15 +128,16 @@ mount_fastapi(app)`}
                     A few things to notice:
                 </p>
                 <ul>
-                    <li><strong>No HTTP boilerplate</strong> — No routes, no methods, no status codes. The function <em>is</em> the endpoint.</li>
-                    <li><strong>Plain Python types</strong> — Primitives are validated automatically. Complex models use <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> which is just a thin wrapper over Pydantic.</li>
-                    <li><strong>Exceptions become errors</strong> — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">ValueError</code> is automatically mapped to an error response. No more <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">HTTPException</code> boilerplate.</li>
-                    <li><strong>Sync is fine</strong> — pyRPC handles sync functions transparently. No need to make everything <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">async</code> unless you need it.</li>
+                    <li><strong>No HTTP boilerplate</strong>  -  No routes, no methods, no status codes. The function <em>is</em> the endpoint.</li>
+                    <li><strong>Plain Python types</strong>  -  Primitives are validated automatically. Complex models use <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@model</code> which is just a thin wrapper over Pydantic.</li>
+                    <li><strong>Exceptions become errors</strong>  -  <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">ValueError</code> is automatically mapped to an error response. No more <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">HTTPException</code> boilerplate.</li>
+                    <li><strong>Sync is fine</strong>  -  pyRPC handles sync functions transparently. No need to make everything <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">async</code> unless you need it.</li>
                 </ul>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 3: Generate the TypeScript client</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
-{`npx pyrpc codegen --url http://localhost:8000`}
+{`pip install pyrpc-codegen
+pyrpc codegen http://localhost:8000`}
                 </pre>
                 <p>
                     This generates a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> package with all your model and procedure types. Then your frontend becomes:
@@ -200,12 +201,12 @@ const newUser = await client.create_user("Alice", "alice@example.com")`}
                     pyRPC isn't meant to replace every FastAPI endpoint. It's best for:
                 </p>
                 <ul>
-                    <li><strong>CRUD operations</strong> — The bread and butter of most backends.</li>
-                    <li><strong>Business logic procedures</strong> — Functions that take inputs and return outputs.</li>
-                    <li><strong>Internal APIs</strong> — Services that call each other within your infrastructure.</li>
+                    <li><strong>CRUD operations</strong>  -  The bread and butter of most backends.</li>
+                    <li><strong>Business logic procedures</strong>  -  Functions that take inputs and return outputs.</li>
+                    <li><strong>Internal APIs</strong>  -  Services that call each other within your infrastructure.</li>
                 </ul>
                 <p>
-                    It's less suited for file uploads, streaming responses, or endpoints that need fine-grained HTTP control. For those, keep your regular FastAPI routes alongside pyRPC — they coexist perfectly.
+                    It's less suited for file uploads, streaming responses, or endpoints that need fine-grained HTTP control. For those, keep your regular FastAPI routes alongside pyRPC  -  they coexist perfectly.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Try it yourself</h2>
