@@ -35,8 +35,8 @@ members = [
 
 [tool.uv.sources]
 pyrpc-core = { workspace = true }
-pyrpc-fastapi = { workspace = true }
 pyrpc-flask = { workspace = true }
+pyrpc-fastapi = { workspace = true }
 pyrpc-codegen = { workspace = true }
 
 
@@ -57,3 +57,16 @@ pythonpath = [
     "packages/pyrpc-codegen/src"
 ]
 asyncio_mode = "auto"
+
+[dependency-groups]
+dev = [
+    "fastapi>=0.128.7",
+    "jinja2>=3.1.6",
+    "pydantic-core==2.27.2",
+    "pyrpc-codegen",
+    "pyrpc-fastapi",
+    "pytest>=9.0.2",
+    "rich>=14.3.2",
+    "typer>=0.21.1",
+    "uvicorn>=0.40.0",
+]
