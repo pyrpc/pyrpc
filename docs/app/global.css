@@ -44,7 +44,6 @@ html.dark {
 
 html.dark body,
 html.dark #__next,
-html.dark main,
 html.dark header {
   background-color: #000000 !important;
 }

@@ -258,11 +258,16 @@ export default function PlaygroundPage() {
     const serverStatus = getServerStatus()
 
     return (
-        <div className="flex flex-col h-[calc(100vh-8rem)] bg-background overflow-hidden mb-4 mx-4">
+        <div className="flex flex-col h-[calc(100vh-8rem)] overflow-hidden mb-4 mx-4 bg-background">
             {/* Header with Reset */}
             <div className="max-w-5xl mx-auto w-full shrink-0 border-b border-edge">
-                <div className="flex items-center justify-between px-4 py-3">
-                    <h1 className="text-sm font-bold tracking-tight uppercase font-mono opacity-30">Interactive Playground</h1>
+                <div className="flex items-center justify-between px-4 py-3 bg-fd-muted/30">
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-sm font-bold tracking-tight uppercase font-mono opacity-40">Interactive Playground</h1>
+                        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-fd-secondary/50 border border-edge text-[9px] font-mono uppercase tracking-wider text-fd-foreground">
+                            v0.2.0
+                        </div>
+                    </div>
                     <button
                         onClick={handleReset}
                         className="flex items-center gap-1.5 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.2em] font-mono border border-edge bg-fd-secondary/50 hover:bg-fd-secondary/80 transition-colors text-fd-secondary-foreground"

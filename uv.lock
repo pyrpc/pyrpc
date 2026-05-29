@@ -381,7 +381,7 @@ wheels = [
 
 [[package]]
 name = "pyrpc-codegen"
-version = "0.1.0a1"
+version = "0.2.0"
 source = { editable = "packages/pyrpc-codegen" }
 dependencies = [
     { name = "httpx" },
@@ -404,7 +404,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-core"
-version = "0.1.0a1"
+version = "0.2.0"
 source = { editable = "packages/pyrpc-core" }
 dependencies = [
     { name = "anyio" },
@@ -421,7 +421,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-fastapi"
-version = "0.1.0a1"
+version = "0.2.0"
 source = { editable = "packages/pyrpc-fastapi" }
 dependencies = [
     { name = "fastapi" },
@@ -436,7 +436,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-flask"
-version = "0.1.0a1"
+version = "0.2.0"
 source = { editable = "packages/pyrpc-flask" }
 dependencies = [
     { name = "flask" },
@@ -451,7 +451,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-workspace"
-version = "0.1.0a1"
+version = "0.2.0"
 source = { editable = "." }
 
 [package.optional-dependencies]
@@ -471,6 +471,7 @@ dev = [
 [package.dev-dependencies]
 dev = [
     { name = "fastapi" },
+    { name = "flask" },
     { name = "jinja2" },
     { name = "pydantic-core" },
     { name = "pyrpc-codegen" },
@@ -499,6 +500,7 @@ provides-extras = ["dev"]
 [package.metadata.requires-dev]
 dev = [
     { name = "fastapi", specifier = ">=0.128.7" },
+    { name = "flask", specifier = ">=3.1.2" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "pydantic-core", specifier = "==2.27.2" },
     { name = "pyrpc-codegen", editable = "packages/pyrpc-codegen" },
