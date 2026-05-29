@@ -39,7 +39,7 @@ Open **[localhost:3000](http://localhost:3000)** to preview.
 
 ```
 ├─ app/
-│  ├─ (home)/               # Home — hero + demo
+│  ├─ (home)/               # Home - hero + demo
 │  ├─ demo/                 # Interactive Playground
 │  └─ docs/[[...slug]]/     # Documentation (MDX)
 │
