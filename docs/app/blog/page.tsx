@@ -5,29 +5,43 @@ const posts = [
         slug: 'building-a-full-stack-app-with-pyrpc',
         title: 'Building a full-stack app with pyRPC',
         description: 'A step-by-step tutorial: FastAPI backend, TypeScript React frontend, end-to-end type safety with pyRPC.',
-        date: '2026-05-25',
+        date: 'May 25, 2026',
         readTime: '10 min',
     },
     {
         slug: 'from-raw-fastapi-to-pyrpc',
         title: 'From raw FastAPI to pyRPC',
-        description: 'A before-and-after migration guide showing how to convert a traditional FastAPI application to pyRPC — and why you might want to.',
-        date: '2026-05-25',
+        description: 'A before-and-after migration guide showing how to convert a traditional FastAPI application to pyRPC - and why you might want to.',
+        date: 'May 25, 2026',
         readTime: '7 min',
     },
     {
         slug: 'why-pyrpc',
         title: 'Why pyRPC?',
         description: 'The philosophy behind pyRPC, what tRPC-style typing means for Python backends, and why we built it.',
-        date: '2026-05-25',
+        date: 'May 25, 2026',
         readTime: '6 min',
     },
     {
         slug: 'demo-sandbox-design',
         title: 'Inside the Interactive Demo Sandbox',
-        description: 'A deep dive into how the pyrpc playground works — design decisions, architecture, and a comparison with the real pyrpc implementation.',
-        date: '2026-05-25',
+        description: 'A deep dive into how the pyrpc playground works - design decisions, architecture, and a comparison with the real pyrpc implementation.',
+        date: 'May 25, 2026',
         readTime: '8 min',
+    },
+    {
+        slug: 'codegen-refactor-and-dx',
+        title: 'Cleaner codegen, one CLI, and a sharper story',
+        description: 'Pattern A CLI, lazy pyrpc-core imports, frontend DX simplified to npm install, cross-language positioning, SECURITY.md rewrite, and Windows cp1252 fixes.',
+        date: 'May 29, 2026',
+        readTime: '8 min',
+    },
+    {
+        slug: 'v0-2-0-type-safety-and-await',
+        title: 'v0.2.0 - Type safety, proper async, and @pyrpc/types',
+        description: 'The three critical fixes that ship pyRPC v0.2.0: real type generation, working async, and a postinstall-based @pyrpc/types setup.',
+        date: 'May 29, 2026',
+        readTime: '6 min',
     },
 ]
 
@@ -39,7 +53,7 @@ export default function BlogPage() {
                 Design notes, deep dives, and updates from the pyrpc team.
             </p>
             <div className="space-y-6">
-                {posts.map((post) => (
+                {posts.sort((a, b) => b.date.localeCompare(a.date)).map((post) => (
                     <Link
                         key={post.slug}
                         href={`/blog/${post.slug}`}
