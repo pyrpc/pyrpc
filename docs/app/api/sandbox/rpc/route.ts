@@ -48,7 +48,7 @@ function parseServerCodeForMock(code: string) {
     }
   }
 
-  // Parse @rpc functions — store return type + param types
+  // Parse @rpc functions - store return type + param types
   interface FuncInfo { return_type: string; param_types: Record<string, string> }
   const rpcs: Record<string, FuncInfo> = {}
   const rpcFuncRegex = /@rpc\s*\n(?:async\s+)?def\s+(\w+)\s*\(([^)]*)\)\s*(?:->\s*([^:\n{]*))?/g

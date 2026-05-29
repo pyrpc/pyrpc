@@ -56,7 +56,7 @@ export default function PlaygroundPage() {
         setServerErrors(validationErrors)
 
         if (validationErrors.length > 0) {
-            setServerError(`${validationErrors.length} validation error(s) found — fix them before starting`)
+            setServerError(`${validationErrors.length} validation error(s) found - fix them before starting`)
             setServerStarting(false)
             setServerRunning(false)
             return
