@@ -76,8 +76,8 @@ export default function HomePage() {
 
               {/* Headline */}
               <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.88] tracking-tighter text-fd-foreground">
-                <span className="block">Python backend.</span>
-                <span className="block whitespace-nowrap text-fd-muted-foreground/40">TypeScript frontend.</span>
+                <span className="block">Python APIs.</span>
+                <span className="block whitespace-nowrap text-fd-muted-foreground/50">Typed end-to-end.</span>
               </h1>
 
               {/* Description */}
@@ -85,7 +85,7 @@ export default function HomePage() {
                 className="max-w-xl text-neutral-600 dark:text-neutral-400 text-sm md:text-base leading-relaxed"
                 style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}
               >
-                One type system across both languages. pyRPC syncs your Python procedure signatures into TypeScript contracts automatically. No codegen hassle, no schema drift.
+                Define procedures in Python. Consume them in TypeScript with full type safety -- without schema drift or code generation.
               </p>
 
               <div className="flex items-center gap-4 flex-wrap mt-2">
