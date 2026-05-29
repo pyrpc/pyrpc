@@ -3,6 +3,7 @@ import Link from 'next/link'
 export default function FromRawFastapiPage() {
     return (
         <article className="max-w-3xl mx-auto px-6 py-20">
+            <div className="rounded-xl border border-fd-border bg-white/70 dark:bg-black/70 backdrop-blur-xl p-8 md:p-12">
             <div className="mb-12">
                 <Link href="/blog" className="text-[10px] font-mono uppercase tracking-[0.2em] text-fd-muted-foreground hover:text-fd-foreground transition-colors">
                     &larr; Back to Blog
@@ -214,6 +215,7 @@ const newUser = await client.create_user("Alice", "alice@example.com")`}
                     The fastest way to see the difference is to open the <Link href="/demo" className="text-fd-foreground underline underline-offset-2">interactive playground</Link>, write a few <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> procedures, and watch the TypeScript types update in real time.
                 </p>
             </section>
+            </div>
         </article>
     )
 }

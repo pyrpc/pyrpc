@@ -3,6 +3,7 @@ import Link from 'next/link'
 export default function CodegenRefactorPost() {
     return (
         <article className="max-w-3xl mx-auto px-6 py-20">
+            <div className="rounded-xl border border-fd-border bg-white/70 dark:bg-black/70 backdrop-blur-xl p-8 md:p-12">
             <div className="mb-12">
                 <Link href="/blog" className="text-[10px] font-mono uppercase tracking-[0.2em] text-fd-muted-foreground hover:text-fd-foreground transition-colors">
                     &larr; Back to Blog
@@ -215,6 +216,7 @@ export default function CodegenRefactorPost() {
                     All 36 tests pass. The repo is at <a href="https://github.com/pyrpc/pyrpc" className="underline hover:text-fd-foreground">github.com/pyrpc/pyrpc</a>.
                 </p>
             </section>
+            </div>
         </article>
     )
 }
