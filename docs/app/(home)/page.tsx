@@ -75,7 +75,7 @@ export default function HomePage() {
               </div>
 
               {/* Headline */}
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter text-fd-foreground max-w-[24ch]">
+              <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter text-fd-foreground">
                 Python backend. <br />
                 <span className="text-fd-muted-foreground/40">TypeScript frontend.</span>
               </h1>
