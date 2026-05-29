@@ -505,9 +505,17 @@ export default function HomePage() {
           <div 
             className="max-w-[1240px] mx-auto pt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-fd-foreground/40 text-[10px] font-mono uppercase tracking-[0.3em]"
           >
-            <div className="text-fd-foreground/60 font-bold">(c) 2026 pyRPC - Licensed under MIT</div>
+            <div className="flex items-center gap-6">
+              <span className="text-fd-foreground/60 font-bold">(c) 2026 pyRPC</span>
+              <span className="text-fd-foreground/20">|</span>
+              <span>MIT License</span>
+              <span className="text-fd-foreground/20">|</span>
+              <span className="text-fd-foreground/30">v0.2.0</span>
+            </div>
             <div className="flex items-center gap-12">
-              <a href="https://x.com" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-all">Twitter</a>
+              <a href="/docs" className="hover:text-fd-foreground transition-all">Docs</a>
+              <a href="https://github.com/pyrpc/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-all">GitHub</a>
+              <a href="https://www.npmjs.com/org/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-all">npm</a>
             </div>
           </div>
         </footer>
