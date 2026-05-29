@@ -153,7 +153,7 @@ export default function HomePage() {
                     <div className="flex flex-col text-neutral-500/40 border-r border-neutral-800/50 select-none text-center leading-relaxed">
                       {Array.from({ length: 10 }, (_, i) => <span key={i}>{i + 1}</span>)}
                     </div>
-                    <div className="px-8 whitespace-pre text-neutral-400 overflow-x-auto leading-relaxed">
+                    <div className="px-8 whitespace-pre text-neutral-400 overflow-hidden leading-relaxed">
                       <code>
                         <span className="text-purple-400">from</span>{' '}pyrpc_core{' '}<span className="text-purple-400">import</span>{' '}<span className="text-white">rpc, model</span>{'\n'}
                         {'\n'}
@@ -173,8 +173,8 @@ export default function HomePage() {
                     <div className="flex flex-col text-neutral-500/40 border-r border-neutral-800/50 select-none text-center leading-relaxed">
                       {Array.from({ length: 9 }, (_, i) => <span key={i}>{i + 1}</span>)}
                     </div>
-                    <div className="px-8 whitespace-pre text-neutral-400 overflow-x-auto leading-relaxed">
-                      <code>
+                    <div className="px-8 whitespace-pre text-neutral-400 overflow-hidden leading-relaxed">
+                      <code className="text-[11px]">
                         <span className="text-purple-400">import</span>{' '}{'{'}{' '}<span className="text-sky-400">createClient</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/client"</span>;{'\n'}
                         <span className="text-purple-400">import</span>{' '}<span className="text-purple-400">type</span>{' '}{'{'}{' '}<span className="text-sky-400">Types</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/types"</span>;{'\n'}
                         {'\n'}
