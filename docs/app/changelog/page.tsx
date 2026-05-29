@@ -112,7 +112,7 @@ const releases = [
 
 function TagBadge({ tag }: { tag: string }) {
     return (
-        <code className="text-[9px] font-mono bg-fd-muted px-2 py-0.5 rounded border border-edge">
+        <code className="text-[9px] font-mono bg-fd-muted px-2 py-0.5 rounded border border-fd-border">
             {tag}
         </code>
     )
@@ -128,9 +128,9 @@ export default function ChangelogPage() {
 
             <div className="space-y-16">
                 {releases.map((release) => (
-                    <section key={release.version} className="relative pl-8 border-l-2 border-edge">
+                    <section key={release.version} className="relative pl-8 border-l-2 border-fd-border">
                         {/* Timeline dot */}
-                        <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-fd-foreground border-2 border-background" />
+                        <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-fd-foreground border-2 border-fd-background" />
 
                         <div className="space-y-6">
                             {/* Header */}
