@@ -6,6 +6,10 @@ Universal TypeScript client for [pyRPC](https://pyrpc.dev). Type-safe RPC calls 
 
 ```bash
 npm install @pyrpc/client
+# or
+pnpm add @pyrpc/client
+# or
+bun add @pyrpc/client
 ```
 
 The postinstall script in `@pyrpc/types` will prompt for your server URL and generate typed contracts automatically.
@@ -32,17 +36,6 @@ console.log(user.name);
 
 The proxy-based API lets you call any remote procedure as a local method. Parameters are passed positionally or as a single object for named arguments.
 
-### Dynamic headers (auth)
-
-```typescript
-const client = createClient({
-  baseUrl: "https://api.example.com",
-  headers: () => ({
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  }),
-});
-```
-
 ### Error handling
 
 ```typescript
@@ -64,7 +57,11 @@ try {
 Creates a proxy client that forwards method calls to the server.
 
 - `baseUrl` — Server root URL (defaults to `window.location.origin` in browsers)
-- `headers` — Static, dynamic, or async `HeadersInit`
+- `headers` — Static or async `HeadersInit`
+
+## Keywords
+
+rpc, pyrpc, typescript, client, type-safe, api, remote-procedure-call
 
 ## License
 
