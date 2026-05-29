@@ -1,0 +1,37 @@
+changelog:
+  categories:
+    - title: Breaking Changes
+      labels:
+        - breaking
+    - title: Features
+      labels:
+        - feat
+    - title: Fixes
+      labels:
+        - fix
+    - title: TypeScript Client
+      labels:
+        - client
+    - title: Adapters
+      labels:
+        - adapter
+        - fastapi
+        - flask
+    - title: Codegen
+      labels:
+        - codegen
+    - title: Documentation
+      labels:
+        - docs
+    - title: Internal / Tooling
+      labels:
+        - chore
+        - ci
+        - test
+        - refactor
+    - title: Dependency Updates
+      labels:
+        - dependencies
+    - title: Other Changes
+      labels:
+        - "*"
