@@ -107,6 +107,19 @@ export default function HomePage() {
                   <span>View on GitHub</span>
                 </Link>
               </div>
+
+              {/* Trust Signals */}
+              <div className="flex items-center gap-3 text-[11px] text-neutral-500 dark:text-neutral-500 font-mono tracking-wide">
+                <span>FastAPI</span>
+                <span className="text-neutral-700 dark:text-neutral-700">|</span>
+                <span>Flask</span>
+                <span className="text-neutral-700 dark:text-neutral-700">|</span>
+                <span>Django</span>
+                <span className="text-neutral-700 dark:text-neutral-700">|</span>
+                <span>React</span>
+                <span className="text-neutral-700 dark:text-neutral-700">|</span>
+                <span>Next.js</span>
+              </div>
             </div>
 
             {/* Right Column - Code Window */}
@@ -278,7 +291,7 @@ export default function HomePage() {
               <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white dark:from-black to-transparent z-10 pointer-events-none opacity-100" />
 
               <div className="flex animate-marquee whitespace-nowrap gap-12 items-center py-4">
-                {[1, 2, 3].map((loop) => (
+                {[1].map((loop) => (
                   <div key={loop} className="flex shrink-0 items-center gap-16">
                     <div className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
                       <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-fd-foreground shrink-0">
@@ -360,8 +373,8 @@ export default function HomePage() {
             {[
               {
                 id: "01",
-                title: "Cross-Language Contracts.",
-                description: "Python @rpc decorators generate TypeScript types automatically. One source of truth, two languages.",
+                title: "Cross-language contracts.",
+                description: "Define once in Python. Get fully typed TypeScript contracts automatically.",
                 visual: (
                   <div className="flex items-center gap-2.5">
                     <span className="text-[10px] font-mono text-sky-400 font-bold">.py</span>
@@ -372,8 +385,8 @@ export default function HomePage() {
               },
               {
                 id: "02",
-                title: "Pydantic v2 Engine.",
-                description: "Industrial-grade parameter validation and return type serialization natively.",
+                title: "Powered by Pydantic v2",
+                description: "Runtime validation and serialization built in by default.",
                 visual: (
                   <div className="px-2 py-1 rounded bg-emerald-500/5 border border-emerald-500/20">
                     <span className="text-[9px] text-emerald-500 font-bold tracking-tighter uppercase">Strict Validation</span>
@@ -479,11 +492,11 @@ export default function HomePage() {
 
             <div className="relative z-10 flex flex-col items-center">
               <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-6 max-w-2xl">
-                Python + TypeScript <br /> 
-                <span className="text-fd-foreground/30 text-3xl md:text-4xl">one type system.</span>
+                One source of truth. <br /> 
+                <span className="text-fd-foreground/30 text-3xl md:text-4xl">Across Python and TypeScript.</span>
               </h2>
               <p className="text-fd-foreground/40 text-base md:text-lg mb-10 max-w-md leading-relaxed">
-                Ship type-safe apps across Python and TypeScript without OpenAPI, gRPC, or manual contract files. Open source and ready for production.
+                Build APIs once in Python. Ship type-safe clients everywhere -- without OpenAPI, gRPC, or manual contract files.
               </p>
               
               <div className="flex flex-col sm:flex-row items-center gap-4">
