@@ -75,7 +75,7 @@ export default function HomePage() {
               </div>
 
               {/* Headline */}
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter text-fd-foreground max-w-[15ch]">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter text-fd-foreground max-w-[22ch]">
                 Python backend. <br />
                 <span className="text-fd-muted-foreground/40">TypeScript frontend.</span>
               </h1>
@@ -174,7 +174,7 @@ export default function HomePage() {
                       {Array.from({ length: 9 }, (_, i) => <span key={i}>{i + 1}</span>)}
                     </div>
                     <div className="px-8 whitespace-pre text-neutral-400 overflow-hidden leading-relaxed">
-                      <code className="text-[11px]">
+                      <code>
                         <span className="text-purple-400">import</span>{' '}{'{'}{' '}<span className="text-sky-400">createClient</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/client"</span>;{'\n'}
                         <span className="text-purple-400">import</span>{' '}<span className="text-purple-400">type</span>{' '}{'{'}{' '}<span className="text-sky-400">Types</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/types"</span>;{'\n'}
                         {'\n'}
