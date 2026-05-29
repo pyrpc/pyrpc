@@ -59,10 +59,10 @@ export default function HomePage() {
 
         <div className="px-6 md:px-12 lg:px-20">
           {/* Hero Section */}
-          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-20 md:pt-32 pb-24">
-
-            {/* Left Column */}
-            <div className="flex flex-col items-start gap-10">
+          <div className="grid lg:grid-cols-[58%_42%] gap-16 lg:gap-24 w-full pt-20 md:pt-32 pb-24">
+ 
+             {/* Left Column */}
+             <div className="flex flex-col items-start gap-10">
 
               {/* Beta Pill */}
               <div
@@ -75,13 +75,14 @@ export default function HomePage() {
               </div>
 
               {/* Headline */}
-              <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter text-fd-foreground text-balance">
-                Python backend. <span className="text-fd-muted-foreground/40">TypeScript frontend.</span>
+              <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.88] tracking-tighter text-fd-foreground">
+                <span className="block">Python backend.</span>
+                <span className="block whitespace-nowrap text-fd-muted-foreground/40">TypeScript frontend.</span>
               </h1>
 
               {/* Description */}
               <p
-                className="max-w-lg text-neutral-600 dark:text-neutral-400 text-sm md:text-base leading-relaxed"
+                className="max-w-xl text-neutral-600 dark:text-neutral-400 text-sm md:text-base leading-relaxed"
                 style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}
               >
                 One type system across both languages. pyRPC syncs your Python procedure signatures into TypeScript contracts automatically. No codegen hassle, no schema drift.
