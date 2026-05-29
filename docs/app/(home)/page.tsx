@@ -75,7 +75,7 @@ export default function HomePage() {
               </div>
 
               {/* Headline */}
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter text-fd-foreground max-w-[22ch]">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter text-fd-foreground max-w-[24ch]">
                 Python backend. <br />
                 <span className="text-fd-muted-foreground/40">TypeScript frontend.</span>
               </h1>
@@ -236,14 +236,24 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {codeTab === 'client' && (
+                {codeTab === 'server' ? (
                   <div className="flex w-full justify-between items-center border border-neutral-800/50 bg-[#080808] px-4 py-2.5 font-mono text-[13px] text-neutral-500 group/codegen hover:border-neutral-700 transition-colors">
                     <div className="flex items-center gap-3">
                       <span className="text-emerald-500/30 select-none">$</span>
-                      <span className="text-neutral-400/80 tracking-tight">pyrpc codegen http://localhost:8000</span>
+                      <span className="text-neutral-400/80 tracking-tight">pyrpc pull app.main -o pyrpc-schema.json</span>
                     </div>
                     <div className="text-[10px] uppercase tracking-widest text-neutral-700 font-bold select-none">
                       Codegen
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex w-full justify-between items-center border border-neutral-800/50 bg-[#080808] px-4 py-2.5 font-mono text-[13px] text-neutral-500 group/codegen hover:border-neutral-700 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <span className="text-emerald-500/30 select-none">$</span>
+                      <span className="text-neutral-400/80 tracking-tight">PYRPC_URL='http://localhost:8000' npm install @pyrpc/client</span>
+                    </div>
+                    <div className="text-[10px] uppercase tracking-widest text-neutral-700 font-bold select-none">
+                      CI Setup
                     </div>
                   </div>
                 )}
