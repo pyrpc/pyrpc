@@ -11,7 +11,7 @@ from rich.table import Table
 from .ts_codegen import save_typescript_client, DEFAULT_OUTPUT
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 app = typer.Typer(

@@ -57,7 +57,7 @@ export default function BlogPage() {
                     <Link
                         key={post.slug}
                         href={`/blog/${post.slug}`}
-                        className="block group border border-edge rounded-lg p-5 hover:bg-fd-accent/30 transition-colors"
+                        className="block group border border-fd-border rounded-lg p-5 hover:bg-fd-accent/30 transition-colors bg-white/50 dark:bg-white/[0.03]"
                     >
                         <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground mb-2">
                             <time>{post.date}</time>
