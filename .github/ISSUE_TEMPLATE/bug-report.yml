@@ -1,0 +1,62 @@
+name: Bug Report
+description: Report a bug in pyRPC
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report.
+  - type: dropdown
+    id: subsystem
+    attributes:
+      label: Subsystem
+      description: Which part of pyRPC is the bug in?
+      options:
+        - pyrpc-core (protocol, router, interpreter, validation)
+        - pyrpc-fastapi (FastAPI adapter)
+        - pyrpc-flask (Flask adapter)
+        - pyrpc-codegen (TypeScript code generation)
+        - @pyrpc/client (TypeScript client)
+        - docs / examples
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of pyRPC are you using? (check pyproject.toml or package.json)
+      placeholder: e.g. 0.1.0-alpha.1
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened? What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Minimal code or steps to reproduce the issue
+      placeholder: |
+        1. Install pyrpc-core 0.1.0
+        2. Define @rpc with X
+        3. Call Y
+        4. See error Z
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or errors
+      description: Copy and paste any relevant output
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Validations
+      options:
+        - label: I have checked the existing issues and this is not a duplicate
+          required: true

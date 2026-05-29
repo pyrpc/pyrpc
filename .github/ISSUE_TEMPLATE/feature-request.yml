@@ -1,0 +1,51 @@
+name: Feature Request
+description: Suggest an idea for pyRPC
+labels: ["feat"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature. Please check the [roadmap](https://github.com/pyrpc/pyrpc/blob/main/ROADMAP.md) first to see if your idea is already planned or listed as a non-goal.
+  - type: dropdown
+    id: subsystem
+    attributes:
+      label: Subsystem
+      description: Which part of pyRPC does this affect?
+      options:
+        - pyrpc-core (protocol, router, interpreter, validation)
+        - pyrpc-fastapi (FastAPI adapter)
+        - pyrpc-flask (Flask adapter)
+        - pyrpc-codegen (TypeScript code generation)
+        - @pyrpc/client (TypeScript client)
+        - docs / examples
+        - release / tooling
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this solve? What is the use case?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What should the API or behavior look like?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative approaches
+      description: What else have you considered?
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Validations
+      options:
+        - label: I have checked the roadmap and this is not listed as a non-goal
+          required: true
+        - label: I have checked the existing issues and this is not a duplicate
+          required: true
