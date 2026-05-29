@@ -1,35 +1,35 @@
 import importlib
+import json
 import os
 import sys
-from typing import Optional
 
 import typer
-import uvicorn
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from .ts_codegen import save_typescript_client
-from pyrpc_core import default_router, get_registry_schema
+from .ts_codegen import save_typescript_client, DEFAULT_OUTPUT
 
 
-# Avoid importing from .. (the root __init__) to prevent circularity if possible
-# or just import specific things we need. 
-# __version__ can be hardcoded here or read from somewhere else if needed, 
-# but for CLI it's often fine to just have a local ref or import from a dedicated version file.
-__version__ = "0.1.0" 
+__version__ = "0.1.0"
 
 
 app = typer.Typer(
     name="pyrpc",
-    help="pyRPC CLI - tRPC power for Python projects",
+    help="pyRPC CLI - type-safe Python-to-TypeScript RPC",
     add_completion=False,
 )
 console = Console()
 
 
+def _lazy_import_pyrpc_core():
+    """Import pyrpc-core lazily so codegen-only usage avoids the dep."""
+    global default_router, get_registry_schema
+    from pyrpc_core import default_router, get_registry_schema
+    return default_router, get_registry_schema
+
+
 def _import_module(module_path: str):
-    """Dynamically import a module and handle errors."""
     sys.path.append(os.getcwd())
     try:
         return importlib.import_module(module_path)
@@ -38,10 +38,66 @@ def _import_module(module_path: str):
         raise typer.Exit(code=1)
 
 
+def _fetch_schema(url: str) -> dict:
+    import httpx
+    clean_url = url.rstrip("/")
+    if not clean_url.endswith("/rpc"):
+        clean_url += "/rpc"
+    response = httpx.get(clean_url)
+    response.raise_for_status()
+    return response.json()
+
+
+def _load_schema(path_or_url: str) -> dict:
+    if path_or_url.startswith("http://") or path_or_url.startswith("https://"):
+        console.print(f"Fetching schema from [bold yellow]{path_or_url}[/bold yellow]...")
+        return _fetch_schema(path_or_url)
+    path = os.path.abspath(path_or_url)
+    console.print(f"Reading schema from [bold yellow]{path}[/bold yellow]...")
+    with open(path, "r") as f:
+        return json.load(f)
+
+
 @app.command()
 def version():
     """Show pyRPC version."""
     console.print(f"pyRPC version: [bold cyan]{__version__}[/bold cyan]")
+
+
+@app.command()
+def pull(
+    module: str = typer.Argument(..., help="Python module path (e.g. 'app.main')"),
+    output: str = typer.Option("pyrpc-schema.json", "--output", "-o", help="Output JSON schema file path"),
+):
+    """Extract RPC schema from a Python module and save as JSON."""
+    _lazy_import_pyrpc_core()
+    _import_module(module)
+
+    schemas = get_registry_schema(default_router)
+
+    if not schemas:
+        console.print("[yellow]No procedures found in registry for this module.[/yellow]")
+        raise typer.Exit(code=1)
+
+    serializable = {}
+    for name, schema in schemas.items():
+        serializable[name] = {
+            "name": schema.name,
+            "doc": schema.doc or "",
+            "parameters": [
+                {"name": p.name, "type": p.type, "required": p.required, "default": p.default}
+                for p in schema.parameters
+            ],
+            "return_type": schema.return_type,
+        }
+
+    output_path = os.path.abspath(output)
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+    with open(output_path, "w") as f:
+        json.dump(serializable, f, indent=2)
+
+    console.print(f"[bold green]OK Schema extracted to {output_path}[/bold green]")
+    console.print(f"  ({len(serializable)} procedure(s) written)")
 
 
 @app.command()
@@ -52,61 +108,38 @@ def serve(
     reload: bool = typer.Option(False, "--reload", help="Enable auto-reload"),
 ):
     """Start the pyRPC ASGI server."""
+    _lazy_import_pyrpc_core()
+    import uvicorn
     _import_module(module)
-    
+
     console.print(Panel(
         f"Starting pyRPC server for [bold cyan]{module}[/bold cyan]\n"
         f"Endpoint: [bold green]http://{host}:{port}/rpc[/bold green]",
         title="pyRPC Serve",
         border_style="blue"
     ))
-    
-    # We use the built-in asgi_app if found in the package, or just the module path for uvicorn
-    # If the user wants to serve their own app (like FastAPI), they'd use uvicorn directly.
-    # Here we assume they want to serve the default pyrpc asgi app.
+
     uvicorn.run("pyrpc:asgi_app", host=host, port=port, reload=reload)
 
 
 @app.command()
 def codegen(
-    module: Optional[str] = typer.Option(None, "--module", "-m", help="Python module to introspect"),
-    url: Optional[str] = typer.Option(None, "--url", "-u", help="URL of a running pyRPC server"),
-    target: str = typer.Option("ts", "--target", "-t", help="Target language (only 'ts' supported)"),
-    output: str = typer.Option(".pyrpc/types.ts", "--output", "-o", help="Output file path"),
+    source: str = typer.Argument(..., help="Schema JSON file path or URL of a running pyRPC server (e.g. pyrpc-schema.json or http://localhost:8000)"),
+    output: str = typer.Option(DEFAULT_OUTPUT, "--output", "-o", help="Output file path for generated types"),
 ):
-    """Generate a client for a pyRPC service."""
-    if target != "ts":
-        console.print(f"[bold red]Error:[/bold red] Target '{target}' is not supported. Use 'ts'.")
+    """Generate TypeScript type definitions from a schema file or a running server."""
+    try:
+        schemas = _load_schema(source)
+    except Exception as e:
+        console.print(f"[bold red]Error:[/bold red] Could not load schema from '{source}': {e}")
         raise typer.Exit(code=1)
 
-    if not module and not url:
-        console.print("[bold red]Error:[/bold red] You must provide either --module or --url.")
-        raise typer.Exit(code=1)
-
-    schemas = {}
-    if module:
-        _import_module(module)
-        console.print(f"Introspecting module [bold yellow]{module}[/bold yellow]...")
-        schemas = get_registry_schema(default_router)
-    elif url:
-        import httpx
-        try:
-            console.print(f"Fetching schema from [bold yellow]{url}[/bold yellow]...")
-            # Automatically append /rpc if it's just the base URL
-            clean_url = url.rstrip("/")
-            if not clean_url.endswith("/rpc"):
-                clean_url += "/rpc"
-            
-            response = httpx.get(clean_url)
-            response.raise_for_status()
-            schemas = response.json()
-        except Exception as e:
-            console.print(f"[bold red]Error:[/bold red] Could not fetch schema from '{url}': {e}")
-            raise typer.Exit(code=1)
-
-    console.print(f"Generating [bold cyan]{target}[/bold cyan] contracts...")
+    console.print(f"Generating TypeScript contracts [dim]({len(schemas)} procedures)[/dim]...")
     save_typescript_client(schemas, output)
-    console.print(f"[bold green]Successfully generated {output}[/bold green]")
+    console.print(f"[bold green]OK Types written to {output}[/bold green]")
+
+    if os.path.exists(output):
+        console.print(f"  Import: [bold]import type {{ Types }} from \"@pyrpc/types\"[/bold]")
 
 
 @app.command()
@@ -114,10 +147,11 @@ def inspect(
     module: str = typer.Argument(..., help="Module to inspect")
 ):
     """List all registered RPC procedures in a module."""
+    _lazy_import_pyrpc_core()
     _import_module(module)
-    
+
     schemas = get_registry_schema(default_router)
-    
+
     if not schemas:
         console.print("[yellow]No procedures found in registry for this module.[/yellow]")
         return
