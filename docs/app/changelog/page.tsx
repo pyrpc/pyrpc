@@ -38,8 +38,15 @@ const releases = [
             {
                 title: 'Documentation',
                 items: [
+                    'Redesigned home page with interactive IDE terminal-style quickstart panels',
+                    'Animated WebGL background waves with mouse interaction (OGL shader)',
+                    'Non-docs layout with architectural grid lines and global footer',
+                    'Privacy policy and terms of use pages at /legal/privacy and /legal/terms',
+                    'Demo sandbox updated with console.log simulation, theme-aware terminal, and v0.2.0 version badge',
                     'Blog post: v0.2.0  -  Type safety, proper async, and @pyrpc/types',
+                    'Blog post: Cleaner codegen, one CLI, and a sharper developer story',
                     'Codegen plugin docs updated: no --watch, no pyrpc init, postinstall flow',
+                    'Changelog page with version timeline for all releases',
                 ]
             },
         ]
