@@ -5,16 +5,38 @@ on:
     tags:
       - "v*.*.*"
       - "v*.*.*-*"
+  workflow_dispatch:
+    inputs:
+      dist_tag:
+        description: 'npm dist-tag'
+        required: true
+        type: choice
+        default: 'latest'
+        options:
+          - 'latest'
+          - 'canary'
+          - 'next'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  id-token: write
+
+env:
+  NPM_CONFIG_PROVENANCE: true
 
 jobs:
   publish-pypi:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -39,40 +61,52 @@ jobs:
 
   publish-npm:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-          
-      - name: Install dependencies
-        working-directory: ./packages/client
-        run: npm install
 
-      - name: Build TypeScript package
-        working-directory: ./packages/client
-        run: npm run build
+      - name: Build TypeScript packages
+        run: |
+          cd packages/client
+          npm ci
+          npm run build
 
-      - name: Publish to npm
-        working-directory: ./packages/client
+      - name: Publish @pyrpc/types
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "::error::NPM_TOKEN secret is not set. Add it at: https://github.com/${{ github.repository }}/settings/secrets/actions"
-            exit 1
-          fi
+          TAG="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dist_tag || '' }}"
           VERSION="${GITHUB_REF_NAME#v}"
-          if [[ "$VERSION" == *"-"* ]]; then
-            TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
-            echo "Publishing prerelease with tag: $TAG"
-            npm publish --access public --tag "$TAG"
+          if [ -n "$TAG" ]; then
+            npm publish ./packages/types --access public --tag "$TAG"
+          elif echo "$VERSION" | grep -q '-'; then
+            PRETAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
+            npm publish ./packages/types --access public --tag "$PRETAG"
           else
-            echo "Publishing stable release"
-            npm publish --access public
+            npm publish ./packages/types --access public
+          fi
+
+      - name: Publish @pyrpc/client
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          TAG="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dist_tag || '' }}"
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [ -n "$TAG" ]; then
+            npm publish ./packages/client --access public --tag "$TAG"
+          elif echo "$VERSION" | grep -q '-'; then
+            PRETAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
+            npm publish ./packages/client --access public --tag "$PRETAG"
+          else
+            npm publish ./packages/client --access public
           fi
 
   create-release:
@@ -80,6 +114,7 @@ jobs:
     permissions:
       contents: write
     needs: [publish-pypi, publish-npm]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/checkout@v4
 

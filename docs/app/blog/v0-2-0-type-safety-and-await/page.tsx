@@ -145,6 +145,24 @@ npm run build`}
                     The generated file can also be committed to the repo so CI doesn&rsquo;t need access to a running Python server.
                 </p>
 
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">4. Everything else in this release</h2>
+                <p>
+                    Beyond the three shipping blockers, v0.2.0 includes the Pattern A CLI refactor, a redesigned documentation site, and a proper changelog.
+                </p>
+
+                <h3 className="text-base font-semibold text-fd-foreground mt-8">Pattern A CLI</h3>
+                <p>
+                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc</code> CLI was refactored with lazy imports so codegen from a JSON file doesn&rsquo;t import <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc-core</code>. The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pull</code> subcommand extracts an RPC schema as portable JSON: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc pull myapp -o schema.json</code>. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc codegen</code> now accepts both file paths and URLs.
+                </p>
+
+                <h3 className="text-base font-semibold text-fd-foreground mt-8">Documentation overhaul</h3>
+                <p>
+                    The home page was redesigned with IDE terminal-style quickstart panels, animated WebGL background waves, and a global footer layout. Privacy policy and terms of use pages live at <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/legal/privacy</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/legal/terms</code>. The demo sandbox now includes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">console.log()</code> simulation and a theme-aware terminal.
+                </p>
+                <p>
+                    New blog posts cover the codegen refactor, building a full-stack app with pyrpc, migrating from FastAPI, and a deep-dive on the demo sandbox architecture. The <Link href="/changelog" className="text-fd-foreground underline underline-offset-2">changelog page</Link> tracks every release.
+                </p>
+
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What&rsquo;s next</h2>
                 <ul>
                     <li>Pydantic model → TypeScript interface generation</li>
