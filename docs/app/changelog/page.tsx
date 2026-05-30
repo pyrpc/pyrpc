@@ -52,6 +52,71 @@ const releases = [
         ]
     },
     {
+        version: 'v0.1.0-alpha.3',
+        date: '2026-05-29',
+        tag: 'v0.1.0-alpha.3',
+        description: 'Iterative npm release with @pyrpc/types postinstall setup and cross-language documentation alignment.',
+        sections: [
+            {
+                title: 'TypeScript Packages',
+                items: [
+                    '@pyrpc/types published to npm as a standalone package with postinstall codegen integration',
+                    '@pyrpc/client updated with simplified README  -  pnpm/bun install options, removed auth section',
+                ]
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'Cross-language positioning: docs updated to remove npx pyrpc references',
+                    'Existing blog posts updated for the postinstall workflow',
+                ]
+            },
+        ]
+    },
+    {
+        version: 'v0.1.0-alpha.2',
+        date: '2026-05-29',
+        tag: 'v0.1.0-alpha.2',
+        description: 'Iterative npm release with Pattern A CLI refactor and demo sandbox improvements.',
+        sections: [
+            {
+                title: 'Code Generation',
+                items: [
+                    'Pattern A CLI refactor: pyrpc pull &lt;module&gt; -o schema.json, pyrpc codegen accepts files and URLs',
+                    'Lazy pyrpc-core imports  -  codegen from JSON file does not import pyrpc-core',
+                    'Comprehensive test suite for CLI subcommands (pull, codegen URL/file)',
+                ]
+            },
+            {
+                title: 'Security & Trust',
+                items: [
+                    'SECURITY.md with reporting scope and vulnerability disclosure policy',
+                    'Trust infrastructure files added: PYRPC.md, ROADMAP.md, CONTRIBUTING.md',
+                    'Issue and PR templates created',
+                ]
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'Blog posts: why pyrpc, migrating from FastAPI, building a full-stack app',
+                    'Demo sandbox blog post: deep-dive on the interactive playground architecture',
+                    'LICENSE.md (MIT) and CONTRIBUTING.md added',
+                    'README updated with contribution and security sections',
+                    'npm and PyPI download badges added to README',
+                ]
+            },
+            {
+                title: 'Demo Sandbox',
+                items: [
+                    'Redesigned demo page with mock execution, terminal, and validation',
+                    'Monaco createModel approach for live TypeScript type generation',
+                    'Client-side Python parser for RPC/model type generation',
+                    'Mock sandbox RPC endpoint with param binding and return literal parsing',
+                ]
+            },
+        ]
+    },
+    {
         version: 'v0.1.0-alpha.1',
         date: '2026-05-25',
         tag: 'v0.1.0-alpha.1',
