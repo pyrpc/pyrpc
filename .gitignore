@@ -154,4 +154,5 @@ node_modules
 dist
 
 
-# 
+# System design docs (local developer documentation)
+system-design/
