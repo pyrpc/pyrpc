@@ -4,6 +4,7 @@ requires-python = ">=3.11"
 
 [manifest]
 members = [
+    "pyrpc-cli",
     "pyrpc-codegen",
     "pyrpc-core",
     "pyrpc-fastapi",
@@ -434,14 +435,12 @@ wheels = [
 ]
 
 [[package]]
-name = "pyrpc-codegen"
+name = "pyrpc-cli"
 version = "0.1.0a1"
-source = { editable = "packages/pyrpc-codegen" }
+source = { editable = "packages/pyrpc-cli" }
 dependencies = [
     { name = "httpx" },
-    { name = "jinja2" },
-    { name = "jsonschema-ts" },
-    { name = "pyrpc-core" },
+    { name = "pyrpc-codegen" },
     { name = "rich" },
     { name = "typer" },
     { name = "uvicorn" },
@@ -451,13 +450,26 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "jinja2", specifier = ">=3.1.0" },
-    { name = "jsonschema-ts", specifier = ">=0.1.0" },
-    { name = "pyrpc-core", editable = "packages/pyrpc-core" },
+    { name = "pyrpc-codegen", editable = "packages/pyrpc-codegen" },
     { name = "rich", specifier = ">=13.0.0" },
     { name = "typer", extras = ["all"], specifier = ">=0.9.0" },
     { name = "uvicorn", specifier = ">=0.23.0" },
     { name = "watchfiles", specifier = ">=1.0.0" },
+]
+
+[[package]]
+name = "pyrpc-codegen"
+version = "0.1.0a1"
+source = { editable = "packages/pyrpc-codegen" }
+dependencies = [
+    { name = "jinja2" },
+    { name = "jsonschema-ts" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "jinja2", specifier = ">=3.1.0" },
+    { name = "jsonschema-ts", specifier = ">=0.1.0" },
 ]
 
 [[package]]
@@ -468,6 +480,7 @@ dependencies = [
     { name = "anyio" },
     { name = "httpx" },
     { name = "pydantic" },
+    { name = "pyrpc-cli" },
 ]
 
 [package.metadata]
@@ -475,6 +488,7 @@ requires-dist = [
     { name = "anyio", specifier = ">=4.0" },
     { name = "httpx", specifier = ">=0.24.0" },
     { name = "pydantic", specifier = ">=2.0" },
+    { name = "pyrpc-cli", editable = "packages/pyrpc-cli" },
 ]
 
 [[package]]
@@ -531,6 +545,7 @@ dev = [
     { name = "fastapi" },
     { name = "jinja2" },
     { name = "pydantic-core" },
+    { name = "pyrpc-cli" },
     { name = "pyrpc-codegen" },
     { name = "pyrpc-fastapi" },
     { name = "pytest" },
@@ -559,6 +574,7 @@ dev = [
     { name = "fastapi", specifier = ">=0.128.7" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "pydantic-core", specifier = "==2.41.5" },
+    { name = "pyrpc-cli", editable = "packages/pyrpc-cli" },
     { name = "pyrpc-codegen", editable = "packages/pyrpc-codegen" },
     { name = "pyrpc-fastapi", editable = "packages/pyrpc-fastapi" },
     { name = "pytest", specifier = ">=9.0.2" },
