@@ -11,7 +11,7 @@ export default function CircularDependencyPost() {
                     The circular dependency problem and how pyrpc-cli solved it
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>June 2, 2026</time>
+                    <time>June 2, 2026 at 10:15am</time>
                     <span>&middot;</span>
                     <span>10 min read</span>
                 </div>

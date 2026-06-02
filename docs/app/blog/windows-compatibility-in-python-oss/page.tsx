@@ -11,7 +11,7 @@ export default function WindowsCompatPost() {
                     Windows compatibility in a Python OSS project: what we learned
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>June 2, 2026</time>
+                    <time>June 2, 2026 at 4:00pm</time>
                     <span>&middot;</span>
                     <span>7 min read</span>
                 </div>

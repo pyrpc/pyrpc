@@ -11,7 +11,7 @@ export default function BreakingCircularDepsPost() {
                     How to break a circular dependency in Python packaging
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>June 2, 2026</time>
+                    <time>June 2, 2026 at 5:30pm</time>
                     <span>&middot;</span>
                     <span>11 min read</span>
                 </div>
