@@ -17,8 +17,9 @@ Thank you for considering contributing to pyRPC. This guide will help you get st
 pyrpc/
 ├── packages/
 │   ├── client/          # TypeScript client (@pyrpc/client)
+│   ├── pyrpc-cli/       # Python CLI (serve, inspect, codegen, pull)
 │   ├── pyrpc-core/      # Python core runtime
-│   ├── pyrpc-codegen/   # Python codegen tools
+│   ├── pyrpc-codegen/   # Python codegen library (pure, no CLI)
 │   ├── pyrpc-fastapi/   # FastAPI adapter
 │   └── pyrpc-flask/     # Flask adapter
 ├── docs/                # Documentation site (Next.js + fumadocs)
@@ -31,7 +32,7 @@ pyrpc/
 ```bash
 uv sync
 # or
-pip install -e packages/pyrpc-core -e packages/pyrpc-codegen -e packages/pyrpc-fastapi -e packages/pyrpc-flask
+pip install -e packages/pyrpc-core -e packages/pyrpc-cli -e packages/pyrpc-codegen -e packages/pyrpc-flask -e packages/pyrpc-fastapi
 ```
 
 ### TypeScript Setup
