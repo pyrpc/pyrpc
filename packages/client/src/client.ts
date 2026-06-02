@@ -95,12 +95,20 @@ export class PyRPCClient {
  */
 export function createClient<TTypes = any>(options: ClientOptions = {}): PyRPCClient & TTypes {
   const client = new PyRPCClient(options);
-  
+
   return new Proxy(client, {
     get(target, prop: string, receiver) {
-      if (prop in target) {
-        return Reflect.get(target, prop, receiver);
+      if (prop === 'rpc') {
+        return new Proxy({}, {
+          get(_, method) {
+            throw new Error(
+              `Use client.${String(method)}() instead of client.rpc.${String(method)}(). ` +
+              `The .rpc prefix was removed for a cleaner API.`
+            );
+          }
+        });
       }
+      if (prop in target) return Reflect.get(target, prop, receiver);
       return target.rpc[prop];
     }
   }) as any;
