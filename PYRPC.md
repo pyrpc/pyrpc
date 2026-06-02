@@ -23,7 +23,7 @@ pyRPC  -  type-safe RPC for Python and TypeScript.
 | `pyrpc-fastapi` | PyPI | FastAPI adapter |
 | `pyrpc-flask` | PyPI | Flask adapter |
 | `pyrpc-codegen` | PyPI | TypeScript code generation library |
-| `pyrpc-cli` | PyPI | CLI tools (serve, inspect, codegen, pull) |
+| `pyrpc-core` | PyPI | Runtime + CLI (serve, inspect, codegen, pull, dev) |
 | `@pyrpc/client` | npm | TypeScript client |
 | `@pyrpc/types` | npm | Generated type definitions (postinstall) |
 
@@ -55,10 +55,7 @@ pyRPC is a Python-first RPC system with TypeScript reach. It gives you type safe
 │  Translate framework HTTP → core Interpreter              │
 ├──────────────────────────────────────────────────────────┤
 │  pyrpc-core                                               │
-│  Protocol, router, procedure execution, validation         │
-├──────────────────────────────────────────────────────────┤
-│  pyrpc-cli                                                │
-│  CLI commands (serve, inspect, codegen, pull, dev)        │
+│  Protocol, router, CLI, validation, dev console            │
 ├──────────────────────────────────────────────────────────┤
 │  pyrpc-codegen                                            │
 │  Introspection → TypeScript type generation (library)     │

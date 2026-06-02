@@ -58,7 +58,7 @@ For TypeScript, you can wrap `createClient` to inject custom headers or use a di
 ## Codegen Tips
 
 - Re-run `npm install @pyrpc/client` with `PYRPC_URL` set to regenerate types after adding procedures.
-- Or use the CLI (requires `pyrpc-cli`): `pyrpc codegen http://localhost:8000`.
+- Or use the CLI: `pyrpc codegen http://localhost:8000` (included with `pyrpc-core`).
 - By default, `pyrpc codegen` writes to `node_modules/@pyrpc/types/src/index.ts`. Use `--output` for a custom path.
 - Commit the generated types to your repo so frontend builds don't depend on a running Python server.
 

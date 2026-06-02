@@ -47,7 +47,7 @@ def test_save_typescript_client_from_file():
         with open(schema_file, "w") as f:
             json.dump(schemas, f)
 
-        from pyrpc_cli.main import _load_schema
+        from pyrpc_core.cli import _load_schema
         loaded = _load_schema(schema_file)
         assert loaded == schemas
 
