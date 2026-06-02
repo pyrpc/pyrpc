@@ -377,24 +377,14 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {codeTab === 'server' ? (
+                {codeTab === 'server' && (
                   <div className="flex w-full justify-between items-center border border-neutral-800/50 bg-[#080808] px-4 py-2.5 font-mono text-[11px] text-neutral-500 group/codegen hover:border-neutral-700 transition-colors">
                     <div className="flex items-center gap-3">
                       <span className="text-emerald-500/30 select-none">$</span>
-                      <span className="text-neutral-400/80 tracking-tight">pyrpc pull app.main -o pyrpc-schema.json</span>
+                      <span className="text-neutral-400/80 tracking-tight">pyrpc dev</span>
                     </div>
                     <div className="text-[10px] uppercase tracking-widest text-neutral-700 font-bold select-none">
-                      Codegen
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex w-full justify-between items-center border border-neutral-800/50 bg-[#080808] px-4 py-2.5 font-mono text-[11px] text-neutral-500 group/codegen hover:border-neutral-700 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <span className="text-emerald-500/30 select-none">$</span>
-                      <span className="text-neutral-400/80 tracking-tight">PYRPC_URL='http://localhost:8000' npm install @pyrpc/client</span>
-                    </div>
-                    <div className="text-[10px] uppercase tracking-widest text-neutral-700 font-bold select-none">
-                      CI Setup
+                      Dev Server
                     </div>
                   </div>
                 )}
@@ -518,7 +508,7 @@ export default function HomePage() {
                       <div className="text-blue-400 mb-1">{'  '}╭─────────────────────────────────────╮</div>
                       <div className="text-blue-400">{'  '}│{'  '}<span className="text-white font-bold">pyRPC</span>{' — '}<span className="text-neutral-400">type-safe RPC for Python</span>{'  '}│</div>
                       <div className="text-blue-400 mb-1">{'  '}╰─────────────────────────────────────╯</div>
-                      <div><span className="text-neutral-600">  Version:</span>{'       '}<span className="text-emerald-400">0.2.0</span></div>
+                      <div><span className="text-neutral-600">  Version:</span>{'       '}<span className="text-emerald-400">0.3.0</span></div>
                       <div><span className="text-neutral-600">  Engine:</span>{'        '}<span className="text-neutral-300">Pydantic v2 + TypeAdapter</span></div>
                       <div><span className="text-neutral-600">  Protocol:</span>{'      '}<span className="text-neutral-300">JSON-RPC 2.0</span></div>
                       <div><span className="text-neutral-600">  Transport:</span>{'     '}<span className="text-neutral-300">ASGI</span></div>
@@ -871,7 +861,7 @@ export default function HomePage() {
                   <div><span className="text-emerald-500">❯</span> <span className="text-neutral-300">uv add pyrpc-core</span></div>
                   <div className="text-neutral-600">Resolved 8 packages in 320ms</div>
                   <div className="text-neutral-600">Installed 4 packages in 45ms</div>
-                  <div> <span className="text-emerald-400">+</span> pyrpc-core<span className="text-neutral-600">=={`0.2.0`}</span></div>
+                   <div> <span className="text-emerald-400">+</span> pyrpc-core<span className="text-neutral-600">=={`0.3.0`}</span></div>
                   <div> <span className="text-emerald-400">+</span> pydantic<span className="text-neutral-600">=={`2.7.1`}</span></div>
                   <div> <span className="text-emerald-400">+</span> typing-extensions<span className="text-neutral-600">=={`4.12.0`}</span></div>
                   <div className="mt-2"><span className="text-emerald-500">❯</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
@@ -879,14 +869,14 @@ export default function HomePage() {
               )}
             />
 
-            {/* Step 2 - Generate */}
+            {/* Step 2 - Dev Server */}
             <QuickstartStep
               step={2}
-              label="Generate"
-              tag="Schema"
-              title="Pull your schema from Python."
-              description="Introspect your registered RPC procedures and export a JSON schema — the bridge between your backend and frontend."
-              command="pyrpc pull app.main -o pyrpc-schema.json"
+              label="Dev"
+              tag="Server"
+              title="Start the pyRPC dev server."
+              description="Launch the development server with instant schema codegen — your RPC endpoints are served and a JSON schema is generated automatically."
+              command="pyrpc dev"
               copiedStep={copiedStep}
               onCopy={copyQuickstart}
               codeFile="@pyrpc/types"
@@ -907,11 +897,12 @@ export default function HomePage() {
               )}
               terminal={(
                 <div className="font-mono text-[11px] leading-[1.7] text-neutral-400 space-y-1">
-                  <div><span className="text-emerald-500">❯</span> <span className="text-neutral-300">pyrpc pull app.main -o pyrpc-schema.json</span></div>
-                  <div className="text-neutral-600 mt-1">Scanning module: <span className="text-sky-400">app.main</span></div>
+                  <div><span className="text-emerald-500">❯</span> <span className="text-neutral-300">pyrpc dev</span></div>
+                  <div className="text-neutral-600 mt-1">Starting pyRPC dev server...</div>
+                  <div className="text-neutral-600">Scanning module: <span className="text-sky-400">app.main</span></div>
                   <div className="text-neutral-600">Found <span className="text-pink-400">1</span> procedure, <span className="text-pink-400">1</span> model</div>
                   <div className="text-neutral-600">{'  '}└─ <span className="text-sky-400">get_user</span>{'  (id: int) → User'}</div>
-                  <div className="mt-1"><span className="text-emerald-400">✓</span> <span className="text-neutral-300">Schema written to pyrpc-schema.json</span></div>
+                  <div className="mt-1"><span className="text-emerald-400">✓</span> <span className="text-neutral-300">Schema generated — serving at http://localhost:8000</span></div>
                   <div className="mt-2"><span className="text-emerald-500">❯</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
                 </div>
               )}
@@ -923,8 +914,8 @@ export default function HomePage() {
               label="Consume"
               tag="Client"
               title="Ship type-safe TypeScript clients."
-              description="Install the client package pointing at your running server. Types are generated automatically — no codegen step, no schema drift."
-              command="npm install @pyrpc/client --url=http://localhost:8000"
+              description="Install the client package in your frontend project. Types are generated automatically at install time — no manual codegen, no schema drift."
+              command="npm install @pyrpc/client"
               copiedStep={copiedStep}
               onCopy={copyQuickstart}
               codeFile="client.ts"
@@ -943,7 +934,7 @@ export default function HomePage() {
               )}
               terminal={(
                 <div className="font-mono text-[11px] leading-[1.7] text-neutral-400 space-y-1">
-                  <div><span className="text-emerald-500">❯</span> <span className="text-neutral-300">npm install @pyrpc/client --url=http://localhost:8000</span></div>
+                  <div><span className="text-emerald-500">❯</span> <span className="text-neutral-300">npm install @pyrpc/client</span></div>
                   <div className="text-neutral-600 mt-1">Fetching schema from <span className="text-sky-400">http://localhost:8000</span></div>
                   <div className="text-neutral-600">Generating TypeScript client...</div>
                   <div className="text-neutral-600">{'  '}→ <span className="text-emerald-400">client.get_user</span>{'(id: number): Promise<User>'}</div>
