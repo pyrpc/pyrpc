@@ -1,3 +1,13 @@
+"""
+Flask + pyRPC server example.
+
+Run directly:
+    uv run python examples/flask_server.py
+
+Or with the CLI:
+    pyrpc serve examples.flask_server
+"""
+
 from pyrpc_core import rpc
 from pyrpc_flask import mount_flask
 from flask import Flask

@@ -69,10 +69,12 @@ uv add pyrpc-fastapi
 uv add pyrpc-flask
 ```
 
-#### 3. Codegen (Optional)
-Tools for generating TypeScript clients.
+#### 3. CLI & Codegen (Optional)
+The `pyrpc-cli` package provides the `pyrpc` terminal command (serve, inspect, codegen, pull).
+Installing `pyrpc-cli` also pulls in the codegen library as a transitive dependency.
 ```bash
-uv add pyrpc-codegen
+uv add pyrpc-cli
+# pip install pyrpc-cli
 ```
 
 ---
@@ -100,7 +102,7 @@ mount_fastapi(app)
 Generate typed contracts from your server to enable end-to-end typed inference.
 
 ```bash
-pip install pyrpc-codegen
+pip install pyrpc-cli
 pyrpc codegen http://localhost:8000
 ```
 

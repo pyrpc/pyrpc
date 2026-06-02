@@ -1,3 +1,10 @@
+"""
+Minimal pyRPC usage — just the @rpc decorator.
+
+Run with a server adapter (FastAPI/Flask/ASGI) or the CLI:
+    pyrpc serve examples.basic_usage
+"""
+
 from pyrpc_core import rpc
 
 """
