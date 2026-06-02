@@ -48,9 +48,8 @@ describe('@pyrpc/types integration', () => {
     expect(body.params).toEqual({ id: 1 });
   });
 
-  it('should still expose client methods alongside rpc methods', () => {
+  it('should expose baseUrl on the client', () => {
     const client = createClient({ baseUrl: 'http://localhost:8000' });
-    // Client methods like rpc should still be accessible
-    expect(client.rpc).toBeDefined();
+    expect(client.baseUrl).toBe('http://localhost:8000');
   });
 });
