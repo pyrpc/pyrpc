@@ -11,7 +11,7 @@ export default function DevConsoleVsShellPost() {
                     Dev console vs shell: two tools, one job, and the line between them
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>June 2, 2026</time>
+                    <time>June 2, 2026 at 11:30am</time>
                     <span>&middot;</span>
                     <span>8 min read</span>
                 </div>

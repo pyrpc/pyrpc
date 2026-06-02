@@ -11,7 +11,7 @@ export default function BetterAuthPatternPost() {
                     The Better Auth meta-package pattern, adapted for Python
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>June 2, 2026</time>
+                    <time>June 2, 2026 at 2:15pm</time>
                     <span>&middot;</span>
                     <span>9 min read</span>
                 </div>

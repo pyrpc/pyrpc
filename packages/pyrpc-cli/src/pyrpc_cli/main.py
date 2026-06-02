@@ -10,6 +10,7 @@ from datetime import datetime
 from pathlib import Path
 
 import typer
+from pyrpc_cli.constants import FRAMEWORKS
 from pyrpc_codegen import DEFAULT_OUTPUT, save_typescript_client
 from rich.console import Console
 from rich.panel import Panel
@@ -20,7 +21,6 @@ from watchfiles import watch
 __version__ = "0.1.0"
 
 PYRPC_CONFIG = dict | None
-FRAMEWORKS = ["fastapi", "flask", "asgi"]
 
 
 def _find_pyproject_toml() -> Path | None:
