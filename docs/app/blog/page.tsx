@@ -50,6 +50,13 @@ const posts = [
         date: 'June 2, 2026',
         readTime: '12 min',
     },
+    {
+        slug: 'dev-console-architecture',
+        title: 'Designing the pyrpc developer console',
+        description: 'Threads, subprocesses, and an embedded interactive console — how pyrpc dev combines a dev server, file watcher, type generator, and CLI into one terminal session.',
+        date: 'June 2, 2026',
+        readTime: '14 min',
+    },
 ]
 
 export default function BlogPage() {
@@ -60,7 +67,7 @@ export default function BlogPage() {
                 Design notes, deep dives, and updates from the pyrpc team.
             </p>
             <div className="space-y-6">
-                {posts.sort((a, b) => b.date.localeCompare(a.date)).map((post) => (
+                {posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((post) => (
                     <Link
                         key={post.slug}
                         href={`/blog/${post.slug}`}
