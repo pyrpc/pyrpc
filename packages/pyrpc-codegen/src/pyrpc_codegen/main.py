@@ -338,8 +338,11 @@ def dev(
     _lazy_import_pyrpc_core()
 
     cwd = os.getcwd()
+    _regenerate_lock = threading.Lock()
 
     def regenerate():
+        if not _regenerate_lock.acquire(blocking=False):
+            return
         try:
             mod = importlib.import_module(module)
             importlib.reload(mod)
@@ -351,6 +354,8 @@ def dev(
                 console.print(f"[dim]{datetime.now().strftime('%H:%M:%S')}[/dim] Types regenerated [dim]({len(schemas)} procs)[/dim]")
         except Exception as e:
             console.print(f"[red]Error regenerating types: {e}[/red]")
+        finally:
+            _regenerate_lock.release()
 
     console.print("[bold blue]Generating initial TypeScript types...[/bold blue]")
     regenerate()
