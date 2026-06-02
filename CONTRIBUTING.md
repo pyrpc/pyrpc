@@ -17,6 +17,7 @@ Thank you for considering contributing to pyRPC. This guide will help you get st
 pyrpc/
 ├── packages/
 │   ├── client/          # TypeScript client (@pyrpc/client)
+│   ├── types/           # TypeScript type declarations (@pyrpc/types)
 │   ├── pyrpc-core/      # Python runtime + CLI (serve, dev, inspect, codegen, pull)
 │   ├── pyrpc-codegen/   # Python codegen library (pure, standalone)
 │   ├── pyrpc-fastapi/   # FastAPI adapter
@@ -55,7 +56,7 @@ PRs should be scoped to one subsystem. A single PR touching core, adapters, and 
 |-----------|------|-------------|
 | Core | `packages/pyrpc-core/` | Protocol behavior, validation invariants, router semantics |
 | Adapter | `packages/pyrpc-fastapi/`, `packages/pyrpc-flask/` | Correct HTTP translation, error mapping, framework integration |
-| Client | `packages/client/`, `packages/types/` | TypeScript ergonomics, type inference, API surface |
+| Client | `packages/client/`, `packages/types/` | TypeScript ergonomics, type inference, postinstall flow, API surface |
 | Codegen | `packages/pyrpc-codegen/` | Type mapping accuracy, output correctness, introspection alignment |
 | Docs | `docs/` | Accuracy, build output |
 | Release | `scripts/`, root config | Version consistency, tag discipline |
