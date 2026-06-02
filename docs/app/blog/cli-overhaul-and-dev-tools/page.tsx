@@ -11,7 +11,7 @@ export default function CliOverhaulPost() {
                     CLI overhaul, model interfaces, and the dev tools we built
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>June 2, 2026</time>
+                    <time>June 2, 2026 at 9:45am</time>
                     <span>&middot;</span>
                     <span>12 min read</span>
                 </div>

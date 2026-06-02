@@ -11,7 +11,7 @@ export default function CodegenRefactorPost() {
                     Cleaner codegen, one CLI, and a sharper story
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>May 29, 2026</time>
+                    <time>May 29, 2026 at 10:00am</time>
                     <span>&middot;</span>
                     <span>8 min read</span>
                 </div>
