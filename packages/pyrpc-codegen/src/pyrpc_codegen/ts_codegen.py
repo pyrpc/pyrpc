@@ -101,11 +101,15 @@ def _return_type_to_ts(return_type: str) -> str:
 def _collect_schema_defs(schemas: Dict[str, Any]) -> dict:
     schema_sources = []
     for _name, schema in schemas.items():
-        for param in schema.get("parameters", []):
-            js = param.get("schema")
+        if isinstance(schema, dict):
+            params = schema.get("parameters", [])
+        else:
+            params = schema.parameters
+        for param in params:
+            js = param.get("schema") if isinstance(param, dict) else param.schema_
             if js:
                 schema_sources.append(js)
-        rs = schema.get("return_schema")
+        rs = schema.get("return_schema") if isinstance(schema, dict) else schema.return_schema
         if rs:
             schema_sources.append(rs)
     return collect_defs(*schema_sources)
