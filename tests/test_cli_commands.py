@@ -151,3 +151,67 @@ def test_cli_shell_inspect():
             result = runner.invoke(app, ["shell", "http://localhost:8000"])
             assert result.exit_code == 0
             assert "add" in result.output
+
+
+def test_dev_no_module_no_config():
+    with mock.patch("pyrpc_cli.main._ensure_config", return_value=None):
+        result = runner.invoke(app, ["dev"])
+    assert result.exit_code != 0
+    assert "No module specified" in result.output
+
+
+def test_dev_reconfigure_flag_help():
+    result = runner.invoke(app, ["dev", "--help"])
+    assert result.exit_code == 0
+    assert "--reconfigure" in result.output
+
+
+def test_parse_entry_module_only():
+    from pyrpc_cli.main import _parse_entry
+    module, app_var = _parse_entry("app.main")
+    assert module == "app.main"
+    assert app_var is None
+
+
+def test_parse_entry_with_app():
+    from pyrpc_cli.main import _parse_entry
+    module, app_var = _parse_entry("app.main:app")
+    assert module == "app.main"
+    assert app_var == "app"
+
+
+def test_parse_entry_complex():
+    from pyrpc_cli.main import _parse_entry
+    module, app_var = _parse_entry("my_package.submodule:create_app()")
+    assert module == "my_package.submodule"
+    assert app_var == "create_app()"
+
+
+def test_read_config_no_pyproject():
+    from pyrpc_cli.main import _read_pyrpc_config
+    config = _read_pyrpc_config()
+    assert config is None
+
+
+def test_write_and_read_config(tmp_path):
+    from pyrpc_cli.main import _read_pyrpc_config, _write_pyrpc_config
+
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text("[project]\nname = \"test\"\nversion = \"0.1.0\"\n")
+
+    cwd = os.getcwd()
+    os.chdir(str(tmp_path))
+    try:
+        ok = _write_pyrpc_config({"framework": "fastapi", "entry": "app.main:app"})
+        assert ok
+
+        config = _read_pyrpc_config()
+        assert config["framework"] == "fastapi"
+        assert config["entry"] == "app.main:app"
+
+        content = pyproject.read_text()
+        assert "[tool.pyrpc]" in content
+        assert 'framework = "fastapi"' in content
+        assert 'entry = "app.main:app"' in content
+    finally:
+        os.chdir(cwd)

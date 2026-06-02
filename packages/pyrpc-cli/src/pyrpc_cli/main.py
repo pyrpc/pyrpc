@@ -13,12 +13,14 @@ import typer
 from pyrpc_codegen import DEFAULT_OUTPUT, save_typescript_client
 from rich.console import Console
 from rich.panel import Panel
+from rich.prompt import Prompt
 from rich.table import Table
 from watchfiles import watch
 
 __version__ = "0.1.0"
 
 PYRPC_CONFIG = dict | None
+FRAMEWORKS = ["fastapi", "flask", "asgi"]
 
 
 def _find_pyproject_toml() -> Path | None:
@@ -80,6 +82,60 @@ def _write_pyrpc_config(config: dict) -> bool:
     with open(path, "w", encoding="utf-8") as f:
         f.writelines(lines)
     return True
+
+
+def _prompt_for_config() -> dict:
+    console.print("[bold]pyRPC Setup[/bold]")
+    console.print("Let's configure pyRPC for your project.\n")
+    framework = Prompt.ask(
+        "Which web framework are you using?",
+        choices=FRAMEWORKS,
+        default="fastapi",
+    )
+    entry = Prompt.ask(
+        "Entry point (e.g. app.main:app)",
+        default="app.main:app",
+    )
+    return {"framework": framework, "entry": entry}
+
+
+def _ensure_config(reconfigure: bool = False) -> dict | None:
+    config = _read_pyrpc_config()
+    if config and not reconfigure:
+        return config
+    if reconfigure:
+        console.print("[yellow]Reconfiguring pyRPC...[/yellow]")
+    config = _prompt_for_config()
+    _write_pyrpc_config(config)
+    return config
+
+
+def _install_adapter(framework: str):
+    if framework == "asgi":
+        return
+    adapter_pkg = f"pyrpc-{framework}"
+    try:
+        importlib.import_module(adapter_pkg.replace("-", "_"))
+        return
+    except ImportError:
+        pass
+    console.print(f"Installing [bold]{adapter_pkg}[/bold]...")
+    result = subprocess.run(
+        [sys.executable, "-m", "pip", "install", adapter_pkg],
+        capture_output=True, text=True,
+    )
+    if result.returncode == 0:
+        console.print(f"[bold green]OK Installed {adapter_pkg}[/bold green]")
+    else:
+        console.print(f"[yellow]Could not auto-install {adapter_pkg}[/yellow]")
+        console.print(f"  Install manually: [bold]pip install {adapter_pkg}[/bold]")
+
+
+def _parse_entry(entry: str) -> tuple[str, str | None]:
+    parts = entry.split(":", 1)
+    module = parts[0]
+    app_var = parts[1] if len(parts) > 1 else None
+    return module, app_var
 
 
 app = typer.Typer(
@@ -392,12 +448,24 @@ class _DevConsole:
 
 @app.command()
 def dev(
-    module: str = typer.Argument(..., help="Module containing the pyRPC application (e.g. 'app.main')"),
+    module: str = typer.Argument(None, help="Module containing the pyRPC application (e.g. 'app.main')"),
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Bind socket to this host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind socket to this port"),
     types_only: bool = typer.Option(False, "--types-only", help="Only regenerate types, skip starting the server"),
+    reconfigure: bool = typer.Option(False, "--reconfigure", help="Re-run first-time setup prompts"),
 ):
     """Start the pyRPC dev server with auto-type regeneration and interactive console."""
+    if not module or reconfigure:
+        config = _ensure_config(reconfigure=reconfigure)
+        if config:
+            module, _ = _parse_entry(config.get("entry", ""))
+            framework = config.get("framework", "asgi")
+            _install_adapter(framework)
+    if not module:
+        console.print("[bold red]Error:[/bold red] No module specified and no [tool.pyrpc] config found.")
+        console.print("  Run [bold]pyrpc dev --reconfigure[/bold] to set up, or pass a module path.")
+        raise typer.Exit(code=1)
+
     _lazy_import_pyrpc_core()
 
     cwd = os.getcwd()
