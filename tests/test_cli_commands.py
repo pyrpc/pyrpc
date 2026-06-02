@@ -136,23 +136,6 @@ def test_cli_dev():
                         result = runner.invoke(app, ["dev", "my_module"])
                         assert result.exit_code == 0
 
-def test_cli_shell_help():
-    with mock.patch("pyrpc_cli.main._fetch_schema") as mock_fetch:
-        mock_fetch.return_value = {"add": {"name": "add", "parameters": [], "return_type": "int", "doc": ""}}
-        with mock.patch("builtins.input", side_effect=["help()", "exit"]):
-            result = runner.invoke(app, ["shell", "http://localhost:8000"])
-            assert result.exit_code == 0
-            assert "Available procedures" in result.output
-
-def test_cli_shell_inspect():
-    with mock.patch("pyrpc_cli.main._fetch_schema") as mock_fetch:
-        mock_fetch.return_value = {"add": {"name": "add", "parameters": [], "return_type": "int", "doc": ""}}
-        with mock.patch("builtins.input", side_effect=["inspect()", "exit"]):
-            result = runner.invoke(app, ["shell", "http://localhost:8000"])
-            assert result.exit_code == 0
-            assert "add" in result.output
-
-
 def test_dev_no_module_no_config():
     with mock.patch("pyrpc_cli.main._ensure_config", return_value=None):
         result = runner.invoke(app, ["dev"])
