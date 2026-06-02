@@ -12,7 +12,7 @@ export default function DemoSandboxDesignPage() {
                     Inside the Interactive Demo Sandbox
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>May 25, 2026</time>
+                    <time>May 25, 2026 at 3:00pm</time>
                     <span>&middot;</span>
                     <span>8 min read</span>
                 </div>
