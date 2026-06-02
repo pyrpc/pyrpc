@@ -6,7 +6,7 @@ import unittest.mock as mock
 
 import pytest
 from pyrpc_core import default_router, rpc
-from pyrpc_cli.main import app
+from pyrpc_core.cli import app
 from typer.testing import CliRunner
 
 runner = CliRunner()
@@ -30,7 +30,7 @@ def test_cli_inspect_with_procs():
     def test_proc(x: int):
         return x
 
-    with mock.patch("pyrpc_cli.main._import_module"):
+    with mock.patch("pyrpc_core.cli._import_module"):
         result = runner.invoke(app, ["inspect", "anything"])
         assert result.exit_code == 0
         assert "test_proc" in result.output
@@ -38,9 +38,9 @@ def test_cli_inspect_with_procs():
 
 def test_cli_codegen_url():
     schemas = {"add": {"name": "add", "parameters": [], "return_type": "int", "return_schema": {}, "doc": ""}}
-    with mock.patch("pyrpc_cli.main._resolve_source") as mock_resolve:
+    with mock.patch("pyrpc_core.cli._resolve_source") as mock_resolve:
         mock_resolve.return_value = schemas
-        with mock.patch("pyrpc_cli.main.save_typescript_client") as mock_save:
+        with mock.patch("pyrpc_core.cli.save_typescript_client") as mock_save:
             result = runner.invoke(app, ["codegen", "http://localhost:8000"])
             assert result.exit_code == 0
             assert "Types written to" in result.output
@@ -58,7 +58,7 @@ def test_cli_codegen_file():
         }
     }
 
-    with mock.patch("pyrpc_cli.main.save_typescript_client") as mock_save:
+    with mock.patch("pyrpc_core.cli.save_typescript_client") as mock_save:
         with tempfile.TemporaryDirectory() as tmpdir:
             schema_file = os.path.join(tmpdir, "schema.json")
             with open(schema_file, "w") as f:
@@ -72,9 +72,9 @@ def test_cli_codegen_file():
 
 def test_cli_codegen_module():
     schemas = {"add": {"name": "add", "parameters": [], "return_type": "int", "return_schema": {}, "doc": ""}}
-    with mock.patch("pyrpc_cli.main._resolve_source") as mock_resolve:
+    with mock.patch("pyrpc_core.cli._resolve_source") as mock_resolve:
         mock_resolve.return_value = schemas
-        with mock.patch("pyrpc_cli.main.save_typescript_client") as mock_save:
+        with mock.patch("pyrpc_core.cli.save_typescript_client") as mock_save:
             result = runner.invoke(app, ["codegen", "app.main"])
             assert result.exit_code == 0
             assert "Types written to" in result.output
@@ -89,7 +89,7 @@ def test_cli_pull():
     with tempfile.TemporaryDirectory() as tmpdir:
         output_file = os.path.join(tmpdir, "schema.json")
 
-        with mock.patch("pyrpc_cli.main._import_module"):
+        with mock.patch("pyrpc_core.cli._import_module"):
             result = runner.invoke(app, ["pull", "any_module", "-o", output_file])
 
         assert result.exit_code == 0
@@ -104,7 +104,7 @@ def test_cli_pull():
         assert "schema" in data["add"]["parameters"][0]
 
 def test_cli_serve():
-    with mock.patch("pyrpc_cli.main._import_module"):
+    with mock.patch("pyrpc_core.cli._import_module"):
         with mock.patch("pyrpc_core.transport.asgi.PyRPCAsgiApp") as mock_app_cls:
             mock_app = mock.MagicMock()
             mock_app_cls.return_value = mock_app
@@ -117,28 +117,28 @@ def test_cli_serve():
                 assert kwargs["port"] == 9000
 
 def test_cli_dev_types_only():
-    with mock.patch("pyrpc_cli.main.get_registry_schema") as mock_get:
+    with mock.patch("pyrpc_core.cli.get_registry_schema") as mock_get:
         mock_get.return_value = {}
-        with mock.patch("pyrpc_cli.main.save_typescript_client"):
-            with mock.patch("pyrpc_cli.main.watch") as mock_watch:
+        with mock.patch("pyrpc_core.cli.save_typescript_client"):
+            with mock.patch("pyrpc_core.cli.watch") as mock_watch:
                 mock_watch.return_value = []
                 with mock.patch("builtins.input", return_value="exit"):
                     result = runner.invoke(app, ["dev", "my_module", "--types-only"])
                     assert result.exit_code == 0
 
 def test_cli_dev():
-    with mock.patch("pyrpc_cli.main.get_registry_schema") as mock_get:
+    with mock.patch("pyrpc_core.cli.get_registry_schema") as mock_get:
         mock_get.return_value = {}
-        with mock.patch("pyrpc_cli.main.save_typescript_client"):
-            with mock.patch("pyrpc_cli.main.subprocess"):
-                with mock.patch("pyrpc_cli.main.watch") as mock_watch:
+        with mock.patch("pyrpc_core.cli.save_typescript_client"):
+            with mock.patch("pyrpc_core.cli.subprocess"):
+                with mock.patch("pyrpc_core.cli.watch") as mock_watch:
                     mock_watch.return_value = []
                     with mock.patch("builtins.input", return_value="exit"):
                         result = runner.invoke(app, ["dev", "my_module"])
                         assert result.exit_code == 0
 
 def test_dev_no_module_no_config():
-    with mock.patch("pyrpc_cli.main._ensure_config", return_value=None):
+    with mock.patch("pyrpc_core.cli._ensure_config", return_value=None):
         result = runner.invoke(app, ["dev"])
     assert result.exit_code != 0
     assert "No module specified" in result.output
@@ -155,34 +155,34 @@ def test_dev_reconfigure_flag_help():
 
 
 def test_parse_entry_module_only():
-    from pyrpc_cli.main import _parse_entry
+    from pyrpc_core.cli import _parse_entry
     module, app_var = _parse_entry("app.main")
     assert module == "app.main"
     assert app_var is None
 
 
 def test_parse_entry_with_app():
-    from pyrpc_cli.main import _parse_entry
+    from pyrpc_core.cli import _parse_entry
     module, app_var = _parse_entry("app.main:app")
     assert module == "app.main"
     assert app_var == "app"
 
 
 def test_parse_entry_complex():
-    from pyrpc_cli.main import _parse_entry
+    from pyrpc_core.cli import _parse_entry
     module, app_var = _parse_entry("my_package.submodule:create_app()")
     assert module == "my_package.submodule"
     assert app_var == "create_app()"
 
 
 def test_read_config_no_pyproject():
-    from pyrpc_cli.main import _read_pyrpc_config
+    from pyrpc_core.cli import _read_pyrpc_config
     config = _read_pyrpc_config()
     assert config is None
 
 
 def test_write_and_read_config(tmp_path):
-    from pyrpc_cli.main import _read_pyrpc_config, _write_pyrpc_config
+    from pyrpc_core.cli import _read_pyrpc_config, _write_pyrpc_config
 
     pyproject = tmp_path / "pyproject.toml"
     pyproject.write_text("[project]\nname = \"test\"\nversion = \"0.1.0\"\n")

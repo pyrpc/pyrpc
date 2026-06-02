@@ -2,6 +2,13 @@ import Link from 'next/link'
 
 const posts = [
     {
+        slug: 'merging-cli-back-into-core',
+        title: 'Why we merged pyrpc-cli back into pyrpc-core',
+        description: 'How the circular dependency that motivated a three-package split disappeared — and why we simplified back to two packages for a single-install experience.',
+        date: 'June 2, 2026 at 6:30pm',
+        readTime: '7 min',
+    },
+    {
         slug: 'building-a-full-stack-app-with-pyrpc',
         title: 'Building a full-stack app with pyRPC',
         description: 'A step-by-step tutorial: FastAPI backend, TypeScript React frontend, end-to-end type safety with pyRPC.',

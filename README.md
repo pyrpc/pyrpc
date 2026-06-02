@@ -69,12 +69,12 @@ uv add pyrpc-fastapi
 uv add pyrpc-flask
 ```
 
-#### 3. CLI & Codegen (Optional)
-The `pyrpc-cli` package provides the `pyrpc` terminal command (serve, inspect, codegen, pull).
-Installing `pyrpc-cli` also pulls in the codegen library as a transitive dependency.
+#### 3. CLI & Codegen (Built-in)
+The `pyrpc` terminal command (serve, dev, inspect, codegen, pull) is included with `pyrpc-core`.
+No separate install needed.
 ```bash
-uv add pyrpc-cli
-# pip install pyrpc-cli
+# The pyrpc CLI comes built-in
+uv run pyrpc version
 ```
 
 ---
@@ -102,7 +102,7 @@ mount_fastapi(app)
 Generate typed contracts from your server to enable end-to-end typed inference.
 
 ```bash
-pip install pyrpc-cli
+# CLI comes with pyrpc-core - no extra install needed
 pyrpc codegen http://localhost:8000
 ```
 
