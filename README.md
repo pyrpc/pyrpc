@@ -5,11 +5,11 @@
 
   <br/>
 
-  <a href="https://www.npmjs.com/package/@pyrpc/client">
-    <img src="https://img.shields.io/npm/dm/@pyrpc/client?style=flat&colorA=000000&colorB=000000" alt="npm downloads"/>
-  </a>
   <a href="https://pepy.tech/project/pyrpc-core">
     <img src="https://img.shields.io/pypi/dm/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI downloads"/>
+  </a>
+  <a href="https://www.npmjs.com/package/@pyrpc/client">
+    <img src="https://img.shields.io/npm/dm/@pyrpc/client?style=flat&colorA=000000&colorB=000000" alt="npm downloads"/>
   </a>
   <a href="https://github.com/pyrpc/pyrpc/stargazers">
     <img src="https://img.shields.io/github/stars/pyrpc/pyrpc?style=flat&colorA=000000&colorB=000000" alt="GitHub stars"/>
