@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import threading
 from datetime import datetime
 
 import typer
@@ -190,6 +191,142 @@ def codegen(
         console.print("  Import: [bold]import type { Types } from \"@pyrpc/types\"[/bold]")
 
 
+class _DevConsole:
+    """Interactive developer console attached to the pyrpc dev server."""
+
+    def __init__(self, module: str, regenerate_cb, server_proc=None, tmp_path: str = None, server_args: list = None, server_cwd: str = None, types_path: str = DEFAULT_OUTPUT):
+        self.module = module
+        self.regenerate = regenerate_cb
+        self.server_proc = server_proc
+        self.tmp_path = tmp_path
+        self.server_args = server_args
+        self.server_cwd = server_cwd
+        self.types_path = types_path
+        self._running = True
+
+    def _schemas(self) -> dict:
+        try:
+            return get_registry_schema(default_router)
+        except Exception:
+            return {}
+
+    def run(self):
+        console.print()
+        console.print("[bold cyan]pyrpc>[/bold cyan] type [bold]help[/bold] for commands")
+        while self._running:
+            try:
+                line = input("[cyan]pyrpc>[/cyan] ").strip()
+            except (EOFError, KeyboardInterrupt):
+                console.print()
+                break
+
+            if not line:
+                continue
+
+            parts = line.split(None, 1)
+            cmd = parts[0].lower()
+            arg = parts[1] if len(parts) > 1 else ""
+
+            handler = {
+                "help": self._cmd_help,
+                "procedures": self._cmd_procedures,
+                "procs": self._cmd_procedures,
+                "inspect": self._cmd_inspect,
+                "generate": self._cmd_generate,
+                "types": self._cmd_types,
+                "restart": self._cmd_restart,
+                "exit": self._cmd_exit,
+                "quit": self._cmd_exit,
+            }.get(cmd)
+
+            if handler:
+                handler(arg)
+            else:
+                console.print(f"[red]Unknown command: {cmd}. Type [bold]help[/bold] for commands.[/red]")
+
+    def _cmd_help(self, _arg=""):
+        console.print("[bold]pyRPC Dev Console Commands:[/bold]")
+        console.print("  [cyan]help[/cyan]                Show this help message")
+        console.print("  [cyan]procedures[/cyan]           List all registered RPC procedures")
+        console.print("  [cyan]procs[/cyan]                Alias for procedures")
+        console.print("  [cyan]inspect <name>[/cyan]       Show details for a specific procedure")
+        console.print("  [cyan]generate[/cyan]             Manually trigger TypeScript type regeneration")
+        console.print("  [cyan]types[/cyan]                Show the path to generated TypeScript types")
+        console.print("  [cyan]restart[/cyan]              Restart the dev server")
+        console.print("  [cyan]exit[/cyan] / [cyan]quit[/cyan]          Stop the dev server and exit")
+
+    def _cmd_procedures(self, _arg=""):
+        schemas = self._schemas()
+        if not schemas:
+            console.print("[yellow]No procedures registered.[/yellow]")
+            return
+        table = Table(title=f"Procedures ({len(schemas)} total)")
+        table.add_column("Name", style="cyan")
+        table.add_column("Params", style="green")
+        table.add_column("Returns", style="magenta")
+        table.add_column("Doc", style="white")
+        for name, schema in sorted(schemas.items()):
+            if hasattr(schema, "parameters"):
+                params = ", ".join(f"{p.name}: {p.type}" for p in schema.parameters)
+                returns = schema.return_type
+                doc = schema.doc or ""
+            else:
+                params = ", ".join(
+                    f"{p.get('name', '?')}: {p.get('type', 'any')}"
+                    for p in schema.get("parameters", [])
+                )
+                returns = schema.get("return_type", "any")
+                doc = schema.get("doc", "")
+            table.add_row(name, params or "None", returns, doc)
+        console.print(table)
+
+    def _cmd_inspect(self, arg=""):
+        if not arg:
+            console.print("[red]Usage: inspect <procedure_name>[/red]")
+            return
+        schemas = self._schemas()
+        schema = schemas.get(arg)
+        if not schema:
+            console.print(f"[red]Procedure '{arg}' not found.[/red]")
+            return
+        console.print(f"[bold cyan]{arg}[/bold cyan]")
+        if hasattr(schema, "doc") and schema.doc:
+            console.print(f"  Doc: {schema.doc}")
+        returns = schema.return_type if hasattr(schema, "return_type") else schema.get("return_type", "any")
+        console.print(f"  Returns: {returns}")
+        params = schema.parameters if hasattr(schema, "parameters") else schema.get("parameters", [])
+        if params:
+            console.print(f"  Parameters ({len(params)}):")
+            for p in params:
+                name = p.name if hasattr(p, "name") else p.get("name", "?")
+                ptype = p.type if hasattr(p, "type") else p.get("type", "any")
+                required = p.required if hasattr(p, "required") else p.get("required", True)
+                console.print(f"    {name}: {ptype} {'[dim](optional)[/dim]' if not required else ''}")
+
+    def _cmd_generate(self, _arg=""):
+        console.print("[bold blue]Regenerating TypeScript types...[/bold blue]")
+        self.regenerate()
+
+    def _cmd_types(self, _arg=""):
+        console.print(f"TypeScript types written to: [bold]{self.types_path}[/bold]")
+        console.print('  Import: [bold]import type { Types } from "@pyrpc/types"[/bold]')
+
+    def _cmd_restart(self, _arg=""):
+        if not self.server_proc:
+            console.print("[yellow]No server running (--types-only mode).[/yellow]")
+            return
+        console.print("[yellow]Restarting server...[/yellow]")
+        self.server_proc.terminate()
+        self.server_proc.wait()
+        self.server_proc = subprocess.Popen(
+            self.server_args, cwd=self.server_cwd,
+        )
+        console.print("[bold green]Server restarted[/bold green]")
+
+    def _cmd_exit(self, _arg=""):
+        self._running = False
+
+
 @app.command()
 def dev(
     module: str = typer.Argument(..., help="Module containing the pyRPC application (e.g. 'app.main')"),
@@ -197,7 +334,7 @@ def dev(
     port: int = typer.Option(8000, "--port", "-p", help="Bind socket to this port"),
     types_only: bool = typer.Option(False, "--types-only", help="Only regenerate types, skip starting the server"),
 ):
-    """Start the pyRPC dev server with auto-type regeneration on file changes."""
+    """Start the pyRPC dev server with auto-type regeneration and interactive console."""
     _lazy_import_pyrpc_core()
 
     cwd = os.getcwd()
@@ -217,8 +354,11 @@ def dev(
 
     console.print("[bold blue]Generating initial TypeScript types...[/bold blue]")
     regenerate()
-    console.print(f"[bold green]OK Initial types generated. Watching for changes in {cwd}[/bold green]")
 
+    server_proc = None
+    tmp_path = None
+    server_args = None
+    server_cwd = None
     if not types_only:
         startup_code = (
             "from pyrpc_core import default_router\n"
@@ -231,11 +371,11 @@ def dev(
         )
         tmp.write(startup_code)
         tmp.close()
+        tmp_path = f"{os.path.splitext(os.path.basename(tmp.name))[0]}:app"
         os.environ.setdefault("PYTHONPATH", cwd)
-        server_proc = subprocess.Popen(
-            [sys.executable, "-m", "uvicorn", f"{os.path.splitext(os.path.basename(tmp.name))[0]}:app", "--host", host, "--port", str(port), "--reload"],
-            cwd=os.path.dirname(tmp.name),
-        )
+        server_args = [sys.executable, "-m", "uvicorn", tmp_path, "--host", host, "--port", str(port), "--reload"]
+        server_cwd = os.path.dirname(tmp.name)
+        server_proc = subprocess.Popen(server_args, cwd=server_cwd)
 
         console.print(Panel(
             f"Dev server for [bold cyan]{module}[/bold cyan]\n"
@@ -246,17 +386,36 @@ def dev(
         ))
 
     watched_dirs = _find_python_dirs(cwd)
-    console.print(f"Watching [bold]{len(watched_dirs)}[/bold] directories for Python changes...")
-    console.print("[dim]Press Ctrl+C to stop[/dim]")
+    stop_event = threading.Event()
 
-    try:
-        for changes in watch(*watched_dirs):
+    def watcher_loop():
+        for changes in watch(*watched_dirs, stop_event=stop_event, yield_on_timeout=True):
+            if stop_event.is_set():
+                break
             if any(f.endswith(".py") for _, f in changes):
                 regenerate()
+
+    watcher_thread = threading.Thread(target=watcher_loop, daemon=True)
+    watcher_thread.start()
+
+    console.print(f"Watching [bold]{len(watched_dirs)}[/bold] directories for Python changes...")
+
+    try:
+        console_obj = _DevConsole(
+            module=module,
+            regenerate_cb=regenerate,
+            server_proc=server_proc,
+            tmp_path=tmp_path,
+            server_args=server_args,
+            server_cwd=server_cwd,
+            types_path=DEFAULT_OUTPUT,
+        )
+        console_obj.run()
     except KeyboardInterrupt:
-        console.print("\n[yellow]Shutting down...[/yellow]")
+        pass
     finally:
-        if not types_only and 'server_proc' in locals():
+        stop_event.set()
+        if server_proc:
             server_proc.terminate()
             server_proc.wait()
 
