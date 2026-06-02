@@ -120,9 +120,10 @@ def test_cli_dev_types_only():
         mock_get.return_value = {}
         with mock.patch("pyrpc_codegen.main.save_typescript_client"):
             with mock.patch("pyrpc_codegen.main.watch") as mock_watch:
-                mock_watch.side_effect = KeyboardInterrupt()
-                result = runner.invoke(app, ["dev", "my_module", "--types-only"])
-                assert result.exit_code == 0
+                mock_watch.return_value = []
+                with mock.patch("builtins.input", return_value="exit"):
+                    result = runner.invoke(app, ["dev", "my_module", "--types-only"])
+                    assert result.exit_code == 0
 
 def test_cli_dev():
     with mock.patch("pyrpc_codegen.main.get_registry_schema") as mock_get:
@@ -130,9 +131,10 @@ def test_cli_dev():
         with mock.patch("pyrpc_codegen.main.save_typescript_client"):
             with mock.patch("pyrpc_codegen.main.subprocess"):
                 with mock.patch("pyrpc_codegen.main.watch") as mock_watch:
-                    mock_watch.side_effect = KeyboardInterrupt()
-                    result = runner.invoke(app, ["dev", "my_module"])
-                    assert result.exit_code == 0
+                    mock_watch.return_value = []
+                    with mock.patch("builtins.input", return_value="exit"):
+                        result = runner.invoke(app, ["dev", "my_module"])
+                        assert result.exit_code == 0
 
 def test_cli_shell_help():
     with mock.patch("pyrpc_codegen.main._fetch_schema") as mock_fetch:
