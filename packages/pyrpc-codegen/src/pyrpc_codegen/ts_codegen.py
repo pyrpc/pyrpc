@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Any, Dict
 
 from jinja2 import Environment, FileSystemLoader
+from jsonschema_ts import Options as JsonschemaTsOptions
+from jsonschema_ts import assemble, collect_defs, convert_all
 
 DEFAULT_OUTPUT = "node_modules/@pyrpc/types/src/index.ts"
 
@@ -96,14 +98,47 @@ def _return_type_to_ts(return_type: str) -> str:
     return _pytype_to_ts(return_type)
 
 
+def _collect_schema_defs(schemas: Dict[str, Any]) -> dict:
+    schema_sources = []
+    for _name, schema in schemas.items():
+        if isinstance(schema, dict):
+            params = schema.get("parameters", [])
+        else:
+            params = schema.parameters
+        for param in params:
+            js = param.get("schema") if isinstance(param, dict) else param.schema_
+            if js:
+                schema_sources.append(js)
+        rs = schema.get("return_schema") if isinstance(schema, dict) else schema.return_schema
+        if rs:
+            schema_sources.append(rs)
+    return collect_defs(*schema_sources)
+
+
 def generate_typescript_client(schemas: Dict[str, Any]) -> str:
+    defs = _collect_schema_defs(schemas)
+
+    opts = JsonschemaTsOptions(
+        banner_comment="",
+        format=True,
+        unknown_any=True,
+    )
+
+    model_interfaces = convert_all(defs, opts=opts)
+
     template_dir = Path(__file__).parent / "templates"
     env = Environment(loader=FileSystemLoader(template_dir))
     env.filters["pytype_to_ts"] = _pytype_to_ts
     env.filters["return_type_to_ts"] = _return_type_to_ts
     template = env.get_template("client.ts.j2")
 
-    return template.render(schemas=schemas)
+    procedure_types = template.render(schemas=schemas)
+
+    return assemble(
+        models=model_interfaces,
+        procedures=procedure_types,
+        banner="",
+    )
 
 
 def save_typescript_client(schemas: Dict[str, Any], output_path: str = DEFAULT_OUTPUT):

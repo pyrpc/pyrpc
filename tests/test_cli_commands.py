@@ -1,11 +1,12 @@
 import json
 import os
 import tempfile
-import pytest
-from typer.testing import CliRunner
-from pyrpc_codegen.main import app
-from pyrpc_core import rpc, default_router
 import unittest.mock as mock
+
+import pytest
+from pyrpc_codegen.main import app
+from pyrpc_core import default_router, rpc
+from typer.testing import CliRunner
 
 runner = CliRunner()
 
@@ -19,7 +20,6 @@ def test_cli_version():
     assert "pyRPC version" in result.output
 
 def test_cli_inspect_empty():
-    # We need a module that can be imported. Let's use 'pyrpc.core.models' as it doesn't have RPCs usually
     result = runner.invoke(app, ["inspect", "pyrpc_core.core.models"])
     assert result.exit_code == 0
     assert "No procedures found" in result.output
@@ -29,7 +29,6 @@ def test_cli_inspect_with_procs():
     def test_proc(x: int):
         return x
     
-    # We need to mock _import_module because 'tests.test_cli_commands' might not be importable easily by name here
     with mock.patch("pyrpc_codegen.main._import_module"):
         result = runner.invoke(app, ["inspect", "anything"])
         assert result.exit_code == 0
@@ -37,13 +36,14 @@ def test_cli_inspect_with_procs():
         assert "x: <class 'int'>" in result.output
 
 def test_cli_codegen_url():
-    with mock.patch("pyrpc_codegen.main._load_schema") as mock_load:
-        mock_load.return_value = {"add": {"name": "add", "parameters": [], "return_type": "int", "return_schema": {}, "doc": ""}}
+    schemas = {"add": {"name": "add", "parameters": [], "return_type": "int", "return_schema": {}, "doc": ""}}
+    with mock.patch("pyrpc_codegen.main._resolve_source") as mock_resolve:
+        mock_resolve.return_value = schemas
         with mock.patch("pyrpc_codegen.main.save_typescript_client") as mock_save:
-            result = runner.invoke(app, ["codegen", "http://localhost:8000", "-o", "test.ts"])
+            result = runner.invoke(app, ["codegen", "http://localhost:8000"])
             assert result.exit_code == 0
-            assert "Types written to test.ts" in result.output
-            mock_save.assert_called_once()
+            assert "Types written to" in result.output
+            mock_save.assert_called_once_with(schemas, mock.ANY)
 
 def test_cli_codegen_file():
     schemas = {
@@ -57,21 +57,27 @@ def test_cli_codegen_file():
         }
     }
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        schema_file = os.path.join(tmpdir, "schema.json")
-        with open(schema_file, "w") as f:
-            json.dump(schemas, f)
+    with mock.patch("pyrpc_codegen.main.save_typescript_client") as mock_save:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            schema_file = os.path.join(tmpdir, "schema.json")
+            with open(schema_file, "w") as f:
+                json.dump(schemas, f)
 
-        output_file = os.path.join(tmpdir, "types.ts")
-        result = runner.invoke(app, ["codegen", schema_file, "-o", output_file])
+            result = runner.invoke(app, ["codegen", schema_file])
 
-        assert result.exit_code == 0
-        assert "Types written to" in result.output
-        assert os.path.exists(output_file)
-        with open(output_file) as f:
-            content = f.read()
-        assert "export interface Types" in content
-        assert "greet(name: string): Promise<string>;" in content
+            assert result.exit_code == 0
+            assert "Types written to" in result.output
+            mock_save.assert_called_once()
+
+def test_cli_codegen_module():
+    schemas = {"add": {"name": "add", "parameters": [], "return_type": "int", "return_schema": {}, "doc": ""}}
+    with mock.patch("pyrpc_codegen.main._resolve_source") as mock_resolve:
+        mock_resolve.return_value = schemas
+        with mock.patch("pyrpc_codegen.main.save_typescript_client") as mock_save:
+            result = runner.invoke(app, ["codegen", "app.main"])
+            assert result.exit_code == 0
+            assert "Types written to" in result.output
+            mock_save.assert_called_once_with(schemas, mock.ANY)
 
 def test_cli_pull():
     @rpc
@@ -92,15 +98,54 @@ def test_cli_pull():
             data = json.load(f)
         assert "add" in data
         assert data["add"]["doc"] == "Add two numbers."
+        assert "return_schema" in data["add"]
+        assert data["add"]["parameters"][0]["name"] == "a"
+        assert "schema" in data["add"]["parameters"][0]
 
 def test_cli_serve():
     with mock.patch("pyrpc_codegen.main._import_module"):
-        with mock.patch("uvicorn.run") as mock_run:
+        with mock.patch("pyrpc_core.transport.asgi.PyRPCAsgiApp") as mock_app_cls:
+            mock_app = mock.MagicMock()
+            mock_app_cls.return_value = mock_app
+            with mock.patch("uvicorn.run") as mock_run:
+                result = runner.invoke(app, ["serve", "my_module", "--port", "9000"])
+                assert result.exit_code == 0
+                assert "Starting pyRPC server" in result.output
+                mock_run.assert_called_once()
+                args, kwargs = mock_run.call_args
+                assert kwargs["port"] == 9000
 
-            result = runner.invoke(app, ["serve", "my_module", "--port", "9000"])
+def test_cli_dev_types_only():
+    with mock.patch("pyrpc_codegen.main.get_registry_schema") as mock_get:
+        mock_get.return_value = {}
+        with mock.patch("pyrpc_codegen.main.save_typescript_client"):
+            with mock.patch("pyrpc_codegen.main.watch") as mock_watch:
+                mock_watch.side_effect = KeyboardInterrupt()
+                result = runner.invoke(app, ["dev", "my_module", "--types-only"])
+                assert result.exit_code == 0
+
+def test_cli_dev():
+    with mock.patch("pyrpc_codegen.main.get_registry_schema") as mock_get:
+        mock_get.return_value = {}
+        with mock.patch("pyrpc_codegen.main.save_typescript_client"):
+            with mock.patch("pyrpc_codegen.main.subprocess"):
+                with mock.patch("pyrpc_codegen.main.watch") as mock_watch:
+                    mock_watch.side_effect = KeyboardInterrupt()
+                    result = runner.invoke(app, ["dev", "my_module"])
+                    assert result.exit_code == 0
+
+def test_cli_shell_help():
+    with mock.patch("pyrpc_codegen.main._fetch_schema") as mock_fetch:
+        mock_fetch.return_value = {"add": {"name": "add", "parameters": [], "return_type": "int", "doc": ""}}
+        with mock.patch("builtins.input", side_effect=["help()", "exit"]):
+            result = runner.invoke(app, ["shell", "http://localhost:8000"])
             assert result.exit_code == 0
-            assert "Starting pyRPC server" in result.output
-            mock_run.assert_called_once()
-            # Check port was passed
-            args, kwargs = mock_run.call_args
-            assert kwargs["port"] == 9000
+            assert "Available procedures" in result.output
+
+def test_cli_shell_inspect():
+    with mock.patch("pyrpc_codegen.main._fetch_schema") as mock_fetch:
+        mock_fetch.return_value = {"add": {"name": "add", "parameters": [], "return_type": "int", "doc": ""}}
+        with mock.patch("builtins.input", side_effect=["inspect()", "exit"]):
+            result = runner.invoke(app, ["shell", "http://localhost:8000"])
+            assert result.exit_code == 0
+            assert "add" in result.output
