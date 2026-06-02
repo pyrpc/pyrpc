@@ -5,17 +5,81 @@ import subprocess
 import sys
 import tempfile
 import threading
+import tomllib
 from datetime import datetime
+from pathlib import Path
 
 import typer
+from pyrpc_codegen import DEFAULT_OUTPUT, save_typescript_client
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from watchfiles import watch
 
-from .ts_codegen import DEFAULT_OUTPUT, save_typescript_client
-
 __version__ = "0.1.0"
+
+PYRPC_CONFIG = dict | None
+
+
+def _find_pyproject_toml() -> Path | None:
+    path = Path.cwd()
+    for parent in [path] + list(path.parents):
+        candidate = parent / "pyproject.toml"
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def _read_pyrpc_config() -> PYRPC_CONFIG:
+    path = _find_pyproject_toml()
+    if not path:
+        return None
+    try:
+        with open(path, "rb") as f:
+            data = tomllib.load(f)
+        return data.get("tool", {}).get("pyrpc")
+    except Exception:
+        return None
+
+
+def _write_pyrpc_config(config: dict) -> bool:
+    path = _find_pyproject_toml()
+    if not path:
+        return False
+    with open(path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    config_lines = ["[tool.pyrpc]\n"]
+    for key, value in config.items():
+        if isinstance(value, str):
+            config_lines.append(f'{key} = "{value}"\n')
+        elif isinstance(value, bool):
+            config_lines.append(f"{key} = {'true' if value else 'false'}\n")
+        elif isinstance(value, int):
+            config_lines.append(f"{key} = {value}\n")
+
+    start_idx = None
+    end_idx = None
+    for i, line in enumerate(lines):
+        if line.strip().startswith("[tool.pyrpc]"):
+            start_idx = i
+        elif start_idx is not None and line.strip().startswith("["):
+            end_idx = i
+            break
+
+    if start_idx is not None:
+        if end_idx is None:
+            end_idx = len(lines)
+        lines[start_idx:end_idx] = config_lines
+    else:
+        if lines and not lines[-1].endswith("\n"):
+            lines[-1] += "\n"
+        lines.append("\n")
+        lines.extend(config_lines)
+
+    with open(path, "w", encoding="utf-8") as f:
+        f.writelines(lines)
+    return True
 
 
 app = typer.Typer(
@@ -27,7 +91,6 @@ console = Console()
 
 
 def _lazy_import_pyrpc_core():
-    """Import pyrpc-core lazily so codegen-only usage avoids the dep."""
     global default_router, get_registry_schema
     from pyrpc_core import default_router, get_registry_schema
     return default_router, get_registry_schema
