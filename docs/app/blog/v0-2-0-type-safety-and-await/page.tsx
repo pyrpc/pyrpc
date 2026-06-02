@@ -11,7 +11,7 @@ export default function V020Post() {
                     v0.2.0  -  Type safety, proper async, and @pyrpc/types
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>May 29, 2026</time>
+                    <time>May 29, 2026 at 2:00pm</time>
                     <span>&middot;</span>
                     <span>6 min read</span>
                 </div>
