@@ -116,7 +116,7 @@ export default function BlogPage() {
                 Design notes, deep dives, and updates from the pyrpc team.
             </p>
             <div className="space-y-6">
-                {posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((post) => (
+                {[...posts].reverse().map((post) => (
                     <Link
                         key={post.slug}
                         href={`/blog/${post.slug}`}

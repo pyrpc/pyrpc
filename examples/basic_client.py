@@ -1,3 +1,12 @@
+"""
+Python client example for pyRPC.
+
+Requires a running pyRPC server (e.g. basic_server.py or pyrpc serve).
+
+Run:
+    uv run python examples/basic_client.py
+"""
+
 import asyncio
 from pyrpc_core import RPCClient, RPCError
 
