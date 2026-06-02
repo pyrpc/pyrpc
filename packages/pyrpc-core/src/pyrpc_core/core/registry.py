@@ -53,3 +53,36 @@ class Router:
     def list(self) -> List[str]:
         with self._lock:
             return list(self._procedures.keys())
+
+    def reload_module(self, module_path: str) -> bool:
+        """Reload a Python module and atomically replace this router's procedures.
+
+        Clears the router, reloads the module (which re-fires @rpc decorators
+        and registers in this router), and restores the old procedures on
+        failure or if the module exports no procedures.
+
+        NOTE: This only works correctly when the module's @rpc decorator is
+        bound to this router instance (e.g. the global ``from pyrpc_core import rpc``
+        which is ``default_router.rpc``).
+
+        Returns True if the router was updated, False otherwise.
+        """
+        import importlib
+
+        mod = importlib.import_module(module_path)
+        with self._lock:
+            old = dict(self._procedures)
+            self._procedures.clear()
+
+        try:
+            importlib.reload(mod)
+        except BaseException:
+            with self._lock:
+                self._procedures.update(old)
+            raise
+
+        with self._lock:
+            if not self._procedures:
+                self._procedures.update(old)
+                return False
+            return True
