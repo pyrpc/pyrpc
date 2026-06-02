@@ -11,7 +11,7 @@ export default function FullStackAppPage() {
                     Building a full-stack app with pyRPC
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>May 25, 2026</time>
+                    <time>May 25, 2026 at 9:00am</time>
                     <span>&middot;</span>
                     <span>10 min read</span>
                 </div>

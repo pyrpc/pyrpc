@@ -4,18 +4,9 @@ version = "0.1.0-alpha.1"
 description = "Codegen and CLI tools for pyRPC"
 requires-python = ">=3.11"
 dependencies = [
-    "pyrpc-core",
-    "typer[all]>=0.9.0",
-    "rich>=13.0.0",
     "jinja2>=3.1.0",
-    "uvicorn>=0.23.0",
-    "httpx>=0.28.1",
     "jsonschema-ts>=0.1.0",
-    "watchfiles>=1.0.0",
 ]
-
-[project.scripts]
-pyrpc = "pyrpc_codegen.main:app"
 
 [build-system]
 requires = ["hatchling"]

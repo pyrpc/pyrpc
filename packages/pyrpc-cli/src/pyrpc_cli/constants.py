@@ -1,0 +1,1 @@
+FRAMEWORKS = ["fastapi", "flask", "asgi"]

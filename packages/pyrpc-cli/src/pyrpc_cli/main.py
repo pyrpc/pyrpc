@@ -5,17 +5,137 @@ import subprocess
 import sys
 import tempfile
 import threading
+import tomllib
 from datetime import datetime
+from pathlib import Path
 
 import typer
+from pyrpc_cli.constants import FRAMEWORKS
+from pyrpc_codegen import DEFAULT_OUTPUT, save_typescript_client
 from rich.console import Console
 from rich.panel import Panel
+from rich.prompt import Prompt
 from rich.table import Table
 from watchfiles import watch
 
-from .ts_codegen import DEFAULT_OUTPUT, save_typescript_client
-
 __version__ = "0.1.0"
+
+PYRPC_CONFIG = dict | None
+
+
+def _find_pyproject_toml() -> Path | None:
+    path = Path.cwd()
+    for parent in [path] + list(path.parents):
+        candidate = parent / "pyproject.toml"
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def _read_pyrpc_config() -> PYRPC_CONFIG:
+    path = _find_pyproject_toml()
+    if not path:
+        return None
+    try:
+        with open(path, "rb") as f:
+            data = tomllib.load(f)
+        return data.get("tool", {}).get("pyrpc")
+    except Exception:
+        return None
+
+
+def _write_pyrpc_config(config: dict) -> bool:
+    path = _find_pyproject_toml()
+    if not path:
+        return False
+    with open(path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    config_lines = ["[tool.pyrpc]\n"]
+    for key, value in config.items():
+        if isinstance(value, str):
+            config_lines.append(f'{key} = "{value}"\n')
+        elif isinstance(value, bool):
+            config_lines.append(f"{key} = {'true' if value else 'false'}\n")
+        elif isinstance(value, int):
+            config_lines.append(f"{key} = {value}\n")
+
+    start_idx = None
+    end_idx = None
+    for i, line in enumerate(lines):
+        if line.strip().startswith("[tool.pyrpc]"):
+            start_idx = i
+        elif start_idx is not None and line.strip().startswith("["):
+            end_idx = i
+            break
+
+    if start_idx is not None:
+        if end_idx is None:
+            end_idx = len(lines)
+        lines[start_idx:end_idx] = config_lines
+    else:
+        if lines and not lines[-1].endswith("\n"):
+            lines[-1] += "\n"
+        lines.append("\n")
+        lines.extend(config_lines)
+
+    with open(path, "w", encoding="utf-8") as f:
+        f.writelines(lines)
+    return True
+
+
+def _prompt_for_config() -> dict:
+    console.print("[bold]pyRPC Setup[/bold]")
+    console.print("Let's configure pyRPC for your project.\n")
+    framework = Prompt.ask(
+        "Which web framework are you using?",
+        choices=FRAMEWORKS,
+        default="fastapi",
+    )
+    entry = Prompt.ask(
+        "Entry point (e.g. app.main:app)",
+        default="app.main:app",
+    )
+    return {"framework": framework, "entry": entry}
+
+
+def _ensure_config(reconfigure: bool = False) -> dict | None:
+    config = _read_pyrpc_config()
+    if config and not reconfigure:
+        return config
+    if reconfigure:
+        console.print("[yellow]Reconfiguring pyRPC...[/yellow]")
+    config = _prompt_for_config()
+    _write_pyrpc_config(config)
+    return config
+
+
+def _install_adapter(framework: str):
+    if framework == "asgi":
+        return
+    adapter_pkg = f"pyrpc-{framework}"
+    try:
+        importlib.import_module(adapter_pkg.replace("-", "_"))
+        return
+    except ImportError:
+        pass
+    console.print(f"Installing [bold]{adapter_pkg}[/bold]...")
+    result = subprocess.run(
+        [sys.executable, "-m", "pip", "install", adapter_pkg],
+        capture_output=True, text=True,
+    )
+    if result.returncode == 0:
+        console.print(f"[bold green]OK Installed {adapter_pkg}[/bold green]")
+    else:
+        console.print(f"[yellow]Could not auto-install {adapter_pkg}[/yellow]")
+        console.print(f"  Install manually: [bold]pip install {adapter_pkg}[/bold]")
+
+
+def _parse_entry(entry: str) -> tuple[str, str | None]:
+    parts = entry.split(":", 1)
+    module = parts[0]
+    app_var = parts[1] if len(parts) > 1 else None
+    return module, app_var
 
 
 app = typer.Typer(
@@ -27,7 +147,6 @@ console = Console()
 
 
 def _lazy_import_pyrpc_core():
-    """Import pyrpc-core lazily so codegen-only usage avoids the dep."""
     global default_router, get_registry_schema
     from pyrpc_core import default_router, get_registry_schema
     return default_router, get_registry_schema
@@ -329,12 +448,24 @@ class _DevConsole:
 
 @app.command()
 def dev(
-    module: str = typer.Argument(..., help="Module containing the pyRPC application (e.g. 'app.main')"),
+    module: str = typer.Argument(None, help="Module containing the pyRPC application (e.g. 'app.main')"),
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Bind socket to this host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind socket to this port"),
     types_only: bool = typer.Option(False, "--types-only", help="Only regenerate types, skip starting the server"),
+    reconfigure: bool = typer.Option(False, "--reconfigure", help="Re-run first-time setup prompts"),
 ):
     """Start the pyRPC dev server with auto-type regeneration and interactive console."""
+    if not module or reconfigure:
+        config = _ensure_config(reconfigure=reconfigure)
+        if config:
+            module, _ = _parse_entry(config.get("entry", ""))
+            framework = config.get("framework", "asgi")
+            _install_adapter(framework)
+    if not module:
+        console.print("[bold red]Error:[/bold red] No module specified and no [tool.pyrpc] config found.")
+        console.print("  Run [bold]pyrpc dev --reconfigure[/bold] to set up, or pass a module path.")
+        raise typer.Exit(code=1)
+
     _lazy_import_pyrpc_core()
 
     cwd = os.getcwd()
@@ -430,119 +561,6 @@ def _find_python_dirs(root: str) -> list:
         if entry.is_dir() and not entry.name.startswith((".", "_", "node_modules", "__pycache__", ".venv", "venv", "env")):
             dirs.add(entry.path)
     return list(dirs)
-
-
-@app.command()
-def shell(
-    url: str = typer.Argument("http://localhost:8000", help="URL of a running pyRPC server (e.g. http://localhost:8000)"),
-):
-    """Start an interactive RPC shell against a running pyRPC server."""
-    import ast
-
-    import httpx
-
-    clean_url = url.rstrip("/")
-    rpc_url = clean_url + "/rpc" if not clean_url.endswith("/rpc") else clean_url
-
-    try:
-        schema = _fetch_schema(url)
-    except Exception as e:
-        console.print(f"[bold red]Error:[/bold red] Could not connect to server at '{url}': {e}")
-        raise typer.Exit(code=1) from e
-
-    procs = {name: schema for name, schema in schema.items()}
-    proc_names = sorted(procs.keys())
-
-    console.print(Panel(
-        f"Connected to [bold green]{rpc_url}[/bold green]\n"
-        f"Available procedures: [bold]{len(proc_names)}[/bold]\n"
-        f"Type [bold]help()[/bold] for usage or [bold]Ctrl+C[/bold] to exit",
-        title="pyRPC Shell",
-        border_style="cyan"
-    ))
-
-    def call_rpc(method: str, params: dict | list = None) -> dict:
-        body = {"id": 1, "method": method, "params": params or {}}
-        resp = httpx.post(rpc_url, json=body, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
-        if data.get("error"):
-            console.print(f"[red]Error: {data['error']}[/red]")
-            return None
-        return data.get("result")
-
-    while True:
-        try:
-            line = input(f"[{len(proc_names)} procs] >>> ").strip()
-        except (EOFError, KeyboardInterrupt):
-            console.print()
-            break
-
-        if not line:
-            continue
-
-        if line in ("exit", "quit"):
-            break
-
-        if line == "help()":
-            console.print("[bold]pyRPC Shell Commands:[/bold]")
-            console.print("  [cyan]method_name(arg1, arg2)[/cyan]  Call an RPC procedure with positional args")
-            console.print("  [cyan]method_name(key=val)[/cyan]     Call an RPC procedure with keyword args")
-            console.print("  [cyan]inspect()[/cyan]                List all available procedures")
-            console.print("  [cyan]help()[/cyan]                   Show this help message")
-            console.print("  [cyan]exit[/cyan] or [cyan]quit[/cyan]           Exit the shell")
-            continue
-
-        if line == "inspect()":
-            table = Table(title="Available Procedures")
-            table.add_column("Name", style="cyan")
-            table.add_column("Params", style="green")
-            table.add_column("Returns", style="magenta")
-            table.add_column("Doc", style="white")
-            for name, schema in sorted(procs.items()):
-                params = ", ".join(
-                    f"{p.get('name', '?')}: {p.get('type', 'any')}"
-                    for p in schema.get("parameters", [])
-                )
-                table.add_row(
-                    name,
-                    params or "None",
-                    schema.get("return_type", "any"),
-                    schema.get("doc", "") or ""
-                )
-            console.print(table)
-            continue
-
-        try:
-            tree = ast.parse(line, mode="eval")
-            if not isinstance(tree.body, ast.Call):
-                console.print("[red]Syntax: method_name(args) or method_name(key=val)[/red]")
-                continue
-
-            call = tree.body
-            method_name = call.func.id if isinstance(call.func, ast.Name) else None
-            if not method_name:
-                console.print("[red]Invalid call syntax[/red]")
-                continue
-
-            if call.args and call.keywords:
-                console.print("[red]Mix of positional and keyword args not supported[/red]")
-                continue
-
-            if call.args:
-                params = [ast.literal_eval(a) for a in call.args]
-            elif call.keywords:
-                params = {kw.arg: ast.literal_eval(kw.value) for kw in call.keywords if kw.arg}
-            else:
-                params = {} if any(p.get("parameters") for p in procs.values()) else []
-
-            result = call_rpc(method_name, params)
-            if result is not None:
-                console.print(result)
-        except SyntaxError:
-            console.print("[red]Invalid syntax. Use method_name(args) or method_name(key=val)[/red]")
-        except Exception as e:
-            console.print(f"[red]Error: {e}[/red]")
 
 
 @app.command()

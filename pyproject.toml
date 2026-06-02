@@ -29,12 +29,14 @@ dev = [
 members = [
     "packages/pyrpc-core",
     "packages/pyrpc-codegen",
+    "packages/pyrpc-cli",
     "packages/pyrpc-fastapi",
     "packages/pyrpc-flask",
 ]
 
 [tool.uv.sources]
 pyrpc-core = { workspace = true }
+pyrpc-cli = { workspace = true }
 pyrpc-flask = { workspace = true }
 pyrpc-fastapi = { workspace = true }
 pyrpc-codegen = { workspace = true }
@@ -52,6 +54,7 @@ target-version = "py311"
 testpaths = ["tests"]
 pythonpath = [
     "packages/pyrpc-core/src",
+    "packages/pyrpc-cli/src",
     "packages/pyrpc-fastapi/src",
     "packages/pyrpc-flask/src",
     "packages/pyrpc-codegen/src"
@@ -61,8 +64,10 @@ asyncio_mode = "auto"
 [dependency-groups]
 dev = [
     "fastapi>=0.128.7",
+    "flask>=3.1.2",
     "jinja2>=3.1.6",
     "pydantic-core==2.41.5",
+    "pyrpc-cli",
     "pyrpc-codegen",
     "pyrpc-fastapi",
     "pytest>=9.0.2",

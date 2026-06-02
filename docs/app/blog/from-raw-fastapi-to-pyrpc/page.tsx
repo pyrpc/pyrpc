@@ -11,7 +11,7 @@ export default function FromRawFastapiPage() {
                     From raw FastAPI to pyRPC
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>May 25, 2026</time>
+                    <time>May 25, 2026 at 10:30am</time>
                     <span>&middot;</span>
                     <span>7 min read</span>
                 </div>
