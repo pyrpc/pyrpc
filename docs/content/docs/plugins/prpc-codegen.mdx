@@ -11,12 +11,11 @@ Automatically generate a TypeScript types interface from your pyRPC server defin
 ## Installation
 
 ```bash
-# CLI + runtime + codegen (recommended - one install, everything)
+# One install — runtime, CLI, and codegen all included
 pip install pyrpc-core
-
-# Or just the codegen library (for standalone use without runtime)
-pip install pyrpc-codegen
 ```
+
+> `pyrpc-codegen` is an internal dependency of `pyrpc-core`. You only install it separately if you need to call the codegen API programmatically without the runtime (e.g., a CI script). Most users never need this.
 
 ## Quick Setup
 

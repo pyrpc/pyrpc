@@ -61,11 +61,10 @@ After (2 packages):   pyrpc-core → pyrpc-codegen`}</pre>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The new package story</h2>
                 <p>Here's what the landscape looks like now:</p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`pip install pyrpc-core     # → runtime + CLI + codegen
-pip install pyrpc-codegen  # → codegen library only (standalone)
-npm install @pyrpc/client  # → TypeScript client (unchanged)`}</pre>
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`pip install pyrpc-core     # → runtime + CLI + codegen (everything)
+npm install @pyrpc/client  # → TypeScript client`}</pre>
                 <p>
-                    <code>pyrpc-codegen</code> remains a standalone package for frontend-only setups or CI pipelines that don't need the Python runtime. But for most users, <code>pip install pyrpc-core</code> is the only command they'll ever need.
+                    For most users, <code>pip install pyrpc-core</code> is the only command they'll ever need. Frontend-only developers just <code>npm install @pyrpc/client</code> — the postinstall script fetches the schema from your server and generates types automatically. The <code>pyrpc-codegen</code> library is an internal dependency; you never install it directly.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What we learned</h2>
