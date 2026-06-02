@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import tempfile
 import unittest.mock as mock
 
@@ -143,10 +144,14 @@ def test_dev_no_module_no_config():
     assert "No module specified" in result.output
 
 
+def _strip_ansi(text: str) -> str:
+    return re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
+
+
 def test_dev_reconfigure_flag_help():
     result = runner.invoke(app, ["dev", "--help"])
     assert result.exit_code == 0
-    assert "--reconfigure" in result.output
+    assert "--reconfigure" in _strip_ansi(result.output)
 
 
 def test_parse_entry_module_only():
