@@ -43,6 +43,13 @@ const posts = [
         date: 'May 29, 2026',
         readTime: '6 min',
     },
+    {
+        slug: 'cli-overhaul-and-dev-tools',
+        title: 'CLI overhaul, model interfaces, and the dev tools we built',
+        description: 'Merging pull into codegen, fixing serve, adding the dev watcher and shell REPL, and integrating jsonschema-ts for Pydantic model interfaces.',
+        date: 'June 2, 2026',
+        readTime: '12 min',
+    },
 ]
 
 export default function BlogPage() {
