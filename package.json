@@ -2,8 +2,7 @@
   "name": "pyrpc-client-workspace",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "docs"
+    "packages/*"
   ],
   "engines": {
     "node": ">=20.0.0"
