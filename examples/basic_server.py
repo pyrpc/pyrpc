@@ -1,3 +1,13 @@
+"""
+FastAPI + pyRPC server example.
+
+Run directly:
+    uv run python examples/basic_server.py
+
+Or with the CLI:
+    pyrpc serve examples.basic_server
+"""
+
 import uvicorn
 from fastapi import FastAPI
 from pyrpc_core import rpc

@@ -1,3 +1,10 @@
+"""
+Validation demo — tests Pydantic input/output validation with pyRPC.
+
+Runs directly (no server needed):
+    uv run python examples/validation_demo.py
+"""
+
 from typing import Optional, Dict
 import asyncio
 import json

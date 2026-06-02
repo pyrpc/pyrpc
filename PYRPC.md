@@ -22,7 +22,8 @@ pyRPC  -  type-safe RPC for Python and TypeScript.
 | `pyrpc-core` | PyPI | Protocol, router, execution, validation |
 | `pyrpc-fastapi` | PyPI | FastAPI adapter |
 | `pyrpc-flask` | PyPI | Flask adapter |
-| `pyrpc-codegen` | PyPI | TypeScript code generation |
+| `pyrpc-codegen` | PyPI | TypeScript code generation library |
+| `pyrpc-cli` | PyPI | CLI tools (serve, inspect, codegen, pull) |
 | `@pyrpc/client` | npm | TypeScript client |
 | `@pyrpc/types` | npm | Generated type definitions (postinstall) |
 
@@ -49,19 +50,22 @@ pyRPC is a Python-first RPC system with TypeScript reach. It gives you type safe
 ### Layering
 
 ```
-┌──────────────────────────────────────────────────────┐
-│  Adapters (pyrpc-fastapi, pyrpc-flask)                │
-│  Translate framework HTTP → core Interpreter          │
-├──────────────────────────────────────────────────────┤
-│  pyrpc-core                                           │
-│  Protocol, router, procedure execution, validation     │
-├──────────────────────────────────────────────────────┤
-│  pyrpc-codegen                                        │
-│  Introspection → TypeScript type generation            │
-├──────────────────────────────────────────────────────┤
-│  @pyrpc/client (@pyrpc/types)                          │
-│  TypeScript client + generated type definitions        │
-└──────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  Adapters (pyrpc-fastapi, pyrpc-flask)                    │
+│  Translate framework HTTP → core Interpreter              │
+├──────────────────────────────────────────────────────────┤
+│  pyrpc-core                                               │
+│  Protocol, router, procedure execution, validation         │
+├──────────────────────────────────────────────────────────┤
+│  pyrpc-cli                                                │
+│  CLI commands (serve, inspect, codegen, pull, dev)        │
+├──────────────────────────────────────────────────────────┤
+│  pyrpc-codegen                                            │
+│  Introspection → TypeScript type generation (library)     │
+├──────────────────────────────────────────────────────────┤
+│  @pyrpc/client (@pyrpc/types)                              │
+│  TypeScript client + generated type definitions            │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ### Rules

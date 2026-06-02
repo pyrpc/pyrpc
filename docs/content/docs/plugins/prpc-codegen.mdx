@@ -11,6 +11,10 @@ Automatically generate a TypeScript types interface from your pyRPC server defin
 ## Installation
 
 ```bash
+# CLI + codegen (recommended)
+pip install pyrpc-cli
+
+# Or just the codegen library (for programmatic use)
 pip install pyrpc-codegen
 ```
 
@@ -32,7 +36,7 @@ PYRPC_URL=https://api.example.com npm install @pyrpc/client
 
 ## CLI Usage
 
-The `pyrpc` CLI provides five subcommands:
+The `pyrpc` CLI (provided by `pyrpc-cli`) provides these subcommands:
 
 | Command | Description |
 |---------|-------------|
@@ -86,7 +90,7 @@ pyrpc codegen pyrpc-schema.json --output ./src/pyrpc-types.ts
 
 ```bash
 # Install the CLI
-pip install pyrpc-codegen
+pip install pyrpc-cli
 
 # Pull schema from your Python module (for CI/offline)
 pyrpc pull my_app.main -o pyrpc-schema.json

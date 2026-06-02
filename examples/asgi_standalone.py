@@ -1,3 +1,13 @@
+"""
+Standalone ASGI server example (no framework adapter needed).
+
+Run directly:
+    uv run python examples/asgi_standalone.py
+
+Or with the CLI:
+    pyrpc serve examples.asgi_standalone
+"""
+
 import uvicorn
 from pyrpc_core import rpc, asgi_app
 
