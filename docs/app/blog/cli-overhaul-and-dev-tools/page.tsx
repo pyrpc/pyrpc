@@ -235,7 +235,7 @@ Available procedures: 5
                     For the argument parsing we use Python&rsquo;s <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">ast.literal_eval</code> to safely
                     evaluate argument literals. This means you can pass strings (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&quot;hello&quot;</code>),
                     numbers (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">42</code>), booleans (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">True</code>/<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">False</code>), lists (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">[1, 2, 3]</code>),
-                    and dicts (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{&quot;key&quot;: &quot;value&quot;}</code>) with full safety &mdash; no code execution
+                    and dicts (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{'{'}&quot;key&quot;: &quot;value&quot;{'}'}</code>) with full safety &mdash; no code execution
                     risk. Both positional and keyword argument syntax are supported.
                 </p>
                 <p>
