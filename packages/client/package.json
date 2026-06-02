@@ -1,6 +1,6 @@
 {
   "name": "@pyrpc/client",
-  "version": "0.1.0-alpha.3",
+  "version": "0.3.0",
   "description": "Universal TypeScript client for pyRPC",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

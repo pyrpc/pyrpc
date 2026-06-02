@@ -435,7 +435,7 @@ wheels = [
 
 [[package]]
 name = "pyrpc-codegen"
-version = "0.1.0a1"
+version = "0.3.0"
 source = { editable = "packages/pyrpc-codegen" }
 dependencies = [
     { name = "jinja2" },
@@ -450,7 +450,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-core"
-version = "0.1.0a1"
+version = "0.3.0"
 source = { editable = "packages/pyrpc-core" }
 dependencies = [
     { name = "anyio" },
@@ -477,7 +477,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-fastapi"
-version = "0.1.0a1"
+version = "0.3.0"
 source = { editable = "packages/pyrpc-fastapi" }
 dependencies = [
     { name = "fastapi" },
@@ -492,7 +492,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-flask"
-version = "0.1.0a1"
+version = "0.3.0"
 source = { editable = "packages/pyrpc-flask" }
 dependencies = [
     { name = "flask" },
@@ -507,7 +507,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-workspace"
-version = "0.1.0a1"
+version = "0.3.0"
 source = { editable = "." }
 
 [package.optional-dependencies]

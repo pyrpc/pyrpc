@@ -27,8 +27,7 @@ jobs:
         run: |
           mkdir -p dist
           for pkg in pyrpc-core pyrpc-codegen pyrpc-fastapi pyrpc-flask; do
-            python -m build "packages/$pkg" --outdir "dist/$pkg"
-            cp -r "dist/$pkg"/* dist/
+            python -m build "packages/$pkg" --outdir dist/
           done
 
       - name: Publish to PyPI

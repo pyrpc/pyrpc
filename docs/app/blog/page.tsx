@@ -113,6 +113,13 @@ const posts = [
         date: 'June 2, 2026 at 6:30pm',
         readTime: '7 min',
     },
+    {
+        slug: 'v0-3-0-single-install',
+        title: 'v0.3.0 — pyrpc-cli merged into core, one-command install',
+        description: 'pip install pyrpc-core now gives you the runtime, CLI, and codegen in a single command — no separate packages, no extra steps.',
+        date: 'June 2, 2026 at 10:15pm',
+        readTime: '5 min',
+    },
 ]
 
 export default function BlogPage() {

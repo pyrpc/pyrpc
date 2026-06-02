@@ -30,7 +30,7 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
             <span className="text-fd-foreground/20">|</span>
             <span>MIT License</span>
             <span className="text-fd-foreground/20">|</span>
-            <span className="text-fd-foreground/30">v0.2.0</span>
+            <span className="text-fd-foreground/30">v0.3.0</span>
           </div>
           <div className="flex items-center gap-12">
             <Link href="/docs" className="hover:text-fd-foreground transition-all">Docs</Link>
