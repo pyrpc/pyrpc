@@ -2,48 +2,47 @@ import Link from 'next/link'
 
 const releases = [
     {
-        version: 'v0.2.0',
-        date: '2026-05-29',
-        tag: 'v0.2.0',
-        description: 'Real type generation, working async dispatch, and postinstall-based @pyrpc/types setup.',
+        version: 'v0.3.0',
+        date: '2026-06-02',
+        tag: 'v0.3.0',
+        description: 'Single-install architecture: pyrpc-cli merged back into pyrpc-core, simplified to two packages.',
         sections: [
             {
-                title: 'Core Engine',
+                title: 'Packaging',
                 items: [
-                    'RPCCallable.__call__ now detects running event loop  -  returns coroutine in async context, calls sync in sync context',
-                    'Sync and async dispatch both tested and working',
+                    'pyrpc-cli merged into pyrpc-core  -  no separate CLI package to install',
+                    'pip install pyrpc-core now gives you the runtime, CLI, and codegen in one command',
+                    'pyrpc-codegen remains a standalone package only for programmatic/CI use',
+                    'Dependency chain simplified: pyrpc-core → pyrpc-codegen (3 packages → 2)',
                 ]
             },
             {
-                title: 'Code Generation',
+                title: 'CLI',
                 items: [
-                    'Python-to-TypeScript type mapper: int→number, str→string, bool→boolean, Optional[T]→T | null, List[T]→T[], Dict[K,V]→Record<K,V>',
-                    'Custom models resolve to class name for future model generation',
-                    '--watch flag removed (HTTP polling every 2s was not production-grade)',
-                    'pyrpc init replaced by @pyrpc/types postinstall (no separate init command needed)',
-                    'DEFAULT_OUTPUT now points to node_modules/@pyrpc/types/src/index.ts',
-                    'New pull subcommand: pyrpc pull <module> -o schema.json extracts RPC schema as portable JSON',
-                    'pyrpc codegen accepts both file paths (pyrpc codegen schema.json) and URLs (pyrpc codegen http://localhost:8000)',
-                    'pyrpc-core made a lazy dependency in pyrpc-codegen - codegen from JSON file does not import pyrpc-core',
-                ]
-            },
-            {
-                title: 'TypeScript Client',
-                items: [
-                    '@pyrpc/types ships a placeholder src/index.ts  -  import resolves immediately even before codegen',
-                    'Postinstall script on npm install @pyrpc/client prompts for backend URL, fetches schema, generates types',
-                    'PYRPC_URL env var support for non-interactive / CI setups',
+                    'All CLI subcommands (serve, dev, inspect, codegen, pull, version) live in pyrpc_core.cli',
+                    'Entry point: pyrpc = pyrpc_core.cli:app via [project.scripts]',
+                    'Lazy imports maintained  -  pyrpc version still starts instantly',
+                    'First-run setup prompts for framework and entry point',
                 ]
             },
             {
                 title: 'Documentation',
                 items: [
-                    'Blog post: v0.2.0  -  Type safety, proper async, and @pyrpc/types',
-                    'Codegen plugin docs updated: no --watch, no pyrpc init, postinstall flow',
+                    'All docs updated: no more pyrpc-cli references, simplified install instructions',
+                    'PYRPC.md, README, CONTRIBUTING, and 5 doc pages rewritten for single-install flow',
+                    'System design doc updated: architecture diagram and dependency section reflect 2-package structure',
+                    'New blog post: "Why we merged pyrpc-cli back into pyrpc-core"',
+                    'New site favicon using pyrpc mark',
                 ]
             },
         ]
     },
+    {
+        version: 'v0.2.0',
+        date: '2026-05-29',
+        tag: 'v0.2.0',
+        description: 'Real type generation, working async dispatch, and postinstall-based @pyrpc/types setup.',
+        sections: [
     {
         version: 'v0.1.0-alpha.1',
         date: '2026-05-25',
