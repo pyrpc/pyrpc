@@ -344,14 +344,13 @@ def dev(
         if not _regenerate_lock.acquire(blocking=False):
             return
         try:
-            mod = importlib.import_module(module)
-            importlib.reload(mod)
-            default_router._procedures.clear()
-            importlib.reload(mod)
+            ok = default_router.reload_module(module)
+            if not ok:
+                console.print("[yellow]No procedures found after reload — did you remove all @rpc decorators?[/yellow]")
+                return
             schemas = get_registry_schema(default_router)
-            if schemas:
-                save_typescript_client(schemas, DEFAULT_OUTPUT)
-                console.print(f"[dim]{datetime.now().strftime('%H:%M:%S')}[/dim] Types regenerated [dim]({len(schemas)} procs)[/dim]")
+            save_typescript_client(schemas, DEFAULT_OUTPUT)
+            console.print(f"[dim]{datetime.now().strftime('%H:%M:%S')}[/dim] Types regenerated [dim]({len(schemas)} procs)[/dim]")
         except Exception as e:
             console.print(f"[red]Error regenerating types: {e}[/red]")
         finally:
