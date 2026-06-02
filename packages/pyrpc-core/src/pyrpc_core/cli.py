@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 
 import typer
-from pyrpc_cli.constants import FRAMEWORKS
+from pyrpc_core.constants import FRAMEWORKS
 from pyrpc_codegen import DEFAULT_OUTPUT, save_typescript_client
 from rich.console import Console
 from rich.panel import Panel
@@ -131,6 +131,7 @@ def _install_adapter(framework: str):
         console.print(f"  Install manually: [bold]pip install {adapter_pkg}[/bold]")
 
 
+
 def _parse_entry(entry: str) -> tuple[str, str | None]:
     parts = entry.split(":", 1)
     module = parts[0]
@@ -159,6 +160,7 @@ def _import_module(module_path: str):
     except ImportError as e:
         console.print(f"[bold red]Error:[/bold red] Could not import module '{module_path}': {e}")
         raise typer.Exit(code=1) from e
+
 
 
 def _fetch_schema(url: str) -> dict:
@@ -230,6 +232,7 @@ def _resolve_source(source: str) -> dict:
 def version():
     """Show pyRPC version."""
     console.print(f"pyRPC version: [bold cyan]{__version__}[/bold cyan]")
+
 
 
 @app.command()
@@ -308,6 +311,7 @@ def codegen(
 
     if os.path.exists(output):
         console.print("  Import: [bold]import type { Types } from \"@pyrpc/types\"[/bold]")
+
 
 
 class _DevConsole:
@@ -446,6 +450,8 @@ class _DevConsole:
         self._running = False
 
 
+
+
 @app.command()
 def dev(
     module: str = typer.Argument(None, help="Module containing the pyRPC application (e.g. 'app.main')"),
@@ -553,6 +559,7 @@ def dev(
         if server_proc:
             server_proc.terminate()
             server_proc.wait()
+
 
 
 def _find_python_dirs(root: str) -> list:
