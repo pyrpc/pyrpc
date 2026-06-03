@@ -17,7 +17,7 @@ from rich.prompt import Prompt
 from rich.table import Table
 from watchfiles import watch
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 PYRPC_CONFIG = dict | None
 
