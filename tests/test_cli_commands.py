@@ -40,7 +40,7 @@ def test_cli_codegen_url():
     schemas = {"add": {"name": "add", "parameters": [], "return_type": "int", "return_schema": {}, "doc": ""}}
     with mock.patch("pyrpc_core.cli._resolve_source") as mock_resolve:
         mock_resolve.return_value = schemas
-        with mock.patch("pyrpc_core.cli.save_typescript_client") as mock_save:
+        with mock.patch("pyrpc_codegen.save_typescript_client") as mock_save:
             result = runner.invoke(app, ["codegen", "http://localhost:8000"])
             assert result.exit_code == 0
             assert "Types written to" in result.output
@@ -58,7 +58,7 @@ def test_cli_codegen_file():
         }
     }
 
-    with mock.patch("pyrpc_core.cli.save_typescript_client") as mock_save:
+    with mock.patch("pyrpc_codegen.save_typescript_client") as mock_save:
         with tempfile.TemporaryDirectory() as tmpdir:
             schema_file = os.path.join(tmpdir, "schema.json")
             with open(schema_file, "w") as f:
@@ -74,7 +74,7 @@ def test_cli_codegen_module():
     schemas = {"add": {"name": "add", "parameters": [], "return_type": "int", "return_schema": {}, "doc": ""}}
     with mock.patch("pyrpc_core.cli._resolve_source") as mock_resolve:
         mock_resolve.return_value = schemas
-        with mock.patch("pyrpc_core.cli.save_typescript_client") as mock_save:
+        with mock.patch("pyrpc_codegen.save_typescript_client") as mock_save:
             result = runner.invoke(app, ["codegen", "app.main"])
             assert result.exit_code == 0
             assert "Types written to" in result.output
@@ -119,7 +119,7 @@ def test_cli_serve():
 def test_cli_dev_types_only():
     with mock.patch("pyrpc_core.cli.get_registry_schema") as mock_get:
         mock_get.return_value = {}
-        with mock.patch("pyrpc_core.cli.save_typescript_client"):
+        with mock.patch("pyrpc_codegen.save_typescript_client"):
             with mock.patch("pyrpc_core.cli.watch") as mock_watch:
                 mock_watch.return_value = []
                 with mock.patch("builtins.input", return_value="exit"):
@@ -129,7 +129,7 @@ def test_cli_dev_types_only():
 def test_cli_dev():
     with mock.patch("pyrpc_core.cli.get_registry_schema") as mock_get:
         mock_get.return_value = {}
-        with mock.patch("pyrpc_core.cli.save_typescript_client"):
+        with mock.patch("pyrpc_codegen.save_typescript_client"):
             with mock.patch("pyrpc_core.cli.subprocess"):
                 with mock.patch("pyrpc_core.cli.watch") as mock_watch:
                     mock_watch.return_value = []
