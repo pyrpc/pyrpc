@@ -1,6 +1,6 @@
 {
   "name": "@pyrpc/client",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Universal TypeScript client for pyRPC",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -24,7 +24,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@pyrpc/types": "^0.1.0-alpha.1"
+    "@pyrpc/types": "^0.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.19.39",
