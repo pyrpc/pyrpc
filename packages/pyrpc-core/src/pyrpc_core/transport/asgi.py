@@ -1,7 +1,14 @@
 import json
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from ..core.interpreter import handle_request
+
+CORS_HEADERS: List[Tuple[bytes, bytes]] = [
+    (b"access-control-allow-origin", b"*"),
+    (b"access-control-allow-methods", b"OPTIONS, GET, POST"),
+    (b"access-control-allow-headers", b"Content-Type"),
+    (b"access-control-max-age", b"86400"),
+]
 
 
 class PyRPCAsgiApp:
@@ -21,6 +28,15 @@ class PyRPCAsgiApp:
 
         method = scope.get("method")
         path = scope.get("path")
+
+        if method == "OPTIONS" and path == "/rpc":
+            await send({
+                "type": "http.response.start",
+                "status": 204,
+                "headers": CORS_HEADERS,
+            })
+            await send({"type": "http.response.body", "body": b""})
+            return
 
         if method == "POST" and path == "/rpc":
             await self.handle_rpc(receive, send)
@@ -83,7 +99,7 @@ class PyRPCAsgiApp:
                 "status": status_code,
                 "headers": [
                     (b"content-type", b"application/json"),
-                ],
+                ] + CORS_HEADERS,
             }
         )
         await send(
