@@ -2,6 +2,23 @@ import Link from 'next/link'
 
 const releases = [
     {
+        version: 'v0.3.1',
+        date: '2026-06-03',
+        tag: 'v0.3.1',
+        description: 'Lazy imports: pyrpc_codegen decoupled from CLI, only loaded on codegen/dev commands.',
+        sections: [
+            {
+                title: 'CLI',
+                items: [
+                    'pyrpc_codegen import moved from top-level to per-command lazy loader',
+                    'Commands version, inspect, serve, pull, and --help no longer require the codegen library',
+                    'Only codegen and dev commands trigger the pyrpc_codegen import',
+                    'All 17 CLI tests pass with updated mock targets',
+                ]
+            },
+        ]
+    },
+    {
         version: 'v0.3.0',
         date: '2026-06-02',
         tag: 'v0.3.0',
