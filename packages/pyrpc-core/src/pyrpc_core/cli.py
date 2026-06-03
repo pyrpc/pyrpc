@@ -270,12 +270,7 @@ def serve(
     from pyrpc_core.transport.asgi import PyRPCAsgiApp
     app_instance = PyRPCAsgiApp(default_router)
 
-    console.print(Panel(
-        f"Starting pyRPC server for [bold cyan]{module}[/bold cyan]\n"
-        f"Endpoint: [bold green]http://{host}:{port}/rpc[/bold green]",
-        title="pyRPC Serve",
-        border_style="blue"
-    ))
+    console.print(f"  [bold]pyRPC server[/bold]  http://{host}:{port}/rpc")
 
     if reload:
         startup_code = (
