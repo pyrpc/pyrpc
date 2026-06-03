@@ -2,6 +2,53 @@ import Link from 'next/link'
 
 const releases = [
     {
+        version: 'v0.3.2',
+        date: '2026-06-03',
+        tag: 'v0.3.2',
+        description: 'Cleaner terminal, smarter setup prompts, entry point simplified — no more :app confusion.',
+        sections: [
+            {
+                title: 'Setup Flow',
+                items: [
+                    'Framework picker changed from text input to questionary.select() arrow-key menu',
+                    'Entry point prompt simplified to "Python module to scan for @rpc procedures (e.g. main, app.main)" with default "main"',
+                    'Removed misleading :app convention (dev command never used the variable part)',
+                ]
+            },
+            {
+                title: 'Import Path',
+                items: [
+                    'sys.path.insert(0, os.getcwd()) added in dev() before module import (Uvicorn standard)',
+                    '_import_module() changed from sys.path.append to sys.path.insert(0, ...) for consistency',
+                    'main now finds main.py in current directory — fixes "No module named main" error',
+                ]
+            },
+            {
+                title: 'Terminal DX',
+                items: [
+                    'Uvicorn subprocess uses --log-level error — 6 lines of reloader/server spam eliminated',
+                    'Heavy Panel box replaced with clean 2-line status block',
+                    'input() replaced with console.input() so Rich markup renders (fixes raw [cyan] text)',
+                    'Removed "Generating initial types" and "Watching X directories" noise lines',
+                    'Consistent symbol prefixes: ✓ success, ✗ error, ⚠ warning, ○ in-progress',
+                ]
+            },
+            {
+                title: 'Dependencies',
+                items: [
+                    'Added questionary>=2.0.0 for interactive CLI prompts',
+                ]
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'Blog post: v0.3.2 — Cleaner terminal, smarter prompts, no more :app confusion',
+                    'Help text updated on dev, serve, and pull commands to match new wording',
+                ]
+            },
+        ]
+    },
+    {
         version: 'v0.3.1',
         date: '2026-06-03',
         tag: 'v0.3.1',

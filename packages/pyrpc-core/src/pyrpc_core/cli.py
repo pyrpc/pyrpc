@@ -9,15 +9,14 @@ import tomllib
 from datetime import datetime
 from pathlib import Path
 
+import questionary
 import typer
 from pyrpc_core.constants import FRAMEWORKS
 from rich.console import Console
-from rich.panel import Panel
-from rich.prompt import Prompt
 from rich.table import Table
 from watchfiles import watch
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 
 PYRPC_CONFIG = dict | None
 
@@ -86,15 +85,15 @@ def _write_pyrpc_config(config: dict) -> bool:
 def _prompt_for_config() -> dict:
     console.print("[bold]pyRPC Setup[/bold]")
     console.print("Let's configure pyRPC for your project.\n")
-    framework = Prompt.ask(
+    framework = questionary.select(
         "Which web framework are you using?",
         choices=FRAMEWORKS,
         default="fastapi",
-    )
-    entry = Prompt.ask(
-        "Entry point (e.g. app.main:app)",
-        default="app.main:app",
-    )
+    ).ask()
+    entry = questionary.text(
+        "Python module to scan for @rpc procedures (e.g. main, app.main)",
+        default="main",
+    ).ask()
     return {"framework": framework, "entry": entry}
 
 
@@ -103,7 +102,7 @@ def _ensure_config(reconfigure: bool = False) -> dict | None:
     if config and not reconfigure:
         return config
     if reconfigure:
-        console.print("[yellow]Reconfiguring pyRPC...[/yellow]")
+        console.print("  [yellow]⚠[/yellow] Reconfiguring pyRPC")
     config = _prompt_for_config()
     _write_pyrpc_config(config)
     return config
@@ -118,16 +117,16 @@ def _install_adapter(framework: str):
         return
     except ImportError:
         pass
-    console.print(f"Installing [bold]{adapter_pkg}[/bold]...")
+    console.print(f"  [dim]○[/dim] Installing {adapter_pkg}...")
     result = subprocess.run(
         [sys.executable, "-m", "pip", "install", adapter_pkg],
         capture_output=True, text=True,
     )
     if result.returncode == 0:
-        console.print(f"[bold green]OK Installed {adapter_pkg}[/bold green]")
+        console.print(f"  [green]✓[/green] Installed {adapter_pkg}")
     else:
-        console.print(f"[yellow]Could not auto-install {adapter_pkg}[/yellow]")
-        console.print(f"  Install manually: [bold]pip install {adapter_pkg}[/bold]")
+        console.print(f"  [red]✗[/red] Could not auto-install {adapter_pkg}")
+        console.print(f"       Install manually: pip install {adapter_pkg}")
 
 
 
@@ -158,7 +157,7 @@ def _lazy_import_codegen():
 
 
 def _import_module(module_path: str):
-    sys.path.append(os.getcwd())
+    sys.path.insert(0, os.getcwd())
     try:
         return importlib.import_module(module_path)
     except ImportError as e:
@@ -241,7 +240,7 @@ def version():
 
 @app.command()
 def pull(
-    module: str = typer.Argument(..., help="Python module path (e.g. 'app.main')"),
+    module: str = typer.Argument(..., help="Python module to scan for @rpc procedures (e.g. main, app.main)"),
     output: str = typer.Option("pyrpc-schema.json", "--output", "-o", help="Output JSON schema file path"),
 ):
     """Extract RPC schema from a Python module and save as JSON."""
@@ -258,7 +257,7 @@ def pull(
 
 @app.command()
 def serve(
-    module: str = typer.Argument(..., help="Module containing the pyRPC application (e.g. 'app.main')"),
+    module: str = typer.Argument(..., help="Python module to scan for @rpc procedures (e.g. main, app.main)"),
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Bind socket to this host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind socket to this port"),
     reload: bool = typer.Option(False, "--reload", help="Enable auto-reload"),
@@ -271,12 +270,7 @@ def serve(
     from pyrpc_core.transport.asgi import PyRPCAsgiApp
     app_instance = PyRPCAsgiApp(default_router)
 
-    console.print(Panel(
-        f"Starting pyRPC server for [bold cyan]{module}[/bold cyan]\n"
-        f"Endpoint: [bold green]http://{host}:{port}/rpc[/bold green]",
-        title="pyRPC Serve",
-        border_style="blue"
-    ))
+    console.print(f"  [bold]pyRPC server[/bold]  http://{host}:{port}/rpc")
 
     if reload:
         startup_code = (
@@ -339,11 +333,10 @@ class _DevConsole:
             return {}
 
     def run(self):
-        console.print()
-        console.print("[bold cyan]pyrpc>[/bold cyan] type [bold]help[/bold] for commands")
+        console.print("[dim]type help for commands[/dim]")
         while self._running:
             try:
-                line = input("[cyan]pyrpc>[/cyan] ").strip()
+                line = console.input("[bold cyan]pyrpc>[/bold cyan] ").strip()
             except (EOFError, KeyboardInterrupt):
                 console.print()
                 break
@@ -459,7 +452,7 @@ class _DevConsole:
 
 @app.command()
 def dev(
-    module: str = typer.Argument(None, help="Module containing the pyRPC application (e.g. 'app.main')"),
+    module: str = typer.Argument(None, help="Python module to scan for @rpc procedures (e.g. main, app.main)"),
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Bind socket to this host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind socket to this port"),
     types_only: bool = typer.Option(False, "--types-only", help="Only regenerate types, skip starting the server"),
@@ -477,6 +470,8 @@ def dev(
         console.print("  Run [bold]pyrpc dev --reconfigure[/bold] to set up, or pass a module path.")
         raise typer.Exit(code=1)
 
+    sys.path.insert(0, os.getcwd())
+
     _lazy_import_pyrpc_core()
 
     cwd = os.getcwd()
@@ -488,18 +483,17 @@ def dev(
         try:
             ok = default_router.reload_module(module)
             if not ok:
-                console.print("[yellow]No procedures found after reload — did you remove all @rpc decorators?[/yellow]")
+                console.print(f"  [yellow]⚠[/yellow] No procedures found — did you remove all @rpc decorators?")
                 return
             schemas = get_registry_schema(default_router)
             DEFAULT_OUTPUT, save_typescript_client = _lazy_import_codegen()
             save_typescript_client(schemas, DEFAULT_OUTPUT)
-            console.print(f"[dim]{datetime.now().strftime('%H:%M:%S')}[/dim] Types regenerated [dim]({len(schemas)} procs)[/dim]")
+            console.print(f"  [green]✓[/green] Types regenerated ({len(schemas)} procs)")
         except Exception as e:
-            console.print(f"[red]Error regenerating types: {e}[/red]")
+            console.print(f"  [red]✗[/red] Types: {e}")
         finally:
             _regenerate_lock.release()
 
-    console.print("[bold blue]Generating initial TypeScript types...[/bold blue]")
     regenerate()
 
     server_proc = None
@@ -520,17 +514,13 @@ def dev(
         tmp.close()
         tmp_path = f"{os.path.splitext(os.path.basename(tmp.name))[0]}:app"
         os.environ.setdefault("PYTHONPATH", cwd)
-        server_args = [sys.executable, "-m", "uvicorn", tmp_path, "--host", host, "--port", str(port), "--reload"]
+        server_args = [sys.executable, "-m", "uvicorn", tmp_path, "--host", host, "--port", str(port), "--reload", "--log-level", "error"]
         server_cwd = os.path.dirname(tmp.name)
         server_proc = subprocess.Popen(server_args, cwd=server_cwd)
 
-        console.print(Panel(
-            f"Dev server for [bold cyan]{module}[/bold cyan]\n"
-            f"Endpoint: [bold green]http://{host}:{port}/rpc[/bold green]\n"
-            f"Types: [bold]node_modules/@pyrpc/types/src/index.ts[/bold]",
-            title="pyRPC Dev",
-            border_style="green"
-        ))
+        console.print()
+        console.print(f"  [bold]pyRPC dev server[/bold]  http://{host}:{port}/rpc")
+        console.print(f"  [dim]Types:[/dim] node_modules/@pyrpc/types/src/index.ts")
 
     watched_dirs = _find_python_dirs(cwd)
     stop_event = threading.Event()
@@ -544,8 +534,6 @@ def dev(
 
     watcher_thread = threading.Thread(target=watcher_loop, daemon=True)
     watcher_thread.start()
-
-    console.print(f"Watching [bold]{len(watched_dirs)}[/bold] directories for Python changes...")
 
     try:
         console_obj = _DevConsole(

@@ -127,6 +127,13 @@ const posts = [
         date: 'June 3, 2026 at 10:30am',
         readTime: '4 min',
     },
+    {
+        slug: 'v0-3-2-clean-ux-and-terminal',
+        title: 'v0.3.2 — Cleaner terminal, smarter prompts, no more :app confusion',
+        description: 'Interactive framework picker, simplified entry point, CWD import path fix, and a terminal that shows what matters — no Uvicorn spam, no raw [cyan] markup, no giant Panel boxes.',
+        date: 'June 3, 2026 at 6:00pm',
+        readTime: '6 min',
+    },
 ]
 
 export default function BlogPage() {

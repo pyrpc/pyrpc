@@ -111,7 +111,7 @@ def test_cli_serve():
             with mock.patch("uvicorn.run") as mock_run:
                 result = runner.invoke(app, ["serve", "my_module", "--port", "9000"])
                 assert result.exit_code == 0
-                assert "Starting pyRPC server" in result.output
+                assert "pyRPC server" in result.output
                 mock_run.assert_called_once()
                 args, kwargs = mock_run.call_args
                 assert kwargs["port"] == 9000
