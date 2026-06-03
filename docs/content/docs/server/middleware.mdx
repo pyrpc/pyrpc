@@ -60,8 +60,8 @@ mount_flask(app)
 For the standalone ASGI app, wrap it with ASGI middleware:
 
 ```python
-from pyrpc.transport.asgi import app as pyRPC_app
+from pyrpc_core import asgi_app
 
 # Wrap with your ASGI middleware
-app = YourMiddleware(pyRPC_app)
+app = YourMiddleware(asgi_app)
 ```
