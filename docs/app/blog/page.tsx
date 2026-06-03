@@ -134,6 +134,13 @@ const posts = [
         date: 'June 3, 2026 at 6:00pm',
         readTime: '6 min',
     },
+    {
+        slug: 'v0-3-3-client-and-watcher-fixes',
+        title: 'v0.3.3 — Cleaner types, no more /rpc/rpc, quieter watcher, CORS included',
+        description: 'TypeScript autocomplete no longer suggests .rpc, URL normalization prevents double /rpc/rpc, file watcher debounced to 300ms, and the ASGI dev server now sends CORS headers — all following reference patterns from tRPC, Better Auth, FastAPI, webpack, and nodemon.',
+        date: 'June 3, 2026 at 9:30pm',
+        readTime: '8 min',
+    },
 ]
 
 export default function BlogPage() {
