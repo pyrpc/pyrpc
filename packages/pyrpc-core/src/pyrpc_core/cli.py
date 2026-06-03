@@ -11,14 +11,13 @@ from pathlib import Path
 
 import typer
 from pyrpc_core.constants import FRAMEWORKS
-from pyrpc_codegen import DEFAULT_OUTPUT, save_typescript_client
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
 from watchfiles import watch
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 PYRPC_CONFIG = dict | None
 
@@ -151,6 +150,11 @@ def _lazy_import_pyrpc_core():
     global default_router, get_registry_schema
     from pyrpc_core import default_router, get_registry_schema
     return default_router, get_registry_schema
+
+
+def _lazy_import_codegen():
+    from pyrpc_codegen import DEFAULT_OUTPUT, save_typescript_client
+    return DEFAULT_OUTPUT, save_typescript_client
 
 
 def _import_module(module_path: str):
@@ -304,6 +308,7 @@ def codegen(
         console.print(f"[bold red]Error:[/bold red] Could not load schema from '{source}': {e}")
         raise typer.Exit(code=1) from e
 
+    DEFAULT_OUTPUT, save_typescript_client = _lazy_import_codegen()
     output = DEFAULT_OUTPUT
     console.print(f"Generating TypeScript contracts [dim]({len(schemas)} procedures)[/dim]...")
     save_typescript_client(schemas, output)
@@ -317,7 +322,7 @@ def codegen(
 class _DevConsole:
     """Interactive developer console attached to the pyrpc dev server."""
 
-    def __init__(self, module: str, regenerate_cb, server_proc=None, tmp_path: str = None, server_args: list = None, server_cwd: str = None, types_path: str = DEFAULT_OUTPUT):
+    def __init__(self, module: str, regenerate_cb, server_proc=None, tmp_path: str = None, server_args: list = None, server_cwd: str = None, types_path: str = "node_modules/@pyrpc/types/src/index.ts"):
         self.module = module
         self.regenerate = regenerate_cb
         self.server_proc = server_proc
@@ -486,6 +491,7 @@ def dev(
                 console.print("[yellow]No procedures found after reload — did you remove all @rpc decorators?[/yellow]")
                 return
             schemas = get_registry_schema(default_router)
+            DEFAULT_OUTPUT, save_typescript_client = _lazy_import_codegen()
             save_typescript_client(schemas, DEFAULT_OUTPUT)
             console.print(f"[dim]{datetime.now().strftime('%H:%M:%S')}[/dim] Types regenerated [dim]({len(schemas)} procs)[/dim]")
         except Exception as e:
@@ -521,7 +527,7 @@ def dev(
         console.print(Panel(
             f"Dev server for [bold cyan]{module}[/bold cyan]\n"
             f"Endpoint: [bold green]http://{host}:{port}/rpc[/bold green]\n"
-            f"Types: [bold]{DEFAULT_OUTPUT}[/bold]",
+            f"Types: [bold]node_modules/@pyrpc/types/src/index.ts[/bold]",
             title="pyRPC Dev",
             border_style="green"
         ))
@@ -549,7 +555,7 @@ def dev(
             tmp_path=tmp_path,
             server_args=server_args,
             server_cwd=server_cwd,
-            types_path=DEFAULT_OUTPUT,
+            types_path="node_modules/@pyrpc/types/src/index.ts",
         )
         console_obj.run()
     except KeyboardInterrupt:

@@ -120,6 +120,13 @@ const posts = [
         date: 'June 2, 2026 at 10:15pm',
         readTime: '5 min',
     },
+    {
+        slug: 'v0-3-1-lazy-codegen-import',
+        title: 'v0.3.1 — Lazy imports, pyrpc_codegen decoupled from CLI',
+        description: 'pyrpc_codegen is no longer loaded for version, inspect, serve, pull, or help — only codegen and dev need it. A patch triggered by a stale shim bug.',
+        date: 'June 3, 2026 at 10:30am',
+        readTime: '4 min',
+    },
 ]
 
 export default function BlogPage() {
