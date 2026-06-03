@@ -2,6 +2,48 @@ import Link from 'next/link'
 
 const releases = [
     {
+        version: 'v0.3.3',
+        date: '2026-06-03',
+        tag: 'v0.3.3',
+        description: 'Cleaner types, no more /rpc/rpc, quieter watcher, CORS headers included.',
+        sections: [
+            {
+                title: 'TypeScript Client',
+                items: [
+                    'createClient returns TTypes directly instead of PyRPCClient & TTypes — rpc no longer pollutes autocomplete',
+                    'Catches client.rpc.method() misuse at compile time instead of runtime',
+                    'URL normalization strips existing trailing /rpc before re-appending — prevents double /rpc/rpc when users copy the URL from server output',
+                    'Both http://localhost:8000 and http://localhost:8000/rpc work correctly as baseUrl',
+                ]
+            },
+            {
+                title: 'File Watcher',
+                items: [
+                    'threading.Timer with 300ms resetting debounce replaces direct regenerate() calls in watcher loop',
+                    'Matches webpack\'s aggregateTimeout and nodemon\'s --delay pattern',
+                    'Types regenerate once after the last file change settles — no more flood of syntax errors on partial writes',
+                    'Startup and manual generate command still regenerate immediately (bypass debounce)',
+                ]
+            },
+            {
+                title: 'ASGI Transport (CORS)',
+                items: [
+                    'Added Access-Control-Allow-Origin: *, Access-Control-Allow-Methods, Access-Control-Allow-Headers, and Access-Control-Max-Age to every response',
+                    'Added OPTIONS /rpc handler returning 204 with CORS headers for preflight requests',
+                    'Same headers as FastAPI\'s CORSMiddleware',
+                    'Flask and FastAPI transports unchanged — CORS is the host application\'s responsibility',
+                ]
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'Blog post: v0.3.3 — Cleaner types, no more /rpc/rpc, quieter watcher, CORS included',
+                    'Changelog entry: v0.3.3',
+                ]
+            },
+        ]
+    },
+    {
         version: 'v0.3.2',
         date: '2026-06-03',
         tag: 'v0.3.2',

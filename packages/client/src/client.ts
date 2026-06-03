@@ -14,7 +14,7 @@ createClient({
 `;
 
 export class PyRPCClient {
-  private baseUrl: string;
+  private url: string;
   private options: ClientOptions;
 
   constructor(options: ClientOptions = {}) {
@@ -28,7 +28,8 @@ export class PyRPCClient {
       }
     }
 
-    this.baseUrl = baseUrl.replace(/\/$/, '');
+    const clean = baseUrl.replace(/\/+$/, '');
+    this.url = clean.replace(/\/rpc$/i, '') + '/rpc';
     this.options = options;
   }
 
@@ -52,7 +53,7 @@ export class PyRPCClient {
 
     const headers = { ...baseHeaders, ...Object.fromEntries(new Headers(userHeaders).entries()) };
 
-    const response = await fetch(`${this.baseUrl}/rpc`, {
+    const response = await fetch(this.url, {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
@@ -93,7 +94,7 @@ export class PyRPCClient {
 /**
  * Modern factory API for pyRPC.
  */
-export function createClient<TTypes = any>(options: ClientOptions = {}): PyRPCClient & TTypes {
+export function createClient<TTypes = any>(options: ClientOptions = {}): TTypes {
   const client = new PyRPCClient(options);
 
   return new Proxy(client, {

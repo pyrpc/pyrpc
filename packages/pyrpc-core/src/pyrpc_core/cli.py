@@ -476,6 +476,9 @@ def dev(
 
     cwd = os.getcwd()
     _regenerate_lock = threading.Lock()
+    _regenerate_timer = None
+    _timer_lock = threading.Lock()
+    DEBOUNCE_SECONDS = 0.3
 
     def regenerate():
         if not _regenerate_lock.acquire(blocking=False):
@@ -493,6 +496,15 @@ def dev(
             console.print(f"  [red]✗[/red] Types: {e}")
         finally:
             _regenerate_lock.release()
+
+    def _schedule_regenerate():
+        nonlocal _regenerate_timer
+        with _timer_lock:
+            if _regenerate_timer is not None:
+                _regenerate_timer.cancel()
+            _regenerate_timer = threading.Timer(DEBOUNCE_SECONDS, regenerate)
+            _regenerate_timer.daemon = True
+            _regenerate_timer.start()
 
     regenerate()
 
@@ -530,7 +542,7 @@ def dev(
             if stop_event.is_set():
                 break
             if any(f.endswith(".py") for _, f in changes):
-                regenerate()
+                _schedule_regenerate()
 
     watcher_thread = threading.Thread(target=watcher_loop, daemon=True)
     watcher_thread.start()
