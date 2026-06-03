@@ -48,8 +48,19 @@ describe('@pyrpc/types integration', () => {
     expect(body.params).toEqual({ id: 1 });
   });
 
-  it('should expose baseUrl on the client', () => {
-    const client = createClient({ baseUrl: 'http://localhost:8000' });
-    expect(client.baseUrl).toBe('http://localhost:8000');
+  it('should normalise baseUrl and strip duplicate /rpc', () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ result: null }),
+    });
+    globalThis.fetch = mockFetch as any;
+
+    const client = createClient({ baseUrl: 'http://localhost:8000/rpc' });
+    void client.foo();
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://localhost:8000/rpc',
+      expect.objectContaining({ body: expect.stringContaining('"method":"foo"') }),
+    );
   });
 });
