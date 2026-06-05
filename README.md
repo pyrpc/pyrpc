@@ -98,13 +98,16 @@ def add(a: int, b: int) -> int:
 mount_fastapi(app)
 ```
 
-#### 2. Client-side (TypeScript)
-Generate typed contracts from your server to enable end-to-end typed inference.
+#### 2. Start the dev server
+Run `pyrpc dev` from your project root. On first run, it prompts for your framework, Python module, and TypeScript client path — then generates types automatically.
 
 ```bash
 # CLI comes with pyrpc-core - no extra install needed
-pyrpc codegen http://localhost:8000
+pyrpc dev
 ```
+
+#### 3. Client-side (TypeScript)
+Once the dev server is running, use the typed client:
 
 ```ts
 import { createClient } from "@pyrpc/client"
@@ -112,7 +115,7 @@ import type { Types } from "@pyrpc/types"
 
 const client = createClient<Types>()
 
-// Fully typed result and parameters!
+// Fully typed result and parameters — no manual type definitions needed
 const result = await client.add(10, 5)
 ```
 
@@ -133,9 +136,11 @@ with RPCClient("http://localhost:8000") as client:
 ### CLI Utilities
 The `pyrpc` CLI provides tooling for serving, inspecting, and generating typed contracts from your RPC procedures.
 
+- `pyrpc dev`: Start the dev server with automatic type regeneration and interactive console. First run prompts for framework, entrypoint, and client root — creates `pyrpc.json`.
 - `pyrpc serve`: Instantly host a Python RPC module for local development and testing.
 - `pyrpc inspect`: Explore registered procedures, inputs, outputs, and namespaces.
 - `pyrpc codegen`: Generate TypeScript types/contracts for end-to-end typed clients.
+- `pyrpc pull`: Extract RPC schema from a Python module and save as JSON.
 
 ### Versioning
 
