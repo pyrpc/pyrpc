@@ -6,11 +6,11 @@ description: How the magic happens under the hood.
 
 # Architecture
 
-pyRPC is designed to be as "invisible" as possible. To achieve this, it relies on a simple three-tier architecture: **Registry**, **Introspection**, and **Contract**.
+pyRPC is designed to be as "invisible" as possible. To achieve this, it relies on a simple multi-tier architecture: **Registry**, **Introspection**, **Config**, and **Contract**.
 
 ## 1. The Registry (Source of Truth)
 
-When you use the `@rpc` decorator, you are adding your function to a central **Registry**. 
+When you use the `@rpc` decorator, you are adding your function to a central **Registry**.
 
 ```python
 @rpc
@@ -25,11 +25,32 @@ The registry is connected to an **Introspection Engine**. This engine can turn t
 
 This engine is exposed via the `GET /rpc` endpoint. It allows tools (and other pyRPC clients) to "see" your backend as if it were a typed library.
 
-## 3. Contract Synchronization
+## 3. Project Configuration (`pyrpc.json`)
 
-The final tier is the **Contract**. This is the bridge to other ecosystems like TypeScript.
+pyRPC stores project settings in a dedicated `pyrpc.json` file:
 
-Instead of generating a bulky SDK with custom classes and logic, `pyrpc codegen` simply fetches the introspection schema and translates it into TypeScript `interface` and `type` definitions.
+```json
+{
+  "version": 1,
+  "framework": "fastapi",
+  "entrypoint": "main",
+  "client_root": "../frontend"
+}
+```
+
+- **framework**: The web framework adapter to use (fastapi, flask, asgi)
+- **entrypoint**: The Python module to scan for `@rpc` procedures
+- **client_root**: Relative path to the TypeScript client project
+
+All paths are resolved relative to `pyrpc.json`'s directory at config load time. The types output path is derived automatically from `client_root`.
+
+The config file is created by `pyrpc dev` and can be updated with `--reconfigure` or individual flags.
+
+## 4. Contract Synchronization
+
+The final tier is the **Contract**. This is the bridge to TypeScript.
+
+Instead of generating a bulky SDK with custom classes and logic, `pyrpc codegen` (or `pyrpc dev`) fetches the introspection schema and translates it into TypeScript `interface` and `type` definitions.
 
 ### Why this works:
 - **Decoupled**: Your server doesn't need to know about TypeScript.
@@ -47,4 +68,4 @@ Instead of generating a bulky SDK with custom classes and logic, `pyrpc codegen`
 
 ---
 
-By understanding this flow, you can see why pyRPC is so reliable - there is no manual translation layer where types can drift.
+By understanding this flow, you can see why pyRPC is so reliable — there is no manual translation layer where types can drift.
