@@ -1,12 +1,12 @@
+import hashlib
 import importlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
 import threading
-import tomllib
-from datetime import datetime
 from pathlib import Path
 
 import questionary
@@ -19,93 +19,138 @@ from watchfiles import watch
 __version__ = "0.3.3"
 
 PYRPC_CONFIG = dict | None
+CONFIG_FILE = "pyrpc.json"
+CONFIG_VERSION = 1
 
 
-def _find_pyproject_toml() -> Path | None:
+def _find_pyrpc_json() -> Path | None:
     path = Path.cwd()
     for parent in [path] + list(path.parents):
-        candidate = parent / "pyproject.toml"
+        candidate = parent / CONFIG_FILE
         if candidate.is_file():
             return candidate
     return None
 
 
 def _read_pyrpc_config() -> PYRPC_CONFIG:
-    path = _find_pyproject_toml()
+    path = _find_pyrpc_json()
     if not path:
         return None
     try:
-        with open(path, "rb") as f:
-            data = tomllib.load(f)
-        return data.get("tool", {}).get("pyrpc")
+        with open(path, "r") as f:
+            return json.load(f)
     except Exception:
         return None
 
 
 def _write_pyrpc_config(config: dict) -> bool:
-    path = _find_pyproject_toml()
+    path = _find_pyrpc_json()
     if not path:
-        return False
-    with open(path, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-
-    config_lines = ["[tool.pyrpc]\n"]
-    for key, value in config.items():
-        if isinstance(value, str):
-            config_lines.append(f'{key} = "{value}"\n')
-        elif isinstance(value, bool):
-            config_lines.append(f"{key} = {'true' if value else 'false'}\n")
-        elif isinstance(value, int):
-            config_lines.append(f"{key} = {value}\n")
-
-    start_idx = None
-    end_idx = None
-    for i, line in enumerate(lines):
-        if line.strip().startswith("[tool.pyrpc]"):
-            start_idx = i
-        elif start_idx is not None and line.strip().startswith("["):
-            end_idx = i
-            break
-
-    if start_idx is not None:
-        if end_idx is None:
-            end_idx = len(lines)
-        lines[start_idx:end_idx] = config_lines
-    else:
-        if lines and not lines[-1].endswith("\n"):
-            lines[-1] += "\n"
-        lines.append("\n")
-        lines.extend(config_lines)
-
-    with open(path, "w", encoding="utf-8") as f:
-        f.writelines(lines)
+        path = Path.cwd() / CONFIG_FILE
+    config["version"] = CONFIG_VERSION
+    with open(path, "w") as f:
+        json.dump(config, f, indent=2)
     return True
 
 
-def _prompt_for_config() -> dict:
+def _hash_file(path: str) -> str:
+    with open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def _prompt_for_config(previous: dict | None = None) -> dict | None:
     console.print("[bold]pyRPC Setup[/bold]")
     console.print("Let's configure pyRPC for your project.\n")
+
+    default_framework = (previous or {}).get("framework", "fastapi")
     framework = questionary.select(
         "Which web framework are you using?",
         choices=FRAMEWORKS,
-        default="fastapi",
+        default=default_framework,
     ).ask()
+    if framework is None:
+        return None
+
+    default_entry = (previous or {}).get("entrypoint", "main")
     entry = questionary.text(
         "Python module to scan for @rpc procedures (e.g. main, app.main)",
-        default="main",
+        default=default_entry,
     ).ask()
-    return {"framework": framework, "entry": entry}
+    if entry is None:
+        return None
+
+    default_client = (previous or {}).get("client_root", "")
+    client_root = questionary.text(
+        "Where is your TypeScript client project? (relative path, e.g. ../frontend)",
+        default=default_client,
+    ).ask()
+    if client_root is None:
+        return None
+
+    return {"framework": framework, "entrypoint": entry, "client_root": client_root}
 
 
-def _ensure_config(reconfigure: bool = False) -> dict | None:
-    config = _read_pyrpc_config()
-    if config and not reconfigure:
-        return config
+def _ensure_config(reconfigure: bool = False, previous: dict | None = None) -> dict | None:
+    if not reconfigure:
+        config = _read_pyrpc_config()
+        if config:
+            return config
+
     if reconfigure:
         console.print("  [yellow]⚠[/yellow] Reconfiguring pyRPC")
-    config = _prompt_for_config()
+
+    config = _prompt_for_config(previous=previous or _read_pyrpc_config())
+    if config is None:
+        return None
+
     _write_pyrpc_config(config)
     return config
+
+
+def _resolve_client_root(client_root: str, config_dir: str) -> str:
+    p = os.path.join(config_dir, client_root) if not os.path.isabs(client_root) else client_root
+    return os.path.normpath(p)
+
+
+def _handle_migration(old_path: str, new_path: str):
+    if not os.path.isfile(old_path):
+        return
+
+    if not os.path.isfile(new_path):
+        ans = questionary.confirm(
+            f"Types location changed.\n  Old: {old_path}\n  New: {new_path}\n\nMove generated types?",
+            default=True,
+        ).ask()
+        if ans is None:
+            return
+        if ans:
+            os.makedirs(os.path.dirname(new_path), exist_ok=True)
+            shutil.move(old_path, new_path)
+            console.print(f"  [green]✓[/green] Moved types to new location")
+        return
+
+    if _hash_file(old_path) == _hash_file(new_path):
+        os.remove(old_path)
+        console.print("  [green]✓[/green] Generated types already exist at new location.")
+        console.print("  [dim]Removed old copy.[/dim]")
+        return
+
+    console.print("\n[yellow]Generated types found in both locations.[/yellow]")
+    console.print("  [bold]Recommended:[/bold] Regenerate from the current server.\n")
+    choice = questionary.select(
+        "What would you like to do?",
+        choices=[
+            "Regenerate at new location and remove old location",
+            "Keep both locations",
+            "Cancel",
+        ],
+        default="Regenerate at new location and remove old location",
+    ).ask()
+    if choice is None:
+        return
+    if choice.startswith("Regenerate"):
+        os.remove(old_path)
+        console.print("  [dim]Removed old copy.[/dim]")
 
 
 def _install_adapter(framework: str):
@@ -303,7 +348,7 @@ def codegen(
         raise typer.Exit(code=1) from e
 
     DEFAULT_OUTPUT, save_typescript_client = _lazy_import_codegen()
-    output = DEFAULT_OUTPUT
+    output = os.path.abspath(DEFAULT_OUTPUT)
     console.print(f"Generating TypeScript contracts [dim]({len(schemas)} procedures)[/dim]...")
     save_typescript_client(schemas, output)
     console.print(f"[bold green]OK Types written to {output}[/bold green]")
@@ -456,19 +501,55 @@ def dev(
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Bind socket to this host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind socket to this port"),
     types_only: bool = typer.Option(False, "--types-only", help="Only regenerate types, skip starting the server"),
-    reconfigure: bool = typer.Option(False, "--reconfigure", help="Re-run first-time setup prompts"),
+    reconfigure: bool = typer.Option(False, "--reconfigure", help="Re-run setup prompts with previous answers as defaults"),
+    framework: str = typer.Option(None, "--framework", help="Web framework to use (fastapi, flask, asgi)"),
+    entry: str = typer.Option(None, "--entry", help="Python module to scan for @rpc procedures"),
+    client_root: str = typer.Option(None, "--client-root", help="Relative path to TypeScript client project"),
 ):
     """Start the pyRPC dev server with auto-type regeneration and interactive console."""
-    if not module or reconfigure:
-        config = _ensure_config(reconfigure=reconfigure)
-        if config:
-            module, _ = _parse_entry(config.get("entry", ""))
-            framework = config.get("framework", "asgi")
-            _install_adapter(framework)
+    config_path = _find_pyrpc_json()
+    config_dir = os.path.dirname(str(config_path)) if config_path else os.getcwd()
+
+    old_cfg = _read_pyrpc_config()
+    old_client_root_raw = (old_cfg or {}).get("client_root")
+    old_client_root = _resolve_client_root(old_client_root_raw, config_dir) if old_client_root_raw else None
+    old_types_output = os.path.join(old_client_root, "node_modules/@pyrpc/types/src/index.ts") if old_client_root else None
+
+    cfg = dict(old_cfg) if old_cfg else {}
+    has_override = False
+    if framework:
+        cfg["framework"] = framework; has_override = True
+    if entry:
+        cfg["entrypoint"] = entry; has_override = True
+    if client_root:
+        cfg["client_root"] = client_root; has_override = True
+
+    if not module and (reconfigure or not old_cfg):
+        cfg = _ensure_config(reconfigure=reconfigure, previous=cfg if (old_cfg or has_override) else None)
+        if cfg is None:
+            console.print("[yellow]Setup cancelled.[/yellow]")
+            raise typer.Exit(code=0)
+        _write_pyrpc_config(cfg)
+    elif not module and old_cfg and has_override:
+        _write_pyrpc_config(cfg)
+
+    if not module and cfg:
+        module = cfg.get("entrypoint", "")
+        resolved_framework = cfg.get("framework", "asgi")
+        _install_adapter(resolved_framework)
     if not module:
-        console.print("[bold red]Error:[/bold red] No module specified and no [tool.pyrpc] config found.")
+        console.print("[bold red]Error:[/bold red] No module specified and no pyrpc.json config found.")
         console.print("  Run [bold]pyrpc dev --reconfigure[/bold] to set up, or pass a module path.")
         raise typer.Exit(code=1)
+
+    new_client_root_raw = cfg.get("client_root") if cfg else None
+    new_client_root = _resolve_client_root(new_client_root_raw, config_dir) if new_client_root_raw else None
+    new_types_output = os.path.join(new_client_root, "node_modules/@pyrpc/types/src/index.ts") if new_client_root else None
+
+    if old_types_output and new_types_output and old_client_root != new_client_root:
+        _handle_migration(old_types_output, new_types_output)
+
+    types_output = new_types_output
 
     sys.path.insert(0, os.getcwd())
 
@@ -489,8 +570,8 @@ def dev(
                 console.print(f"  [yellow]⚠[/yellow] No procedures found — did you remove all @rpc decorators?")
                 return
             schemas = get_registry_schema(default_router)
-            DEFAULT_OUTPUT, save_typescript_client = _lazy_import_codegen()
-            save_typescript_client(schemas, DEFAULT_OUTPUT)
+            _, save_typescript_client = _lazy_import_codegen()
+            save_typescript_client(schemas, types_output)
             console.print(f"  [green]✓[/green] Types regenerated ({len(schemas)} procs)")
         except Exception as e:
             console.print(f"  [red]✗[/red] Types: {e}")
@@ -532,7 +613,8 @@ def dev(
 
         console.print()
         console.print(f"  [bold]pyRPC dev server[/bold]  http://{host}:{port}/rpc")
-        console.print(f"  [dim]Types:[/dim] node_modules/@pyrpc/types/src/index.ts")
+        if types_output:
+            console.print(f"  [dim]Types:[/dim] {types_output}")
 
     watched_dirs = _find_python_dirs(cwd)
     stop_event = threading.Event()
@@ -555,7 +637,7 @@ def dev(
             tmp_path=tmp_path,
             server_args=server_args,
             server_cwd=server_cwd,
-            types_path="node_modules/@pyrpc/types/src/index.ts",
+            types_path=types_output or "node_modules/@pyrpc/types/src/index.ts",
         )
         console_obj.run()
     except KeyboardInterrupt:
