@@ -12,14 +12,6 @@ pnpm add @pyrpc/client
 bun add @pyrpc/client
 ```
 
-The postinstall script in `@pyrpc/types` will prompt for your server URL and generate typed contracts automatically.
-
-For CI, set the `PYRPC_URL` environment variable:
-
-```bash
-PYRPC_URL=https://api.example.com npm install @pyrpc/client
-```
-
 ## Usage
 
 ```typescript
@@ -31,7 +23,7 @@ const client = createClient<Types>({
 });
 
 const user = await client.get_user(1);
-console.log(user.name);
+console.log(user.name); // Fully typed — no manual type definitions needed
 ```
 
 The proxy-based API lets you call any remote procedure as a local method. Parameters are passed positionally or as a single object for named arguments.
@@ -52,12 +44,14 @@ try {
 
 ## API
 
-### `createClient<TTypes>(options?)`
+### `createClient<T>(options?)`
 
-Creates a proxy client that forwards method calls to the server.
+Creates a proxy client that forwards method calls to the server. The generic parameter `T` is your `Types` interface for full type safety.
 
 - `baseUrl` — Server root URL (defaults to `window.location.origin` in browsers)
 - `headers` — Static or async `HeadersInit`
+
+**Note:** There is no `.rpc` property. Call methods directly on the client object.
 
 ## Keywords
 
