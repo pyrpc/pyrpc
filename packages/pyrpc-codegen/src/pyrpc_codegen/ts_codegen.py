@@ -141,10 +141,12 @@ def generate_typescript_client(schemas: Dict[str, Any]) -> str:
     )
 
 
-def save_typescript_client(schemas: Dict[str, Any], output_path: str = DEFAULT_OUTPUT):
-    content = generate_typescript_client(schemas)
+def save_typescript_client(schemas: Dict[str, Any], output_path: str):
     if not os.path.isabs(output_path):
-        output_path = os.path.join(os.getcwd(), output_path)
+        raise ValueError(
+            "save_typescript_client requires an absolute path"
+        )
+    content = generate_typescript_client(schemas)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(content)
