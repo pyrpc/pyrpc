@@ -2,6 +2,7 @@ import hashlib
 import importlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -107,8 +108,12 @@ def _ensure_config(reconfigure: bool = False, previous: dict | None = None) -> d
     return config
 
 
+def _is_absolute_or_drive_path(p: str) -> bool:
+    return os.path.isabs(p) or bool(re.match(r"^[A-Za-z]:[/\\]", p))
+
+
 def _resolve_client_root(client_root: str, config_dir: str) -> str:
-    p = os.path.join(config_dir, client_root) if not os.path.isabs(client_root) else client_root
+    p = client_root if _is_absolute_or_drive_path(client_root) else os.path.join(config_dir, client_root)
     return os.path.normpath(p)
 
 
