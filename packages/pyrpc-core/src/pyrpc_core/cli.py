@@ -64,7 +64,8 @@ def _prompt_for_config(previous: dict | None = None) -> dict | None:
     console.print("[bold]pyRPC Setup[/bold]")
     console.print("Let's configure pyRPC for your project.\n")
 
-    default_framework = (previous or {}).get("framework", "fastapi")
+    importable = [f for f in FRAMEWORKS if _is_adapter_installed(f)]
+    default_framework = (previous or {}).get("framework") or (importable[0] if importable else "fastapi")
     framework = questionary.select(
         "Which web framework are you using?",
         choices=FRAMEWORKS,
@@ -173,25 +174,32 @@ def _handle_migration(old_path: str, new_path: str):
         console.print("  [dim]Removed old copy.[/dim]")
 
 
+def _is_adapter_installed(framework: str) -> bool:
+    if framework == "asgi":
+        return True
+    try:
+        importlib.import_module(f"pyrpc_{framework}")
+        return True
+    except ImportError:
+        return False
+
+
 def _install_adapter(framework: str):
     if framework == "asgi":
         return
-    adapter_pkg = f"pyrpc-{framework}"
-    try:
-        importlib.import_module(adapter_pkg.replace("-", "_"))
+    if _is_adapter_installed(framework):
         return
-    except ImportError:
-        pass
-    console.print(f"  [dim]○[/dim] Installing {adapter_pkg}...")
+    extra = f"pyrpc-core[{framework}]"
+    console.print(f"  [dim]○[/dim] Installing {extra}...")
     result = subprocess.run(
-        [sys.executable, "-m", "pip", "install", adapter_pkg],
+        [sys.executable, "-m", "pip", "install", extra],
         capture_output=True, text=True,
     )
     if result.returncode == 0:
-        console.print(f"  [green]✓[/green] Installed {adapter_pkg}")
+        console.print(f"  [green]✓[/green] Installed {extra}")
     else:
-        console.print(f"  [red]✗[/red] Could not auto-install {adapter_pkg}")
-        console.print(f"       Install manually: pip install {adapter_pkg}")
+        console.print(f"  [red]✗[/red] Could not auto-install {extra}")
+        console.print(f"       Install manually: pip install {extra}")
 
 
 

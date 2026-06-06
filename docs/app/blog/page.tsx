@@ -142,7 +142,7 @@ const posts = [
         readTime: '8 min',
     },
     {
-        slug: 'v0-4-0-pyrpc-json-config',
+        slug: 'pyrpc-json-config',
         title: 'pyrpc.json: why we left pyproject.toml behind',
         description: 'Three problems with [tool.pyrpc] in pyproject.toml - fragile writing, ambiguous file ownership, and unclear path semantics - and why a dedicated pyrpc.json file with JSON, not TOML, was the right answer.',
         date: 'June 6, 2026 at 8:00am',
@@ -184,7 +184,7 @@ const posts = [
         readTime: '7 min',
     },
     {
-        slug: 'v0-5-0-distribution-modes',
+        slug: 'distribution-modes',
         title: 'Distribution modes: workspace and server',
         description: 'Two distribution modes for pyrpc: workspace (monorepo, types written directly to client) and server (separate repos, types fetched via HTTP). When to use each and how they work under the hood.',
         date: 'June 6, 2026 at 1:00pm',
@@ -203,6 +203,13 @@ const posts = [
         description: 'How server mode works: the schema endpoint stays in memory, pyrpc never writes to the client filesystem, and the client fetches types on demand via npx pyrpc sync.',
         date: 'June 6, 2026 at 1:30pm',
         readTime: '9 min',
+    },
+    {
+        slug: 'client-distribution-and-package-standardization',
+        title: 'Client distribution and package standardization',
+        description: 'Completing the distribution story with npx pyrpc sync, a postinstall prompt for @pyrpc/client, and packaging cleanup: tests in packages, domain migration, framework extras, and package READMEs.',
+        date: 'June 6, 2026 at 2:00pm',
+        readTime: '10 min',
     },
 ]
 

@@ -44,37 +44,21 @@ Unlike REST, there are no URL conventions, no status code mapping, no manual fet
 
 ---
 
-### Modular Installation
+### Install
 
-pyRPC follows a modular packaging strategy. You only pay for what you use.
-
-#### 1. Core (Required)
-The tiny core protocol and runtime.
 ```bash
 uv add pyrpc-core
 # or
 pip install pyrpc-core
 ```
 
-#### 2. Adapters (Optional)
-Install the adapter for your favorite framework.
+The `pyrpc` CLI (serve, dev, inspect, codegen, pull) is included out of the box.
 
-**FastAPI**
-```bash
-uv add pyrpc-fastapi
-```
+For framework adapters, install extras:
 
-**Flask**
 ```bash
-uv add pyrpc-flask
-```
-
-#### 3. CLI & Codegen (Built-in)
-The `pyrpc` terminal command (serve, dev, inspect, codegen, pull) is included with `pyrpc-core`.
-No separate install needed.
-```bash
-# The pyrpc CLI comes built-in
-uv run pyrpc version
+uv add pyrpc-core[fastapi]   # FastAPI adapter
+uv add pyrpc-core[flask]     # Flask adapter
 ```
 
 ---

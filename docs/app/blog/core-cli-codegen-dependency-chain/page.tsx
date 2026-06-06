@@ -201,7 +201,7 @@ pyrpc codegen https://api.example.com/rpc`}
                 </p>
                 <ul className="text-fd-muted-foreground">
                     <li><strong>First-run setup</strong> &mdash; <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc dev</code> with no config prompts for framework and entry point, saves to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">[tool.pyrpc]</code>, installs adapter.</li>
-                    <li><strong>Adapter auto-install</strong> &mdash; <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pip install pyrpc-fastapi</code> (or flask/asgi) based on framework choice.</li>
+                    <li><strong>Adapter auto-install</strong> &mdash; <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{'pip install pyrpc-core[{framework}]'}</code> based on framework choice.</li>
                     <li><strong><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">--reconfigure</code></strong> &mdash; re-run setup prompts to switch frameworks or entry points.</li>
                     <li><strong>Optional <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc shell</code> removal</strong> &mdash; the shell lives entirely in pyrpc-cli and can be deprecated without touching core or codegen.</li>
                 </ul>
