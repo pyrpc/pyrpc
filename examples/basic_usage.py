@@ -1,5 +1,5 @@
 """
-Minimal pyRPC usage — just the @rpc decorator.
+Minimal pyRPC usage - just the @rpc decorator.
 
 Run with a server adapter (FastAPI/Flask/ASGI) or the CLI:
     pyrpc serve examples.basic_usage

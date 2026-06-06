@@ -17,14 +17,14 @@ body {
 }
 
 /* =============================================
-   pyRPC Design System — Dark Mode Token Override
+   pyRPC Design System - Dark Mode Token Override
    ============================================= */
 html.dark {
   /* Core surfaces */
   --background: #000000;
   --foreground: #FAFAF9;
 
-  /* Fumadocs overrides — raw RGB channel values */
+  /* Fumadocs overrides - raw RGB channel values */
   --fd-background: 0 0 0;
   --fd-foreground: 250 250 249;
   --fd-muted: 40 40 40;
@@ -178,7 +178,7 @@ aside button[aria-label*="Search"] {
   display: none !important;
 }
 
-/* Docs background — theme-aware */
+/* Docs background - theme-aware */
 .dark #nd-docs-layout, 
 .dark .fd-toc, 
 .dark .fd-doc {

@@ -98,7 +98,7 @@ After:
                 <p>
                     The new output:
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`  ✓ Types regenerated (3 procs)
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`  âœ“ Types regenerated (3 procs)
 
   pyRPC dev server  http://127.0.0.1:8000/rpc
   Types: node_modules/@pyrpc/types/src/index.ts
@@ -114,7 +114,7 @@ pyrpc>`}</pre>
                     <li><strong><code>pyrpc&gt;</code> prompt actually renders</strong> &mdash; was using raw <code>input()</code> which showed <code>[cyan]pyrpc&gt;[/cyan]</code> as literal text. Now uses <code>console.input()</code>.</li>
                     <li><strong>No &ldquo;Generating initial types&rdquo;</strong> &mdash; types generate silently on startup.</li>
                     <li><strong>No &ldquo;Watching X directories&rdquo;</strong> &mdash; the user doesn&rsquo;t need to know.</li>
-                    <li><strong>Consistent symbol prefixes</strong> &mdash; <code>✓</code> for success, <code>✗</code> for error, <code>⚠</code> for warning, <code>○</code> for in-progress. Borrowed from the pattern Next.js, tRPC, and Better Auth use &mdash; scannable at a glance.</li>
+                    <li><strong>Consistent symbol prefixes</strong> &mdash; <code>âœ“</code> for success, <code>âœ-</code> for error, <code>âš </code> for warning, <code>â-‹</code> for in-progress. Borrowed from the pattern Next.js, tRPC, and Better Auth use &mdash; scannable at a glance.</li>
                 </ul>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Help text updated everywhere</h2>
@@ -129,7 +129,7 @@ pyrpc>`}</pre>
                     <li><strong>Dependencies:</strong> Added <code>questionary&gt;=2.0.0</code> for interactive CLI prompts.</li>
                     <li><strong>Setup flow:</strong> Framework picker changed from <code>rich.prompt.Prompt.ask</code> (text input) to <code>questionary.select</code> (arrow-key menu). Entry point prompt simplified to <code>Python module to scan for @rpc procedures (e.g. main, app.main)</code> with default <code>main</code>.</li>
                     <li><strong>Import path:</strong> <code>sys.path.insert(0, os.getcwd())</code> added in <code>dev()</code> before module import. <code>_import_module()</code> changed from <code>sys.path.append</code> to <code>sys.path.insert(0, ...)</code>. Now matches Uvicorn&rsquo;s standard <code>--app-dir</code> behavior.</li>
-                    <li><strong>Terminal DX:</strong> Uvicorn subprocess uses <code>--log-level error</code>. Panel box replaced with minimal status lines. <code>input()</code> replaced with <code>console.input()</code> so Rich markup renders. Removed &ldquo;Generating initial types&rdquo;, &ldquo;Watching X directories&rdquo;, and &ldquo;Types regenerated&rdquo; verbose lines. Error/success messages use consistent <code>✓</code>, <code>✗</code>, <code>⚠</code>, <code>○</code> symbol prefixes.</li>
+                    <li><strong>Terminal DX:</strong> Uvicorn subprocess uses <code>--log-level error</code>. Panel box replaced with minimal status lines. <code>input()</code> replaced with <code>console.input()</code> so Rich markup renders. Removed &ldquo;Generating initial types&rdquo;, &ldquo;Watching X directories&rdquo;, and &ldquo;Types regenerated&rdquo; verbose lines. Error/success messages use consistent <code>âœ“</code>, <code>âœ-</code>, <code>âš </code>, <code>â-‹</code> symbol prefixes.</li>
                     <li><strong>Help text:</strong> Updated <code>dev</code>, <code>serve</code>, and <code>pull</code> argument descriptions to match new wording.</li>
                 </ul>
 

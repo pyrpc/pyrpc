@@ -71,7 +71,7 @@ export default function ThreeArchitecturesPost() {
                 </p>
                 <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`backend/
   main.py
-  pyrpc.json           # client_root: not set — no frontend in this repo
+  pyrpc.json           # client_root: not set - no frontend in this repo
 
 frontend/
   package.json         # depends on @pyrpc/client, @pyrpc/types

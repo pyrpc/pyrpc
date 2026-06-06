@@ -53,7 +53,7 @@ def worker(worker_id: int, venv_base: Path, count: int, delay: float, results: l
             tmp_path = Path(tmpdir)
             venv_path = tmp_path / ".venv"
 
-            log(f"  [Worker {worker_id}] Download {index}/{count} — creating venv...")
+            log(f"  [Worker {worker_id}] Download {index}/{count} - creating venv...")
             try:
                 subprocess.run(
                     [sys.executable, "-m", "venv", str(venv_path)],
@@ -67,15 +67,15 @@ def worker(worker_id: int, venv_base: Path, count: int, delay: float, results: l
                     results.append(False)
                 continue
 
-            log(f"  [Worker {worker_id}] Download {index}/{count} — pip downloading pyrpc-core...")
+            log(f"  [Worker {worker_id}] Download {index}/{count} - pip downloading pyrpc-core...")
             ok = download_in_venv(venv_path, index)
             with lock:
                 results.append(ok)
 
             if ok:
-                log(f"  [Worker {worker_id}] Download {index}/{count} — OK")
+                log(f"  [Worker {worker_id}] Download {index}/{count} - OK")
             else:
-                log(f"  [Worker {worker_id}] Download {index}/{count} — FAILED")
+                log(f"  [Worker {worker_id}] Download {index}/{count} - FAILED")
 
         if delay > 0:
             time.sleep(delay)

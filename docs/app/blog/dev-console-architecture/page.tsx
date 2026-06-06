@@ -261,7 +261,7 @@ dev() starts
                     The first version of <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">regenerate()</code> used a double-reload pattern:
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg text-[10px] font-mono overflow-x-auto">
-{`# Old approach — smell
+{`# Old approach - smell
 importlib.reload(mod)
 default_router._procedures.clear()
 importlib.reload(mod)`}
