@@ -88,7 +88,7 @@ async function createUser(name: string, email: string): Promise<User> {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 1: Add pyRPC</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
-{`pip install pyrpc-core pyrpc-fastapi`}
+{`pip install pyrpc-core[fastapi]`}
                 </pre>
                 <p>
                     That's it. One install command for the core runtime and the FastAPI adapter.

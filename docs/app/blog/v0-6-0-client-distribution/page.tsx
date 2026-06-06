@@ -178,12 +178,10 @@ export default function V060ClientDistributionPost() {
                         library. Internal dependency, not installed directly.
                     </li>
                     <li>
-                        <code>pyrpc-fastapi</code> &mdash; FastAPI adapter. Also
-                        installable as <code>pyrpc-core[fastapi]</code>.
+                        <code>pyrpc-core[fastapi]</code> &mdash; FastAPI adapter bundled as an extra.
                     </li>
                     <li>
-                        <code>pyrpc-flask</code> &mdash; Flask adapter. Also installable
-                        as <code>pyrpc-core[flask]</code>.
+                        <code>pyrpc-core[flask]</code> &mdash; Flask adapter bundled as an extra.
                     </li>
                 </ul>
                 <p>
@@ -202,12 +200,11 @@ export default function V060ClientDistributionPost() {
 pip install pyrpc-core[fastapi]   # + FastAPI adapter
 pip install pyrpc-core[flask]     # + Flask adapter`}</pre>
                 <p>
-                    The separate <code>pyrpc-fastapi</code> and <code>pyrpc-flask</code>
-                    packages still exist for explicit installs. The extras provide a
-                    unified install story &mdash; one package name to remember, one
-                    version to track. This mirrors the pattern we established in v0.3.0
-                    when we merged <code>pyrpc-cli</code> back into <code>pyrpc-core</code>:
-                    one package, optional extras, no unnecessary splits.
+                    The adapter code lives inside the pyrpc-core extras &mdash; no
+                    separate packages to discover or version to track. This mirrors the
+                    pattern we established in v0.3.0 when we merged <code>pyrpc-cli</code>
+                    back into <code>pyrpc-core</code>: one package, optional extras,
+                    no unnecessary splits.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">

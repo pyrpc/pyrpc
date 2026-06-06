@@ -31,7 +31,7 @@ export default function FullStackAppPage() {
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`mkdir pyrpc-tasks
 cd pyrpc-tasks
-pip install pyrpc-core pyrpc-fastapi uvicorn
+pip install pyrpc-core[fastapi] uvicorn
 mkdir server`}
                 </pre>
                 <p>
