@@ -119,10 +119,10 @@ function main() {
     return Promise.resolve();
   }
 
-  var isInteractive = process.stdin.isTTY;
+  var isInteractive = process.stdout.isTTY;
   var isCI = process.env.CI;
 
-  if (!isInteractive || isCI) {
+  if (process.env.CI || !isInteractive) {
     return Promise.resolve();
   }
 
