@@ -22,6 +22,7 @@ __version__ = "0.3.3"
 PYRPC_CONFIG = dict | None
 CONFIG_FILE = "pyrpc.json"
 CONFIG_VERSION = 1
+DISTRIBUTION_MODES = ["workspace", "server"]
 
 
 def _find_pyrpc_json() -> Path | None:
@@ -80,24 +81,38 @@ def _prompt_for_config(previous: dict | None = None) -> dict | None:
     if entry is None:
         return None
 
-    default_client = (previous or {}).get("client_root", "")
-    client_root = questionary.text(
-        "Where is your TypeScript client project? (relative path, e.g. ../frontend)",
-        default=default_client,
+    default_distribution = (previous or {}).get("distribution", "workspace")
+    distribution = questionary.select(
+        "How are types distributed to the client?",
+        choices=DISTRIBUTION_MODES,
+        default=default_distribution,
     ).ask()
-    if client_root is None:
+    if distribution is None:
         return None
 
-    return {"framework": framework, "entrypoint": entry, "client_root": client_root}
+    client_root = None
+    if distribution == "workspace":
+        default_client = (previous or {}).get("client_root", "")
+        client_root = questionary.text(
+            "Where is your TypeScript client project? (relative path, e.g. ../frontend)",
+            default=default_client,
+        ).ask()
+        if client_root is None:
+            return None
+
+    config = {"framework": framework, "entrypoint": entry, "distribution": distribution}
+    if client_root:
+        config["client_root"] = client_root
+    return config
 
 
 def _ensure_config(reconfigure: bool = False, previous: dict | None = None) -> dict | None:
     if not reconfigure:
         config = _read_pyrpc_config()
-        if config:
+        if config and "distribution" in config:
             return config
 
-    if reconfigure:
+    if reconfigure or (config and "distribution" not in config):
         console.print("  [yellow]⚠[/yellow] Reconfiguring pyRPC")
 
     config = _prompt_for_config(previous=previous or _read_pyrpc_config())
@@ -366,7 +381,7 @@ def codegen(
 class _DevConsole:
     """Interactive developer console attached to the pyrpc dev server."""
 
-    def __init__(self, module: str, regenerate_cb, server_proc=None, tmp_path: str = None, server_args: list = None, server_cwd: str = None, types_path: str = "node_modules/@pyrpc/types/src/index.ts"):
+    def __init__(self, module: str, regenerate_cb, server_proc=None, tmp_path: str = None, server_args: list = None, server_cwd: str = None, types_path: str = "node_modules/@pyrpc/types/src/index.ts", is_server_mode: bool = False):
         self.module = module
         self.regenerate = regenerate_cb
         self.server_proc = server_proc
@@ -374,6 +389,7 @@ class _DevConsole:
         self.server_args = server_args
         self.server_cwd = server_cwd
         self.types_path = types_path
+        self.is_server_mode = is_server_mode
         self._running = True
 
     def _schemas(self) -> dict:
@@ -421,8 +437,12 @@ class _DevConsole:
         console.print("  [cyan]procedures[/cyan]           List all registered RPC procedures")
         console.print("  [cyan]procs[/cyan]                Alias for procedures")
         console.print("  [cyan]inspect <name>[/cyan]       Show details for a specific procedure")
-        console.print("  [cyan]generate[/cyan]             Manually trigger TypeScript type regeneration")
-        console.print("  [cyan]types[/cyan]                Show the path to generated TypeScript types")
+        if self.is_server_mode:
+            console.print("  [cyan]generate[/cyan]             Manually trigger schema regeneration")
+            console.print("  [cyan]types[/cyan]                Show how clients fetch types in server mode")
+        else:
+            console.print("  [cyan]generate[/cyan]             Manually trigger TypeScript type regeneration")
+            console.print("  [cyan]types[/cyan]                Show the path to generated TypeScript types")
         console.print("  [cyan]restart[/cyan]              Restart the dev server")
         console.print("  [cyan]exit[/cyan] / [cyan]quit[/cyan]          Stop the dev server and exit")
 
@@ -475,12 +495,20 @@ class _DevConsole:
                 console.print(f"    {name}: {ptype} {'[dim](optional)[/dim]' if not required else ''}")
 
     def _cmd_generate(self, _arg=""):
-        console.print("[bold blue]Regenerating TypeScript types...[/bold blue]")
+        if self.is_server_mode:
+            console.print("[bold blue]Regenerating schema...[/bold blue]")
+        else:
+            console.print("[bold blue]Regenerating TypeScript types...[/bold blue]")
         self.regenerate()
 
     def _cmd_types(self, _arg=""):
-        console.print(f"TypeScript types written to: [bold]{self.types_path}[/bold]")
-        console.print('  Import: [bold]import type { Types } from "@pyrpc/types"[/bold]')
+        if self.is_server_mode:
+            console.print("Server mode — clients fetch types via HTTP.")
+            console.print("  [bold]GET /rpc[/bold] returns the current schema")
+            console.print("  Run [bold]npx pyrpc sync[/bold] on the client to regenerate types")
+        else:
+            console.print(f"TypeScript types written to: [bold]{self.types_path}[/bold]")
+            console.print('  Import: [bold]import type { Types } from "@pyrpc/types"[/bold]')
 
     def _cmd_restart(self, _arg=""):
         if not self.server_proc:
@@ -510,6 +538,7 @@ def dev(
     framework: str = typer.Option(None, "--framework", help="Web framework to use (fastapi, flask, asgi)"),
     entry: str = typer.Option(None, "--entry", help="Python module to scan for @rpc procedures"),
     client_root: str = typer.Option(None, "--client-root", help="Relative path to TypeScript client project"),
+    distribution: str = typer.Option(None, "--distribution", help="How types reach the client (workspace, server)"),
 ):
     """Start the pyRPC dev server with auto-type regeneration and interactive console."""
     config_path = _find_pyrpc_json()
@@ -528,9 +557,12 @@ def dev(
         cfg["entrypoint"] = entry; has_override = True
     if client_root:
         cfg["client_root"] = client_root; has_override = True
+    if distribution:
+        cfg["distribution"] = distribution; has_override = True
 
-    if not module and (reconfigure or not old_cfg):
-        cfg = _ensure_config(reconfigure=reconfigure, previous=cfg if (old_cfg or has_override) else None)
+    missing_distribution = old_cfg and "distribution" not in old_cfg and not distribution
+    if not module and (reconfigure or not old_cfg or missing_distribution):
+        cfg = _ensure_config(reconfigure=reconfigure or missing_distribution, previous=cfg if (old_cfg or has_override) else None)
         if cfg is None:
             console.print("[yellow]Setup cancelled.[/yellow]")
             raise typer.Exit(code=0)
@@ -547,27 +579,30 @@ def dev(
         console.print("  Run [bold]pyrpc dev --reconfigure[/bold] to set up, or pass a module path.")
         raise typer.Exit(code=1)
 
-    new_client_root_raw = cfg.get("client_root") if cfg else None
-    new_client_root = _resolve_client_root(new_client_root_raw, config_dir) if new_client_root_raw else None
-    new_types_output = os.path.join(new_client_root, "node_modules/@pyrpc/types/src/index.ts") if new_client_root else None
+    resolved_distribution = cfg.get("distribution", "workspace")
+    types_output = None
+    if resolved_distribution == "workspace":
+        new_client_root_raw = cfg.get("client_root")
+        new_client_root = _resolve_client_root(new_client_root_raw, config_dir) if new_client_root_raw else None
+        new_types_output = os.path.join(new_client_root, "node_modules/@pyrpc/types/src/index.ts") if new_client_root else None
 
-    if new_client_root and not os.path.isdir(new_client_root):
-        console.print(f"[bold red]Error:[/bold red] Client project not found at:")
-        console.print(f"  {new_client_root}")
-        console.print()
-        console.print("Create it first, then re-run [bold]pyrpc dev[/bold].")
-        console.print()
-        console.print("  [dim]Examples:[/dim]")
-        console.print("    npm create vite@latest frontend -- --template react-ts")
-        console.print("    npx create-next-app@latest frontend --typescript")
-        console.print("    npx create-react-app frontend --template typescript")
-        console.print()
-        raise typer.Exit(code=1)
+        if new_client_root and not os.path.isdir(new_client_root):
+            console.print(f"[bold red]Error:[/bold red] Client project not found at:")
+            console.print(f"  {new_client_root}")
+            console.print()
+            console.print("Create it first, then re-run [bold]pyrpc dev[/bold].")
+            console.print()
+            console.print("  [dim]Examples:[/dim]")
+            console.print("    npm create vite@latest frontend -- --template react-ts")
+            console.print("    npx create-next-app@latest frontend --typescript")
+            console.print("    npx create-react-app frontend --template typescript")
+            console.print()
+            raise typer.Exit(code=1)
 
-    if old_types_output and new_types_output and old_client_root != new_client_root:
-        _handle_migration(old_types_output, new_types_output)
+        if old_types_output and new_types_output and old_client_root != new_client_root:
+            _handle_migration(old_types_output, new_types_output)
 
-    types_output = new_types_output
+        types_output = new_types_output
 
     sys.path.insert(0, os.getcwd())
 
@@ -588,9 +623,12 @@ def dev(
                 console.print(f"  [yellow]⚠[/yellow] No procedures found — did you remove all @rpc decorators?")
                 return
             schemas = get_registry_schema(default_router)
-            _, save_typescript_client = _lazy_import_codegen()
-            save_typescript_client(schemas, types_output)
-            console.print(f"  [green]✓[/green] Types regenerated ({len(schemas)} procs)")
+            if resolved_distribution == "server":
+                console.print(f"  [green]✓[/green] Server mode — schema updated ({len(schemas)} procs)")
+            else:
+                _, save_typescript_client = _lazy_import_codegen()
+                save_typescript_client(schemas, types_output)
+                console.print(f"  [green]✓[/green] Types regenerated ({len(schemas)} procs)")
         except Exception as e:
             console.print(f"  [red]✗[/red] Types: {e}")
         finally:
@@ -631,7 +669,9 @@ def dev(
 
         console.print()
         console.print(f"  [bold]pyRPC dev server[/bold]  http://{host}:{port}/rpc")
-        if types_output:
+        if resolved_distribution == "server":
+            console.print(f"  [dim]Distribution:[/dim] server (clients fetch via npx pyrpc sync)")
+        elif types_output:
             console.print(f"  [dim]Types:[/dim] {types_output}")
 
     watched_dirs = _find_python_dirs(cwd)
@@ -656,6 +696,7 @@ def dev(
             server_args=server_args,
             server_cwd=server_cwd,
             types_path=types_output or "node_modules/@pyrpc/types/src/index.ts",
+            is_server_mode=resolved_distribution == "server",
         )
         console_obj.run()
     except KeyboardInterrupt:

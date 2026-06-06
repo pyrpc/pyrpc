@@ -168,9 +168,9 @@ def test_dev_with_framework_flag_writes_config(tmp_path):
     os.chdir(str(tmp_path))
     try:
         cfg = tmp_path / CONFIG_FILE
-        cfg.write_text(json.dumps({"framework": "fastapi", "entrypoint": "my_module", "client_root": "../frontend"}))
+        cfg.write_text(json.dumps({"framework": "fastapi", "entrypoint": "my_module", "client_root": "../frontend", "distribution": "workspace"}))
         os.makedirs(tmp_path.parent / "frontend", exist_ok=True)
-        with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value={"framework": "fastapi", "entrypoint": "my_module", "client_root": "../frontend"}):
+        with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value={"framework": "fastapi", "entrypoint": "my_module", "client_root": "../frontend", "distribution": "workspace"}):
             with mock.patch("pyrpc_core.cli._find_pyrpc_json", return_value=cfg):
                 with mock.patch("pyrpc_core.get_registry_schema", return_value={}):
                     with mock.patch("pyrpc_codegen.save_typescript_client"):
@@ -191,9 +191,9 @@ def test_dev_with_entry_flag_writes_config(tmp_path):
     os.chdir(str(tmp_path))
     try:
         cfg = tmp_path / CONFIG_FILE
-        cfg.write_text(json.dumps({"framework": "fastapi", "entrypoint": "old_module", "client_root": "../frontend"}))
+        cfg.write_text(json.dumps({"framework": "fastapi", "entrypoint": "old_module", "client_root": "../frontend", "distribution": "workspace"}))
         os.makedirs(tmp_path.parent / "frontend", exist_ok=True)
-        with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value={"framework": "fastapi", "entrypoint": "old_module", "client_root": "../frontend"}):
+        with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value={"framework": "fastapi", "entrypoint": "old_module", "client_root": "../frontend", "distribution": "workspace"}):
             with mock.patch("pyrpc_core.cli._find_pyrpc_json", return_value=cfg):
                 with mock.patch("pyrpc_core.get_registry_schema", return_value={}):
                     with mock.patch("pyrpc_codegen.save_typescript_client"):
@@ -213,9 +213,9 @@ def test_dev_with_client_root_flag_writes_config(tmp_path):
     os.chdir(str(tmp_path))
     try:
         cfg = tmp_path / CONFIG_FILE
-        cfg.write_text(json.dumps({"framework": "fastapi", "entrypoint": "my_module", "client_root": "../old-client"}))
+        cfg.write_text(json.dumps({"framework": "fastapi", "entrypoint": "my_module", "client_root": "../old-client", "distribution": "workspace"}))
         os.makedirs(tmp_path.parent / "new-client", exist_ok=True)
-        with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value={"framework": "fastapi", "entrypoint": "my_module", "client_root": "../old-client"}):
+        with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value={"framework": "fastapi", "entrypoint": "my_module", "client_root": "../old-client", "distribution": "workspace"}):
             with mock.patch("pyrpc_core.cli._find_pyrpc_json", return_value=cfg):
                 with mock.patch("pyrpc_core.get_registry_schema", return_value={}):
                     with mock.patch("pyrpc_codegen.save_typescript_client"):
