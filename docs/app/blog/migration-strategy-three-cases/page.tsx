@@ -89,7 +89,7 @@ export default function MigrationStrategyPost() {
                     pyrpc uses SHA256 to compare them:
                 </p>
                 <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`if _hash_file(old_path) == _hash_file(new_path):
-    # Identical content — remove old, keep new
+    # Identical content - remove old, keep new
     os.remove(old_path)
     console.print("Generated types already exist at new location.")
     console.print("Removed old copy.")`}</pre>
@@ -154,7 +154,7 @@ export default function MigrationStrategyPost() {
                 </p>
                 <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`ans = questionary.confirm(...).ask()
 if ans is None:
-    return  # user cancelled — do nothing`}</pre>
+    return  # user cancelled - do nothing`}</pre>
                 <p>
                     This means Ctrl+C during a migration prompt exits cleanly. The dev server
                     continues starting with the old config. No half-migrated state. No orphaned

@@ -99,7 +99,7 @@ mount_fastapi(app)
 ```
 
 #### 2. Start the dev server
-Run `pyrpc dev` from your project root. On first run, it prompts for your framework, Python module, and TypeScript client path — then generates types automatically.
+Run `pyrpc dev` from your project root. On first run, it prompts for your framework, Python module, and TypeScript client path - then generates types automatically.
 
 ```bash
 # CLI comes with pyrpc-core - no extra install needed
@@ -115,7 +115,7 @@ import type { Types } from "@pyrpc/types"
 
 const client = createClient<Types>()
 
-// Fully typed result and parameters — no manual type definitions needed
+// Fully typed result and parameters - no manual type definitions needed
 const result = await client.add(10, 5)
 ```
 
@@ -136,7 +136,7 @@ with RPCClient("http://localhost:8000") as client:
 ### CLI Utilities
 The `pyrpc` CLI provides tooling for serving, inspecting, and generating typed contracts from your RPC procedures.
 
-- `pyrpc dev`: Start the dev server with automatic type regeneration and interactive console. First run prompts for framework, entrypoint, and client root — creates `pyrpc.json`.
+- `pyrpc dev`: Start the dev server with automatic type regeneration and interactive console. First run prompts for framework, entrypoint, and client root - creates `pyrpc.json`.
 - `pyrpc serve`: Instantly host a Python RPC module for local development and testing.
 - `pyrpc inspect`: Explore registered procedures, inputs, outputs, and namespaces.
 - `pyrpc codegen`: Generate TypeScript types/contracts for end-to-end typed clients.

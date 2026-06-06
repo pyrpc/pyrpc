@@ -12,6 +12,7 @@ dependencies = []
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
+    "pytest-asyncio>=0.25.0",
     "fastapi>=0.100.0",
     "flask>=3.0.0",
     "httpx>=0.24.0",
@@ -49,7 +50,12 @@ line-length = 88
 target-version = "py311"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = [
+    "packages/pyrpc-core/tests",
+    "packages/pyrpc-fastapi/tests",
+    "packages/pyrpc-flask/tests",
+    "packages/pyrpc-codegen/tests",
+]
 pythonpath = [
     "packages/pyrpc-core/src",
     "packages/pyrpc-fastapi/src",
@@ -67,6 +73,7 @@ dev = [
     "pyrpc-codegen",
     "pyrpc-fastapi",
     "pytest>=9.0.2",
+    "pytest-asyncio>=0.25.0",
     "rich>=14.3.2",
     "typer>=0.21.1",
     "uvicorn>=0.40.0",

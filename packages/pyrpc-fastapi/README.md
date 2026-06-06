@@ -1,6 +1,6 @@
 # pyrpc-fastapi
 
-[FastAPI](https://fastapi.tiangolo.com/) adapter for [pyRPC](https://pyrpc.dev). Mounts RPC procedures as a FastAPI route.
+[FastAPI](https://fastapi.tiangolo.com/) adapter for [pyRPC](https://pyrpc.com). Mounts RPC procedures as FastAPI routes.
 
 ## Installation
 
@@ -24,7 +24,7 @@ def add(a: int, b: int) -> int:
 mount_fastapi(app)
 ```
 
-Starts an HTTP server with JSON-RPC 2.0 semantics at `/rpc`.
+Creates `POST /rpc` for JSON-RPC 2.0 calls and `GET /rpc` for schema introspection.
 
 ## License
 

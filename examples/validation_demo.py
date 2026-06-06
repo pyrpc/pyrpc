@@ -1,5 +1,5 @@
 """
-Validation demo — tests Pydantic input/output validation with pyRPC.
+Validation demo - tests Pydantic input/output validation with pyRPC.
 
 Runs directly (no server needed):
     uv run python examples/validation_demo.py
