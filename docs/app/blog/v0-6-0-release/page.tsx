@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function ClientDistributionAndPackageStandardizationPost() {
+export default function V060ReleasePost() {
     return (
         <article className="max-w-3xl mx-auto px-6 py-20">
             <div className="mb-12">
@@ -8,7 +8,7 @@ export default function ClientDistributionAndPackageStandardizationPost() {
                     &larr; Back to Blog
                 </Link>
                 <h1 className="text-2xl font-bold tracking-tight mt-6 mb-3">
-                    Client distribution and package standardization
+                    v0.6.0 - Client distribution and package standardization
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
                     <time>June 6, 2026 at 2:00pm</time>
@@ -19,7 +19,7 @@ export default function ClientDistributionAndPackageStandardizationPost() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    This release completes the distribution story with a proper client-side CLI
+                    v0.6.0 completes the distribution story with a proper client-side CLI
                     and cleans up the packaging foundation that&rsquo;s been accumulating
                     small debts since the earliest releases. Two branches, one release &mdash; the first
                     adds new capabilities, the second pays down technical debt.
