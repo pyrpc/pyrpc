@@ -4,8 +4,13 @@ var path = require('path');
 var http = require('http');
 var https = require('https');
 
-var typesDir = path.dirname(require.resolve('@pyrpc/types/package.json'));
-var TYPES_OUTPUT = path.join(typesDir, 'src', 'index.ts');
+var TYPES_OUTPUT;
+try {
+  var typesDir = path.dirname(require.resolve('@pyrpc/types/package.json'));
+  TYPES_OUTPUT = path.join(typesDir, 'src', 'index.ts');
+} catch (e) {
+  TYPES_OUTPUT = path.join(__dirname, 'node_modules', '@pyrpc', 'types', 'src', 'index.ts');
+}
 
 function findConfig() {
   var dir = process.cwd();
@@ -182,4 +187,8 @@ function main() {
   return Promise.resolve();
 }
 
-main().catch(function(e) {});
+if (require.main === module) {
+  main().catch(function(e) {});
+}
+
+module.exports = { main, toTs, generate, fetchSchema, findConfig, printHelp };

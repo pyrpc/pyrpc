@@ -165,4 +165,8 @@ function main() {
   });
 }
 
-main().catch(function(e) {});
+if (require.main === module) {
+  main().catch(function(e) {});
+}
+
+module.exports = { main, toTs, generate, fetchSchema, findProjectRoot, getConfigPath, TYPES_FILE, PLACEHOLDER_MARKER };
