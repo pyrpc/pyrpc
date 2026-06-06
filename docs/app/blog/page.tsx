@@ -143,7 +143,7 @@ const posts = [
     },
     {
         slug: 'v0-4-0-pyrpc-json-config',
-        title: 'v0.4.0 — pyrpc.json: why we left pyproject.toml behind',
+        title: 'pyrpc.json: why we left pyproject.toml behind',
         description: 'Three problems with [tool.pyrpc] in pyproject.toml — fragile writing, ambiguous file ownership, and unclear path semantics — and why a dedicated pyrpc.json file with JSON, not TOML, was the right answer.',
         date: 'June 6, 2026 at 8:00am',
         readTime: '9 min',
@@ -182,6 +182,27 @@ const posts = [
         description: 'The hidden bug in os.getcwd() fallback paths — why a silent default is worse than a hard error, how the CLI layer resolves paths before calling the API, and the "fail fast on global state" design principle.',
         date: 'June 6, 2026 at 9:15am',
         readTime: '7 min',
+    },
+    {
+        slug: 'v0-5-0-distribution-modes',
+        title: 'Distribution modes: workspace and server',
+        description: 'Two distribution modes for pyrpc: workspace (monorepo, types written directly to client) and server (separate repos, types fetched via HTTP). When to use each and how they work under the hood.',
+        date: 'June 6, 2026 at 1:00pm',
+        readTime: '8 min',
+    },
+    {
+        slug: 'distribution-workspace-flow',
+        title: 'Workspace mode: what happens when you run pyrpc dev',
+        description: 'A step-by-step walkthrough of workspace mode: config resolution, client root validation, migration checks, file watcher loop, dev server startup, and CI compatibility.',
+        date: 'June 6, 2026 at 1:15pm',
+        readTime: '7 min',
+    },
+    {
+        slug: 'distribution-server-flow',
+        title: 'Server mode: type distribution across repositories',
+        description: 'How server mode works: the schema endpoint stays in memory, pyrpc never writes to the client filesystem, and the client fetches types on demand via npx pyrpc sync.',
+        date: 'June 6, 2026 at 1:30pm',
+        readTime: '9 min',
     },
 ]
 
