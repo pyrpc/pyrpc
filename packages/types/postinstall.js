@@ -5,12 +5,21 @@ var readline = require('readline');
 var TYPES_FILE = path.join(__dirname, 'src', 'index.ts');
 var PLACEHOLDER_MARKER = 'types not generated yet';
 
-// Skip if real types already exist
-if (fs.existsSync(TYPES_FILE)) {
-  var content = fs.readFileSync(TYPES_FILE, 'utf-8');
-  if (!content.includes(PLACEHOLDER_MARKER)) {
-    process.exit(0);
+function findProjectRoot() {
+  var dir = path.dirname(__dirname);
+  while (true) {
+    var pkgPath = path.join(dir, 'package.json');
+    if (fs.existsSync(pkgPath) && !pkgPath.replace(/\\/g, '/').includes('/node_modules/')) {
+      return dir;
+    }
+    var parent = path.dirname(dir);
+    if (parent === dir) return process.cwd();
+    dir = parent;
   }
+}
+
+function getConfigPath() {
+  return path.join(findProjectRoot(), 'pyrpc-client.json');
 }
 
 var TYPE_MAP = {
@@ -103,17 +112,36 @@ function fetchSchema(url) {
 }
 
 function main() {
-  var isInteractive = process.stdin.isTTY;
-  var envUrl = process.env.PYRPC_URL;
-  var url = null;
+  if (fs.existsSync(getConfigPath())) {
+    return Promise.resolve();
+  }
 
-  if (isInteractive) {
-    var rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  var isInteractive = process.stdin.isTTY;
+  var isCI = process.env.CI;
+
+  if (!isInteractive || isCI) {
+    return Promise.resolve();
+  }
+
+  var rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise(function(resolve) {
+    rl.question('How are types distributed to the client?\n  1) workspace (default) - server writes types directly to your project\n  2) server - client fetches types via HTTP\nEnter choice [1]: ', function(answer) {
+      rl.close();
+      resolve(answer.trim() === '2' ? 'server' : 'workspace');
+    });
+  }).then(function(distribution) {
+    if (distribution === 'workspace') {
+      var config = { distribution: 'workspace' };
+      fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
+      console.log('  \u2713 pyrpc-client.json created (workspace mode)');
+      return;
+    }
+
+    var rl2 = readline.createInterface({ input: process.stdin, output: process.stdout });
     return new Promise(function(resolve) {
-      rl.question('  pyRPC backend URL (default: http://localhost:8000): ', function(answer) {
-        rl.close();
-        url = answer.trim() || 'http://localhost:8000';
-        resolve(url);
+      rl2.question('pyRPC backend URL (default: http://localhost:8000): ', function(answer) {
+        rl2.close();
+        resolve(answer.trim() || 'http://localhost:8000');
       });
     }).then(function(url) {
       return fetchSchema(url).then(function(schemas) {
@@ -121,34 +149,20 @@ function main() {
         fs.mkdirSync(path.dirname(TYPES_FILE), { recursive: true });
         fs.writeFileSync(TYPES_FILE, code, 'utf-8');
         console.log('  \u2713 @pyrpc/types: generated for ' + Object.keys(schemas).length + ' procedures');
-        console.log('  Import: import type { Types } from "@pyrpc/types"');
+
+        var config = { distribution: 'server', server_url: url };
+        fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
+        console.log('  \u2713 pyrpc-client.json created (server mode)');
       }).catch(function(err) {
         console.log('  \u2717 @pyrpc/types: could not connect (' + err.message + ')');
-        console.log('  Run manually: pyrpc codegen ' + url);
+        console.log('  Run later: npx pyrpc sync');
+
+        var config = { distribution: 'server', server_url: url };
+        fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
+        console.log('  \u2713 pyrpc-client.json created (server mode)');
       });
     });
-  }
-
-  if (envUrl) {
-    return fetchSchema(envUrl).then(function(schemas) {
-      var code = generate(schemas);
-      fs.mkdirSync(path.dirname(TYPES_FILE), { recursive: true });
-      fs.writeFileSync(TYPES_FILE, code, 'utf-8');
-      console.log('  \u2713 @pyrpc/types: generated for ' + Object.keys(schemas).length + ' procedures');
-    }).catch(function(err) {
-      console.log('  \u2717 @pyrpc/types: could not connect (' + err.message + ')');
-      console.log('  Run manually: pyrpc codegen ' + envUrl);
-    });
-  }
-
-  console.log('');
-  console.log('  \u26A1 @pyrpc/types: no types generated yet.');
-  console.log('  To connect to your pyRPC backend:');
-  console.log('    pyrpc codegen http://localhost:8000');
-  console.log('  Or install interactively in a terminal:');
-  console.log('    npm install @pyrpc/client');
-  console.log('');
-  return Promise.resolve();
+  });
 }
 
 main().catch(function(e) {});
