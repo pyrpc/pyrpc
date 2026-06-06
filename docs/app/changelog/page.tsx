@@ -2,6 +2,76 @@ import Link from 'next/link'
 
 const releases = [
     {
+        version: 'v0.6.0',
+        date: '2026-06-06',
+        tag: 'v0.6.0',
+        description: 'Client-side distribution, framework extras, package standardization, pyrpc.json config, and distribution modes.',
+        sections: [
+            {
+                title: 'Client-Side Distribution',
+                items: [
+                    '@pyrpc/client postinstall prompts for workspace or server mode, creates pyrpc-client.json',
+                    'npx pyrpc sync fetches schema from server URL and regenerates @pyrpc/types',
+                    'Server-mode clients can pull types on demand without server filesystem access',
+                    'pyrpc-client.json stores distribution mode and server URL, checked into version control',
+                ]
+            },
+            {
+                title: 'Package Architecture',
+                items: [
+                    'pyrpc-core now exposes fastapi and flask extras: pyrpc-core[fastapi], pyrpc-core[flask]',
+                    'Adapter packages (pyrpc-fastapi, pyrpc-flask) are internal implementation details',
+                    'Adapter auto-install in pyrpc dev uses extras syntax (pip install pyrpc-core[{framework}])',
+                    'Setup wizard detects importable adapters and uses them as the default framework choice',
+                    'Tests moved from root tests/ into package-level tests/ directories',
+                    'All Python packages have dedicated READMEs on PyPI and GitHub',
+                    'Root README simplified: only pyrpc-core shown with extras for adapters',
+                    'pyrpc.dev domain migrated to pyrpc.com across the entire codebase',
+                    'Em dash (U+2014) characters normalized to regular dashes; 4 corrupted files (cp1252, UTF-16 LE) repaired',
+                ]
+            },
+            {
+                title: 'Workspace & Config',
+                items: [
+                    'pyrpc.json replaces [tool.pyrpc] in pyproject.toml — dedicated config file with explicit fields',
+                    'Distribution mode (workspace/server) is a required field — explicit config, no heuristics',
+                    'Workspace mode writes TypeScript types directly to client_root on file change',
+                    'Server mode exposes schema at GET /rpc — no filesystem writes, clients fetch via HTTP',
+                    'Setup wizard integrated into pyrpc dev — no separate pyrpc init command',
+                    'Config-relative path resolution — paths resolved against pyrpc.json directory, not CWD',
+                    'save_typescript_client() enforces absolute path contract at the boundary',
+                    'Migration strategy with SHA256 comparison — handles client_root changes without data loss',
+                ]
+            },
+            {
+                title: 'CLI & Dev Server',
+                items: [
+                    'pyrpc dev prompts for framework, entrypoint, distribution, and client_root on first run',
+                    'CLI flags (--framework, --entrypoint, --distribution, --client-root) skip the wizard entirely',
+                    '--reconfigure re-runs setup prompts while pre-filling existing values',
+                    'Client root validated before starting dev server — fails fast on missing paths',
+                    'Adapter auto-installed if missing — no separate pip install step needed after pyrpc dev',
+                ]
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'Blog post: Client distribution and package standardization',
+                    'Blog post: Distribution: workspace or server',
+                    'Blog post: Workspace mode: what happens when you run pyrpc dev',
+                    'Blog post: Server mode: type distribution across repositories',
+                    'Blog post: Three deployment architectures for pyrpc',
+                    'Blog post: pyrpc.json: why we left pyproject.toml behind',
+                    'Blog post: Why save_typescript_client() refuses relative paths',
+                    'Blog post: Path resolution: config-relative, not CWD-relative',
+                    'Blog post: Three cases, zero data loss: pyrpc types migration strategy',
+                    'Blog post: No pyrpc init needed: designing the integrated setup wizard',
+                    'Changelog entry: v0.6.0',
+                ]
+            },
+        ]
+    },
+    {
         version: 'v0.3.3',
         date: '2026-06-03',
         tag: 'v0.3.3',

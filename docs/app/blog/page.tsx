@@ -205,9 +205,9 @@ const posts = [
         readTime: '9 min',
     },
     {
-        slug: 'client-distribution-and-package-standardization',
-        title: 'Client distribution and package standardization',
-        description: 'Completing the distribution story with npx pyrpc sync, a postinstall prompt for @pyrpc/client, and packaging cleanup: tests in packages, domain migration, framework extras, and package READMEs.',
+        slug: 'v0-6-0-release',
+        title: 'v0.6.0 - Client distribution and package standardization',
+        description: 'npx pyrpc sync, postinstall prompt, framework extras (pyrpc-core[fastapi], pyrpc-core[flask]), adapter auto-install, pyrpc.json config, distribution modes, and package standardization.',
         date: 'June 6, 2026 at 2:00pm',
         readTime: '10 min',
     },
