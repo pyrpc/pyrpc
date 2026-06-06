@@ -8,7 +8,7 @@ export default function V040ConfigPost() {
                     &larr; Back to Blog
                 </Link>
                 <h1 className="text-2xl font-bold tracking-tight mt-6 mb-3">
-                    v0.4.0  &mdash;  pyrpc.json: why we left pyproject.toml behind
+                    pyrpc.json: why we left pyproject.toml behind
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
                     <time>June 6, 2026 at 8:00am</time>
