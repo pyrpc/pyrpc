@@ -15,6 +15,10 @@ dependencies = [
     "questionary>=2.0.0",
 ]
 
+[project.optional-dependencies]
+fastapi = ["fastapi>=0.100.0"]
+flask = ["flask>=3.0.0"]
+
 [project.scripts]
 pyrpc = "pyrpc_core.cli:app"
 

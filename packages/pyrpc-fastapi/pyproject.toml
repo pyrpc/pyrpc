@@ -4,8 +4,7 @@ version = "0.3.3"
 description = "FastAPI adapter for pyRPC"
 requires-python = ">=3.11"
 dependencies = [
-    "pyrpc-core",
-    "fastapi>=0.100.0",
+    "pyrpc-core[fastapi]",
 ]
 
 [build-system]
