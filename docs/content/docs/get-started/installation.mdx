@@ -38,20 +38,43 @@ uv add pyrpc-flask
 
 The `pyrpc` CLI comes built-in with `pyrpc-core` — no separate install needed.
 
-### Contract Synchronization
+### Dev Server (Recommended)
 
-The frontend package generates types automatically on install:
+The fastest way to get started:
 
 ```bash
-npm install @pyrpc/client
+pyrpc dev
 ```
 
-The postinstall script prompts for your server URL, fetches the schema from `GET /rpc`, and writes types to `node_modules/@pyrpc/types/src/index.ts`.
+On first run, `pyrpc dev` walks you through setup interactively — framework, Python module, and TypeScript client path. It creates a `pyrpc.json` config file, generates types, and starts the development server with auto-regeneration on file changes.
 
-For server-side or CI workflows, the CLI can generate types explicitly:
+You can also pass flags to skip the wizard:
 
 ```bash
-uv run pyrpc codegen http://localhost:8000
+pyrpc dev --framework fastapi --entry server --client-root ../frontend
+```
+
+### Configuration (`pyrpc.json`)
+
+pyRPC stores its project configuration in a dedicated `pyrpc.json` file (not in `pyproject.toml`):
+
+```json
+{
+  "version": 1,
+  "framework": "fastapi",
+  "entrypoint": "server",
+  "client_root": "../frontend"
+}
+```
+
+The file is created automatically by `pyrpc dev`. Paths in `pyrpc.json` are resolved relative to the config file's directory.
+
+### Manual Codegen
+
+For CI/CD or one-off generation:
+
+```bash
+pyrpc codegen http://localhost:8000
 ```
 
 ## Quick Start Example (FastAPI)
@@ -72,5 +95,5 @@ mount_fastapi(app)
 
 ## Next
 
-- [Quickstart](/docs/get-started/quickstart)  -  Full server + client example
-- [Concepts](/docs/concepts)  -  Mental model and protocol design
+- [Quickstart](/docs/get-started/quickstart) — Full server + client example
+- [Concepts](/docs/concepts) — Mental model and protocol design
