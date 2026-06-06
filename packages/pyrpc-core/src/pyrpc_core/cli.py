@@ -17,7 +17,7 @@ from rich.console import Console
 from rich.table import Table
 from watchfiles import watch
 
-__version__ = "0.3.3"
+__version__ = "0.6.0"
 
 PYRPC_CONFIG = dict | None
 CONFIG_FILE = "pyrpc.json"
