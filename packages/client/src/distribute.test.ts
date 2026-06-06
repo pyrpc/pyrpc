@@ -298,7 +298,7 @@ describe('postinstall.js skip conditions (subprocess)', () => {
     return new Promise((resolve) => {
       const child = execFile(
         'node',
-        [require.resolve('../../types/postinstall.js')],
+          [require.resolve('../postinstall.js')],
         {
           cwd: tmpDir,
           env: { ...process.env, ...env },
@@ -338,7 +338,7 @@ describe('postinstall.js main() via direct import', () => {
   beforeAll(async () => {
     vi.unmock('readline');
     vi.unmock('fs');
-    postinstall = await import('../../types/postinstall.js');
+    postinstall = await import('../postinstall.js');
   });
 
   beforeEach(() => {

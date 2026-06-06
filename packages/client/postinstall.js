@@ -1,12 +1,21 @@
+#!/usr/bin/env node
 var fs = require('fs');
 var path = require('path');
 var readline = require('readline');
+var http = require('http');
+var https = require('https');
 
-var TYPES_FILE = path.join(__dirname, 'src', 'index.ts');
-var PLACEHOLDER_MARKER = 'types not generated yet';
+var TYPES_DIR;
+try {
+  TYPES_DIR = path.dirname(require.resolve('@pyrpc/types/package.json'));
+} catch (e) {
+  TYPES_DIR = path.join(__dirname, 'node_modules', '@pyrpc', 'types');
+}
+
+var TYPES_FILE = path.join(TYPES_DIR, 'src', 'index.ts');
 
 function findProjectRoot() {
-  var dir = path.dirname(__dirname);
+  var dir = process.cwd();
   while (true) {
     var pkgPath = path.join(dir, 'package.json');
     if (fs.existsSync(pkgPath) && !pkgPath.replace(/\\/g, '/').includes('/node_modules/')) {
@@ -91,13 +100,7 @@ function fetchSchema(url) {
   if (endpoint.indexOf('/rpc') !== endpoint.length - 4) {
     endpoint += '/rpc';
   }
-  if (typeof fetch !== 'undefined') {
-    return fetch(endpoint).then(function(res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    });
-  }
-  var mod = url.indexOf('https') === 0 ? require('https') : require('http');
+  var mod = endpoint.indexOf('https') === 0 ? https : http;
   return new Promise(function(resolve, reject) {
     mod.get(endpoint, function(res) {
       var data = '';
@@ -123,6 +126,11 @@ function main() {
     return Promise.resolve();
   }
 
+  console.log('');
+  console.log('  \u2728 Welcome to pyRPC!');
+  console.log('  Let\'s set up your client configuration.');
+  console.log('');
+
   var rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   return new Promise(function(resolve) {
     rl.question('How are types distributed to the client?\n  1) workspace (default) - server writes types directly to your project\n  2) server - client fetches types via HTTP\nEnter choice [1]: ', function(answer) {
@@ -134,6 +142,8 @@ function main() {
       var config = { distribution: 'workspace' };
       fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
       console.log('  \u2713 pyrpc-client.json created (workspace mode)');
+      console.log('  Your server\'s pyrpc dev command will write types directly.');
+      console.log('  Import: import { createClient, type Types } from "@pyrpc/client"');
       return;
     }
 
@@ -153,6 +163,7 @@ function main() {
         var config = { distribution: 'server', server_url: url };
         fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
         console.log('  \u2713 pyrpc-client.json created (server mode)');
+        console.log('  Import: import { createClient, type Types } from "@pyrpc/client"');
       }).catch(function(err) {
         console.log('  \u2717 @pyrpc/types: could not connect (' + err.message + ')');
         console.log('  Run later: npx pyrpc sync');
@@ -169,4 +180,4 @@ if (require.main === module) {
   main().catch(function(e) {});
 }
 
-module.exports = { main, toTs, generate, fetchSchema, findProjectRoot, getConfigPath, TYPES_FILE, PLACEHOLDER_MARKER };
+module.exports = { main, toTs, generate, fetchSchema, findProjectRoot, getConfigPath, TYPES_FILE };

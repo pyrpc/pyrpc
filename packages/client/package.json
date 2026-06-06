@@ -10,9 +10,11 @@
   },
   "files": [
     "dist",
-    "cli.js"
+    "cli.js",
+    "postinstall.js"
   ],
   "scripts": {
+    "postinstall": "node postinstall.js",
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
     "lint": "eslint src/**/*.ts",
@@ -28,6 +30,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@pyrpc/types": "^0.3.0"
+  },
+  "peerDependencies": {
     "@pyrpc/types": "^0.3.0"
   },
   "devDependencies": {
