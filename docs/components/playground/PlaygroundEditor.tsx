@@ -26,15 +26,7 @@ export interface RpcError {
     data?: unknown;
 }
 
-export type RpcProxy = {
-    [method: string]: (...args: any[]) => Promise<any>;
-};
-
-export interface PyRPCClient {
-    rpc: RpcProxy;
-}
-
-export function createClient<TTypes = any>(options?: ClientOptions): Omit<PyRPCClient, 'rpc'> & TTypes;
+export function createClient<T = any>(options?: ClientOptions): T;
 `;
 
 export function PlaygroundEditor({ code, language, onChange, serverTypes, serverErrors }: PlaygroundEditorProps) {

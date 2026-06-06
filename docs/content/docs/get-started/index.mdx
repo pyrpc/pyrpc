@@ -10,30 +10,30 @@ Inspired by the DX of **tRPC** and **Better Auth**, pyRPC eliminates the need fo
 
 ## The Problem
 
-Modern web development often feels like managing two separate worlds. You have a typed Python backend and a typed TypeScript frontend, but the bridge between them is usually a "dumb" JSON-RPC or REST interface. 
+Modern web development often feels like managing two separate worlds. You have a typed Python backend and a typed TypeScript frontend, but the bridge between them is usually a "dumb" JSON-RPC or REST interface.
 
 You end up manually writing TypeScript interfaces for Python models, handling string-based API routes that break when you rename a function, and relying on OpenAPI specs that are often out of sync with reality.
 
 ## The Solution
 
-**pyRPC** treats your backend as a **shared library**. It synchronizes your Python procedure signatures directly into TypeScript contracts. 
+**pyRPC** treats your backend as a **shared library**. It synchronizes your Python procedure signatures directly into TypeScript contracts.
 
 - **No OpenAPI**: No intermediate spec files to maintain or sync.
-- **No SDKs**: No heavy generated code - just clean TypeScript contracts.
+- **No SDKs**: No heavy generated code — just clean TypeScript contracts.
 - **Pure Types**: Your procedures, fully typed, from end-to-end.
 
 ## Key Features
 
 - **Python-native**: Built for asyncio, Pydantic v2, and modern type hints.
 - **End-to-End Typing**: Request, response, and errors stay in sync automatically.
-- **Zero Config**: Drop it into your existing FastAPI or Flask app in seconds.
+- **One-command setup**: `pyrpc dev` walks you through configuration and starts everything.
 - **Modular**: Only install what you need (core, adapters).
 
 ## How it works
 
 1. **Define**: Use the `@rpc` decorator on any Python function.
-2. **Mount**: Attach your pyRPC registry to your favorite web framework.
-3. **Call**: Use the pyRPC client (Python or via generated TypeScript contracts) to call your functions.
+2. **Run**: `pyrpc dev` creates a `pyrpc.json` config, starts the server, and generates types.
+3. **Call**: Use `createClient<Types>()` on the frontend with full type safety.
 
 ## Next Steps
 

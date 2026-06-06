@@ -13,7 +13,7 @@ createClient({
 })
 `;
 
-export class PyRPCClient {
+class PyRPCClient {
   private url: string;
   private options: ClientOptions;
 
@@ -33,9 +33,6 @@ export class PyRPCClient {
     this.options = options;
   }
 
-  /**
-   * Internal method to perform the fetch request.
-   */
   private async request<T>(method: string, params: any): Promise<T> {
     const id = Math.random().toString(36).substring(7);
     const body: RpcRequest = { id, method, params };
@@ -71,46 +68,38 @@ export class PyRPCClient {
 
     return data.result as T;
   }
+}
 
-  /**
-   * Creates a proxy that allows calling remote procedures as if they were local methods.
-   */
-  public get rpc(): any {
-    return new Proxy({}, {
-      get: (_, method: string) => {
-        return (...args: any[]) => {
-          // If the first argument is an object and it's the only one, 
-          // we treat it as named parameters. Otherwise, positional.
-          const params = (args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0]))
-            ? args[0]
-            : args;
-          return this.request(method, params);
-        };
-      }
-    });
-  }
+function normalizeArgs(args: any[]): any {
+  return (args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0]))
+    ? args[0]
+    : args;
 }
 
 /**
- * Modern factory API for pyRPC.
+ * Creates a typed pyRPC client.
+ *
+ * Pass your generated `Types` interface as the generic parameter
+ * to get full type safety and auto-complete for all RPC procedures.
+ *
+ * @example
+ * ```typescript
+ * import { createClient } from "@pyrpc/client"
+ * import type { Types } from "@pyrpc/types"
+ *
+ * const api = createClient<Types>({ baseUrl: "http://localhost:8000" })
+ * const user = await api.get_user("John")
+ * ```
  */
-export function createClient<TTypes = any>(options: ClientOptions = {}): TTypes {
+export function createClient<T = any>(
+  options: ClientOptions = {}
+): T {
   const client = new PyRPCClient(options);
 
-  return new Proxy(client, {
-    get(target, prop: string, receiver) {
-      if (prop === 'rpc') {
-        return new Proxy({}, {
-          get(_, method) {
-            throw new Error(
-              `Use client.${String(method)}() instead of client.rpc.${String(method)}(). ` +
-              `The .rpc prefix was removed for a cleaner API.`
-            );
-          }
-        });
-      }
-      if (prop in target) return Reflect.get(target, prop, receiver);
-      return target.rpc[prop];
+  return new Proxy({} as Record<string, (...args: any[]) => Promise<any>>, {
+    get(_target, prop: string | symbol) {
+      if (typeof prop !== 'string') return undefined;
+      return (...args: any[]) => (client as any).request(prop, normalizeArgs(args));
     }
-  }) as any;
+  }) as unknown as T;
 }

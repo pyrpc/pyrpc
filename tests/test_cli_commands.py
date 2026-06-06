@@ -46,6 +46,7 @@ def test_cli_codegen_url():
             assert "Types written to" in result.output
             mock_save.assert_called_once_with(schemas, mock.ANY)
 
+
 def test_cli_codegen_file():
     schemas = {
         "greet": {
@@ -79,6 +80,7 @@ def test_cli_codegen_module():
             assert result.exit_code == 0
             assert "Types written to" in result.output
             mock_save.assert_called_once_with(schemas, mock.ANY)
+
 
 def test_cli_pull():
     @rpc
@@ -140,18 +142,134 @@ def test_cli_dev():
 def test_dev_no_module_no_config():
     with mock.patch("pyrpc_core.cli._ensure_config", return_value=None):
         result = runner.invoke(app, ["dev"])
-    assert result.exit_code != 0
-    assert "No module specified" in result.output
+    assert result.exit_code == 0
+    assert "Setup cancelled" in result.output
 
 
 def _strip_ansi(text: str) -> str:
     return re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
 
 
-def test_dev_reconfigure_flag_help():
+def test_dev_flags_in_help():
     result = runner.invoke(app, ["dev", "--help"])
     assert result.exit_code == 0
-    assert "--reconfigure" in _strip_ansi(result.output)
+    output = _strip_ansi(result.output)
+    assert "--reconfigure" in output
+    assert "--framework" in output
+    assert "--entry" in output
+    assert "--client-root" in output
+
+
+# ── Integration: dev with CLI overrides ─────────────────────
+
+def test_dev_with_framework_flag_writes_config(tmp_path):
+    from pyrpc_core.cli import CONFIG_FILE
+    cwd = os.getcwd()
+    os.chdir(str(tmp_path))
+    try:
+        cfg = tmp_path / CONFIG_FILE
+        cfg.write_text(json.dumps({"framework": "fastapi", "entrypoint": "my_module", "client_root": "../frontend"}))
+        with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value={"framework": "fastapi", "entrypoint": "my_module", "client_root": "../frontend"}):
+            with mock.patch("pyrpc_core.cli._find_pyrpc_json", return_value=cfg):
+                with mock.patch("pyrpc_core.cli.get_registry_schema", return_value={}):
+                    with mock.patch("pyrpc_codegen.save_typescript_client"):
+                        with mock.patch("pyrpc_core.cli.subprocess"):
+                            with mock.patch("pyrpc_core.cli.watch", return_value=[]):
+                                with mock.patch("builtins.input", return_value="exit"):
+                                    runner.invoke(app, ["dev", "--framework", "flask"])
+        written = json.loads(cfg.read_text())
+        assert written["framework"] == "flask"
+        assert written["entrypoint"] == "my_module"
+    finally:
+        os.chdir(cwd)
+
+
+def test_dev_with_entry_flag_writes_config(tmp_path):
+    from pyrpc_core.cli import CONFIG_FILE
+    cwd = os.getcwd()
+    os.chdir(str(tmp_path))
+    try:
+        cfg = tmp_path / CONFIG_FILE
+        cfg.write_text(json.dumps({"framework": "fastapi", "entrypoint": "old_module", "client_root": "../frontend"}))
+        with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value={"framework": "fastapi", "entrypoint": "old_module", "client_root": "../frontend"}):
+            with mock.patch("pyrpc_core.cli._find_pyrpc_json", return_value=cfg):
+                with mock.patch("pyrpc_core.cli.get_registry_schema", return_value={}):
+                    with mock.patch("pyrpc_codegen.save_typescript_client"):
+                        with mock.patch("pyrpc_core.cli.subprocess"):
+                            with mock.patch("pyrpc_core.cli.watch", return_value=[]):
+                                with mock.patch("builtins.input", return_value="exit"):
+                                    runner.invoke(app, ["dev", "--entry", "new_module"])
+        written = json.loads(cfg.read_text())
+        assert written["entrypoint"] == "new_module"
+    finally:
+        os.chdir(cwd)
+
+
+def test_dev_with_client_root_flag_writes_config(tmp_path):
+    from pyrpc_core.cli import CONFIG_FILE
+    cwd = os.getcwd()
+    os.chdir(str(tmp_path))
+    try:
+        cfg = tmp_path / CONFIG_FILE
+        cfg.write_text(json.dumps({"framework": "fastapi", "entrypoint": "my_module", "client_root": "../old-client"}))
+        with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value={"framework": "fastapi", "entrypoint": "my_module", "client_root": "../old-client"}):
+            with mock.patch("pyrpc_core.cli._find_pyrpc_json", return_value=cfg):
+                with mock.patch("pyrpc_core.cli.get_registry_schema", return_value={}):
+                    with mock.patch("pyrpc_codegen.save_typescript_client"):
+                        with mock.patch("pyrpc_core.cli.subprocess"):
+                            with mock.patch("pyrpc_core.cli.watch", return_value=[]):
+                                with mock.patch("pyrpc_core.cli._handle_migration") as mock_migrate:
+                                    with mock.patch("builtins.input", return_value="exit"):
+                                        runner.invoke(app, ["dev", "--client-root", "../new-client"])
+        written = json.loads(cfg.read_text())
+        assert written["client_root"] == "../new-client"
+        mock_migrate.assert_called_once()
+    finally:
+        os.chdir(cwd)
+
+
+def test_codegen_writes_actual_file(tmp_path):
+    schemas = {
+        "multiply": {
+            "name": "multiply",
+            "doc": "",
+            "parameters": [
+                {"name": "a", "type": "<class 'int'>", "required": True, "default": None}
+            ],
+            "return_type": "<class 'int'>",
+        }
+    }
+    schema_file = tmp_path / "schema.json"
+    schema_file.write_text(json.dumps(schemas))
+    from pyrpc_codegen import save_typescript_client
+    out = os.path.join(str(tmp_path), "output.ts")
+    save_typescript_client(schemas, out)
+    assert os.path.isfile(out)
+    content = schema_file.parent / "output.ts"
+    assert "multiply" in content.read_text()
+
+
+def test_codegen_cli_writes_to_disk(tmp_path):
+    schemas = {
+        "divide": {
+            "name": "divide",
+            "doc": "",
+            "parameters": [],
+            "return_type": "<class 'float'>",
+        }
+    }
+    schema_file = tmp_path / "schema.json"
+    schema_file.write_text(json.dumps(schemas))
+    cwd = os.getcwd()
+    os.chdir(str(tmp_path))
+    try:
+        result = runner.invoke(app, ["codegen", str(schema_file)])
+        assert result.exit_code == 0
+        generated = tmp_path / "node_modules/@pyrpc/types/src/index.ts"
+        assert generated.exists()
+        assert "divide" in generated.read_text()
+    finally:
+        os.chdir(cwd)
 
 
 def test_parse_entry_module_only():
@@ -175,31 +293,28 @@ def test_parse_entry_complex():
     assert app_var == "create_app()"
 
 
-def test_read_config_no_pyproject():
+def test_read_config_no_pyrpc_json():
     from pyrpc_core.cli import _read_pyrpc_config
     config = _read_pyrpc_config()
     assert config is None
 
 
 def test_write_and_read_config(tmp_path):
-    from pyrpc_core.cli import _read_pyrpc_config, _write_pyrpc_config
-
-    pyproject = tmp_path / "pyproject.toml"
-    pyproject.write_text("[project]\nname = \"test\"\nversion = \"0.1.0\"\n")
+    from pyrpc_core.cli import _read_pyrpc_config, _write_pyrpc_config, CONFIG_FILE, CONFIG_VERSION
 
     cwd = os.getcwd()
     os.chdir(str(tmp_path))
     try:
-        ok = _write_pyrpc_config({"framework": "fastapi", "entry": "app.main:app"})
+        ok = _write_pyrpc_config({"framework": "fastapi", "entrypoint": "app.main:app", "client_root": "../frontend"})
         assert ok
 
         config = _read_pyrpc_config()
         assert config["framework"] == "fastapi"
-        assert config["entry"] == "app.main:app"
+        assert config["entrypoint"] == "app.main:app"
+        assert config["client_root"] == "../frontend"
+        assert config["version"] == CONFIG_VERSION
 
-        content = pyproject.read_text()
-        assert "[tool.pyrpc]" in content
-        assert 'framework = "fastapi"' in content
-        assert 'entry = "app.main:app"' in content
+        pyrpc_json = tmp_path / CONFIG_FILE
+        assert pyrpc_json.exists()
     finally:
         os.chdir(cwd)
