@@ -16,8 +16,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-fastapi = ["fastapi>=0.100.0"]
-flask = ["flask>=3.0.0"]
+fastapi = ["fastapi>=0.100.0", "pyrpc-fastapi"]
+flask = ["flask>=3.0.0", "pyrpc-flask"]
 
 [project.scripts]
 pyrpc = "pyrpc_core.cli:app"
