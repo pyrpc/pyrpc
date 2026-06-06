@@ -11,6 +11,9 @@
   <a href="https://github.com/pyrpc/pyrpc/stargazers">
     <img src="https://img.shields.io/github/stars/pyrpc/pyrpc?style=flat&colorA=000000&colorB=000000" alt="GitHub stars"/>
   </a>
+  <a href="https://pypi.org/project/pyrpc-core/">
+    <img src="https://img.shields.io/pypi/v/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI version"/>
+  </a>
 
   <p>
     <a href="https://pyrpc.com"><b>Website</b></a>
