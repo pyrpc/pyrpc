@@ -121,7 +121,7 @@ function printHelp() {
   console.log('  root and fetches the latest RPC schema from the server.');
   console.log('');
   console.log('  In workspace mode, the server writes types directly to your');
-  console.log('  project — no sync needed.');
+  console.log('  project \u2014 no sync needed.');
   console.log('');
 }
 
@@ -177,7 +177,7 @@ function main() {
       fs.mkdirSync(path.dirname(TYPES_OUTPUT), { recursive: true });
       fs.writeFileSync(TYPES_OUTPUT, code, 'utf-8');
       console.log('  \u2713 Types synced: ' + Object.keys(schemas).length + ' procedures');
-      console.log('  Import: import type { Types } from "@pyrpc/types"');
+      console.log('  Import: import { createClient, type Types } from "@pyrpc/client"');
     }).catch(function(err) {
       console.log('  \u2717 Could not fetch schema from ' + url + ' (' + err.message + ')');
     });
