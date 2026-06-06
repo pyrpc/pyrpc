@@ -162,7 +162,7 @@ class TestEnsureConfig:
 
     def test_returns_existing_config_without_reconfigure(self):
         from pyrpc_core.cli import _ensure_config
-        existing = {"framework": "fastapi", "entrypoint": "main", "client_root": "../frontend"}
+        existing = {"framework": "fastapi", "entrypoint": "main", "client_root": "../frontend", "distribution": "workspace"}
         with mock.patch("pyrpc_core.cli._read_pyrpc_config", return_value=existing):
             result = _ensure_config(reconfigure=False)
             assert result == existing
@@ -230,18 +230,29 @@ class TestPromptForConfig:
 
     def test_returns_none_on_text_cancel(self):
         from pyrpc_core.cli import _prompt_for_config
-        with mock.patch("questionary.select", return_value=_mock_ask("fastapi")):
+        selects_called = [0]
+        def fake_select(text, choices, default):
+            selects_called[0] += 1
+            if selects_called[0] == 1:
+                return _mock_ask("fastapi")
+            return _mock_ask("workspace")
+        with mock.patch("questionary.select", side_effect=fake_select):
             with mock.patch("questionary.text", return_value=_mock_ask(None)):
                 result = _prompt_for_config()
                 assert result is None
 
     def test_uses_previous_as_defaults(self):
         from pyrpc_core.cli import _prompt_for_config
-        previous = {"framework": "flask", "entrypoint": "src.main", "client_root": "../client"}
-        texts_called = [0]
+        previous = {"framework": "flask", "entrypoint": "src.main", "client_root": "../client", "distribution": "server"}
+        selects_called = [0]
         def fake_select(text, choices, default):
-            assert default == "flask"
-            return _mock_ask("flask")
+            selects_called[0] += 1
+            if selects_called[0] == 1:
+                assert default == "flask"
+                return _mock_ask("flask")
+            assert default == "server"
+            return _mock_ask("server")
+        texts_called = [0]
         def fake_text(text, default):
             texts_called[0] += 1
             if texts_called[0] == 1:
@@ -252,4 +263,4 @@ class TestPromptForConfig:
         with mock.patch("questionary.select", side_effect=fake_select):
             with mock.patch("questionary.text", side_effect=fake_text):
                 result = _prompt_for_config(previous=previous)
-                assert result == {"framework": "flask", "entrypoint": "src.main", "client_root": "../client"}
+                assert result == {"framework": "flask", "entrypoint": "src.main", "distribution": "server"}
