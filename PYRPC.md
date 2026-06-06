@@ -60,7 +60,7 @@ pyRPC is a Python-first RPC system with TypeScript reach. It gives you type safe
 │  Introspection → TypeScript type generation (library)     │
 ├──────────────────────────────────────────────────────────┤
 │  pyrpc.json                                               │
-│  Single config file — framework, entrypoint, client_root   │
+│  Single config file - framework, entrypoint, client_root   │
 ├──────────────────────────────────────────────────────────┤
 │  @pyrpc/client (@pyrpc/types)                              │
 │  TypeScript client + generated type definitions            │

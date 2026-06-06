@@ -127,7 +127,7 @@ export default function PlaygroundPage() {
         return code.slice(startIdx, i)
     }
 
-    /** Resolve a simple JS expression against varMap (e.g. user.name → varMap['user']?.name). */
+    /** Resolve a simple JS expression against varMap (e.g. user.name â†’ varMap['user']?.name). */
     function resolveExpr(expr: string, varMap: Record<string, any>): any {
         const parts = expr.split('.')
         let val: any = varMap[parts[0]]
@@ -233,7 +233,7 @@ export default function PlaygroundPage() {
             setStatus('success')
         } catch (err: any) {
             const msg = err?.message ?? String(err);
-            setLogs((prev: string[]) => [...prev, `✗ Error: ${msg}`]);
+            setLogs((prev: string[]) => [...prev, `âœ- Error: ${msg}`]);
             setResponse({ result: null, error: { message: msg } })
             setStatus('error');
         }
@@ -397,10 +397,10 @@ export default function PlaygroundPage() {
                         {logs.map((line, i) => (
                             <div key={i} className={cn(
                                 'whitespace-pre-wrap',
-                                line.startsWith('✗') && 'text-[#ff5555]',
-                                line.startsWith('✓') && 'text-[#33cc66]',
+                                line.startsWith('âœ-') && 'text-[#ff5555]',
+                                line.startsWith('âœ“') && 'text-[#33cc66]',
                                 line.startsWith('$') && 'text-[#5a6478]',
-                                !line.startsWith('✗') && !line.startsWith('✓') && !line.startsWith('$') && (isDark ? 'text-[#c9d1d9]' : 'text-[#374151]')
+                                !line.startsWith('âœ-') && !line.startsWith('âœ“') && !line.startsWith('$') && (isDark ? 'text-[#c9d1d9]' : 'text-[#374151]')
                             )}>
                                 <span className="text-[#33cc66] mr-2">$</span>
                                 {line.replace(/^\$\s*/, '')}

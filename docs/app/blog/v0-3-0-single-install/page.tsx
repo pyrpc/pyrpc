@@ -19,7 +19,7 @@ export default function V030Post() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    v0.3.0 is the simplest install yet. <code>pip install pyrpc-core</code> now gives you the entire pyRPC stack — runtime, CLI, and code generation — in a single command.
+                    v0.3.0 is the simplest install yet. <code>pip install pyrpc-core</code> now gives you the entire pyRPC stack - runtime, CLI, and code generation - in a single command.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What changed</h2>
@@ -35,10 +35,10 @@ After:   pyrpc-core → pyrpc-codegen                (2 packages)`}</pre>
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Install is now one command</h2>
                 <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`pip install pyrpc-core`}</pre>
                 <p>
-                    That's it. The <code>pyrpc</code> CLI is available immediately — <code>pyrpc serve</code>, <code>pyrpc dev</code>, <code>pyrpc inspect</code>, <code>pyrpc codegen</code>, and <code>pyrpc pull</code> all work out of the box. No extras, no optional dependencies, no separate install steps.
+                    That's it. The <code>pyrpc</code> CLI is available immediately - <code>pyrpc serve</code>, <code>pyrpc dev</code>, <code>pyrpc inspect</code>, <code>pyrpc codegen</code>, and <code>pyrpc pull</code> all work out of the box. No extras, no optional dependencies, no separate install steps.
                 </p>
                 <p>
-                    Frontend-only developers just <code>npm install @pyrpc/client</code> — the postinstall script fetches the schema from your server and generates types automatically. The <code>pyrpc-codegen</code> library is an internal dependency; you never install it directly.
+                    Frontend-only developers just <code>npm install @pyrpc/client</code> - the postinstall script fetches the schema from your server and generates types automatically. The <code>pyrpc-codegen</code> library is an internal dependency; you never install it directly.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">No API changes</h2>
@@ -54,7 +54,7 @@ After:   pyrpc-core → pyrpc-codegen                (2 packages)`}</pre>
                 <ul className="space-y-2">
                     <li><strong>Packaging:</strong> pyrpc-cli merged into pyrpc-core. <code>pip install pyrpc-core</code> is now the single entry point.</li>
                     <li><strong>CLI:</strong> All commands live in <code>pyrpc_core.cli</code>. Entry point registered via <code>[project.scripts]</code> in pyproject.toml.</li>
-                    <li><strong>Docs:</strong> README, CONTRIBUTING, PYRPC.md, installation guides, plugin docs — all rewritten for single-install flow. No more pyrpc-cli references.</li>
+                    <li><strong>Docs:</strong> README, CONTRIBUTING, PYRPC.md, installation guides, plugin docs - all rewritten for single-install flow. No more pyrpc-cli references.</li>
                     <li><strong>System design:</strong> Architecture diagram and dependency section updated to reflect the 2-package structure.</li>
                     <li><strong>Blog:</strong> New post explaining the merge rationale and trade-offs.</li>
                     <li><strong>Favicon:</strong> pyrpc mark added as site favicon.</li>

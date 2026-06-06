@@ -49,7 +49,12 @@ line-length = 88
 target-version = "py311"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = [
+    "packages/pyrpc-core/tests",
+    "packages/pyrpc-fastapi/tests",
+    "packages/pyrpc-flask/tests",
+    "packages/pyrpc-codegen/tests",
+]
 pythonpath = [
     "packages/pyrpc-core/src",
     "packages/pyrpc-fastapi/src",

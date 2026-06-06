@@ -109,7 +109,7 @@ DEFAULT_OUTPUT, save_typescript_client = _lazy_import_codegen()
 output = os.path.abspath(DEFAULT_OUTPUT)  # ← explicit resolution at CLI level
 save_typescript_client(schemas, output)
 
-# dev command — regenerate():
+# dev command - regenerate():
 _, save_typescript_client = _lazy_import_codegen()
 save_typescript_client(schemas, types_output)  # ← types_output is already absolute`}</pre>
                 <p>

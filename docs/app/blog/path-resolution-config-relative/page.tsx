@@ -47,11 +47,11 @@ export default function PathResolutionPost() {
 cd project/server
 pyrpc dev
 
-# With os.getcwd() resolution, "../frontend" → project/server/../frontend
-# → project/frontend ✓  (works by accident in this case)
+# With os.getcwd() resolution, "../frontend" â†’ project/server/../frontend
+# â†’ project/frontend âœ“  (works by accident in this case)
 
-# With config-relative resolution, "../frontend" → project/server/../frontend
-# → project/frontend ✓  (same result)`}</pre>
+# With config-relative resolution, "../frontend" â†’ project/server/../frontend
+# â†’ project/frontend âœ“  (same result)`}</pre>
                 <p>
                     In this case both approaches work. The difference appears when the config file
                     is in a different location than expected, or when the user runs pyrpc from
@@ -75,10 +75,10 @@ pyrpc dev
 cd monorepo/server
 pyrpc dev
 
-# With os.getcwd() resolution: "frontend" → monorepo/server/frontend ✗
+# With os.getcwd() resolution: "frontend" â†’ monorepo/server/frontend âœ-
 # (nowhere near the actual frontend project)
 
-# With config-relative resolution: "frontend" → monorepo/frontend ✓
+# With config-relative resolution: "frontend" â†’ monorepo/frontend âœ“
 # (from pyrpc.json's directory, which is monorepo/)`}</pre>
                 <p>
                     The <code>_find_pyrpc_json()</code> function walks up from CWD to find the

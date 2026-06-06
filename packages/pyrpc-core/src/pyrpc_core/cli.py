@@ -503,7 +503,7 @@ class _DevConsole:
 
     def _cmd_types(self, _arg=""):
         if self.is_server_mode:
-            console.print("Server mode — clients fetch types via HTTP.")
+            console.print("Server mode - clients fetch types via HTTP.")
             console.print("  [bold]GET /rpc[/bold] returns the current schema")
             console.print("  Run [bold]npx pyrpc sync[/bold] on the client to regenerate types")
         else:
@@ -620,11 +620,11 @@ def dev(
         try:
             ok = default_router.reload_module(module)
             if not ok:
-                console.print(f"  [yellow]⚠[/yellow] No procedures found — did you remove all @rpc decorators?")
+                console.print(f"  [yellow]⚠[/yellow] No procedures found - did you remove all @rpc decorators?")
                 return
             schemas = get_registry_schema(default_router)
             if resolved_distribution == "server":
-                console.print(f"  [green]✓[/green] Server mode — schema updated ({len(schemas)} procs)")
+                console.print(f"  [green]✓[/green] Server mode - schema updated ({len(schemas)} procs)")
             else:
                 _, save_typescript_client = _lazy_import_codegen()
                 save_typescript_client(schemas, types_output)
