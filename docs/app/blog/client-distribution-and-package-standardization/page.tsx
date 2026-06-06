@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function V060ClientDistributionPost() {
+export default function ClientDistributionAndPackageStandardizationPost() {
     return (
         <article className="max-w-3xl mx-auto px-6 py-20">
             <div className="mb-12">
@@ -8,7 +8,7 @@ export default function V060ClientDistributionPost() {
                     &larr; Back to Blog
                 </Link>
                 <h1 className="text-2xl font-bold tracking-tight mt-6 mb-3">
-                    v0.6.0 - Client distribution and package standardization
+                    Client distribution and package standardization
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
                     <time>June 6, 2026 at 2:00pm</time>
@@ -19,9 +19,9 @@ export default function V060ClientDistributionPost() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    v0.6.0 completes the distribution story with a proper client-side CLI
+                    This release completes the distribution story with a proper client-side CLI
                     and cleans up the packaging foundation that&rsquo;s been accumulating
-                    small debts since v0.1.0. Two branches, one release &mdash; the first
+                    small debts since the earliest releases. Two branches, one release &mdash; the first
                     adds new capabilities, the second pays down technical debt.
                 </p>
 
@@ -30,7 +30,7 @@ export default function V060ClientDistributionPost() {
                 </h2>
                 <p>
                     The distribution model introduced in v0.5.0 defined <em>workspace</em> and
-                    <em>server</em> modes on the server side. v0.6.0 completes the picture
+                    <em>server</em> modes on the server side. This release completes the picture
                     by adding the client-side counterpart &mdash; <code>npx pyrpc sync</code>.
                 </p>
                 <p>
@@ -236,7 +236,7 @@ TypeScript:
                     packages or contributing on Windows.
                 </p>
                 <p>
-                    For v0.7.0, we&rsquo;re turning to documentation and examples
+                    Next, we&rsquo;re turning to documentation and examples
                     &mdash; filling in the gaps that new users encounter when they
                     first try pyrpc. Read the full
                     <Link href="/changelog" className="text-fd-foreground underline"> changelog</Link>
