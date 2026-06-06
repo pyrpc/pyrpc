@@ -551,6 +551,19 @@ def dev(
     new_client_root = _resolve_client_root(new_client_root_raw, config_dir) if new_client_root_raw else None
     new_types_output = os.path.join(new_client_root, "node_modules/@pyrpc/types/src/index.ts") if new_client_root else None
 
+    if new_client_root and not os.path.isdir(new_client_root):
+        console.print(f"[bold red]Error:[/bold red] Client project not found at:")
+        console.print(f"  {new_client_root}")
+        console.print()
+        console.print("Create it first, then re-run [bold]pyrpc dev[/bold].")
+        console.print()
+        console.print("  [dim]Examples:[/dim]")
+        console.print("    npm create vite@latest frontend -- --template react-ts")
+        console.print("    npx create-next-app@latest frontend --typescript")
+        console.print("    npx create-react-app frontend --template typescript")
+        console.print()
+        raise typer.Exit(code=1)
+
     if old_types_output and new_types_output and old_client_root != new_client_root:
         _handle_migration(old_types_output, new_types_output)
 
