@@ -12,18 +12,17 @@ pnpm add @pyrpc/client
 bun add @pyrpc/client
 ```
 
-On install, `@pyrpc/types` runs a `postinstall` script that prompts you to choose a **distribution mode**:
+On install, `@pyrpc/client` runs a `postinstall` script that prompts you to choose a **distribution mode**:
 
 - **Workspace** — types are written by the server-side `pyrpc dev` / `pyrpc codegen` commands.
 - **Server** — types are fetched from a running server at `npx pyrpc sync` time.
 
-CI / non-TTY environments skip the prompt silently.
+CI / non-TTY environments skip the prompt silently. Re-run with `npx pyrpc sync` to generate types later.
 
 ## Usage
 
 ```typescript
-import { createClient } from "@pyrpc/client";
-import type { Types } from "@pyrpc/types";
+import { createClient, type Types } from "@pyrpc/client";
 
 const client = createClient<Types>({
   baseUrl: "https://api.example.com",

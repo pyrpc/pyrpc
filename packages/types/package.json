@@ -9,11 +9,9 @@
     }
   },
   "files": [
-    "src",
-    "postinstall.js"
+    "src"
   ],
   "scripts": {
-    "postinstall": "node postinstall.js",
     "lint": "echo 'no lint'",
     "test": "echo 'no test'"
   },
