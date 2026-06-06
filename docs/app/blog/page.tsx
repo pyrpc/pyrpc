@@ -2,6 +2,48 @@ import Link from 'next/link'
 
 const posts = [
     {
+        slug: 'v0-4-0-pyrpc-json-config',
+        title: 'v0.4.0 — pyrpc.json: why we left pyproject.toml behind',
+        description: 'Three problems with [tool.pyrpc] in pyproject.toml — fragile writing, ambiguous file ownership, and unclear path semantics — and why a dedicated pyrpc.json file with JSON, not TOML, was the right answer.',
+        date: 'June 6, 2026 at 8:00am',
+        readTime: '9 min',
+    },
+    {
+        slug: 'path-resolution-config-relative',
+        title: 'Path resolution in pyrpc: config-relative, not CWD-relative',
+        description: 'Why resolving paths against pyrpc.json\'s directory (not os.getcwd()) is the only correct approach, how the pipeline produces absolute paths everywhere, and why save_typescript_client() enforces the contract at the boundary.',
+        date: 'June 6, 2026 at 8:15am',
+        readTime: '8 min',
+    },
+    {
+        slug: 'migration-strategy-three-cases',
+        title: 'Three cases, zero data loss: pyrpc\'s types migration strategy',
+        description: 'What happens when you change client_root in pyrpc.json? Three cases with SHA256 comparison, interactive prompts only when needed, and a clean KeyboardInterrupt path that never leaves half-migrated state.',
+        date: 'June 6, 2026 at 8:30am',
+        readTime: '10 min',
+    },
+    {
+        slug: 'three-deployment-architectures',
+        title: 'Three deployment architectures for pyrpc',
+        description: 'Monorepo, separate repos, and published npm package — how pyrpc\'s config system and type generation handle all three workflows, and why server-side codegen was built before the client-side npx CLI.',
+        date: 'June 6, 2026 at 8:45am',
+        readTime: '9 min',
+    },
+    {
+        slug: 'integrated-first-time-setup',
+        title: 'No pyrpc init needed: designing the integrated setup wizard',
+        description: 'Why pyrpc embeds setup inside pyrpc dev instead of a separate init command: fewer context switches, --reconfigure pre-fills defaults, CLI flags skip the wizard entirely, and KeyboardInterrupt exits cleanly.',
+        date: 'June 6, 2026 at 9:00am',
+        readTime: '8 min',
+    },
+    {
+        slug: 'absolute-path-contract',
+        title: 'Why save_typescript_client() refuses relative paths',
+        description: 'The hidden bug in os.getcwd() fallback paths — why a silent default is worse than a hard error, how the CLI layer resolves paths before calling the API, and the "fail fast on global state" design principle.',
+        date: 'June 6, 2026 at 9:15am',
+        readTime: '7 min',
+    },
+    {
         slug: 'building-a-full-stack-app-with-pyrpc',
         title: 'Building a full-stack app with pyRPC',
         description: 'A step-by-step tutorial: FastAPI backend, TypeScript React frontend, end-to-end type safety with pyRPC.',
