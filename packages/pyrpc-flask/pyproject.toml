@@ -4,7 +4,8 @@ version = "0.3.3"
 description = "Flask adapter for pyRPC"
 requires-python = ">=3.11"
 dependencies = [
-    "pyrpc-core[flask]",
+    "pyrpc-core",
+    "flask>=3.0.0",
 ]
 
 [build-system]
