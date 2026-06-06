@@ -1,6 +1,6 @@
 # pyrpc-flask
 
-[Flask](https://flask.palletsprojects.com/) adapter for [pyRPC](https://pyrpc.dev). Mounts RPC procedures as a Flask route.
+[Flask](https://flask.palletsprojects.com/) adapter for [pyRPC](https://pyrpc.com). Mounts RPC procedures as Flask routes.
 
 ## Installation
 
@@ -24,7 +24,7 @@ def add(a: int, b: int) -> int:
 mount_flask(app)
 ```
 
-Starts an HTTP server with JSON-RPC 2.0 semantics at `/rpc`.
+Creates `POST /rpc` for JSON-RPC 2.0 calls and `GET /rpc` for schema introspection.
 
 ## License
 

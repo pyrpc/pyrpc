@@ -10,9 +10,9 @@ const releases = [
             {
                 title: 'TypeScript Client',
                 items: [
-                    'createClient returns TTypes directly instead of PyRPCClient & TTypes — rpc no longer pollutes autocomplete',
+                    'createClient returns TTypes directly instead of PyRPCClient & TTypes - rpc no longer pollutes autocomplete',
                     'Catches client.rpc.method() misuse at compile time instead of runtime',
-                    'URL normalization strips existing trailing /rpc before re-appending — prevents double /rpc/rpc when users copy the URL from server output',
+                    'URL normalization strips existing trailing /rpc before re-appending - prevents double /rpc/rpc when users copy the URL from server output',
                     'Both http://localhost:8000 and http://localhost:8000/rpc work correctly as baseUrl',
                 ]
             },
@@ -21,7 +21,7 @@ const releases = [
                 items: [
                     'threading.Timer with 300ms resetting debounce replaces direct regenerate() calls in watcher loop',
                     'Matches webpack\'s aggregateTimeout and nodemon\'s --delay pattern',
-                    'Types regenerate once after the last file change settles — no more flood of syntax errors on partial writes',
+                    'Types regenerate once after the last file change settles - no more flood of syntax errors on partial writes',
                     'Startup and manual generate command still regenerate immediately (bypass debounce)',
                 ]
             },
@@ -31,13 +31,13 @@ const releases = [
                     'Added Access-Control-Allow-Origin: *, Access-Control-Allow-Methods, Access-Control-Allow-Headers, and Access-Control-Max-Age to every response',
                     'Added OPTIONS /rpc handler returning 204 with CORS headers for preflight requests',
                     'Same headers as FastAPI\'s CORSMiddleware',
-                    'Flask and FastAPI transports unchanged — CORS is the host application\'s responsibility',
+                    'Flask and FastAPI transports unchanged - CORS is the host application\'s responsibility',
                 ]
             },
             {
                 title: 'Documentation',
                 items: [
-                    'Blog post: v0.3.3 — Cleaner types, no more /rpc/rpc, quieter watcher, CORS included',
+                    'Blog post: v0.3.3 - Cleaner types, no more /rpc/rpc, quieter watcher, CORS included',
                     'Changelog entry: v0.3.3',
                 ]
             },
@@ -47,7 +47,7 @@ const releases = [
         version: 'v0.3.2',
         date: '2026-06-03',
         tag: 'v0.3.2',
-        description: 'Cleaner terminal, smarter setup prompts, entry point simplified — no more :app confusion.',
+        description: 'Cleaner terminal, smarter setup prompts, entry point simplified - no more :app confusion.',
         sections: [
             {
                 title: 'Setup Flow',
@@ -62,13 +62,13 @@ const releases = [
                 items: [
                     'sys.path.insert(0, os.getcwd()) added in dev() before module import (Uvicorn standard)',
                     '_import_module() changed from sys.path.append to sys.path.insert(0, ...) for consistency',
-                    'main now finds main.py in current directory — fixes "No module named main" error',
+                    'main now finds main.py in current directory - fixes "No module named main" error',
                 ]
             },
             {
                 title: 'Terminal DX',
                 items: [
-                    'Uvicorn subprocess uses --log-level error — 6 lines of reloader/server spam eliminated',
+                    'Uvicorn subprocess uses --log-level error - 6 lines of reloader/server spam eliminated',
                     'Heavy Panel box replaced with clean 2-line status block',
                     'input() replaced with console.input() so Rich markup renders (fixes raw [cyan] text)',
                     'Removed "Generating initial types" and "Watching X directories" noise lines',
@@ -84,7 +84,7 @@ const releases = [
             {
                 title: 'Documentation',
                 items: [
-                    'Blog post: v0.3.2 — Cleaner terminal, smarter prompts, no more :app confusion',
+                    'Blog post: v0.3.2 - Cleaner terminal, smarter prompts, no more :app confusion',
                     'Help text updated on dev, serve, and pull commands to match new wording',
                 ]
             },

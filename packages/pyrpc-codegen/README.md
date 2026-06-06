@@ -1,12 +1,12 @@
 # pyrpc-codegen
 
-Code generation and template utilities for [pyRPC](https://pyrpc.dev). Used internally by `pyrpc-core` for TypeScript type generation and schema serialization.
+Code generation utilities for [pyRPC](https://pyrpc.com). Generates TypeScript type definitions from Python procedure schemas.
 
 ## What it does
 
-- Generates TypeScript interfaces from Python procedure schemas
-- Serializes RPC schema to JSON for distribution
-- Provides Jinja2 templates used by the `pyrpc codegen` and `pyrpc pull` commands
+- `generate_typescript_client(schemas)` - generates TypeScript interface source code from a schema dict
+- `save_typescript_client(schemas, output_path)` - generates and writes TypeScript types to a file
+- `DEFAULT_OUTPUT` - default output filename constant
 
 ## Installation
 

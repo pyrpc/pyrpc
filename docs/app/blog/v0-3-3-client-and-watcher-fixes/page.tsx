@@ -76,7 +76,7 @@ export default function V033Post() {
                     wraps the instance in a second proxy that blocks access to <code>.rpc</code>
                     and throws a helpful error. But TypeScript doesn&rsquo;t know about that.
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`// Before — type lies to autocomplete
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`// Before - type lies to autocomplete
 export function createClient<TTypes>(...): PyRPCClient & TTypes {
   return new Proxy(client, {
     get(target, prop) {
@@ -96,7 +96,7 @@ export function createClient<TTypes>(...): PyRPCClient & TTypes {
                     openapi-fetch both do: their <code>createClient</code> return types map directly
                     to the procedure signatures, never the internal class shape.
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`// After — type matches user's mental model
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`// After - type matches user's mental model
 export function createClient<TTypes>(...): TTypes {
   // Same runtime proxy, same error on .rpc
   // But TypeScript only knows about TTypes
@@ -126,7 +126,7 @@ export function createClient<TTypes>(...): TTypes {
                 <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`// Before
 this.baseUrl = baseUrl.replace(/\\/$/, '')
 
-// After — strip trailing /rpc first, then re-append
+// After - strip trailing /rpc first, then re-append
 const clean = baseUrl.replace(/\\/+$/, '')
 this.url = clean.replace(/\\/rpc$/i, '') + '/rpc'`}</pre>
                 <p>
@@ -155,7 +155,7 @@ createClient({ baseUrl: 'http://localhost:8000/rpc' })
                     each producing a cascade of <code>✗ Types: invalid syntax</code> errors before
                     the file settled and regeneration succeeded.
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`// Before — fires on every file change
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`// Before - fires on every file change
 def watcher_loop():
     for changes in watch(*watched_dirs, ...):
         if any(f.endswith(".py") for _, f in changes):
@@ -194,7 +194,7 @@ def watcher_loop():
                     Partial writes during a save settle within milliseconds, well under the
                     window. The result:
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`// After — one message, once, after file settles
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`// After - one message, once, after file settles
 //
 //   ✓ Types regenerated (1 procs)`}</pre>
                 <p>

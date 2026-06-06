@@ -1,6 +1,6 @@
 # @pyrpc/client
 
-Universal TypeScript client for [pyRPC](https://pyrpc.dev). Type-safe RPC calls to your Python backend — install, import, call. Ships an optional `npx pyrpc sync` CLI.
+Universal TypeScript client for [pyRPC](https://pyrpc.com). Type-safe RPC calls to your Python backend - install, import, call.
 
 ## Installation
 
@@ -30,7 +30,7 @@ const client = createClient<Types>({
 });
 
 const user = await client.get_user(1);
-console.log(user.name); // Fully typed — no manual type definitions needed
+console.log(user.name); // Fully typed - no manual type definitions needed
 ```
 
 The proxy-based API lets you call any remote procedure as a local method. Parameters are passed positionally or as a single object for named arguments.
@@ -70,8 +70,8 @@ Run `npx pyrpc --help` for options.
 
 Creates a proxy client that forwards method calls to the server. The generic parameter `T` is your `Types` interface for full type safety.
 
-- `baseUrl` — Server root URL (defaults to `window.location.origin` in browsers)
-- `headers` — Static or async `HeadersInit`
+- `baseUrl` - Server root URL (defaults to `window.location.origin` in browsers)
+- `headers` - Static or async `HeadersInit`
 
 **Note:** There is no `.rpc` property. Call methods directly on the client object.
 

@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <Section title="The short version">
           <ul className="space-y-2">
             <li><Bullet /> No accounts, no sign-up, no telemetry.</li>
-            <li><Bullet /> The library runs entirely on your machine — no data is sent anywhere unless you explicitly trigger a command that makes a network request.</li>
+            <li><Bullet /> The library runs entirely on your machine - no data is sent anywhere unless you explicitly trigger a command that makes a network request.</li>
           </ul>
         </Section>
 
@@ -33,14 +33,14 @@ export default function PrivacyPage() {
             pyRPC itself makes no network requests. The CLI only reaches out when you run specific commands:
           </p>
           <ul className="space-y-2">
-            <li><Bullet /> <Code>pyrpc pull</Code> introspects your local Python module — no network.</li>
+            <li><Bullet /> <Code>pyrpc pull</Code> introspects your local Python module - no network.</li>
             <li><Bullet /> <Code>npm install @pyrpc/client</Code> and <Code>uv add pyrpc-core</Code> use standard package managers (npm, uv) which fetch from their respective registries.</li>
           </ul>
         </Section>
 
         <Section title="What we collect">
           <p>
-            Nothing. pyRPC has no telemetry, no analytics, and no backend server. We don't run analytics on this site, don't set tracking cookies, and don't embed third-party trackers. The only data we see is what you voluntarily send — GitHub issues, PRs, or emails to the addresses below.
+            Nothing. pyRPC has no telemetry, no analytics, and no backend server. We don't run analytics on this site, don't set tracking cookies, and don't embed third-party trackers. The only data we see is what you voluntarily send - GitHub issues, PRs, or emails to the addresses below.
           </p>
         </Section>
 
