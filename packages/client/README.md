@@ -1,6 +1,6 @@
 # @pyrpc/client
 
-Universal TypeScript client for [pyRPC](https://pyrpc.dev). Type-safe RPC calls to your Python backend — install, import, call.
+Universal TypeScript client for [pyRPC](https://pyrpc.dev). Type-safe RPC calls to your Python backend — install, import, call. Ships an optional `npx pyrpc sync` CLI.
 
 ## Installation
 
@@ -11,6 +11,13 @@ pnpm add @pyrpc/client
 # or
 bun add @pyrpc/client
 ```
+
+On install, `@pyrpc/types` runs a `postinstall` script that prompts you to choose a **distribution mode**:
+
+- **Workspace** — types are written by the server-side `pyrpc dev` / `pyrpc codegen` commands.
+- **Server** — types are fetched from a running server at `npx pyrpc sync` time.
+
+CI / non-TTY environments skip the prompt silently.
 
 ## Usage
 
@@ -41,6 +48,21 @@ try {
   }
 }
 ```
+
+## CLI — `npx pyrpc sync`
+
+After install, you can sync types from a server distribution:
+
+```bash
+npx pyrpc sync
+```
+
+Reads `pyrpc-client.json` and behaves according to the configured distribution:
+
+- **workspace** — prints "Nothing to sync — server writes types directly."
+- **server** — fetches schema from the configured `server_url` and regenerates `@pyrpc/types/src/index.ts`.
+
+Run `npx pyrpc --help` for options.
 
 ## API
 
