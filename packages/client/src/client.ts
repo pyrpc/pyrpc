@@ -2,38 +2,69 @@ import { PyRPCError } from './error';
 import type { ClientOptions, RpcRequest, RpcResponse } from './types';
 
 const NO_BASE_URL_ERROR = `
-No baseUrl detected.
+No server URL configured.
 
-pyRPC could not automatically determine your server location.
+Provide a baseUrl when creating the client:
 
-If your frontend and backend are deployed separately, provide:
+  const api = createClient({ baseUrl: "http://localhost:8000" })
 
-createClient({
-  baseUrl: "https://api.example.com"
-})
+Or set up your client configuration by running:
+
+  npx pyrpc init
 `;
+
+function readPyrpcClientConfig(): { distribution?: string; server_url?: string } | null {
+  if (typeof process === 'undefined' || typeof require === 'undefined') return null;
+  try {
+    const fs = require('fs') as { existsSync: (p: string) => boolean; readFileSync: (p: string, enc: string) => string };
+    const p = require('path') as { join: (...args: string[]) => string; dirname: (p: string) => string };
+
+    let dir = process.cwd();
+    while (true) {
+      const cfgPath = p.join(dir, 'pyrpc-client.json');
+      if (fs.existsSync(cfgPath)) {
+        return JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
+      }
+      const parent = p.dirname(dir);
+      if (parent === dir) return null;
+      dir = parent;
+    }
+  } catch {
+    return null;
+  }
+}
 
 class PyRPCClient {
   private url: string;
   private options: ClientOptions;
 
   constructor(options: ClientOptions = {}) {
+    this.options = options;
+
     let baseUrl = options.baseUrl;
 
     if (!baseUrl) {
-      if (typeof window !== 'undefined' && window.location) {
+      const config = readPyrpcClientConfig();
+      if (config?.server_url) {
+        baseUrl = config.server_url;
+      } else if (typeof window !== 'undefined' && window.location) {
         baseUrl = window.location.origin;
-      } else {
-        throw new Error(NO_BASE_URL_ERROR);
       }
     }
 
-    const clean = baseUrl.replace(/\/+$/, '');
-    this.url = clean.replace(/\/rpc$/i, '') + '/rpc';
-    this.options = options;
+    if (baseUrl) {
+      const clean = baseUrl.replace(/\/+$/, '');
+      this.url = clean.replace(/\/rpc$/i, '') + '/rpc';
+    } else {
+      this.url = '';
+    }
   }
 
   private async request<T>(method: string, params: any): Promise<T> {
+    if (!this.url) {
+      throw new Error(NO_BASE_URL_ERROR);
+    }
+
     const id = Math.random().toString(36).substring(7);
     const body: RpcRequest = { id, method, params };
 
