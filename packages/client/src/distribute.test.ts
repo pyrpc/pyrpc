@@ -321,14 +321,24 @@ describe('postinstall.js skip conditions (subprocess)', () => {
     expect(stdout).toBe('');
   });
 
-  it('skips in CI environment', async () => {
+  it('creates default config in CI environment', async () => {
     const { stdout } = await runPostinstall({ CI: 'true' });
     expect(stdout).toBe('');
+    const cfgPath = join(tmpDir, 'pyrpc-client.json');
+    expect(existsSync(cfgPath)).toBe(true);
+    const cfg = JSON.parse(readFileSync(cfgPath, 'utf-8'));
+    expect(cfg.distribution).toBe('workspace');
+    expect(cfg.server_url).toBe('http://localhost:8000');
   });
 
-  it('skips in non-TTY without CI', async () => {
+  it('creates default config in non-TTY', async () => {
     const { stdout } = await runPostinstall();
     expect(stdout).toBe('');
+    const cfgPath = join(tmpDir, 'pyrpc-client.json');
+    expect(existsSync(cfgPath)).toBe(true);
+    const cfg = JSON.parse(readFileSync(cfgPath, 'utf-8'));
+    expect(cfg.distribution).toBe('workspace');
+    expect(cfg.server_url).toBe('http://localhost:8000');
   });
 });
 
