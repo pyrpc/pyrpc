@@ -1,6 +1,6 @@
 [project]
 name = "pyrpc-codegen"
-version = "0.6.1"
+version = "0.6.2"
 description = "Codegen and CLI tools for pyRPC"
 requires-python = ">=3.11"
 dependencies = [
