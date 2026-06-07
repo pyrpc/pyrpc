@@ -123,55 +123,49 @@ function main() {
   var isCI = process.env.CI;
 
   if (!isInteractive || isCI) {
+    // Non-interactive: default to workspace with localhost
+    var config = { distribution: 'workspace', server_url: 'http://localhost:8000' };
+    fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
     return Promise.resolve();
   }
 
   console.log('');
   console.log('  \u2728 Welcome to pyRPC!');
-  console.log('  Let\'s set up your client configuration.');
+  console.log('  Let\u2019s set up your client configuration.');
   console.log('');
 
   var rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   return new Promise(function(resolve) {
-    rl.question('How are types distributed to the client?\n  1) workspace (default) - server writes types directly to your project\n  2) server - client fetches types via HTTP\nEnter choice [1]: ', function(answer) {
+    rl.question('How are types distributed?\n  1) workspace (default) - server writes types directly to your project\n  2) server - client fetches types via HTTP\nEnter choice [1]: ', function(answer) {
       rl.close();
       resolve(answer.trim() === '2' ? 'server' : 'workspace');
     });
   }).then(function(distribution) {
-    if (distribution === 'workspace') {
-      var config = { distribution: 'workspace' };
-      fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
-      console.log('  \u2713 pyrpc-client.json created (workspace mode)');
-      console.log('  Your server\'s pyrpc dev command will write types directly.');
-      console.log('  Import: import { createClient, type Types } from "@pyrpc/client"');
-      return;
-    }
-
+    // Always prompt for URL with same default
     var rl2 = readline.createInterface({ input: process.stdin, output: process.stdout });
     return new Promise(function(resolve) {
-      rl2.question('pyRPC backend URL (default: http://localhost:8000): ', function(answer) {
+      rl2.question('Server URL [http://localhost:8000]: ', function(answer) {
         rl2.close();
         resolve(answer.trim() || 'http://localhost:8000');
       });
-    }).then(function(url) {
-      return fetchSchema(url).then(function(schemas) {
-        var code = generate(schemas);
-        fs.mkdirSync(path.dirname(TYPES_FILE), { recursive: true });
-        fs.writeFileSync(TYPES_FILE, code, 'utf-8');
-        console.log('  \u2713 @pyrpc/types: generated for ' + Object.keys(schemas).length + ' procedures');
+    }).then(function(serverUrl) {
+      var config = { distribution: distribution, server_url: serverUrl };
+      fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
+      console.log('  \u2713 pyrpc-client.json created (' + distribution + ' mode)');
 
-        var config = { distribution: 'server', server_url: url };
-        fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
-        console.log('  \u2713 pyrpc-client.json created (server mode)');
-        console.log('  Import: import { createClient, type Types } from "@pyrpc/client"');
-      }).catch(function(err) {
-        console.log('  \u2717 @pyrpc/types: could not connect (' + err.message + ')');
-        console.log('  Run later: npx pyrpc sync');
-
-        var config = { distribution: 'server', server_url: url };
-        fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + '\n');
-        console.log('  \u2713 pyrpc-client.json created (server mode)');
-      });
+      if (distribution === 'server') {
+        return fetchSchema(serverUrl).then(function(schemas) {
+          var code = generate(schemas);
+          fs.mkdirSync(path.dirname(TYPES_FILE), { recursive: true });
+          fs.writeFileSync(TYPES_FILE, code, 'utf-8');
+          console.log('  \u2713 @pyrpc/types: generated for ' + Object.keys(schemas).length + ' procedures');
+        }).catch(function(err) {
+          console.log('  \u2717 @pyrpc/types: could not connect (' + err.message + ')');
+          console.log('  Run later: npx pyrpc sync');
+        });
+      } else {
+        console.log('  Your server\u2019s pyrpc dev command will write types directly.');
+      }
     });
   });
 }
