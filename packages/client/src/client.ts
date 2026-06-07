@@ -14,9 +14,10 @@ Or set up your client configuration by running:
 `;
 
 function readPyrpcClientConfig(): { distribution?: string; server_url?: string } | null {
+  if (typeof process === 'undefined' || typeof require === 'undefined') return null;
   try {
-    const fs = require('fs') as typeof import('fs');
-    const p = require('path') as typeof import('path');
+    const fs = require('fs') as { existsSync: (p: string) => boolean; readFileSync: (p: string, enc: string) => string };
+    const p = require('path') as { join: (...args: string[]) => string; dirname: (p: string) => string };
 
     let dir = process.cwd();
     while (true) {
