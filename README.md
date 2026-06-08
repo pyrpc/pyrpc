@@ -1,10 +1,26 @@
 <div align="center">
   <picture>
-    <img alt="pyRPC" src="https://github.com/user-attachments/assets/6f7b3e8e-2e66-4135-a89d-c84b3cefcfe1" />
+    <source media="(prefers-color-scheme: dark)" srcset="docs/public/branding/png/pyrpc-wordmark-bg-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/public/branding/png/pyrpc-wordmark-bg-light.png" />
+    <img alt="pyRPC" src="docs/public/branding/png/pyrpc-wordmark-bg-light.png" width="400" />
   </picture>
+</div>
 
-  <br/>
+<h3 align="center">Type-safe RPC for Python &amp; TypeScript</h3>
 
+<p align="center">
+  Define procedures in Python. Consume them in TypeScript with full type safety — whether in a monorepo or across repositories.
+</p>
+
+<p align="center">
+  <a href="https://pyrpc.com"><b>Website</b></a>
+  ·
+  <a href="https://pyrpc.com/docs"><b>Docs</b></a>
+  ·
+  <a href="https://github.com/pyrpc/pyrpc/issues"><b>Issues</b></a>
+</p>
+
+<p align="center">
   <a href="https://pepy.tech/project/pyrpc-core">
     <img src="https://img.shields.io/pypi/dm/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI downloads"/>
   </a>
@@ -14,56 +30,60 @@
   <a href="https://pypi.org/project/pyrpc-core/">
     <img src="https://img.shields.io/pypi/v/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI version"/>
   </a>
-
-  <p>
-    <a href="https://pyrpc.com"><b>Website</b></a>
-    ·
-    <a href="https://github.com/pyrpc/pyrpc/issues"><b>Issues</b></a>
-  </p>
-</div>
+  <a href="https://github.com/pyrpc/pyrpc/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/pyrpc/pyrpc?style=flat&colorA=000000&colorB=000000" alt="License"/>
+  </a>
+</p>
 
 > [!WARNING]
 > pyRPC is in active development. APIs may change as we approach a stable release. Read the [changelog](https://pyrpc.com/changelog) and [roadmap](./ROADMAP.md) for direction.
 
-## pyRPC
-
-**pyRPC** is type-safe RPC for Python and TypeScript. It gives you a tRPC-like experience with a Python backend: one `@rpc` decorator defines the endpoint, generates the TypeScript types, and validates every request at runtime.
-
-Unlike REST, there are no URL conventions, no status code mapping, no manual fetch wrappers. Unlike GraphQL, there is no query language, no schema file, no resolver tree. Unlike gRPC, there is no IDL, no codegen-first workflow, no protobuf compilation step. pyRPC starts from Python code and reaches into TypeScript  -  not the other way around.
-
-### Philosophy
-- **Python-first, TypeScript reach**  -  your Python functions are the source of truth. TypeScript types are derived from them.
-- **Low ceremony**  -  one install, one decorator, one import on the client side. No schema files, no config, no CLI required for Python-to-Python.
-- **Framework-agnostic core**  -  `pyrpc-core` knows nothing about FastAPI or Flask. Adapters translate HTTP into core calls.
-- **Validation at runtime**  -  every parameter and return value is validated by Pydantic v2. The type definitions in TypeScript are derived from the same introspection that powers validation.
-- **Standards-based transport**  -  JSON-RPC 2.0 on the wire. The protocol is explicit and language-agnostic.
-- **Lockstep versioning**  -  all Python and npm packages release together at the same version. No ecosystem drift.
-
 ---
 
-### Install
+## What is pyRPC?
+
+pyRPC is a type-safe RPC framework for Python backends with TypeScript frontends. One `@rpc` decorator defines the endpoint, generates TypeScript types, and validates every request at runtime — no OpenAPI schemas, no codegen pipelines, no manual contract files.
+
+```python
+from pyrpc_core import rpc
+
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+```
+
+```ts
+import { createClient } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+const client = createClient<Types>()
+const result = await client.add(10, 5)  // typed as number
+```
+
+### Why pyRPC?
+
+End-to-end type safety across Python and TypeScript is a half-solved problem. Existing approaches rely on OpenAPI schemas that drift from implementation, manual type definitions that go out of sync, or heavy codegen pipelines. pyRPC treats your Python functions as the source of truth and derives TypeScript types directly from them — no middle layer, no drift.
+
+## Install
 
 ```bash
+# Using uv
 uv add pyrpc-core
-# or
+
+# Using pip
 pip install pyrpc-core
 ```
 
-The `pyrpc` CLI (serve, dev, inspect, codegen, pull) is included out of the box.
-
-For framework adapters, install extras:
+The `pyrpc` CLI (dev, serve, inspect, codegen, pull) is included out of the box. Framework adapters are available as extras:
 
 ```bash
 uv add pyrpc-core[fastapi]   # FastAPI adapter
 uv add pyrpc-core[flask]     # Flask adapter
 ```
 
----
+## Quick Start
 
-### Quick Start
-
-#### 1. Server-side (FastAPI Example)
-Define your procedures and mount the RPC layer.
+### 1. Define your procedures
 
 ```python
 from pyrpc_core import rpc
@@ -79,73 +99,76 @@ def add(a: int, b: int) -> int:
 mount_fastapi(app)
 ```
 
-#### 2. Start the dev server
-Run `pyrpc dev` from your project root. On first run, it prompts for your framework, Python module, and TypeScript client path - then generates types automatically.
+### 2. Start the dev server
 
 ```bash
-# CLI comes with pyrpc-core - no extra install needed
 pyrpc dev
 ```
 
-#### 3. Client-side (TypeScript)
-Once the dev server is running, use the typed client:
+On first run, it prompts for your framework, Python module, distribution mode, and client path — then generates types automatically.
+
+### 3. Call from TypeScript
 
 ```ts
 import { createClient } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
 const client = createClient<Types>()
-
-// Fully typed result and parameters - no manual type definitions needed
 const result = await client.add(10, 5)
+console.log(result)  // 15
 ```
 
-#### 3. Client-side (Python)
-Call your procedures from other Python services or scripts with zero codegen required.
+### 4. Or from Python
 
 ```python
 from pyrpc_core import RPCClient
 
 with RPCClient("http://localhost:8000") as client:
-    # Everything is dynamic and introspected at runtime
     result = client.add(10, 5)
     print(f"Result: {result}")
 ```
 
 ---
 
-### CLI Utilities
-The `pyrpc` CLI provides tooling for serving, inspecting, and generating typed contracts from your RPC procedures.
+## Distribution Modes
 
-- `pyrpc dev`: Start the dev server with automatic type regeneration and interactive console. First run prompts for framework, entrypoint, and client root - creates `pyrpc.json`.
-- `pyrpc serve`: Instantly host a Python RPC module for local development and testing.
-- `pyrpc inspect`: Explore registered procedures, inputs, outputs, and namespaces.
-- `pyrpc codegen`: Generate TypeScript types/contracts for end-to-end typed clients.
-- `pyrpc pull`: Extract RPC schema from a Python module and save as JSON.
+pyRPC supports two ways to sync TypeScript types:
 
-### Versioning
+- **Workspace** (default) — for monorepos. The server writes types directly into your client's `node_modules/@pyrpc/types`.
+- **Server** — for separate repositories. The client fetches types via `npx pyrpc sync` over HTTP.
 
-pyRPC uses `0.x.y` versioning while the API stabilizes. Pre-release tags use `-alpha.N`, `-beta.N`, and `-rc.N` suffixes. All packages - Python and npm - release in lockstep at the same version.
+Configure via `pyrpc.json`:
 
-See the [changelog](https://pyrpc.com/changelog) for per-release details and [ROADMAP.md](./ROADMAP.md) for direction and non-goals.
+```json
+{
+  "version": 1,
+  "framework": "fastapi",
+  "entrypoint": "server",
+  "client_root": "../frontend",
+  "distribution": "workspace"
+}
+```
 
-### Documentation & Examples
+---
 
-- [Docs site](https://pyrpc.com/docs) - guides, API reference, mental model
-- [examples/](./examples/) - complete server and client implementations
-- [PYRPC.md](./PYRPC.md) - architecture, invariants, and contributor policy
-- [Changelog](https://pyrpc.com/changelog) - per-release changes
+## Documentation
 
-### License
+- [Docs site](https://pyrpc.com/docs) — guides, API reference, mental model
+- [examples/](./examples/) — complete server and client implementations
+- [PYRPC.md](./PYRPC.md) — architecture, invariants, and contributor policy
+- [Changelog](https://pyrpc.com/changelog) — per-release changes
 
-MIT
+## Contributing
 
-### Contributing
+pyRPC is a free and open source project licensed under the [MIT License](./LICENSE). You are free to do whatever you want with it.
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for the PR workflow and [PYRPC.md](./PYRPC.md) for subsystem boundaries.
+You can help continue its development by:
 
-### Security
+- [Contributing to the source code](./CONTRIBUTING.md)
+- [Suggesting new features and reporting issues](https://github.com/pyrpc/pyrpc/issues)
 
-Report vulnerabilities privately: https://github.com/pyrpc/pyrpc/security/advisories/new
+## Security
 
-See [SECURITY.md](./SECURITY.md) for scope and supported versions.
+If you discover a security vulnerability within pyRPC, please report it via [GitHub Security Advisories](https://github.com/pyrpc/pyrpc/security/advisories/new).
+
+All reports will be promptly addressed, and you'll be credited accordingly.

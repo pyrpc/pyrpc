@@ -13,7 +13,9 @@ import {
   Search, 
   Package, 
   Activity, 
-  Grid2X2 
+  Grid2X2,
+  GitBranch,
+  Globe
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
@@ -225,7 +227,7 @@ export default function HomePage() {
                 className="max-w-xl text-neutral-600 dark:text-neutral-400 text-sm md:text-base leading-relaxed"
                 style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}
               >
-                Define procedures in Python. Consume them in TypeScript with full type safety -- without schema drift or code generation.
+                Define procedures in Python. Consume them in TypeScript with full type safety -- whether in a monorepo or across separate repositories.
               </p>
 
               <div className="flex items-center gap-4 flex-wrap mt-2">
@@ -665,11 +667,19 @@ export default function HomePage() {
               },
               {
                 id: "06",
-                title: "JSON-RPC 2.0.",
-                description: "Built on a predictable, standardized protocol for robust error handling.",
+                title: "Workspace or Remote.",
+                description: "Monorepo? Server writes types directly. Separate repos? Client fetches them via HTTP.",
                 visual: (
-                  <div className="px-2 py-1 border border-fd-border bg-fd-foreground/[0.02] rounded flex items-center gap-2">
-                    <span className="text-[9px] font-mono text-fd-foreground/40 tracking-widest">code: -32601</span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-amber-500/5 border border-amber-500/20">
+                      <GitBranch className="w-3 h-3 text-amber-500" />
+                      <span className="text-[9px] text-amber-500 font-bold tracking-tighter uppercase">Workspace</span>
+                    </div>
+                    <span className="text-neutral-600 text-[10px]">|</span>
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-sky-500/5 border border-sky-500/20">
+                      <Globe className="w-3 h-3 text-sky-500" />
+                      <span className="text-[9px] text-sky-500 font-bold tracking-tighter uppercase">Server</span>
+                    </div>
                   </div>
                 )
               }
