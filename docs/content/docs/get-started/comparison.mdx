@@ -1,12 +1,23 @@
 ---
 title: Comparison
-description: How pyRPC compares to other RPC frameworks
+description: How pyRPC compares to other RPC frameworks.
 
 ---
 
-# pyRPC vs Other Frameworks
+pyRPC brings tRPC-level type safety to Python + TypeScript stacks. It syncs your Python procedure signatures into TypeScript contracts automatically -- no OpenAPI schemas, no codegen pipelines, no manual boilerplate.
 
-pyRPC brings tRPC-level type safety to Python + TypeScript stacks. It syncs your Python procedure signatures into TypeScript contracts automatically - no OpenAPI schemas, no codegen pipelines, no manual boilerplate.
+## At a Glance
+
+| Feature | pyRPC | tRPC | gRPC | FastAPI + OpenAPI |
+|---|---|---|---|---|
+| Backend language | Python | TypeScript | Multi-language | Python |
+| Frontend types | Auto-generated TypeScript | Built-in TypeScript | Generated stubs | Manual or generated |
+| Schema / IDL required | None (Python types) | None (TypeScript types) | `.proto` files | OpenAPI spec |
+| Framework-agnostic | Yes (ASGI) | Node.js only | Yes (polyglot) | FastAPI only |
+| Transport | HTTP/JSON | HTTP/JSON | HTTP/2 (binary) | HTTP/JSON |
+| Works in monorepo | Yes (workspace mode) | Yes | Yes | Manual |
+| Cross-repo types | Yes (server mode) | No (same repo) | Yes (shared proto) | Only via OpenAPI |
+| Setup time | One command | One command | Proto compilation | Scaffold + generator |
 
 ## Key Differences
 
@@ -26,8 +37,15 @@ pyRPC brings tRPC-level type safety to Python + TypeScript stacks. It syncs your
 
 ✅ You want tRPC-like type safety but your backend runs Python, not Node.js.  
 ✅ You're shipping a React / Next.js frontend with a Python backend and want shared types.  
-✅ You need a "drop-in" solution for an existing FastAPI or Flask app.  
+✅ You need a drop-in solution for an existing FastAPI or Flask app.  
 ✅ You prefer standard Python type hints over OpenAPI schemas or gRPC protos.
+
+### When NOT to Use pyRPC
+
+❌ Your backend is Node.js -- tRPC is the native choice and will always be ahead.  
+❌ You need strict schema governance with a single IDL source of truth -- gRPC's proto-first workflow may suit you better.  
+❌ You are building a public REST API for third-party consumption -- OpenAPI remains the universal standard for that use case.  
+❌ Your frontend is not TypeScript -- pyRPC's type safety is built for the TS ecosystem.
 
 ```python
 # pyRPC: Your function is the API

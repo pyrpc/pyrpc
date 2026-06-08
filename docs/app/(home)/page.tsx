@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { 
-  Github, 
   Check, 
   Copy, 
   Zap, 
@@ -219,8 +218,8 @@ export default function HomePage() {
 
               {/* Headline */}
               <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.88] tracking-tighter text-fd-foreground">
-                <span className="block">Python APIs.</span>
-                <span className="block whitespace-nowrap text-fd-muted-foreground/50">Typed end-to-end.</span>
+                <span className="block">tRPC for</span>
+                <span className="block whitespace-nowrap">Python backends<span className="text-fd-muted-foreground/50">.</span></span>
               </h1>
 
               {/* Description */}
@@ -228,7 +227,7 @@ export default function HomePage() {
                 className="max-w-xl text-neutral-600 dark:text-neutral-400 text-sm md:text-base leading-relaxed"
                 style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}
               >
-                For teams shipping Python backends with TypeScript frontends. Define procedures in Python, consume them with full type safety -- no schema drift, no codegen pipelines.
+                tRPC-level type safety for teams shipping Python backends with TypeScript frontends. Define procedures in Python, call them from TypeScript — no schemas, no drift, no boilerplate.
               </p>
 
               <div className="flex items-center gap-4 flex-wrap mt-2">
@@ -249,26 +248,15 @@ export default function HomePage() {
                   <span>Try it live</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
-
-                {/* GitHub */}
-                <Link
-                  href="https://github.com/pyrpc/pyrpc"
-                  className="inline-flex items-center gap-2 text-neutral-500 hover:text-fd-foreground transition-colors px-6 py-2.5 border border-fd-border hover:bg-white/[0.03] text-[13px] font-medium tracking-tight rounded-md w-fit"
-                >
-                  <Github className="w-4 h-4" />
-                  <span>View on GitHub</span>
-                </Link>
               </div>
 
               {/* Social proof */}
-              <div className="flex items-center gap-5 text-[13px] text-neutral-500">
-                <a href="https://github.com/pyrpc/pyrpc" className="flex items-center gap-1.5 hover:text-fd-foreground transition-colors">
-                  <svg viewBox="0 0 16 16" className="w-4 h-4" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-                  <span>Stars</span>
+              <div className="flex items-center gap-3">
+                <a href="https://github.com/pyrpc/pyrpc">
+                  <img alt="GitHub Stars" src="https://img.shields.io/github/stars/pyrpc/pyrpc?style=flat&label=stars&colorA=000000&colorB=000000&logo=github" className="h-5" />
                 </a>
-                <a href="https://pypi.org/project/pyrpc-core/" className="flex items-center gap-1.5 hover:text-fd-foreground transition-colors">
-                  <svg viewBox="0 0 16 16" className="w-4 h-4" fill="currentColor"><path d="M8 1.5C4.14 1.5 1 4.64 1 8.5c0 2.05.97 3.88 2.47 5.05l.34-.93c.17-.47.73-.77 1.22-.63l.59.17a.75.75 0 01.47.47l.17.58c.14.49-.16 1.05-.63 1.22l-.93.34A6.97 6.97 0 008 15.5c3.86 0 7-3.14 7-7s-3.14-7-7-7zM4 7.5a1 1 0 112 0 1 1 0 01-2 0zm8 0a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
-                  <span>Downloads</span>
+                <a href="https://pypi.org/project/pyrpc-core/">
+                  <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/pyrpc-core?style=flat&label=downloads&colorA=000000&colorB=000000" className="h-5" />
                 </a>
               </div>
 
@@ -617,7 +605,7 @@ export default function HomePage() {
               Everything you need. Zero boilerplate.
             </h2>
             <p className="max-w-xl text-fd-foreground/50 text-sm md:text-base leading-relaxed font-sans">
-              tRPC-level type safety for teams shipping Python backends with TypeScript frontends. Move fast, catch bugs at compile-time, and focus on building features instead of manual contract files.
+              Move fast, catch bugs at compile-time, and focus on building features instead of manual contract files. Python defines the types — TypeScript consumes them, automatically.
             </p>
           </div>
 
@@ -641,8 +629,8 @@ export default function HomePage() {
               },
               {
                 id: "02",
-                title: "Workspace or Remote.",
-                description: "Monorepo? Server writes typed contracts directly. Separate repos? The client fetches them via HTTP at codegen time.",
+                title: "Monorepo or Separate Repos -- both work.",
+                description: "In a monorepo? The server writes typed contracts directly to the client. Separate repos? The client fetches them via HTTP at build time.",
                 visual: (
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-amber-500/5 border border-amber-500/20">
@@ -695,8 +683,8 @@ export default function HomePage() {
               },
               {
                 id: "06",
-                title: "Async-First Core.",
-                description: "Native async/await with high-concurrency performance baked in from the ground up.",
+                title: "Sync and async -- both work.",
+                description: "Write sync or async procedures -- pyRPC detects the right calling convention automatically.",
                 visual: (
                   <div className="flex gap-1 items-end h-6">
                     {[30, 70, 45, 95, 60].map((h, i) => (
