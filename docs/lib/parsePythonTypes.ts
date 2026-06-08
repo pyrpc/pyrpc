@@ -44,7 +44,7 @@ interface ParsedParam {
   type: string
 }
 
-export function parseServerCode(code: string): {
+function parseServerCode(code: string): {
   procedures: Record<string, { name: string; parameters: ParsedParam[]; return_type: string }>
   models: Record<string, Record<string, string>>
 } {
@@ -124,7 +124,7 @@ export function parseServerCode(code: string): {
   return { procedures, models }
 }
 
-export function introspectionToTypes(schema: {
+function introspectionToTypes(schema: {
   procedures: Record<string, { name: string; parameters: ParsedParam[]; return_type: string }>
   models: Record<string, Record<string, string>>
 }): string {

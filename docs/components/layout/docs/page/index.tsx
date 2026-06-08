@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import { buttonVariants } from '../../../ui/button';
-import { Edit, Text } from 'lucide-react';
+import { Text } from 'lucide-react';
 import { I18nLabel } from 'fumadocs-ui/contexts/i18n';
 import {
   type BreadcrumbProps,
@@ -170,30 +170,6 @@ export function DocsPage({
   );
 }
 
-export function EditOnGitHub(props: ComponentProps<'a'>) {
-  return (
-    <a
-      target="_blank"
-      rel="noreferrer noopener"
-      {...props}
-      className={cn(
-        buttonVariants({
-          color: 'secondary',
-          size: 'sm',
-          className: 'gap-1.5 not-prose',
-        }),
-        props.className,
-      )}
-    >
-      {props.children ?? (
-        <>
-          <Edit className="size-3.5" />
-          <I18nLabel label="editOnGithub" />
-        </>
-      )}
-    </a>
-  );
-}
 
 /**
  * Add typography styles
@@ -225,4 +201,4 @@ export function DocsTitle({ children, className, ...props }: ComponentProps<'h1'
   );
 }
 
-export { PageLastUpdate, PageBreadcrumb } from './client';
+

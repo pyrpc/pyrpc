@@ -1,8 +1,10 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
-import LineWaves from "./line-waves"
+
+const LineWaves = dynamic(() => import("./line-waves"), { ssr: false })
 
 export function BackgroundWaves() {
   const { resolvedTheme } = useTheme()

@@ -204,25 +204,6 @@ export function PageTOCPopoverContent(props: ComponentProps<'div'>) {
   );
 }
 
-export function PageLastUpdate({
-  date: value,
-  ...props
-}: Omit<ComponentProps<'p'>, 'children'> & { date: Date }) {
-  const { text } = useI18n();
-  const [date, setDate] = useState('');
-
-  useEffect(() => {
-    // to the timezone of client
-    setDate(value.toLocaleDateString());
-  }, [value]);
-
-  return (
-    <p {...props} className={cn('text-sm text-fd-muted-foreground', props.className)}>
-      {text.lastUpdate} {date}
-    </p>
-  );
-}
-
 type Item = Pick<PageTree.Item, 'name' | 'description' | 'url'>;
 export interface FooterProps extends ComponentProps<'div'> {
   /**
