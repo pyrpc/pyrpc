@@ -37,6 +37,5 @@ CollapsibleContent.displayName = Primitive.CollapsibleContent.displayName;
 
 export { Collapsible, CollapsibleTrigger, CollapsibleContent };
 
-export type CollapsibleProps = Primitive.CollapsibleProps;
 export type CollapsibleContentProps = Primitive.CollapsibleContentProps;
 export type CollapsibleTriggerProps = Primitive.CollapsibleTriggerProps;
