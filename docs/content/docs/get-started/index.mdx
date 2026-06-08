@@ -4,15 +4,20 @@ description: Welcome to pyRPC - The type-safe, Python-first RPC framework.
 
 ---
 
+<div className="flex items-center gap-4 mb-4">
+  <img alt="PyPI - Version" src="https://img.shields.io/pypi/v/pyrpc-core?style=flat&colorA=000000&colorB=000000&label=version" />
+  <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/pyrpc-core?style=flat&colorA=000000&colorB=000000" />
+</div>
+
 **pyRPC** is a modern "drop-in RPC layer" for Python. It turns your backend into a library of typed async functions that can be called from anywhere.
 
-Inspired by the DX of **tRPC** and **Better Auth**, pyRPC eliminates the need for OpenAPI schemas, heavy generators, or manual boilerplate.
+Inspired by the DX of **tRPC**, pyRPC eliminates the need for OpenAPI schemas, heavy generators, or manual boilerplate.
 
 ## The Problem
 
-Modern web development often feels like managing two separate worlds. You have a typed Python backend and a typed TypeScript frontend, but the bridge between them is usually a "dumb" JSON-RPC or REST interface.
+You rename a Python function from `get_user` to `fetch_user`. Your TypeScript client silently breaks — no error, no warning, just a runtime failure in production.
 
-You end up manually writing TypeScript interfaces for Python models, handling string-based API routes that break when you rename a function, and relying on OpenAPI specs that are often out of sync with reality.
+That's the reality of maintaining type safety across a Python backend and a TypeScript frontend without a shared contract layer.
 
 ## The Solution
 

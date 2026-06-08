@@ -1,12 +1,35 @@
-import Link from 'next/link'
+'use client';
 
-const posts = [
+import Link from 'next/link'
+import { useState } from 'react'
+import { cn } from '@/lib/cn'
+
+type Category = 'all' | 'release' | 'deep-dive' | 'tutorial'
+
+const categories: { key: Category; label: string }[] = [
+    { key: 'all', label: 'All Posts' },
+    { key: 'release', label: 'Release Notes' },
+    { key: 'deep-dive', label: 'Deep Dives' },
+    { key: 'tutorial', label: 'Tutorials' },
+]
+
+interface Post {
+    slug: string
+    title: string
+    description: string
+    date: string
+    readTime: string
+    category: Category
+}
+
+const posts: Post[] = [
     {
         slug: 'building-a-full-stack-app-with-pyrpc',
         title: 'Building a full-stack app with pyRPC',
         description: 'A step-by-step tutorial: FastAPI backend, TypeScript React frontend, end-to-end type safety with pyRPC.',
         date: 'May 25, 2026 at 9:00am',
         readTime: '10 min',
+        category: 'tutorial',
     },
     {
         slug: 'from-raw-fastapi-to-pyrpc',
@@ -14,6 +37,7 @@ const posts = [
         description: 'A before-and-after migration guide showing how to convert a traditional FastAPI application to pyRPC - and why you might want to.',
         date: 'May 25, 2026 at 10:30am',
         readTime: '7 min',
+        category: 'tutorial',
     },
     {
         slug: 'why-pyrpc',
@@ -21,6 +45,7 @@ const posts = [
         description: 'The philosophy behind pyRPC, what tRPC-style typing means for Python backends, and why we built it.',
         date: 'May 25, 2026 at 1:00pm',
         readTime: '6 min',
+        category: 'tutorial',
     },
     {
         slug: 'demo-sandbox-design',
@@ -28,6 +53,7 @@ const posts = [
         description: 'A deep dive into how the pyrpc playground works - design decisions, architecture, and a comparison with the real pyrpc implementation.',
         date: 'May 25, 2026 at 3:00pm',
         readTime: '8 min',
+        category: 'deep-dive',
     },
     {
         slug: 'codegen-refactor-and-dx',
@@ -35,6 +61,7 @@ const posts = [
         description: 'Pattern A CLI, lazy pyrpc-core imports, frontend DX simplified to npm install, cross-language positioning, SECURITY.md rewrite, and Windows cp1252 fixes.',
         date: 'May 29, 2026 at 10:00am',
         readTime: '8 min',
+        category: 'release',
     },
     {
         slug: 'v0-2-0-type-safety-and-await',
@@ -42,6 +69,7 @@ const posts = [
         description: 'The three critical fixes that ship pyRPC v0.2.0: real type generation, working async, and a postinstall-based @pyrpc/types setup.',
         date: 'May 29, 2026 at 2:00pm',
         readTime: '6 min',
+        category: 'release',
     },
     {
         slug: 'dev-console-architecture',
@@ -49,6 +77,7 @@ const posts = [
         description: 'Threads, subprocesses, and an embedded interactive console - how pyrpc dev combines a dev server, file watcher, type generator, and CLI into one terminal session.',
         date: 'June 2, 2026 at 8:30am',
         readTime: '14 min',
+        category: 'deep-dive',
     },
     {
         slug: 'cli-overhaul-and-dev-tools',
@@ -56,6 +85,7 @@ const posts = [
         description: 'Merging pull into codegen, fixing serve, adding the dev watcher and shell REPL, and integrating jsonschema-ts for Pydantic model interfaces.',
         date: 'June 2, 2026 at 9:45am',
         readTime: '12 min',
+        category: 'release',
     },
     {
         slug: 'circular-dependency-package-architecture',
@@ -63,6 +93,7 @@ const posts = [
         description: 'How we discovered and solved the circular dependency between pyrpc-core and pyrpc-codegen by extracting pyrpc-cli - with three alternative strategies evaluated and a step-by-step extraction guide.',
         date: 'June 2, 2026 at 10:15am',
         readTime: '10 min',
+        category: 'deep-dive',
     },
     {
         slug: 'dev-console-vs-shell-design-decisions',
@@ -70,13 +101,15 @@ const posts = [
         description: 'Why the dev console reads from the parent process (not HTTP), how the shell connects remotely, and the shared REPL UI that bridges them.',
         date: 'June 2, 2026 at 11:30am',
         readTime: '8 min',
+        category: 'deep-dive',
     },
     {
         slug: 'core-cli-codegen-dependency-chain',
-        title: 'Core \u2192 CLI \u2192 Codegen: why the dependency direction matters',
-        description: 'Why pyrpc-core \u2192 pyrpc-cli \u2192 pyrpc-codegen is the right dependency direction - and three principles for designing package chains that never tangle.',
+        title: 'Core → CLI → Codegen: why the dependency direction matters',
+        description: 'Why pyrpc-core → pyrpc-cli → pyrpc-codegen is the right dependency direction - and three principles for designing package chains that never tangle.',
         date: 'June 2, 2026 at 1:00pm',
         readTime: '7 min',
+        category: 'deep-dive',
     },
     {
         slug: 'better-auth-pattern-for-python',
@@ -84,6 +117,7 @@ const posts = [
         description: 'How Better Auth\u2019s npm meta-package inspired pyrpc\u2019s package architecture, and how we adapted it for Python\u2019s packaging constraints.',
         date: 'June 2, 2026 at 2:15pm',
         readTime: '9 min',
+        category: 'deep-dive',
     },
     {
         slug: 'lazy-imports-as-api-contract',
@@ -91,6 +125,7 @@ const posts = [
         description: 'Three tiers of CLI commands, the packaging-vs-code dependency distinction, and why lazy imports define capability boundaries \u2014 not just startup time.',
         date: 'June 2, 2026 at 3:00pm',
         readTime: '8 min',
+        category: 'deep-dive',
     },
     {
         slug: 'windows-compatibility-in-python-oss',
@@ -98,6 +133,7 @@ const posts = [
         description: 'Unicode crashes on cp1252, LF/CRLF git warnings, path separators, file watcher quirks, and a no-special-chars policy for cross-platform Python OSS.',
         date: 'June 2, 2026 at 4:00pm',
         readTime: '7 min',
+        category: 'deep-dive',
     },
     {
         slug: 'breaking-circular-dependencies-in-python',
@@ -105,6 +141,7 @@ const posts = [
         description: 'Four strategies for breaking circular package dependencies in Python, evaluated through pyrpc\u2019s real-world restructuring \u2014 with a step-by-step extraction guide.',
         date: 'June 2, 2026 at 5:30pm',
         readTime: '11 min',
+        category: 'deep-dive',
     },
     {
         slug: 'merging-cli-back-into-core',
@@ -112,6 +149,7 @@ const posts = [
         description: 'How the circular dependency that motivated a three-package split disappeared - and why we simplified back to two packages for a single-install experience.',
         date: 'June 2, 2026 at 6:30pm',
         readTime: '7 min',
+        category: 'release',
     },
     {
         slug: 'v0-3-0-single-install',
@@ -119,6 +157,7 @@ const posts = [
         description: 'pip install pyrpc-core now gives you the runtime, CLI, and codegen in a single command - no separate packages, no extra steps.',
         date: 'June 2, 2026 at 10:15pm',
         readTime: '5 min',
+        category: 'release',
     },
     {
         slug: 'v0-3-1-lazy-codegen-import',
@@ -126,6 +165,7 @@ const posts = [
         description: 'pyrpc_codegen is no longer loaded for version, inspect, serve, pull, or help - only codegen and dev need it. A patch triggered by a stale shim bug.',
         date: 'June 3, 2026 at 10:30am',
         readTime: '4 min',
+        category: 'release',
     },
     {
         slug: 'v0-3-2-clean-ux-and-terminal',
@@ -133,6 +173,7 @@ const posts = [
         description: 'Interactive framework picker, simplified entry point, CWD import path fix, and a terminal that shows what matters - no Uvicorn spam, no raw [cyan] markup, no giant Panel boxes.',
         date: 'June 3, 2026 at 6:00pm',
         readTime: '6 min',
+        category: 'release',
     },
     {
         slug: 'v0-3-3-client-and-watcher-fixes',
@@ -140,6 +181,7 @@ const posts = [
         description: 'TypeScript autocomplete no longer suggests .rpc, URL normalization prevents double /rpc/rpc, file watcher debounced to 300ms, and the ASGI dev server now sends CORS headers - all following reference patterns from tRPC, Better Auth, FastAPI, webpack, and nodemon.',
         date: 'June 3, 2026 at 9:30pm',
         readTime: '8 min',
+        category: 'release',
     },
     {
         slug: 'pyrpc-json-config',
@@ -147,6 +189,7 @@ const posts = [
         description: 'Three problems with [tool.pyrpc] in pyproject.toml - fragile writing, ambiguous file ownership, and unclear path semantics - and why a dedicated pyrpc.json file with JSON, not TOML, was the right answer.',
         date: 'June 6, 2026 at 8:00am',
         readTime: '9 min',
+        category: 'deep-dive',
     },
     {
         slug: 'path-resolution-config-relative',
@@ -154,6 +197,7 @@ const posts = [
         description: 'Why resolving paths against pyrpc.json\'s directory (not os.getcwd()) is the only correct approach, how the pipeline produces absolute paths everywhere, and why save_typescript_client() enforces the contract at the boundary.',
         date: 'June 6, 2026 at 8:15am',
         readTime: '8 min',
+        category: 'deep-dive',
     },
     {
         slug: 'migration-strategy-three-cases',
@@ -161,6 +205,7 @@ const posts = [
         description: 'What happens when you change client_root in pyrpc.json? Three cases with SHA256 comparison, interactive prompts only when needed, and a clean KeyboardInterrupt path that never leaves half-migrated state.',
         date: 'June 6, 2026 at 8:30am',
         readTime: '10 min',
+        category: 'deep-dive',
     },
     {
         slug: 'three-deployment-architectures',
@@ -168,6 +213,7 @@ const posts = [
         description: 'Monorepo, separate repos, and published npm package - how pyrpc\'s config system and type generation handle all three workflows, and why server-side codegen was built before the client-side npx CLI.',
         date: 'June 6, 2026 at 8:45am',
         readTime: '9 min',
+        category: 'deep-dive',
     },
     {
         slug: 'integrated-first-time-setup',
@@ -175,6 +221,7 @@ const posts = [
         description: 'Why pyrpc embeds setup inside pyrpc dev instead of a separate init command: fewer context switches, --reconfigure pre-fills defaults, CLI flags skip the wizard entirely, and KeyboardInterrupt exits cleanly.',
         date: 'June 6, 2026 at 9:00am',
         readTime: '8 min',
+        category: 'deep-dive',
     },
     {
         slug: 'absolute-path-contract',
@@ -182,6 +229,7 @@ const posts = [
         description: 'The hidden bug in os.getcwd() fallback paths - why a silent default is worse than a hard error, how the CLI layer resolves paths before calling the API, and the "fail fast on global state" design principle.',
         date: 'June 6, 2026 at 9:15am',
         readTime: '7 min',
+        category: 'deep-dive',
     },
     {
         slug: 'distribution-modes',
@@ -189,6 +237,7 @@ const posts = [
         description: 'Two distribution modes for pyrpc: workspace (monorepo, types written directly to client) and server (separate repos, types fetched via HTTP). When to use each and how they work under the hood.',
         date: 'June 6, 2026 at 1:00pm',
         readTime: '8 min',
+        category: 'deep-dive',
     },
     {
         slug: 'distribution-workspace-flow',
@@ -196,6 +245,7 @@ const posts = [
         description: 'A step-by-step walkthrough of workspace mode: config resolution, client root validation, migration checks, file watcher loop, dev server startup, and CI compatibility.',
         date: 'June 6, 2026 at 1:15pm',
         readTime: '7 min',
+        category: 'deep-dive',
     },
     {
         slug: 'distribution-server-flow',
@@ -203,6 +253,7 @@ const posts = [
         description: 'How server mode works: the schema endpoint stays in memory, pyrpc never writes to the client filesystem, and the client fetches types on demand via npx pyrpc sync.',
         date: 'June 6, 2026 at 1:30pm',
         readTime: '9 min',
+        category: 'deep-dive',
     },
     {
         slug: 'v0-6-0-release',
@@ -210,18 +261,48 @@ const posts = [
         description: 'npx pyrpc sync, postinstall prompt, framework extras (pyrpc-core[fastapi], pyrpc-core[flask]), adapter auto-install, pyrpc.json config, distribution modes, and package standardization.',
         date: 'June 6, 2026 at 2:00pm',
         readTime: '10 min',
+        category: 'release',
     },
 ]
 
 export default function BlogPage() {
+    const [active, setActive] = useState<Category>('all')
+
+    const filtered = active === 'all' ? posts : posts.filter(p => p.category === active)
+
+    const tagLabel: Record<Category, string> = {
+        'all': '',
+        'release': 'Release',
+        'deep-dive': 'Deep Dive',
+        'tutorial': 'Tutorial',
+    }
+
     return (
         <div className="max-w-3xl mx-auto px-6 py-20">
             <h1 className="text-2xl font-bold tracking-tight uppercase font-mono mb-2">Blog</h1>
-            <p className="text-sm text-fd-muted-foreground mb-12">
+            <p className="text-sm text-fd-muted-foreground mb-8">
                 Design notes, deep dives, and updates from the pyrpc team.
             </p>
+
+            <div className="flex items-center gap-2 mb-12 pb-6 border-b border-fd-border">
+                {categories.map((cat) => (
+                    <button
+                        key={cat.key}
+                        onClick={() => setActive(cat.key)}
+                        className={cn(
+                            "px-3 py-1.5 text-[11px] font-medium tracking-wide rounded-full transition-colors",
+                            active === cat.key
+                                ? "bg-fd-foreground text-fd-background dark:text-black"
+                                : "text-fd-muted-foreground hover:text-fd-foreground bg-fd-accent/30"
+                        )}
+                    >
+                        {cat.label}
+                    </button>
+                ))}
+            </div>
+
             <div className="space-y-6">
-                {[...posts].reverse().map((post) => (
+                {[...filtered].reverse().map((post) => (
                     <Link
                         key={post.slug}
                         href={`/blog/${post.slug}`}
@@ -231,6 +312,9 @@ export default function BlogPage() {
                             <time>{post.date}</time>
                             <span>&middot;</span>
                             <span>{post.readTime}</span>
+                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-fd-accent/50 text-fd-muted-foreground font-bold">
+                                {tagLabel[post.category]}
+                            </span>
                         </div>
                         <h2 className="text-base font-semibold group-hover:text-fd-foreground transition-colors mb-1">
                             {post.title}

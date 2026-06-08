@@ -6,8 +6,21 @@ import { BackgroundWaves } from '@/components/background-waves';
 import { NonDocsLayout } from '@/components/non-docs-layout';
 import './global.css';
 import type { ReactNode } from 'react';
+import type { Metadata } from 'next';
 
-export default function Layout({ children }: { children: ReactNode }) {
+export const metadata: Metadata = {
+  title: {
+    default: 'pyRPC — Type-Safe Python RPC for TypeScript Frontends',
+    template: '%s | pyRPC',
+  },
+  description: 'Define procedures in Python. Consume them in TypeScript with full type safety — no schema drift, no codegen pipelines.',
+  openGraph: {
+    title: 'pyRPC — Type-Safe Python RPC for TypeScript Frontends',
+    description: 'Define procedures in Python. Consume them in TypeScript with full type safety — no schema drift, no codegen pipelines.',
+  },
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-fd-background text-fd-foreground" suppressHydrationWarning>
