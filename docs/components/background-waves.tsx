@@ -18,14 +18,14 @@ export function BackgroundWaves() {
     >
       <div className="absolute inset-0">
         <LineWaves
-          rotation={-38}
-          speed={0.35}
-          warpIntensity={0.3}
-          innerLineCount={50}
-          outerLineCount={15}
+          rotation={-42}
+          speed={0.4}
+          warpIntensity={0.35}
+          innerLineCount={45}
+          outerLineCount={12}
           edgeFadeWidth={0}
           colorCycleSpeed={0}
-          brightness={isDark ? 0.15 : 0.25}
+          brightness={isDark ? 0.07 : 0.16}
           color1="#ffffff"
           color2="#ffffff"
           color3="#ffffff"
@@ -36,7 +36,7 @@ export function BackgroundWaves() {
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white dark:from-fd-background to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white dark:from-fd-background to-transparent" />
       <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(255,255,255,1)_92%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_30%,#0a0a0a_92%)] opacity-70"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(255,255,255,1)_90%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_25%,#070707_90%)] opacity-90"
       />
     </div>
   )
