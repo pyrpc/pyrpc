@@ -72,16 +72,16 @@ float smoothNoise(float x) {
 }
 
 float displaceA(float coord, float t) {
-  float result = sin(coord * 2.123) * 0.2;
-  result += sin(coord * 3.234 + t * 4.345) * 0.1;
-  result += sin(coord * 0.589 + t * 0.934) * 0.5;
+  float result = sin(coord * 1.5 + t * 0.6) * 0.35;
+  result += sin(coord * 3.7) * 0.15;
+  result += sin(coord * 0.7 + t * 1.1) * 0.3;
   return result;
 }
 
 float displaceB(float coord, float t) {
-  float result = sin(coord * 1.345) * 0.3;
-  result += sin(coord * 2.734 + t * 3.345) * 0.2;
-  result += sin(coord * 0.189 + t * 0.934) * 0.3;
+  float result = sin(coord * 2.1 + t * 0.4) * 0.25;
+  result += sin(coord * 0.9) * 0.3;
+  result += sin(coord * 4.3 + t * 1.8) * 0.15;
   return result;
 }
 
