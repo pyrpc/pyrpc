@@ -6,7 +6,7 @@ description: How the magic happens under the hood.
 
 # Architecture
 
-pyRPC is designed to be as "invisible" as possible. To achieve this, it relies on a simple multi-tier architecture: **Registry**, **Introspection**, **Config**, and **Contract**.
+pyRPC is designed to be as "invisible" as possible. To achieve this, it relies on a simple multi-tier architecture: **Registry**, **Introspection**, **Config**, **Distribution**, and **Contract**.
 
 ## 1. The Registry (Source of Truth)
 
@@ -34,19 +34,64 @@ pyRPC stores project settings in a dedicated `pyrpc.json` file:
   "version": 1,
   "framework": "fastapi",
   "entrypoint": "main",
-  "client_root": "../frontend"
+  "client_root": "../frontend",
+  "distribution": "workspace"
 }
 ```
 
 - **framework**: The web framework adapter to use (fastapi, flask, asgi)
 - **entrypoint**: The Python module to scan for `@rpc` procedures
 - **client_root**: Relative path to the TypeScript client project
+- **distribution**: How types are delivered to the client — `workspace` (monorepo) or `server` (remote)
 
 All paths are resolved relative to `pyrpc.json`'s directory at config load time. The types output path is derived automatically from `client_root`.
 
 The config file is created by `pyrpc dev` and can be updated with `--reconfigure` or individual flags.
 
-## 4. Contract Synchronization
+## 4. Distribution
+
+How TypeScript types are delivered to the client depends on the **distribution mode**. This is configured via the `distribution` field in `pyrpc.json`.
+
+### Workspace Mode (Monorepo)
+
+When backend and frontend live in the same repository, the server writes generated types **directly** into the client's `node_modules`:
+
+```
+┌──────────────┐     writes types      ┌─────────────────┐
+│  Python Dev  │ ──────────────────→   │  node_modules/  │
+│  pyrpc dev   │                       │  @pyrpc/types   │
+└──────────────┘                       └─────────────────┘
+```
+
+- Types are regenerated automatically on every file change (300ms debounce).
+- No network round-trip — the frontend sees updates instantly.
+- The TypeScript client imports types from `@pyrpc/types` as if they were a regular npm package.
+
+### Server Mode (Remote / Separate Repos)
+
+When backend and frontend are in different repositories, the server exposes the schema at `GET /rpc` and the client fetches it on demand:
+
+```
+┌──────────────┐  GET /rpc (schema)   ┌─────────────────┐
+│  Python Dev  │ ←──────────────────  │  npx pyrpc sync │
+│  pyrpc dev   │     (HTTP fetch)     │  @pyrpc/client  │
+└──────────────┘                      └─────────────────┘
+```
+
+- The server never touches the client's filesystem.
+- Frontend developers run `npx pyrpc sync` to pull the latest schema and regenerate types.
+- The `@pyrpc/client` postinstall script prompts for the server URL and distribution mode on first install.
+
+### How It Works Under the Hood
+
+Both modes use the same introspection schema (from `GET /rpc`). The difference is *who* initiates the sync:
+
+- **Workspace**: `pyrpc dev` calls `save_typescript_client()` on regeneration, writing directly to the resolved `client_root`.
+- **Server**: `pyrpc dev` only updates the in-memory schema. The client's `npx pyrpc sync` fetches it over HTTP and runs `save_typescript_client()` locally.
+
+This means you can switch between modes without changing your Python code — only the `distribution` field and the client's setup process differ.
+
+## 5. Contract Synchronization
 
 The final tier is the **Contract**. This is the bridge to TypeScript.
 

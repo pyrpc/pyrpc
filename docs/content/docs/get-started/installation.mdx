@@ -6,9 +6,53 @@ description: Install pyRPC and its modular adapters.
 
 pyRPC follows a modular packaging strategy. You only pay for what you use.
 
+## Project Setup
+
+### Python
+
+Before installing pyRPC, set up a Python virtual environment:
+
+```bash
+# Create a virtual environment
+python -m venv .venv
+
+# Activate it
+# macOS / Linux:
+source .venv/bin/activate
+
+# Windows:
+.venv\Scripts\activate
+```
+
+If you're using **uv** (recommended), you can initialize a new project:
+
+```bash
+# Initialize a new uv project
+uv init
+
+# Or if your project already exists, just create the venv
+uv venv
+```
+
+### TypeScript / npm
+
+For the frontend client, you'll need a TypeScript project. Create one if you haven't already:
+
+```bash
+# Create a new TypeScript project
+npm init -y
+npm install typescript --save-dev
+npx tsc --init
+
+# Or with a framework like Next.js
+npx create-next-app@latest frontend
+```
+
+The `@pyrpc/client` package will be installed later when you generate types.
+
 ## Core Package
 
-The tiny core protocol and runtime. This is always required.
+The tiny core protocol and runtime. This is always required. Make sure your virtual environment is activated first, then:
 
 ```bash
 # Using uv
@@ -46,12 +90,13 @@ The fastest way to get started:
 pyrpc dev
 ```
 
-On first run, `pyrpc dev` walks you through setup interactively - framework, Python module, and TypeScript client path. It creates a `pyrpc.json` config file, generates types, and starts the development server with auto-regeneration on file changes.
+On first run, `pyrpc dev` walks you through setup interactively — framework, Python module, distribution mode, and TypeScript client path. It creates a `pyrpc.json` config file, generates types, and starts the development server with auto-regeneration on file changes.
 
 You can also pass flags to skip the wizard:
 
 ```bash
 pyrpc dev --framework fastapi --entry server --client-root ../frontend
+pyrpc dev --framework fastapi --entry server --distribution server
 ```
 
 ### Configuration (`pyrpc.json`)
@@ -63,7 +108,8 @@ pyRPC stores its project configuration in a dedicated `pyrpc.json` file (not in 
   "version": 1,
   "framework": "fastapi",
   "entrypoint": "server",
-  "client_root": "../frontend"
+  "client_root": "../frontend",
+  "distribution": "workspace"
 }
 ```
 
@@ -76,6 +122,64 @@ For CI/CD or one-off generation:
 ```bash
 pyrpc codegen http://localhost:8000
 ```
+
+## Distribution Modes
+
+pyRPC supports two distribution modes for syncing TypeScript types from your Python server, configured via the `distribution` field in `pyrpc.json`.
+
+### Workspace Mode (default)
+
+Ideal for monorepos where the Python backend and TypeScript frontend live in the same repository. The server writes generated types **directly** into your client's `node_modules/@pyrpc/types`:
+
+```bash
+# pyrpc.json
+{
+  "version": 1,
+  "framework": "fastapi",
+  "entrypoint": "server",
+  "client_root": "../frontend",
+  "distribution": "workspace"
+}
+```
+
+- Types are regenerated automatically on every file change.
+- No network calls needed — the frontend sees updates instantly.
+- Works great for monorepos, side projects, and co-located teams.
+
+### Server Mode
+
+Best for separate repositories or when the frontend team cannot access the backend filesystem. The server exposes the schema at `GET /rpc`, and the client fetches it via `npx pyrpc sync`:
+
+```bash
+# Start the dev server in server mode
+pyrpc dev --distribution server
+```
+
+On the client side:
+
+```bash
+npm install @pyrpc/client
+npx pyrpc sync
+```
+
+The postinstall script of `@pyrpc/client` prompts for the distribution mode:
+
+```
+? How are types distributed?
+  1) workspace (default) - server writes types directly to your project
+  2) server - client fetches types via HTTP
+```
+
+- No filesystem access to the server is required.
+- Teams can work independently on backend and frontend.
+- The schema is fetched over HTTP on demand.
+
+### Quick Reference
+
+| Mode | Use Case | How Types Sync |
+|------|----------|---------------|
+| `workspace` | Monorepo, co-located projects | Server writes to `node_modules` directly |
+| `server` | Separate repos, remote teams | Client fetches via `npx pyrpc sync` |
 
 ## Quick Start Example (FastAPI)
 

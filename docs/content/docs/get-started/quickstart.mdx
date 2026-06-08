@@ -11,8 +11,10 @@ Copy, paste, run. No fluff - just a working pyRPC server and client call.
 ## 1. Install
 
 ```bash
-uv add pyrpc-core[fastapi] uvicorn
+uv add pyrpc-core[fastapi]
 ```
+
+> `uvicorn` is included as a dependency of `pyrpc-core` — no need to install it separately. The `pyrpc dev` command uses it under the hood.
 
 ## 2. Server
 
@@ -40,13 +42,13 @@ mount_fastapi(app)
 
 ## 3. Start the dev server
 
-Run `pyrpc dev` - on first run it will prompt for your framework, Python module, and TypeScript client location, then generate types automatically.
+Run `pyrpc dev` - on first run it will prompt for your framework, Python module, TypeScript client location, and distribution mode, then generate types automatically.
 
 ```bash
 pyrpc dev
 ```
 
-**Expected output:**
+**Expected output (workspace mode — monorepo):**
 
 ```
 pyRPC Setup
@@ -54,14 +56,26 @@ Let's configure pyRPC for your project.
 
 ? Which web framework are you using?  fastapi
 ? Python module to scan for @rpc procedures:  server
+? How are types distributed?  workspace
 ? Where is your TypeScript client project?:  ../frontend
 
   ✓ Types regenerated (2 procs)
   pyRPC dev server  http://127.0.0.1:8000/rpc
-  Types: C:\Users\me\project\frontend\node_modules\@pyrpc\types\src\index.ts
+  Types: ../frontend/node_modules/@pyrpc/types/src/index.ts
 ```
 
-This creates a `pyrpc.json` config file and starts the dev server with auto-type regeneration on file changes.
+This creates a `pyrpc.json` config file and starts the dev server with auto-type regeneration on file changes. The `distribution` field determines how types are synced:
+
+- **workspace** (default) — for monorepos: types written directly to your client project
+- **server** — for separate repos: clients fetch types via `npx pyrpc sync`
+
+For server mode, start with:
+
+```bash
+pyrpc dev --distribution server
+```
+
+> uvicorn is bundled with pyrpc-core — `pyrpc dev` launches it automatically. You never need to install or run uvicorn manually.
 
 ## 4. Client (TypeScript)
 
