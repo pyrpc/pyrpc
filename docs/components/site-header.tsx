@@ -66,6 +66,17 @@ export function SiteHeader() {
             <div className="absolute top-0 left-0 w-full h-[1px] bg-fd-foreground" />
           )}
         </Link>
+        <Link
+          href="https://github.com/pyrpc/pyrpc/discussions"
+          target="_blank"
+          rel="noreferrer"
+          className={cn(
+            "h-full px-6 flex items-center border-l border-fd-border text-[10px] font-black uppercase tracking-[0.2em] transition-colors hover:bg-fd-accent/50",
+            "text-fd-muted-foreground hover:text-fd-foreground"
+          )}
+        >
+          Community
+        </Link>
         <button 
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           className="h-full px-6 flex items-center border-l border-fd-border text-fd-muted-foreground hover:text-fd-foreground transition-colors hover:bg-fd-accent/50"
