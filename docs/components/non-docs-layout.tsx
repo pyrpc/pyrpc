@@ -1,11 +1,17 @@
 "use client"
 
 import { usePathname } from "next/navigation"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
 import type { ReactNode } from "react"
 import Link from "next/link"
 
 export function NonDocsLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   if (pathname?.startsWith("/docs")) {
     return <>{children}</>
@@ -22,22 +28,31 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
       {/* Global Footer for non-docs pages */}
       <footer className="relative mt-40 pb-24 px-6">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-px bg-fd-border" />
-        <div 
-          className="max-w-[1240px] mx-auto pt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-fd-foreground/40 text-[10px] font-mono uppercase tracking-[0.3em]"
-        >
-          <div className="flex items-center gap-6">
-            <span className="text-fd-foreground/60 font-bold">(c) 2026 pyRPC</span>
-            <span className="text-fd-foreground/20">|</span>
-            <span>MIT License</span>
-            <span className="text-fd-foreground/20">|</span>
-            <span className="text-fd-foreground/30">v0.3.0</span>
-          </div>
-          <div className="flex items-center gap-12">
-            <Link href="/docs" className="hover:text-fd-foreground transition-all">Docs</Link>
-            <a href="https://github.com/pyrpc/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-all">GitHub</a>
-            <a href="https://www.npmjs.com/org/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-all">npm</a>
-            <Link href="/legal/privacy" className="hover:text-fd-foreground transition-all">Privacy</Link>
-            <Link href="/legal/terms" className="hover:text-fd-foreground transition-all">Terms</Link>
+        <div className="max-w-[1240px] mx-auto pt-10 flex flex-col items-center gap-4 text-[11px] text-fd-foreground/40">
+          <nav className="flex items-center gap-3">
+            <Link href="/docs" className="hover:text-fd-foreground transition-colors">Docs</Link>
+            <span className="text-fd-foreground/15">/</span>
+            <Link href="/blog" className="hover:text-fd-foreground transition-colors">Blog</Link>
+            <span className="text-fd-foreground/15">/</span>
+            <a href="https://github.com/pyrpc/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-colors">GitHub</a>
+            <span className="text-fd-foreground/15">/</span>
+            <a href="https://www.npmjs.com/org/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-colors">npm</a>
+            <span className="text-fd-foreground/15">/</span>
+            <Link href="/legal/privacy" className="hover:text-fd-foreground transition-colors">Privacy</Link>
+            <span className="text-fd-foreground/15">/</span>
+            <Link href="/legal/terms" className="hover:text-fd-foreground transition-colors">Terms</Link>
+          </nav>
+          <div className="flex items-center gap-2">
+            {mounted && (
+              <button
+                onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+                className="hover:text-fd-foreground transition-colors"
+              >
+                {resolvedTheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              </button>
+            )}
+            <span className="text-fd-foreground/15">·</span>
+            <span>© 2026 pyRPC</span>
           </div>
         </div>
       </footer>
