@@ -2,14 +2,14 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/public/branding/png/pyrpc-wordmark-bg-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="docs/public/branding/png/pyrpc-wordmark-bg-light.png" />
-    <img alt="pyRPC" src="docs/public/branding/png/pyrpc-wordmark-bg-light.png" width="400" />
+    <img alt="pyRPC" src="docs/public/branding/png/pyrpc-wordmark-bg-light.png" />
   </picture>
 </div>
 
 <h3 align="center">Type-safe RPC for Python &amp; TypeScript</h3>
 
 <p align="center">
-  Define procedures in Python. Consume them in TypeScript with full type safety — whether in a monorepo or across repositories.
+  Define procedures in Python. Consume them in TypeScript with full type safety - whether in a monorepo or across repositories.
 </p>
 
 <p align="center">
@@ -21,17 +21,17 @@
 </p>
 
 <p align="center">
-  <a href="https://pepy.tech/project/pyrpc-core">
-    <img src="https://img.shields.io/pypi/dm/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI downloads"/>
-  </a>
-  <a href="https://github.com/pyrpc/pyrpc/stargazers">
-    <img src="https://img.shields.io/github/stars/pyrpc/pyrpc?style=flat&colorA=000000&colorB=000000" alt="GitHub stars"/>
-  </a>
   <a href="https://pypi.org/project/pyrpc-core/">
     <img src="https://img.shields.io/pypi/v/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI version"/>
   </a>
   <a href="https://github.com/pyrpc/pyrpc/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/pyrpc/pyrpc?style=flat&colorA=000000&colorB=000000" alt="License"/>
+  </a>
+  <a href="https://pepy.tech/project/pyrpc-core">
+    <img src="https://img.shields.io/pypi/dm/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI downloads"/>
+  </a>
+  <a href="https://github.com/pyrpc/pyrpc/stargazers">
+    <img src="https://img.shields.io/github/stars/pyrpc/pyrpc?style=flat&colorA=000000&colorB=000000" alt="GitHub stars"/>
   </a>
 </p>
 
@@ -42,7 +42,7 @@
 
 ## What is pyRPC?
 
-pyRPC is a type-safe RPC framework for Python backends with TypeScript frontends. One `@rpc` decorator defines the endpoint, generates TypeScript types, and validates every request at runtime — no OpenAPI schemas, no codegen pipelines, no manual contract files.
+pyRPC is a type-safe RPC framework for Python backends with TypeScript frontends. One `@rpc` decorator defines the endpoint, generates TypeScript types, and validates every request at runtime - no OpenAPI schemas, no codegen pipelines, no manual contract files.
 
 ```python
 from pyrpc_core import rpc
@@ -62,7 +62,7 @@ const result = await client.add(10, 5)  // typed as number
 
 ### Why pyRPC?
 
-End-to-end type safety across Python and TypeScript is a half-solved problem. Existing approaches rely on OpenAPI schemas that drift from implementation, manual type definitions that go out of sync, or heavy codegen pipelines. pyRPC treats your Python functions as the source of truth and derives TypeScript types directly from them — no middle layer, no drift.
+End-to-end type safety across Python and TypeScript is a half-solved problem. Existing approaches rely on OpenAPI schemas that drift from implementation, manual type definitions that go out of sync, or heavy codegen pipelines. pyRPC treats your Python functions as the source of truth and derives TypeScript types directly from them - no middle layer, no drift.
 
 ## Install
 
@@ -105,7 +105,7 @@ mount_fastapi(app)
 pyrpc dev
 ```
 
-On first run, it prompts for your framework, Python module, distribution mode, and client path — then generates types automatically.
+On first run, it prompts for your framework, Python module, distribution mode, and client path - then generates types automatically.
 
 ### 3. Call from TypeScript
 
@@ -134,8 +134,8 @@ with RPCClient("http://localhost:8000") as client:
 
 pyRPC supports two ways to sync TypeScript types:
 
-- **Workspace** (default) — for monorepos. The server writes types directly into your client's `node_modules/@pyrpc/types`.
-- **Server** — for separate repositories. The client fetches types via `npx pyrpc sync` over HTTP.
+- **Workspace** (default) - for monorepos. The server writes types directly into your client's `node_modules/@pyrpc/types`.
+- **Server** - for separate repositories. The client fetches types via `npx pyrpc sync` over HTTP.
 
 Configure via `pyrpc.json`:
 
@@ -153,10 +153,10 @@ Configure via `pyrpc.json`:
 
 ## Documentation
 
-- [Docs site](https://pyrpc.com/docs) — guides, API reference, mental model
-- [examples/](./examples/) — complete server and client implementations
-- [PYRPC.md](./PYRPC.md) — architecture, invariants, and contributor policy
-- [Changelog](https://pyrpc.com/changelog) — per-release changes
+- [Docs site](https://pyrpc.com/docs) - guides, API reference, mental model
+- [examples/](./examples/) - complete server and client implementations
+- [PYRPC.md](./PYRPC.md) - architecture, invariants, and contributor policy
+- [Changelog](https://pyrpc.com/changelog) - per-release changes
 
 ## Contributing
 
