@@ -55,10 +55,10 @@ function QuickstartStep({ step, title, description, filename, children, terminal
             <div className="flex-1 min-w-0">
               {lines ? (
                 <div className="grid grid-cols-[40px_1fr] font-mono text-[12px] leading-relaxed">
-                  <div className="whitespace-pre text-center text-[#555] border-r border-[#1a1a1a] select-none leading-relaxed pb-12 pt-5">
+                  <div className="whitespace-pre text-center text-[#555] border-r border-[#1a1a1a] select-none leading-relaxed pb-6 pt-5">
                     {Array.from({ length: lines }, (_, i) => `${i + 1}\n`).join('')}
                   </div>
-                  <div className="leading-relaxed pb-12 pt-5 px-8">
+                  <div className="leading-relaxed pb-6 pt-5 px-8 text-neutral-300">
                     {children}
                   </div>
                 </div>
@@ -69,7 +69,7 @@ function QuickstartStep({ step, title, description, filename, children, terminal
               )}
             </div>
             {terminal && (
-              <div className="flex-1 min-w-0 border-l border-[#1a1a1a] p-4 font-mono text-[11px] leading-relaxed bg-black flex flex-col justify-end">
+              <div className="flex-1 min-w-0 border-l border-[#1a1a1a] pt-5 pb-4 px-4 font-mono text-[11px] leading-relaxed bg-black">
                 {terminal}
               </div>
             )}
@@ -485,7 +485,7 @@ export default function HomePage() {
 
       {/* CTA Section - Full width dark section like PayKit */}
       <div className="mt-40 border-t border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-black">
-        <div className="py-24 md:py-32 flex flex-col items-center text-center px-6">
+        <div className="py-16 md:py-20 flex flex-col items-center text-center px-6">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-neutral-900 dark:text-white mb-4" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
             Ready to ship type-safe APIs?
           </h2>
