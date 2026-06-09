@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   Check,
@@ -77,7 +77,9 @@ export default function HomePage() {
   const [manager, setManager] = useState<'uv' | 'pip' | 'npm' | 'pnpm' | 'bun'>('uv');
   const [copied, setCopied] = useState(false);
   const [codeTab, setCodeTab] = useState<'server' | 'client'>('server');
+  const userInteractedRef = useRef(false);
   useEffect(() => {
+    if (userInteractedRef.current) return;
     const timer = setInterval(() => {
       setCodeTab(prev => prev === 'server' ? 'client' : 'server');
     }, 3500);
@@ -169,8 +171,8 @@ export default function HomePage() {
                 </div>
                 {/* File tabs */}
                 <div className="flex items-center bg-[#111111] border border-neutral-800 p-0.5 rounded-md">
-                  <button onClick={() => setCodeTab('server')} className={cn("px-4 py-1 text-[10px] font-bold font-mono tracking-widest uppercase transition-all rounded-md", codeTab === 'server' ? "bg-neutral-700 text-white" : "text-neutral-500 hover:text-neutral-300")}>server.py</button>
-                  <button onClick={() => setCodeTab('client')} className={cn("px-4 py-1 text-[10px] font-bold font-mono tracking-widest uppercase transition-all rounded-md", codeTab === 'client' ? "bg-neutral-700 text-white" : "text-neutral-500 hover:text-neutral-300")}>client.ts</button>
+                  <button onClick={() => { userInteractedRef.current = true; setCodeTab('server'); }} className={cn("px-4 py-1 text-[10px] font-bold font-mono tracking-widest uppercase transition-all rounded-md", codeTab === 'server' ? "bg-neutral-700 text-white" : "text-neutral-500 hover:text-neutral-300")}>server.py</button>
+                  <button onClick={() => { userInteractedRef.current = true; setCodeTab('client'); }} className={cn("px-4 py-1 text-[10px] font-bold font-mono tracking-widest uppercase transition-all rounded-md", codeTab === 'client' ? "bg-neutral-700 text-white" : "text-neutral-500 hover:text-neutral-300")}>client.ts</button>
                 </div>
                 <div className="w-[44px]" />
               </div>
@@ -196,29 +198,16 @@ export default function HomePage() {
 
         {/* Demo Section */}
         <div className="my-40 relative max-w-[1100px] mx-auto">
-          <div className="mb-16 flex flex-col items-center text-center">
+          <div className="mb-12 flex flex-col items-center text-center">
             <div className="flex items-center gap-4 mb-4">
               <span
-                style={{
-                  fontFamily: '"Geist Mono", "Geist Mono Fallback"',
-                  fontSize: '11px',
-                  fontWeight: 400,
-                  lineHeight: '16.5px',
-                  color: 'lab(67.9697 -3.85058 -3.02824)'
-                }}
+                className="font-mono text-[11px] text-fd-foreground/30 tracking-wider"
               >
                 00
               </span>
               <div className="h-px w-8 bg-fd-border" />
               <span
-                className="uppercase tracking-widest"
-                style={{
-                  fontFamily: '"Geist Mono", "Geist Mono Fallback"',
-                  fontSize: '11px',
-                  fontWeight: 400,
-                  lineHeight: '16.5px',
-                  color: 'lab(67.9697 -3.85058 -3.02824)'
-                }}
+                className="uppercase tracking-widest font-mono text-[11px] text-fd-foreground/30"
               >
                 Demo
               </span>
@@ -226,24 +215,23 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-6" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
               See pyRPC in action.
             </h2>
-            <p className="text-fd-foreground/50 text-sm md:text-base leading-relaxed font-sans">
-              Server, client, and types - in one pane.
-            </p>
           </div>
 
-          <div className="flex justify-center w-full">
-            <div className="relative w-full max-w-[700px] rounded-md overflow-hidden border border-neutral-800 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.7)] group cursor-pointer">
+          <div className="flex flex-col items-center gap-4">
+            <span className="font-mono text-[11px] text-neutral-500 tracking-tight">pyrpc · demo</span>
+            <div className="relative w-full rounded-[4px] overflow-hidden border border-neutral-800 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.7)] cursor-pointer">
               <img
                 src="/branding/svg/pyrpc_thumbnail_v3.svg"
                 alt="pyRPC Demo - Python to TypeScript type-safe RPC"
-                className="w-full h-auto blur-[2px] group-hover:blur-0 transition-all duration-500"
+                className="w-full h-auto"
               />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-all duration-300">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                 <div className="w-14 h-14 rounded-full bg-white/90 dark:bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
                   <Play className="w-5 h-5 text-black dark:text-white ml-0.5" />
                 </div>
               </div>
             </div>
+            <span className="font-mono text-[12px] text-fd-foreground/40 tracking-tight">Python → TypeScript. Live in the browser.</span>
           </div>
         </div>
 
