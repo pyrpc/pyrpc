@@ -10,13 +10,13 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    default: 'pyRPC — Type-Safe Python RPC for TypeScript Frontends',
+    default: 'pyRPC - Type-Safe Python RPC for TypeScript Frontends',
     template: '%s | pyRPC',
   },
-  description: 'Define procedures in Python. Consume them in TypeScript with full type safety — no schema drift, no codegen pipelines.',
+  description: 'Define procedures in Python. Consume them in TypeScript with full type safety. No schema drift, no codegen pipelines.',
   openGraph: {
-    title: 'pyRPC — Type-Safe Python RPC for TypeScript Frontends',
-    description: 'Define procedures in Python. Consume them in TypeScript with full type safety — no schema drift, no codegen pipelines.',
+    title: 'pyRPC - Type-Safe Python RPC for TypeScript Frontends',
+    description: 'Define procedures in Python. Consume them in TypeScript with full type safety. No schema drift, no codegen pipelines.',
   },
 };
 
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <RootProvider>
           <BackgroundWaves />
           <SiteHeader />
-          <main className="relative z-10 pt-14">
+          <main className="relative z-10">
             <NonDocsLayout>
               {children}
             </NonDocsLayout>
