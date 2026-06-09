@@ -42,7 +42,7 @@ export function SiteHeader() {
     setMounted(true);
     fetch('https://api.github.com/repos/pyrpc/pyrpc')
       .then(r => r.json())
-      .then(d => d.stargazers_count && setStars(d.stargazers_count))
+      .then(d => setStars(d.stargazers_count ?? 0))
       .catch(() => {});
   }, []);
 

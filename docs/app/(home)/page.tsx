@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Check,
@@ -77,6 +77,12 @@ export default function HomePage() {
   const [manager, setManager] = useState<'uv' | 'pip' | 'npm' | 'pnpm' | 'bun'>('uv');
   const [copied, setCopied] = useState(false);
   const [codeTab, setCodeTab] = useState<'server' | 'client'>('server');
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCodeTab(prev => prev === 'server' ? 'client' : 'server');
+    }, 3500);
+    return () => clearInterval(timer);
+  }, []);
   const [copiedStep, setCopiedStep] = useState<number | null>(null);
 
   const command = manager === 'uv' ? 'uv add pyrpc-core' :
@@ -112,8 +118,8 @@ export default function HomePage() {
 
             {/* Headline - single line */}
             <h1 className="text-[44px] md:text-[48px] font-normal leading-[54px] md:leading-[58px] tracking-tight text-neutral-900 dark:text-[#E8E8E8]" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
-              tRPC for{" "}
-              <span className="text-neutral-500 dark:text-white/40">Python backends.</span>
+              <span className="text-neutral-500 dark:text-white/40">tRPC for</span>{" "}
+              Python backends.
             </h1>
 
             {/* Description */}
@@ -121,7 +127,7 @@ export default function HomePage() {
               className="max-w-xl text-[18px] leading-[28px] font-normal text-neutral-600 dark:text-white/80"
               style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}
             >
-              tRPC-level type safety for teams shipping Python backends with TypeScript frontends. No schemas, no drift, no boilerplate.
+              tRPC-level type safety for teams shipping Python backends with TypeScript frontends. No schemas. No drift. Ship in minutes.
             </p>
 
             {/* Try it live + Install command badge */}
@@ -141,7 +147,7 @@ export default function HomePage() {
                   {['uv', 'pip'].map((m, i) => (
                     <span key={m} className="flex items-center">
                       {i > 0 && <span className="text-neutral-800 select-none mx-1.5">|</span>}
-                      <button onClick={() => setManager(m as 'uv' | 'pip')} className={cn("text-[10px] uppercase tracking-widest transition-colors", manager === m ? "text-white font-bold" : "text-neutral-600 hover:text-neutral-400")}>{m}</button>
+                      <button onClick={() => setManager(m as 'uv' | 'pip')} className={cn("text-[10px] uppercase tracking-widest transition-colors px-2 py-0.5 rounded", manager === m ? "bg-neutral-700 text-white font-bold" : "text-neutral-500 hover:text-neutral-300")}>{m}</button>
                     </span>
                   ))}
                 </div>
@@ -271,7 +277,7 @@ export default function HomePage() {
             </span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-6" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
-            Everything you need. Zero boilerplate.
+            Built for the Python ↔ TypeScript stack.
           </h2>
           <p className="text-fd-foreground/50 text-sm md:text-base leading-relaxed font-sans">
             Move fast, catch bugs at compile-time, and focus on building features instead of manual contract files. Python defines the types. TypeScript consumes them, automatically.
