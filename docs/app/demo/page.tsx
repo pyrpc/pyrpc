@@ -262,7 +262,12 @@ export default function PlaygroundPage() {
             {/* Header with Reset */}
             <div className="max-w-5xl mx-auto w-full shrink-0 border-b border-edge">
                 <div className="flex items-center justify-between px-4 py-3">
-                    <h1 className="text-sm font-bold tracking-tight uppercase font-mono opacity-30">Interactive Playground</h1>
+                    <div>
+                        <h1 className="text-sm font-bold tracking-tight uppercase font-mono opacity-30">Interactive Playground</h1>
+                        <p className="text-[10px] font-mono text-fd-muted-foreground/50 mt-0.5">
+                            Write Python procedures, call them from TypeScript - live in the browser.
+                        </p>
+                    </div>
                     <button
                         onClick={handleReset}
                         className="flex items-center gap-1.5 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.2em] font-mono border border-edge bg-fd-secondary/50 hover:bg-fd-secondary/80 transition-colors text-fd-secondary-foreground"
@@ -281,7 +286,7 @@ export default function PlaygroundPage() {
                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] font-mono text-fd-foreground">Server Logic</span>
                             <div className="flex items-center gap-3">
                                 <FrameworkSelect
-                                    label="Provider"
+                                    label="Framework"
                                     value={serverLang}
                                     options={Object.keys(TEMPLATES)}
                                     onChange={handleChangeFramework}
@@ -376,17 +381,18 @@ export default function PlaygroundPage() {
                             'text-[10px] font-bold uppercase tracking-wider font-mono ml-2',
                             isDark ? 'text-[#5a6478]' : 'text-[#6b7280]'
                         )}>Client Output</span>
-                        <span className={cn(
-                            'text-[9px] font-mono ml-auto px-2 py-0.5 border border-edge',
-                            status === 'running' ? 'border-yellow-500/50' : 
-                            status === 'success' ? 'border-green-500/50' :
-                            status === 'error' ? 'border-red-500/50' :
-                            isDark ? 'border-[#1a1a2e]' : 'border-gray-200'
-                        )}>
-                            {status === 'running' ? 'RUNNING' : 
-                             status === 'success' ? 'SUCCESS' : 
-                             status === 'error' ? 'ERROR' : 'READY'}
-                        </span>
+                        {status !== 'idle' && (
+                            <span className={cn(
+                                'text-[9px] font-mono ml-auto px-2 py-0.5 border border-edge',
+                                status === 'running' ? 'border-yellow-500/50 text-yellow-500' : 
+                                status === 'success' ? 'border-green-500/50 text-green-500' :
+                                'border-red-500/50 text-red-500'
+                            )}>
+                                {status === 'running' ? 'RUNNING' : 
+                                 status === 'success' ? 'SUCCESS' : 
+                                 'ERROR'}
+                            </span>
+                        )}
                     </div>
                     <div className="flex-1 overflow-y-auto px-3 pt-3 pb-0 font-mono text-[11px] leading-relaxed">
                         {logs.length === 0 && status === 'idle' && (

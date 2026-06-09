@@ -156,3 +156,6 @@ dist
 
 # System design docs (local developer documentation)
 system-design/
+
+# Scripts
+scripts/seed_downloads.py

@@ -9,13 +9,13 @@ description: Welcome to pyRPC - The type-safe, Python-first RPC framework.
   <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/pyrpc-core?style=flat&colorA=000000&colorB=000000" />
 </div>
 
-**pyRPC** is a modern "drop-in RPC layer" for Python. It turns your backend into a library of typed async functions that can be called from anywhere.
+**pyRPC** is a drop-in RPC layer for Python. It turns your backend into a library of typed async functions that can be called from anywhere.
 
 Inspired by the DX of **tRPC**, pyRPC eliminates the need for OpenAPI schemas, heavy generators, or manual boilerplate.
 
 ## The Problem
 
-You rename a Python function from `get_user` to `fetch_user`. Your TypeScript client silently breaks — no error, no warning, just a runtime failure in production.
+You rename a Python function from `get_user` to `fetch_user`. Your TypeScript client silently breaks - no error, no warning, just a runtime failure in production.
 
 That's the reality of maintaining type safety across a Python backend and a TypeScript frontend without a shared contract layer.
 

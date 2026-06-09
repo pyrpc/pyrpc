@@ -6,7 +6,7 @@ description: Get a working pyRPC server and client in under 2 minutes.
 
 # Quickstart
 
-Copy, paste, run. No fluff - just a working pyRPC server and client call.
+Copy, paste, run - a working pyRPC server and client call in under 2 minutes.
 
 ## 1. Install
 
@@ -14,7 +14,7 @@ Copy, paste, run. No fluff - just a working pyRPC server and client call.
 uv add pyrpc-core[fastapi]
 ```
 
-> `uvicorn` is included as a dependency of `pyrpc-core` — no need to install it separately. The `pyrpc dev` command uses it under the hood.
+> `uvicorn` is included as a dependency of `pyrpc-core` - no need to install it separately. The `pyrpc dev` command uses it under the hood.
 
 ## 2. Server
 
@@ -48,7 +48,7 @@ Run `pyrpc dev` - on first run it will prompt for your framework, Python module,
 pyrpc dev
 ```
 
-**Expected output (workspace mode — monorepo):**
+**Expected output (workspace mode - monorepo):**
 
 ```
 pyRPC Setup
@@ -66,16 +66,14 @@ Let's configure pyRPC for your project.
 
 This creates a `pyrpc.json` config file and starts the dev server with auto-type regeneration on file changes. The `distribution` field determines how types are synced:
 
-- **workspace** (default) — for monorepos: types written directly to your client project
-- **server** — for separate repos: clients fetch types via `npx pyrpc sync`
+- **workspace** (default) - for monorepos: types written directly to your client project
+- **server** - for separate repos: clients fetch types via `npx pyrpc sync`
 
 For server mode, start with:
 
 ```bash
 pyrpc dev --distribution server
 ```
-
-> uvicorn is bundled with pyrpc-core — `pyrpc dev` launches it automatically. You never need to install or run uvicorn manually.
 
 ## 4. Client (TypeScript)
 
