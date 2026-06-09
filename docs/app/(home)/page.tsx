@@ -474,31 +474,35 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="border border-fd-border rounded-lg p-8 bg-white dark:bg-[#0a0a0a]">
-                <h3 className="text-lg font-semibold tracking-tight text-fd-foreground mb-2" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
-                  Python Backends
-                </h3>
-                <p className="text-fd-foreground/50 text-[13px] leading-relaxed mb-6">Drop pyRPC into any Python web framework.</p>
-                <div className="flex flex-wrap gap-3">
-                  {[{ name: 'FastAPI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg' }, { name: 'Flask', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg' }, { name: 'Django', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg' }, { name: 'Starlette', icon: null }, { name: 'ASGI', icon: null }].map((fw) => (
-                    <span key={fw.name} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono font-bold tracking-tight border border-fd-border rounded-md bg-fd-foreground/5 text-fd-foreground/70">
-                      {fw.icon && <img src={fw.icon} alt="" className="w-3.5 h-3.5 shrink-0" />}
-                      {fw.name}
+            <div className="flex items-start gap-16 justify-center">
+              <div className="flex flex-col items-center gap-5">
+                <span className="text-[11px] font-semibold tracking-widest uppercase text-fd-foreground/30">Python</span>
+                <div className="flex items-center gap-6">
+                  {[
+                    { name: 'FastAPI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg' },
+                    { name: 'Flask', icon: 'https://cdn.simpleicons.org/flask' },
+                    { name: 'Django', icon: 'https://cdn.simpleicons.org/django' },
+                  ].map((fw) => (
+                    <span key={fw.name} className="flex flex-col items-center gap-1.5">
+                      <img src={fw.icon} alt="" className="w-6 h-6" />
+                      <span className="text-[10px] font-mono text-fd-foreground/50">{fw.name}</span>
                     </span>
                   ))}
                 </div>
               </div>
-              <div className="border border-fd-border rounded-lg p-8 bg-white dark:bg-[#0a0a0a]">
-                <h3 className="text-lg font-semibold tracking-tight text-fd-foreground mb-2" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
-                  TypeScript Frontends
-                </h3>
-                <p className="text-fd-foreground/50 text-[13px] leading-relaxed mb-6">Works with any framework that speaks fetch.</p>
-                <div className="flex flex-wrap gap-3">
-                  {[{ name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' }, { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' }, { name: 'Vue', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg' }, { name: 'Svelte', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg' }, { name: 'Any Fetch', icon: null }].map((fw) => (
-                    <span key={fw.name} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono font-bold tracking-tight border border-fd-border rounded-md bg-fd-foreground/5 text-fd-foreground/70">
-                      {fw.icon && <img src={fw.icon} alt="" className="w-3.5 h-3.5 shrink-0" />}
-                      {fw.name}
+              <div className="w-px self-stretch bg-fd-border" />
+              <div className="flex flex-col items-center gap-5">
+                <span className="text-[11px] font-semibold tracking-widest uppercase text-fd-foreground/30">TypeScript</span>
+                <div className="flex items-center gap-6">
+                  {[
+                    { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
+                    { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+                    { name: 'Vue', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg' },
+                    { name: 'Svelte', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg' },
+                  ].map((fw) => (
+                    <span key={fw.name} className="flex flex-col items-center gap-1.5">
+                      <img src={fw.icon} alt="" className="w-6 h-6" />
+                      <span className="text-[10px] font-mono text-fd-foreground/50">{fw.name}</span>
                     </span>
                   ))}
                 </div>
