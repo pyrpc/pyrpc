@@ -181,7 +181,7 @@ export default function HomePage() {
 
       <div className="px-6 md:px-12 lg:px-20">
          {/* Hero Section */}
-          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-20 md:pt-32 pb-40">
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-28 md:pt-40 pb-40">
 
              {/* Left Column */}
              <div className="flex flex-col items-start gap-10 max-w-[480px]">
@@ -374,7 +374,7 @@ export default function HomePage() {
               },
               {
                 id: "02",
-                title: "Monorepo or Separate Repos -- both work.",
+                title: "Monorepo or Separate Repos — both work.",
                 description: "In a monorepo? The server writes typed contracts directly to the client. Separate repos? The client fetches them via HTTP at build time.",
                 visual: (
                   <div className="flex items-center gap-4">
@@ -428,7 +428,7 @@ export default function HomePage() {
               },
               {
                 id: "06",
-                title: "Sync and async -- both work.",
+                title: "Sync and async — both work.",
                 description: "Write sync or async procedures -- pyRPC detects the right calling convention automatically.",
                 visual: (
                   <div className="flex gap-1 items-end h-6">

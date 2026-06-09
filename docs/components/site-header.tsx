@@ -199,6 +199,13 @@ export function SiteHeader() {
           </div>
         </div>
 
+        <button 
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="h-full px-6 flex items-center border-l border-fd-border text-fd-muted-foreground hover:text-fd-foreground transition-colors hover:bg-fd-accent/50"
+          aria-label="Toggle theme"
+        >
+          {mounted && (theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />)}
+        </button>
         <Link
           href="https://github.com/pyrpc/pyrpc"
           target="_blank"
@@ -211,13 +218,6 @@ export function SiteHeader() {
           <Github className="w-3.5 h-3.5" />
           {stars !== null && <span className="text-[10px] font-mono font-normal normal-case tracking-tight text-fd-muted-foreground">{formatStars(stars)}</span>}
         </Link>
-        <button 
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="h-full px-6 flex items-center border-l border-fd-border text-fd-muted-foreground hover:text-fd-foreground transition-colors hover:bg-fd-accent/50"
-          aria-label="Toggle theme"
-        >
-          {mounted && (theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />)}
-        </button>
       </div>
     </header>
   );
