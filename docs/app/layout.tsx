@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <RootProvider>
           <BackgroundWaves />
           <SiteHeader />
-          <main className="relative z-10 pt-14">
+          <main className="relative z-10">
             <NonDocsLayout>
               {children}
             </NonDocsLayout>
