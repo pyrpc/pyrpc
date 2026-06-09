@@ -98,10 +98,8 @@ export function SiteHeader() {
       {/* Left: Logo */}
       <div className="flex items-center h-full px-6">
         <Link href="/" className="flex items-center gap-2 font-bold text-fd-foreground tracking-tighter text-lg">
-          <picture>
-            <source srcSet="/branding/png/pyrpc-mark-bg-dark.png" media="(prefers-color-scheme: dark)" />
-            <img src="/branding/png/pyrpc-mark-bg-light.png" alt="" className="w-5 h-5" />
-          </picture>
+          <img src="/branding/png/pyrpc-wordmark-bg-light.png" alt="" className="h-5 w-auto block dark:hidden" />
+          <img src="/branding/png/pyrpc-wordmark-bg-dark.png" alt="" className="h-5 w-auto hidden dark:block" />
           pyRPC
         </Link>
       </div>
