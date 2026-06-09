@@ -21,18 +21,12 @@ import {
 import { cn } from '@/lib/cn';
 import { motion } from 'framer-motion';
 
-function QuickstartStep({ step, label, tag, title, description, code, codeFile, terminal, command, copiedStep, onCopy }: {
+function QuickstartStep({ step, title, description, filename, children }: {
   step: number;
-  label: string;
-  tag: string;
   title: string;
   description: string;
-  code: React.ReactNode;
-  codeFile: string;
-  terminal: React.ReactNode;
-  command?: string;
-  copiedStep?: number | null;
-  onCopy?: (text: string, step: number) => void;
+  filename?: string;
+  children: React.ReactNode;
 }) {
   return (
     <motion.div
@@ -42,44 +36,22 @@ function QuickstartStep({ step, label, tag, title, description, code, codeFile, 
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="w-full"
     >
-      {/* Section header */}
+      {/* Step number + title */}
       <div className="flex items-center gap-3 mb-6">
-        <span
-          style={{
-            fontFamily: '"Geist Mono", "Geist Mono Fallback"',
-            fontSize: '11px',
-            fontWeight: 400,
-            lineHeight: '16.5px',
-            color: 'lab(67.9697 -3.85058 -3.02824)'
-          }}
-        >
+        <span className="font-mono text-[11px] text-fd-foreground/30 tracking-wider">
           0{step}
         </span>
         <div className="h-px w-6 bg-fd-border" />
-        <span
-          className="uppercase tracking-widest"
-          style={{
-            fontFamily: '"Geist Mono", "Geist Mono Fallback"',
-            fontSize: '11px',
-            fontWeight: 400,
-            lineHeight: '16.5px',
-            color: 'lab(67.9697 -3.85058 -3.02824)'
-          }}
-        >
-          {label}
-        </span>
-        <span className="text-sky-400 text-[10px] uppercase tracking-widest font-bold">{tag}</span>
+        <h3 className="text-2xl md:text-3xl font-bold tracking-tighter text-fd-foreground">
+          {title}
+        </h3>
       </div>
-
-      <h3 className="text-2xl md:text-3xl font-bold tracking-tighter text-fd-foreground mb-2" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
-        {title}
-      </h3>
       <p className="text-fd-foreground/50 text-[15px] leading-relaxed mb-8 max-w-xl font-sans">
         {description}
       </p>
 
-      {/* IDE Panel */}
-      <div className="relative mt-auto w-full">
+      {/* Code block */}
+      <div className="relative w-full">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-indigo-500/[0.06] blur-[100px] rounded-full pointer-events-none" />
         <div className="relative w-full border border-neutral-800 rounded-md bg-[#0c0c0c] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.7)] overflow-hidden">
           {/* Title bar */}
@@ -89,62 +61,14 @@ function QuickstartStep({ step, label, tag, title, description, code, codeFile, 
               <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
               <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
             </div>
-            <span className="text-[11px] font-mono text-neutral-500 tracking-tight">~/projects/pyrpc · {label.toLowerCase()}</span>
+            {filename && <span className="text-[11px] font-mono text-neutral-500 tracking-tight">~/projects/pyrpc/{filename}</span>}
           </div>
-
-          {/* Tab bar */}
-          <div className="flex items-center bg-[#111111] border-b border-neutral-800 overflow-x-auto">
-            <div className="px-4 py-2 text-[10px] font-mono bg-[#0c0c0c] text-neutral-300 border-r border-neutral-800 cursor-default select-none">
-              {codeFile}
-            </div>
-            <div className="px-4 py-2 text-[10px] font-mono text-neutral-600 border-r border-neutral-800 cursor-default select-none">
-              terminal
-            </div>
-            <div className="flex-1" />
-          </div>
-
-          {/* Main content: code + terminal split */}
-          <div className="flex min-h-[300px]">
-            {/* Code editor panel */}
-            <div className="flex-1 bg-[#0e0e0e] p-5 font-mono text-[12px] leading-[1.7] overflow-hidden border-r border-neutral-800">
-              {code}
-            </div>
-
-            {/* Terminal panel */}
-            <div className="w-[45%] bg-[#0a0a0a] p-4 font-mono text-[11px] leading-[1.7] overflow-hidden flex flex-col">
-              <div className="flex-1">
-                {terminal}
-              </div>
-              {command && onCopy && (
-                <div className="flex items-center justify-between pt-3 mt-3 border-t border-neutral-800 group/cmd">
-                  <div className="flex items-center gap-2 text-[10px] font-mono text-neutral-500 overflow-hidden min-w-0">
-                    <span className="text-emerald-500/60 shrink-0">$</span>
-                    <code className="truncate">{command}</code>
-                  </div>
-                  <button onClick={() => onCopy(command, step)} className="text-neutral-600 hover:text-white transition-colors shrink-0 ml-2">
-                    {copiedStep === step ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Status bar */}
-          <div className="flex items-center justify-between px-4 py-1.5 bg-[#161616] border-t border-neutral-800 text-[10px] font-mono select-none">
-            <div className="flex items-center gap-4 text-neutral-600">
-              <span className="text-emerald-500">●</span>
-              <span>main</span>
-              <span className="text-neutral-700">|</span>
-              <span>pyrpc</span>
-            </div>
-            <div className="flex items-center gap-4 text-neutral-600">
-              <span>UTF-8</span>
-              <span className="text-neutral-700">|</span>
-              <span>{step <= 2 ? 'Python 3.12' : 'Node 20'}</span>
-            </div>
-            </div>
+          {/* Content */}
+          <div className="p-5 font-mono text-[12px] leading-[1.7] bg-[#0e0e0e]">
+            {children}
           </div>
         </div>
+      </div>
     </motion.div>
   );
 }
@@ -528,111 +452,66 @@ export default function HomePage() {
               {/* Step 1 - Install */}
               <QuickstartStep
                 step={1}
-                label="Install"
-                tag="Server"
                 title="Add pyRPC to your Python project."
                 description="One command installs the core runtime with Pydantic-powered validation, async support, and framework adapters."
-                command="uv add pyrpc-core"
-                copiedStep={copiedStep}
-                onCopy={copyQuickstart}
-                codeFile="main.py"
-                code={(
-                  <div className="whitespace-pre text-neutral-400 leading-relaxed">
-                    <code>
-                      <span className="text-purple-400">from</span>{' '}pyrpc_core{' '}<span className="text-purple-400">import</span>{' '}<span className="text-sky-400">rpc, model</span>{'\n'}
-                      {'\n'}
-                      <span className="text-sky-400">@model</span>{'\n'}
-                      <span className="text-purple-400">class</span>{' '}<span className="text-sky-400">User</span>:{'\n'}
-                      {'    '}id:{' '}<span className="text-pink-400">int</span>{'\n'}
-                      {'    '}name:{' '}<span className="text-pink-400">str</span>{'\n'}
-                      {'\n'}
-                      <span className="text-sky-400">@rpc</span>{'\n'}
-                      <span className="text-purple-400">def</span>{' '}<span className="text-sky-400">get_user</span>(id:{' '}<span className="text-pink-400">int</span>) <span className="text-neutral-600">-&gt;</span>{' '}<span className="text-sky-400">User</span>:{'\n'}
-                      {'    '}<span className="text-purple-400">return</span>{' '}<span className="text-sky-400">User</span>(id=id, name=<span className="text-emerald-400">"Alice"</span>){'\n'}
-                    </code>
+                filename=""
+              >
+                <div className="font-mono text-[11px] leading-[1.7] space-y-1">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-neutral-600">$</span>{' '}<span className="text-neutral-200">uv add pyrpc-core</span>
+                    </div>
+                    <button onClick={() => copyQuickstart('uv add pyrpc-core', 1)} className="text-neutral-600 hover:text-neutral-300 transition-colors">
+                      {copiedStep === 1 ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                    </button>
                   </div>
-                )}
-                terminal={(
-                  <div className="font-mono text-[11px] leading-[1.7] text-neutral-400 space-y-1">
-                    <div><span className="text-emerald-500">$</span> <span className="text-neutral-300">uv add pyrpc-core</span></div>
-                    <div className="text-neutral-600">Resolved 8 packages in 320ms</div>
-                    <div className="text-neutral-600">Installed 4 packages in 45ms</div>
-                    <div> <span className="text-emerald-400">+</span> pyrpc-core<span className="text-neutral-600">==0.3.0</span></div>
-                    <div> <span className="text-emerald-400">+</span> pydantic<span className="text-neutral-600">==2.7.1</span></div>
-                    <div className="mt-2"><span className="text-emerald-500">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
-                  </div>
-                )}
-              />
+                  <div className="text-neutral-600">Resolved 8 packages in 320ms</div>
+                  <div className="text-neutral-600">Installed 4 packages in 45ms</div>
+                  <div className="text-neutral-600">+ pyrpc-core==0.3.0</div>
+                  <div className="text-neutral-600">+ pydantic==2.7.1</div>
+                  <div className="mt-2"><span className="text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
+                </div>
+              </QuickstartStep>
 
               {/* Step 2 - Dev Server */}
               <QuickstartStep
                 step={2}
-                label="Dev"
-                tag="Server"
                 title="Start the pyRPC dev server."
-                description="Launch the development server with instant schema codegen - your RPC endpoints are served and a JSON schema is generated automatically."
-                command="pyrpc dev"
-                copiedStep={copiedStep}
-                onCopy={copyQuickstart}
-                codeFile="@pyrpc/types"
-                code={(
-                  <div className="whitespace-pre text-neutral-400 leading-relaxed">
-                    <code>
-                      <span className="text-neutral-600">/**</span>{'\n'}
-                      <span className="text-neutral-600">{' *'} Auto-generated by pyrpc dev.</span>{'\n'}
-                      <span className="text-neutral-600">{' */'}</span>{'\n'}
-                      {'\n'}
-                      <span className="text-purple-400">export</span>{' '}<span className="text-purple-400">interface</span>{' '}<span className="text-sky-400">Types</span> {'{'}
-                      {'\n'}{'  '}<span className="text-sky-400">get_user</span>(id: <span className="text-pink-400">number</span>): <span className="text-sky-400">Promise</span>&lt;<span className="text-sky-400">User</span>&gt;;{'\n'}
-                      {'}'}
-                    </code>
-                  </div>
-                )}
-                terminal={(
-                  <div className="font-mono text-[11px] leading-[1.7] text-neutral-400 space-y-1">
-                    <div><span className="text-emerald-500">$</span> <span className="text-neutral-300">pyrpc dev</span></div>
-                    <div className="text-neutral-600 mt-1">Starting pyRPC dev server...</div>
-                    <div className="text-neutral-600">Found <span className="text-pink-400">1</span> procedure</div>
-                    <div className="mt-1"><span className="text-emerald-400">✓</span> <span className="text-neutral-300">Serving at http://localhost:8000</span></div>
-                    <div className="mt-2"><span className="text-emerald-500">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
-                  </div>
-                )}
-              />
+                description="Types are generated automatically as your server runs."
+                filename="@pyrpc/types"
+              >
+                <div className="whitespace-pre leading-relaxed">
+                  <code>
+                    <span className="text-neutral-600">/**</span>{'\n'}
+                    <span className="text-neutral-600">{' *'} Auto-generated by pyrpc dev.</span>{'\n'}
+                    <span className="text-neutral-600">{' */'}</span>{'\n'}
+                    {'\n'}
+                    <span className="text-purple-400">export</span>{' '}<span className="text-purple-400">interface</span>{' '}<span className="text-sky-400">Types</span> {'{'}
+                    {'\n'}{'  '}<span className="text-sky-400">get_user</span>(id: <span className="text-pink-400">number</span>): <span className="text-sky-400">Promise</span>&lt;<span className="text-sky-400">User</span>&gt;;{'\n'}
+                    {'}'}
+                  </code>
+                </div>
+              </QuickstartStep>
 
               {/* Step 3 - Consume */}
               <QuickstartStep
                 step={3}
-                label="Consume"
-                tag="Client"
                 title="Ship type-safe TypeScript clients."
-                description="Install the client package in your frontend project. Types are generated by pyrpc dev - no manual codegen, no schema drift."
-                command="npm install @pyrpc/client"
-                copiedStep={copiedStep}
-                onCopy={copyQuickstart}
-                codeFile="client.ts"
-                code={(
-                  <div className="whitespace-pre text-neutral-400 leading-relaxed">
-                    <code>
-                      <span className="text-purple-400">import</span>{' '}{'{'}{' '}<span className="text-sky-400">createClient</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/client"</span>;{'\n'}
-                      <span className="text-purple-400">import</span>{' '}<span className="text-purple-400">type</span>{' '}{'{'}{' '}<span className="text-sky-400">Types</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/types"</span>;{'\n'}
-                      {'\n'}
-                      <span className="text-purple-400">const</span>{' '}client = <span className="text-sky-400">createClient</span>&lt;<span className="text-sky-400">Types</span>&gt;();{'\n'}
-                      {'\n'}
-                      <span className="text-purple-400">const</span>{' '}user = <span className="text-purple-400">await</span> client.<span className="text-sky-400">get_user</span>(<span className="text-pink-400">1</span>);{'\n'}
-                      console.<span className="text-sky-400">log</span>(user.name);{' '}<span className="text-neutral-600 italic">// Fully typed!</span>{'\n'}
-                    </code>
-                  </div>
-                )}
-                terminal={(
-                  <div className="font-mono text-[11px] leading-[1.7] text-neutral-400 space-y-1">
-                    <div><span className="text-emerald-500">$</span> <span className="text-neutral-300">npm install @pyrpc/client</span></div>
-                    <div className="text-neutral-600">Resolved 12 packages in 1.4s</div>
-                    <div> <span className="text-emerald-400">+</span> @pyrpc/client<span className="text-neutral-600">==0.3.0</span></div>
-                    <div> <span className="text-emerald-400">+</span> @pyrpc/types<span className="text-neutral-600">==0.3.0</span></div>
-                    <div className="mt-1"><span className="text-emerald-500">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
-                  </div>
-                )}
-              />
+                description="Install the client package in your frontend project. Types flow from Python to TypeScript — no manual codegen, no schema drift."
+                filename="client.ts"
+              >
+                <div className="whitespace-pre leading-relaxed">
+                  <code>
+                    <span className="text-purple-400">import</span>{' '}{'{'}{' '}<span className="text-sky-400">createClient</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/client"</span>;{'\n'}
+                    <span className="text-purple-400">import</span>{' '}<span className="text-purple-400">type</span>{' '}{'{'}{' '}<span className="text-sky-400">Types</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/types"</span>;{'\n'}
+                    {'\n'}
+                    <span className="text-purple-400">const</span>{' '}client = <span className="text-sky-400">createClient</span>&lt;<span className="text-sky-400">Types</span>&gt;();{'\n'}
+                    {'\n'}
+                    <span className="text-purple-400">const</span>{' '}user = <span className="text-purple-400">await</span> client.<span className="text-sky-400">get_user</span>(<span className="text-pink-400">1</span>);{'\n'}
+                    console.<span className="text-sky-400">log</span>(user.name);{' '}<span className="text-neutral-600 italic">// Fully typed!</span>{'\n'}
+                  </code>
+                </div>
+              </QuickstartStep>
 
             </div>
           </div>
