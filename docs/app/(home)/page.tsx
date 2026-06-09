@@ -491,6 +491,13 @@ export default function HomePage() {
                     {'}'}
                   </code>
                 </div>
+                <div className="border-t border-neutral-800 mt-5 pt-4 font-mono text-[11px] leading-[1.7] space-y-1">
+                  <div><span className="text-neutral-600">$</span> <span className="text-neutral-200">pyrpc dev</span></div>
+                  <div className="text-neutral-600">Starting pyRPC dev server...</div>
+                  <div className="text-neutral-600">Found 1 procedure</div>
+                  <div><span className="text-emerald-600">✓</span> <span className="text-neutral-200">Serving at http://localhost:8000</span></div>
+                  <div className="mt-2"><span className="text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
+                </div>
               </QuickstartStep>
 
               {/* Step 3 - Consume */}
@@ -510,6 +517,13 @@ export default function HomePage() {
                     <span className="text-purple-400">const</span>{' '}user = <span className="text-purple-400">await</span> client.<span className="text-sky-400">get_user</span>(<span className="text-pink-400">1</span>);{'\n'}
                     console.<span className="text-sky-400">log</span>(user.name);{' '}<span className="text-neutral-600 italic">// Fully typed!</span>{'\n'}
                   </code>
+                </div>
+                <div className="border-t border-neutral-800 mt-5 pt-4 font-mono text-[11px] leading-[1.7] space-y-1">
+                  <div><span className="text-neutral-600">$</span> <span className="text-neutral-200">npm install @pyrpc/client</span></div>
+                  <div className="text-neutral-600">Resolved 12 packages in 1.4s</div>
+                  <div className="text-neutral-600">+ @pyrpc/client@0.3.0</div>
+                  <div className="text-neutral-600">+ @pyrpc/types@0.3.0</div>
+                  <div className="mt-2"><span className="text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
                 </div>
               </QuickstartStep>
 
