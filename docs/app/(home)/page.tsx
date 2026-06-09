@@ -362,7 +362,7 @@ export default function HomePage() {
             {[
               {
                 id: "01",
-                title: "Monorepo or Separate Repos — both work.",
+                title: "Monorepo or Separate Repos - both work.",
                 description: "In a monorepo? The server writes typed contracts directly to the client. Separate repos? The client fetches them via HTTP at build time.",
                 visual: (
                   <div className="flex items-center gap-4">
@@ -395,7 +395,7 @@ export default function HomePage() {
               {
                 id: "03",
                 title: "Invalid Inputs? Blocked.",
-                description: "Bad data throws before it hits your logic — always. Powered by Pydantic v2.",
+                description: "Bad data throws before it hits your logic - always. Powered by Pydantic v2.",
                 visual: (
                   <div className="px-2 py-1 rounded bg-emerald-500/5 border border-emerald-500/20">
                     <span className="text-[9px] text-emerald-500 font-bold tracking-tighter uppercase">Strict Validation</span>
@@ -417,7 +417,7 @@ export default function HomePage() {
               {
                 id: "05",
                 title: "Universal Adapters.",
-                description: "Bring your own framework — FastAPI, Flask, Django, or raw ASGI. pyRPC fits your stack.",
+                description: "Bring your own framework - FastAPI, Flask, Django, or raw ASGI. pyRPC fits your stack.",
                 visual: (
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded bg-fd-foreground/5 border border-fd-border flex items-center justify-center text-[10px] font-bold">FA</div>
@@ -428,8 +428,8 @@ export default function HomePage() {
               },
               {
                 id: "06",
-                title: "Sync and async — both work.",
-                description: "Write sync or async procedures — pyRPC detects the right calling convention automatically.",
+                title: "Sync and async - both work.",
+                description: "Write sync or async procedures - pyRPC detects the right calling convention automatically.",
                 visual: (
                   <div className="flex gap-1 items-end h-6">
                     {[30, 70, 45, 95, 60].map((h, i) => (
