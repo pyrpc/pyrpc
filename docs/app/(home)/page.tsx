@@ -197,6 +197,7 @@ export default function HomePage() {
         </div>
 
         {/* Demo Section */}
+        {/*
         <div className="my-40 relative max-w-[1100px] mx-auto">
           <div className="mb-12 flex flex-col items-center text-center">
             <div className="flex items-center gap-4 mb-4">
@@ -234,6 +235,7 @@ export default function HomePage() {
             <span className="font-mono text-[12px] text-fd-foreground/40 tracking-tight">Python → TypeScript. Live in the browser.</span>
           </div>
         </div>
+        */}
 
         {/* Features Section Header */}
 
