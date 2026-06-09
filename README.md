@@ -42,7 +42,7 @@
 
 ## What is pyRPC?
 
-pyRPC is a type-safe RPC framework for Python backends with TypeScript frontends. One `@rpc` decorator defines the endpoint, generates TypeScript types, and validates every request at runtime - no OpenAPI schemas, no codegen pipelines, no manual contract files.
+pyRPC is a type-safe RPC framework for Python backends with TypeScript frontends. One `@rpc` decorator defines the endpoint, generates TypeScript types, and validates every request at runtime. No OpenAPI schemas, no codegen pipelines, no manual contract files.
 
 ```python
 from pyrpc_core import rpc
@@ -62,7 +62,7 @@ const result = await client.add(10, 5)  // typed as number
 
 ### Why pyRPC?
 
-End-to-end type safety across Python and TypeScript is a half-solved problem. Existing approaches rely on OpenAPI schemas that drift from implementation, manual type definitions that go out of sync, or heavy codegen pipelines. pyRPC treats your Python functions as the source of truth and derives TypeScript types directly from them - no middle layer, no drift.
+End-to-end type safety across Python and TypeScript is a half-solved problem. Existing approaches rely on OpenAPI schemas that drift from implementation, manual type definitions that go out of sync, or heavy codegen pipelines. pyRPC treats your Python functions as the source of truth and derives TypeScript types directly from them. No middle layer, no drift.
 
 ## Install
 
