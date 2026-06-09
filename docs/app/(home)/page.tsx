@@ -265,10 +265,10 @@ export default function HomePage() {
             </span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-6" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
-            Built for the Python ↔ TypeScript stack.
+            Everything you need.
           </h2>
           <p className="text-fd-foreground/50 text-sm md:text-base leading-relaxed font-sans">
-            Move fast, catch bugs at compile-time, and focus on building features instead of manual contract files. Python defines the types. TypeScript consumes them, automatically.
+            Python defines the types. TypeScript consumes them, automatically.
           </p>
         </div>
 
@@ -280,26 +280,20 @@ export default function HomePage() {
           {[
             {
               id: "01",
-              title: "Monorepo or Separate Repos - both work.",
-              description: "In a monorepo? The server writes typed contracts directly to the client. Separate repos? The client fetches them via HTTP at build time.",
-                visual: (
-                  <div className="flex flex-col gap-3">
-                    <div className="text-[10px] font-mono">
-                      <span className="text-purple-400">from</span> pyrpc_core <span className="text-purple-400">import</span> <span className="text-white">rpc</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-amber-500/5 border border-amber-500/20">
-                        <GitBranch className="w-3 h-3 text-amber-500" />
-                        <span className="text-[9px] text-amber-500 font-bold tracking-tighter uppercase">Workspace</span>
-                      </div>
-                      <span className="text-neutral-600 text-[10px]">|</span>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-sky-500/5 border border-sky-500/20">
-                        <Globe className="w-3 h-3 text-sky-500" />
-                        <span className="text-[9px] text-sky-500 font-bold tracking-tighter uppercase">Server</span>
-                      </div>
-                    </div>
+              title: "Cross-language contracts.",
+              description: "Define once in Python. Get fully typed TypeScript contracts automatically.",
+              visual: (
+                <div className="flex flex-col gap-3">
+                  <div className="text-[10px] font-mono">
+                    <span className="text-purple-400">from</span> pyrpc_core <span className="text-purple-400">import</span> <span className="text-white">rpc</span>
                   </div>
-                )
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[10px] font-mono text-sky-400 font-bold">.py</span>
+                    <span className="text-neutral-600 text-[10px]">→</span>
+                    <span className="text-[10px] font-mono text-blue-400 font-bold">.ts</span>
+                  </div>
+                </div>
+              )
             },
             {
               id: "02",
@@ -327,13 +321,19 @@ export default function HomePage() {
             },
             {
               id: "04",
-              title: "Cross-language contracts.",
-              description: "Define once in Python. Get fully typed TypeScript contracts automatically.",
+              title: "Monorepo or Separate Repos - both work.",
+              description: "In a monorepo? The server writes typed contracts directly to the client. Separate repos? The client fetches them via HTTP at build time.",
               visual: (
-                <div className="flex items-center gap-2.5">
-                  <span className="text-[10px] font-mono text-sky-400 font-bold">.py</span>
-                  <span className="text-neutral-600 text-[10px]">→</span>
-                  <span className="text-[10px] font-mono text-blue-400 font-bold">.ts</span>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-amber-500/5 border border-amber-500/20">
+                    <GitBranch className="w-3 h-3 text-amber-500" />
+                    <span className="text-[9px] text-amber-500 font-bold tracking-tighter uppercase">Workspace</span>
+                  </div>
+                  <span className="text-neutral-600 text-[10px]">|</span>
+                  <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-sky-500/5 border border-sky-500/20">
+                    <Globe className="w-3 h-3 text-sky-500" />
+                    <span className="text-[9px] text-sky-500 font-bold tracking-tighter uppercase">Server</span>
+                  </div>
                 </div>
               )
             },
