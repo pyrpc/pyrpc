@@ -33,14 +33,14 @@ const releases = [
             {
                 title: 'Workspace & Config',
                 items: [
-                    'pyrpc.json replaces [tool.pyrpc] in pyproject.toml — dedicated config file with explicit fields',
-                    'Distribution mode (workspace/server) is a required field — explicit config, no heuristics',
+                    'pyrpc.json replaces [tool.pyrpc] in pyproject.toml - dedicated config file with explicit fields',
+                    'Distribution mode (workspace/server) is a required field - explicit config, no heuristics',
                     'Workspace mode writes TypeScript types directly to client_root on file change',
-                    'Server mode exposes schema at GET /rpc — no filesystem writes, clients fetch via HTTP',
-                    'Setup wizard integrated into pyrpc dev — no separate pyrpc init command',
-                    'Config-relative path resolution — paths resolved against pyrpc.json directory, not CWD',
+                    'Server mode exposes schema at GET /rpc - no filesystem writes, clients fetch via HTTP',
+                    'Setup wizard integrated into pyrpc dev - no separate pyrpc init command',
+                    'Config-relative path resolution - paths resolved against pyrpc.json directory, not CWD',
                     'save_typescript_client() enforces absolute path contract at the boundary',
-                    'Migration strategy with SHA256 comparison — handles client_root changes without data loss',
+                    'Migration strategy with SHA256 comparison - handles client_root changes without data loss',
                 ]
             },
             {
@@ -49,8 +49,8 @@ const releases = [
                     'pyrpc dev prompts for framework, entrypoint, distribution, and client_root on first run',
                     'CLI flags (--framework, --entrypoint, --distribution, --client-root) skip the wizard entirely',
                     '--reconfigure re-runs setup prompts while pre-filling existing values',
-                    'Client root validated before starting dev server — fails fast on missing paths',
-                    'Adapter auto-installed if missing — no separate pip install step needed after pyrpc dev',
+                    'Client root validated before starting dev server - fails fast on missing paths',
+                    'Adapter auto-installed if missing - no separate pip install step needed after pyrpc dev',
                 ]
             },
             {
