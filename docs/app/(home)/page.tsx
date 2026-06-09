@@ -5,28 +5,19 @@ import Link from 'next/link';
 import {
   Check,
   Copy,
-  Zap,
-  ShieldCheck,
-  Sparkles,
-  Layers,
-  Search,
-  Package,
-  Activity,
-  Grid2X2,
-  GitBranch,
-  Globe,
-  ArrowUpRight,
   Play
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
-function QuickstartStep({ step, title, description, filename, children }: {
+function QuickstartStep({ step, title, description, filename, children, terminal, lines }: {
   step: number;
   title: string;
   description: string;
   filename?: string;
   children: React.ReactNode;
+  terminal?: React.ReactNode;
+  lines?: number;
 }) {
   return (
     <motion.div
@@ -52,20 +43,36 @@ function QuickstartStep({ step, title, description, filename, children }: {
 
       {/* Code block */}
       <div className="relative w-full">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-indigo-500/[0.06] blur-[100px] rounded-full pointer-events-none" />
-        <div className="relative w-full border border-neutral-800 rounded-md bg-[#0c0c0c] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.7)] overflow-hidden">
+        <div className="relative w-full border border-[#1a1a1a] bg-black overflow-hidden">
           {/* Title bar */}
-          <div className="flex items-center px-4 py-2.5 bg-[#161616] border-b border-neutral-800">
-            <div className="flex gap-1.5 mr-4">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-              <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-              <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+          {filename && (
+            <div className="border-b border-[#1a1a1a] px-4 py-2">
+              <span className="text-[11px] font-mono text-neutral-500 tracking-tight">{filename}</span>
             </div>
-            {filename && <span className="text-[11px] font-mono text-neutral-500 tracking-tight">~/projects/pyrpc/{filename}</span>}
-          </div>
+          )}
           {/* Content */}
-          <div className="p-5 font-mono text-[12px] leading-[1.7] bg-[#0e0e0e]">
-            {children}
+          <div className="flex">
+            <div className="flex-1 min-w-0">
+              {lines ? (
+                <div className="grid grid-cols-[40px_1fr] font-mono text-[12px] leading-relaxed">
+                  <div className="whitespace-pre text-center text-[#555] border-r border-[#1a1a1a] select-none leading-relaxed pb-12 pt-5">
+                    {Array.from({ length: lines }, (_, i) => `${i + 1}\n`).join('')}
+                  </div>
+                  <div className="leading-relaxed pb-12 pt-5 px-8">
+                    {children}
+                  </div>
+                </div>
+              ) : (
+                <div className="p-5 font-mono text-[12px] leading-relaxed">
+                  {children}
+                </div>
+              )}
+            </div>
+            {terminal && (
+              <div className="flex-1 min-w-0 border-l border-[#1a1a1a] p-4 font-mono text-[11px] leading-relaxed bg-black flex flex-col justify-end">
+                {terminal}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -76,15 +83,8 @@ function QuickstartStep({ step, title, description, filename, children }: {
 export default function HomePage() {
   const [manager, setManager] = useState<'uv' | 'pip' | 'npm' | 'pnpm' | 'bun'>('uv');
   const [copied, setCopied] = useState(false);
-  const [codeTab, setCodeTab] = useState<'server' | 'client'>('server');
+  const [codeTab, setCodeTab] = useState<'server' | 'generated' | 'client'>('server');
   const userInteractedRef = useRef(false);
-  useEffect(() => {
-    if (userInteractedRef.current) return;
-    const timer = setInterval(() => {
-      setCodeTab(prev => prev === 'server' ? 'client' : 'server');
-    }, 3500);
-    return () => clearInterval(timer);
-  }, []);
   const [copiedStep, setCopiedStep] = useState<number | null>(null);
 
   const command = manager === 'uv' ? 'uv add pyrpc-core' :
@@ -106,6 +106,18 @@ export default function HomePage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  useEffect(() => {
+    if (userInteractedRef.current) return;
+    const interval = setInterval(() => {
+      setCodeTab((prev) => {
+        if (prev === 'server') return 'generated';
+        if (prev === 'generated') return 'client';
+        return 'server';
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="text-fd-foreground font-sans min-h-screen overflow-x-hidden">
       {/* Subtle radial glow top center */}
@@ -118,18 +130,14 @@ export default function HomePage() {
           {/* Left Column */}
           <div className="flex flex-col items-start gap-10 max-w-[480px]">
 
-            {/* Headline - single line */}
+            {/* Headline */}
             <h1 className="text-[44px] md:text-[48px] font-normal leading-[54px] md:leading-[58px] tracking-tight text-neutral-900 dark:text-[#E8E8E8]" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
-              <span className="text-neutral-500 dark:text-white/40">tRPC for</span>{" "}
-              Python backends.
+              Type-safe APIs<br />for Python.
             </h1>
 
             {/* Description */}
-            <p
-              className="max-w-xl text-[18px] leading-[28px] font-normal text-neutral-600 dark:text-white/80"
-              style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}
-            >
-              tRPC-level type safety for teams shipping Python backends with TypeScript frontends. No schemas. No drift. Ship in minutes.
+            <p className="text-sm leading-relaxed text-neutral-600 dark:text-white/80 max-w-xl">
+              Build APIs in Python and consume them in TypeScript with full inference. No schemas. No drift. No OpenAPI.
             </p>
 
             {/* Try it live + Install command badge */}
@@ -158,43 +166,61 @@ export default function HomePage() {
 
           </div>
 
-          {/* Right Column - Code Window */}
-          <div className="relative w-full max-w-[600px] lg:ml-auto">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-indigo-500/[0.07] blur-[80px] rounded-full pointer-events-none" />
-            <div className="relative w-full border border-neutral-800 rounded-md bg-[#0c0c0c] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.7)] overflow-hidden">
-              {/* Window chrome */}
-              <div className="flex items-center justify-between px-4 py-2.5 bg-[#161616] border-b border-neutral-800">
-                <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
-                </div>
-                {/* File tabs */}
-                <div className="flex items-center bg-[#111111] border border-neutral-800 p-0.5 rounded-md">
-                  <button onClick={() => { userInteractedRef.current = true; setCodeTab('server'); }} className={cn("px-4 py-1 text-[10px] font-bold font-mono tracking-widest uppercase transition-all rounded-md", codeTab === 'server' ? "bg-neutral-700 text-white" : "text-neutral-500 hover:text-neutral-300")}>server.py</button>
-                  <button onClick={() => { userInteractedRef.current = true; setCodeTab('client'); }} className={cn("px-4 py-1 text-[10px] font-bold font-mono tracking-widest uppercase transition-all rounded-md", codeTab === 'client' ? "bg-neutral-700 text-white" : "text-neutral-500 hover:text-neutral-300")}>client.ts</button>
-                </div>
-                <div className="w-[44px]" />
+          {/* Right Column - Code Viewer */}
+          <div className="w-full max-w-[600px] lg:ml-auto">
+            <div className="w-full border border-[#1a1a1a] bg-black">
+              {/* Tab bar */}
+              <div className="border-b border-[#1a1a1a]">
+                <nav className="flex items-stretch px-3">
+                  {(['server', 'generated', 'client'] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => { setCodeTab(tab); userInteractedRef.current = true; }}
+                      className={cn(
+                        "relative px-3 py-2.5 text-[11px] font-mono tracking-tight transition-colors duration-200",
+                        codeTab === tab ? "text-white" : "text-white/45 hover:text-white/70"
+                      )}
+                    >
+                      {tab === 'server' ? 'server.py' : tab === 'generated' ? 'generated.ts' : 'client.ts'}
+                      {codeTab === tab && (
+                        <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/90" />
+                      )}
+                    </button>
+                  ))}
+                </nav>
               </div>
               {/* Code body */}
-              {codeTab === 'server' ? (
-                <div className="grid grid-cols-[40px_1fr] font-mono text-[12px] leading-[1.6] bg-[#080808] py-12">
-                  <div className="flex flex-col text-neutral-500/40 border-r border-neutral-800/50 select-none text-center leading-relaxed">{Array.from({ length: 9 }, (_, i) => <span key={i}>{i + 1}</span>)}</div>
-                  <div className="px-8 whitespace-pre text-neutral-400 overflow-hidden leading-relaxed">
-                    <code><span className="text-purple-400">from</span>{' '}pyrpc_core{' '}<span className="text-purple-400">import</span>{' '}<span className="text-white">rpc, model</span>{'\n'}{'\n'}<span className="text-sky-400">@model</span>{'\n'}<span className="text-purple-400">class</span>{' '}<span className="text-sky-400">User</span>:{'\n'}{'    '}id:{' '}<span className="text-pink-400">int</span>{'\n'}{'    '}name:{' '}<span className="text-pink-400">str</span>{'\n'}{'    '}email:{' '}<span className="text-pink-400">str</span>{'\n'}{'\n'}<span className="text-sky-400">@rpc</span>{'\n'}<span className="text-purple-400">def</span>{' '}<span className="text-sky-400">get_user</span>(id:{' '}<span className="text-pink-400">int</span>){' '}<span className="text-neutral-600">-&gt;</span>{' '}<span className="text-sky-400">User</span>:{'\n'}{'    '}<span className="text-purple-400">return</span>{' '}<span className="text-sky-400">User</span>(id=id, name=<span className="text-emerald-400">"atnatewos"</span>, email=<span className="text-emerald-400">"atnatewos@pyrpc.com"</span>)</code>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-[40px_1fr] font-mono text-[12px] leading-[1.6] bg-[#080808] py-12">
-                  <div className="flex flex-col text-neutral-500/40 border-r border-neutral-800/50 select-none text-center leading-relaxed">{Array.from({ length: 8 }, (_, i) => <span key={i}>{i + 1}</span>)}</div>
-                  <div className="px-8 whitespace-pre text-neutral-400 overflow-hidden leading-relaxed">
-                    <code><span className="text-purple-400">import</span>{' '}{'{'}{' '}<span className="text-sky-400">createClient</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/client"</span>;{'\n'}<span className="text-purple-400">import</span>{' '}<span className="text-purple-400">type</span>{' '}{'{'}{' '}<span className="text-sky-400">Types</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/types"</span>;{'\n'}{'\n'}<span className="text-purple-400">const</span>{' '}client = <span className="text-sky-400">createClient</span>&lt;<span className="text-sky-400">Types</span>&gt;();{'\n'}{'\n'}<span className="text-purple-400">const</span>{' '}user = <span className="text-purple-400">await</span> client.<span className="text-sky-400">get_user</span>(<span className="text-pink-400">1</span>);{'\n'}<span className="text-neutral-600 italic">// name, email - fully typed from Python model</span>{'\n'}<span className="text-white">console</span>.<span className="text-sky-400">log</span>(user.name, user.email);</code>
-                  </div>
-                </div>
-              )}
+              <div className="grid grid-cols-[40px_1fr] font-mono text-[12px] leading-[1.6] min-h-[340px]">
+                <AnimatePresence mode="wait">
+                  {codeTab === 'server' && (
+                    <motion.div key="server" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="contents">
+                      <div className="whitespace-pre text-center text-[#555] border-r border-[#1a1a1a] select-none leading-relaxed pb-12">{Array.from({ length: 13 }, (_, i) => `${i + 1}\n`).join('')}</div>
+                      <div className="px-8 whitespace-pre overflow-hidden leading-relaxed pb-12 text-[#d7d7d7]">
+                        <code><span className="text-[#b4b7ff]">from</span>{' '}pyrpc_core{' '}<span className="text-[#b4b7ff]">import</span>{' '}<span className="text-[#74c7ff]">rpc, model</span>{'\n'}{'\n'}<span className="text-[#d6b76c]">@model</span>{'\n'}<span className="text-[#b4b7ff]">class</span>{' '}<span className="text-[#74c7ff]">Team</span>:{'\n'}{'    '}id: <span className="text-[#86e1d8]">int</span>{'\n'}{'    '}name: <span className="text-[#86e1d8]">str</span>{'\n'}{'    '}members: <span className="text-[#86e1d8]">list</span>[<span className="text-[#86e1d8]">str</span>]{'\n'}{'    '}settings: <span className="text-[#86e1d8]">dict</span>[<span className="text-[#86e1d8]">str</span>, <span className="text-[#86e1d8]">bool</span>]{'\n'}{'\n'}<span className="text-[#d6b76c]">@rpc</span>{'\n'}<span className="text-[#b4b7ff]">def</span>{' '}<span className="text-[#74c7ff]">get_team</span>(id: <span className="text-[#86e1d8]">int</span>){' -> '}<span className="text-[#74c7ff]">Team</span>:{'\n'}{'    '}<span className="text-[#b4b7ff]">return</span>{' '}<span className="text-[#74c7ff]">Team</span>(id=<span className="text-[#8cd992]">1</span>, name=<span className="text-[#8cd992]">"Platform"</span>, ...){'\n'}</code>
+                      </div>
+                    </motion.div>
+                  )}
+                  {codeTab === 'generated' && (
+                    <motion.div key="generated" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="contents">
+                      <div className="whitespace-pre text-center text-[#555] border-r border-[#1a1a1a] select-none leading-relaxed pb-12">{Array.from({ length: 13 }, (_, i) => `${i + 1}\n`).join('')}</div>
+                      <div className="px-8 whitespace-pre overflow-hidden leading-relaxed pb-12 text-[#d7d7d7]">
+                        <code><span className="text-[#6c6c6c] italic">// Auto-generated from get_team</span>{'\n'}{'\n'}<span className="text-[#b4b7ff]">interface</span>{' '}<span className="text-[#86e1d8]">Team</span>{' {'}{'\n'}{'  '}id: <span className="text-[#86e1d8]">number</span>;{'\n'}{'  '}name: <span className="text-[#86e1d8]">string</span>;{'\n'}{'  '}members: <span className="text-[#86e1d8]">string</span>[];{'\n'}{'  '}settings: <span className="text-[#86e1d8]">Record</span>&lt;<span className="text-[#86e1d8]">string</span>, <span className="text-[#86e1d8]">boolean</span>&gt;;{'\n'}{'}'}{'\n'}{'\n'}<span className="text-[#b4b7ff]">interface</span>{' '}<span className="text-[#86e1d8]">Types</span>{' {'}{'\n'}{'  '}<span className="text-[#74c7ff]">get_team</span>(id: <span className="text-[#86e1d8]">number</span>): <span className="text-[#86e1d8]">Promise</span>&lt;<span className="text-[#86e1d8]">Team</span>&gt;;{'\n'}{'}'}{'\n'}</code>
+                      </div>
+                    </motion.div>
+                  )}
+                  {codeTab === 'client' && (
+                    <motion.div key="client" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="contents">
+                      <div className="whitespace-pre text-center text-[#555] border-r border-[#1a1a1a] select-none leading-relaxed pb-12">{Array.from({ length: 12 }, (_, i) => `${i + 1}\n`).join('')}</div>
+                      <div className="px-8 whitespace-pre overflow-hidden leading-relaxed pb-12 text-[#d7d7d7]">
+                        <code><span className="text-[#b4b7ff]">import</span>{' '}{'{'}{' '}<span className="text-[#74c7ff]">createClient</span>{' '}{'}'}{' '}<span className="text-[#b4b7ff]">from</span>{' '}<span className="text-[#8cd992]">"@pyrpc/client"</span>;{'\n'}<span className="text-[#b4b7ff]">import</span>{' '}<span className="text-[#b4b7ff]">type</span>{' '}{'{'}{' '}<span className="text-[#86e1d8]">Types</span>{' '}{'}'}{' '}<span className="text-[#b4b7ff]">from</span>{' '}<span className="text-[#8cd992]">"@pyrpc/types"</span>;{'\n'}{'\n'}<span className="text-[#b4b7ff]">const</span>{' '}client{' = '}<span className="text-[#74c7ff]">createClient</span>&lt;<span className="text-[#86e1d8]">Types</span>&gt;();{'\n'}{'\n'}<span className="text-[#6c6c6c] italic">// Autocomplete works across your stack</span>{'\n'}<span className="text-[#b4b7ff]">const</span>{' '}team{' = '}<span className="text-[#b4b7ff]">await</span>{' '}client.<span className="text-[#74c7ff]">get_team</span>(<span className="text-[#8cd992]">1</span>);{'\n'}<span className="text-[#6c6c6c] italic">//    ^? Team</span>{'\n'}{'\n'}console.<span className="text-[#74c7ff]">log</span>(team.members);{'\n'}<span className="text-[#6c6c6c] italic">//          ^? string[]</span>{'\n'}</code>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-          </div>
-        </div>
+           </div>
+         </div>
 
         {/* Demo Section */}
         {/*
@@ -239,33 +265,7 @@ export default function HomePage() {
 
         {/* Features Section Header */}
 
-        <div className="my-40 flex flex-col items-center text-center max-w-[1100px] mx-auto">
-          <div className="flex items-center gap-4 mb-4">
-            <span
-              style={{
-                fontFamily: '"Geist Mono", "Geist Mono Fallback"',
-                fontSize: '11px',
-                fontWeight: 400,
-                lineHeight: '16.5px',
-                color: 'lab(67.9697 -3.85058 -3.02824)'
-              }}
-            >
-              01
-            </span>
-            <div className="h-px w-8 bg-fd-border" />
-            <span
-              className="uppercase tracking-widest"
-              style={{
-                fontFamily: '"Geist Mono", "Geist Mono Fallback"',
-                fontSize: '11px',
-                fontWeight: 400,
-                lineHeight: '16.5px',
-                color: 'lab(67.9697 -3.85058 -3.02824)'
-              }}
-            >
-              Features
-            </span>
-          </div>
+        <div className="mt-40 mb-16 flex flex-col items-center text-center max-w-[1100px] mx-auto">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-6" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
             Everything you need.
           </h2>
@@ -284,84 +284,31 @@ export default function HomePage() {
               id: "01",
               title: "Cross-language contracts.",
               description: "Define once in Python. Get fully typed TypeScript contracts automatically.",
-              visual: (
-                <div className="flex flex-col gap-3">
-                  <div className="text-[10px] font-mono">
-                    <span className="text-purple-400">from</span> pyrpc_core <span className="text-purple-400">import</span> <span className="text-white">rpc</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-[10px] font-mono text-sky-400 font-bold">.py</span>
-                    <span className="text-neutral-600 text-[10px]">→</span>
-                    <span className="text-[10px] font-mono text-blue-400 font-bold">.ts</span>
-                  </div>
-                </div>
-              )
             },
             {
               id: "02",
               title: "Full IDE autocompletion.",
-              description: "Your Python procedures appear as typed methods in VS Code, WebStorm, and any TypeScript-aware editor. Rename a procedure in Python and TypeScript flags every broken call.",
-              visual: (
-                <div className="flex items-center gap-2 text-[10px] font-mono">
-                  <span className="text-fd-foreground/60">client.</span>
-                  <span className="text-sky-400">get_user</span>
-                  <span className="text-neutral-600">(</span>
-                  <span className="text-pink-400">id</span>
-                  <span className="text-neutral-600">)</span>
-                </div>
-              )
+              description: "Your Python procedures appear as typed methods. Rename a procedure and TypeScript flags every broken call.",
             },
             {
               id: "03",
               title: "Invalid Inputs? Blocked.",
               description: "Bad data throws before it hits your logic - always. Powered by Pydantic v2.",
-              visual: (
-                <div className="px-2 py-1 rounded bg-emerald-500/5 border border-emerald-500/20">
-                  <span className="text-[9px] text-emerald-500 font-bold tracking-tighter uppercase">Strict Validation</span>
-                </div>
-              )
             },
             {
               id: "04",
               title: "Monorepo or Separate Repos - both work.",
               description: "In a monorepo? The server writes typed contracts directly to the client. Separate repos? The client fetches them via HTTP at build time.",
-              visual: (
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-amber-500/5 border border-amber-500/20">
-                    <GitBranch className="w-3 h-3 text-amber-500" />
-                    <span className="text-[9px] text-amber-500 font-bold tracking-tighter uppercase">Workspace</span>
-                  </div>
-                  <span className="text-neutral-600 text-[10px]">|</span>
-                  <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-sky-500/5 border border-sky-500/20">
-                    <Globe className="w-3 h-3 text-sky-500" />
-                    <span className="text-[9px] text-sky-500 font-bold tracking-tighter uppercase">Server</span>
-                  </div>
-                </div>
-              )
             },
             {
               id: "05",
               title: "Universal Adapters.",
               description: "Bring your own framework - FastAPI, Flask, Django, or raw ASGI. pyRPC fits your stack.",
-              visual: (
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded bg-fd-foreground/5 border border-fd-border flex items-center justify-center text-[10px] font-bold">FA</div>
-                  <div className="w-6 h-6 rounded bg-fd-foreground/5 border border-fd-border flex items-center justify-center text-[10px] font-bold">FL</div>
-                  <div className="w-6 h-6 rounded bg-fd-foreground/5 border border-fd-border flex items-center justify-center text-[10px] font-bold">DJ</div>
-                </div>
-              )
             },
             {
               id: "06",
               title: "Sync and async - both work.",
               description: "Write sync or async procedures - pyRPC detects the right calling convention automatically.",
-              visual: (
-                <div className="flex gap-1 items-end h-6">
-                  {[30, 70, 45, 95, 60].map((h, i) => (
-                    <div key={i} className="w-1 bg-gradient-to-t from-blue-500/40 to-blue-500/10 rounded-full" style={{ height: `${h}%` }} />
-                  ))}
-                </div>
-              )
             }
           ].map((feature) => (
             <div
@@ -374,10 +321,7 @@ export default function HomePage() {
               <h3 className="mb-2 font-sans text-[17px] font-medium tracking-tight text-fd-foreground">
                 {feature.title}
               </h3>
-              <p className="text-fd-foreground/50 text-[13px] leading-relaxed mb-12 max-w-[26ch]">{feature.description}</p>
-              <div className="mt-auto">
-                {feature.visual}
-              </div>
+              <p className="text-fd-foreground/50 text-[13px] leading-relaxed max-w-[26ch]">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -386,11 +330,6 @@ export default function HomePage() {
       {/* Works With Section */}
       <div className="my-40 max-w-[1100px] mx-auto">
         <div className="flex flex-col items-center text-center mb-16">
-          <div className="flex items-center gap-4 mb-4">
-            <span style={{ fontFamily: '"Geist Mono", "Geist Mono Fallback"', fontSize: '11px', fontWeight: 400, lineHeight: '16.5px', color: 'lab(67.9697 -3.85058 -3.02824)' }}>02</span>
-            <div className="h-px w-8 bg-fd-border" />
-            <span className="uppercase tracking-widest" style={{ fontFamily: '"Geist Mono", "Geist Mono Fallback"', fontSize: '11px', fontWeight: 400, lineHeight: '16.5px', color: 'lab(67.9697 -3.85058 -3.02824)' }}>Works With</span>
-          </div>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-6" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>
             Fits your stack.
           </h2>
@@ -439,11 +378,6 @@ export default function HomePage() {
 
       <div className="my-40 relative w-full">
         <div className="mb-24 flex flex-col items-center text-center max-w-5xl mx-auto">
-          <div className="flex items-center gap-4 mb-4">
-            <span style={{ fontFamily: '"Geist Mono", "Geist Mono Fallback"', fontSize: '11px', fontWeight: 400, lineHeight: '16.5px', color: 'lab(67.9697 -3.85058 -3.02824)' }}>03</span>
-            <div className="h-px w-8 bg-fd-border" />
-            <span className="uppercase tracking-widest" style={{ fontFamily: '"Geist Mono", "Geist Mono Fallback"', fontSize: '11px', fontWeight: 400, lineHeight: '16.5px', color: 'lab(67.9697 -3.85058 -3.02824)' }}>Quickstart</span>
-          </div>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tighter text-fd-foreground mb-6" style={{ fontFamily: 'Geist, "Geist Fallback", sans-serif' }}>Ship in Three commands.</h2>
           <p className="text-fd-foreground/50 text-sm md:text-base leading-relaxed font-sans max-w-2xl">From zero to a running pyRPC server with a type-safe TypeScript client in under two minutes.</p>
         </div>
@@ -455,22 +389,34 @@ export default function HomePage() {
             step={1}
             title="Add pyRPC to your Python project."
             description="One command installs the core runtime with Pydantic-powered validation, async support, and framework adapters."
-            filename=""
-          >
-            <div className="font-mono text-[11px] leading-[1.7] space-y-1">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-neutral-600">$</span>{' '}<span className="text-neutral-200">uv add pyrpc-core</span>
+            filename="server.py"
+            lines={5}
+            terminal={
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-neutral-600">$</span>{' '}<span className="text-neutral-200">uv add pyrpc-core</span>
+                  </div>
+                  <button onClick={() => copyQuickstart('uv add pyrpc-core', 1)} className="text-neutral-600 hover:text-neutral-300 transition-colors">
+                    {copiedStep === 1 ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                  </button>
                 </div>
-                <button onClick={() => copyQuickstart('uv add pyrpc-core', 1)} className="text-neutral-600 hover:text-neutral-300 transition-colors">
-                  {copiedStep === 1 ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
-                </button>
+                <div className="text-neutral-600">Resolved 8 packages in 320ms</div>
+                <div className="text-neutral-600">Installed 4 packages in 45ms</div>
+                <div className="text-neutral-600">+ pyrpc-core==0.3.0</div>
+                <div className="text-neutral-600">+ pydantic==2.7.1</div>
+                <div className="mt-2"><span className="text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
               </div>
-              <div className="text-neutral-600">Resolved 8 packages in 320ms</div>
-              <div className="text-neutral-600">Installed 4 packages in 45ms</div>
-              <div className="text-neutral-600">+ pyrpc-core==0.3.0</div>
-              <div className="text-neutral-600">+ pydantic==2.7.1</div>
-              <div className="mt-2"><span className="text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
+            }
+          >
+            <div className="whitespace-pre-wrap leading-relaxed">
+              <code>
+                <span className="text-[#b4b7ff]">from</span>{' '}pyrpc_core{' '}<span className="text-[#b4b7ff]">import</span>{' '}<span className="text-[#74c7ff]">rpc</span>{'\n'}
+                {'\n'}
+                <span className="text-[#d6b76c]">@rpc</span>{'\n'}
+                <span className="text-[#b4b7ff]">def</span>{' '}<span className="text-[#74c7ff]">greet</span>(name: <span className="text-[#86e1d8]">str</span>){' '}<span className="text-[#6c6c6c]">-&gt;</span>{' '}<span className="text-[#86e1d8]">str</span>:{'\n'}
+                {'    '}<span className="text-[#b4b7ff]">return</span>{' '}<span className="text-[#8cd992]">{'f"Hello {name}!"'}</span>
+              </code>
             </div>
           </QuickstartStep>
 
@@ -480,24 +426,27 @@ export default function HomePage() {
             title="Start the pyRPC dev server."
             description="Types are generated automatically as your server runs."
             filename="@pyrpc/types"
+            lines={7}
+            terminal={
+              <div className="space-y-1">
+                <div><span className="text-neutral-600">$</span> <span className="text-neutral-200">pyrpc dev</span></div>
+                <div className="text-neutral-600">Starting pyRPC dev server...</div>
+                <div className="text-neutral-600">Found 1 procedure</div>
+                <div><span className="text-emerald-600">✓</span> <span className="text-neutral-200">Serving at http://localhost:8000</span></div>
+                <div className="mt-2"><span className="text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
+              </div>
+            }
           >
-            <div className="whitespace-pre leading-relaxed">
+            <div className="whitespace-pre-wrap leading-relaxed">
               <code>
-                <span className="text-neutral-600">/**</span>{'\n'}
-                <span className="text-neutral-600">{' *'} Auto-generated by pyrpc dev.</span>{'\n'}
-                <span className="text-neutral-600">{' */'}</span>{'\n'}
+                <span className="text-[#6c6c6c] italic">/**</span>{'\n'}
+                <span className="text-[#6c6c6c] italic">{' *'} Auto-generated by pyrpc dev.</span>{'\n'}
+                <span className="text-[#6c6c6c] italic">{' */'}</span>{'\n'}
                 {'\n'}
-                <span className="text-purple-400">export</span>{' '}<span className="text-purple-400">interface</span>{' '}<span className="text-sky-400">Types</span> {'{'}
-                {'\n'}{'  '}<span className="text-sky-400">get_user</span>(id: <span className="text-pink-400">number</span>): <span className="text-sky-400">Promise</span>&lt;<span className="text-sky-400">User</span>&gt;;{'\n'}
+                <span className="text-[#b4b7ff]">export</span>{' '}<span className="text-[#b4b7ff]">interface</span>{' '}<span className="text-[#74c7ff]">Types</span> {'{'}
+                {'\n'}{'  '}<span className="text-[#74c7ff]">greet</span>(name: <span className="text-[#86e1d8]">string</span>): <span className="text-[#86e1d8]">Promise</span>&lt;<span className="text-[#86e1d8]">string</span>&gt;;{'\n'}
                 {'}'}
               </code>
-            </div>
-            <div className="border-t border-neutral-800 mt-5 pt-4 font-mono text-[11px] leading-[1.7] space-y-1">
-              <div><span className="text-neutral-600">$</span> <span className="text-neutral-200">pyrpc dev</span></div>
-              <div className="text-neutral-600">Starting pyRPC dev server...</div>
-              <div className="text-neutral-600">Found 1 procedure</div>
-              <div><span className="text-emerald-600">✓</span> <span className="text-neutral-200">Serving at http://localhost:8000</span></div>
-              <div className="mt-2"><span className="text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
             </div>
           </QuickstartStep>
 
@@ -507,24 +456,27 @@ export default function HomePage() {
             title="Ship type-safe TypeScript clients."
             description="Install the client package in your frontend project. Types flow from Python to TypeScript — no manual codegen, no schema drift."
             filename="client.ts"
+            lines={8}
+            terminal={
+              <div className="space-y-1">
+                <div><span className="text-neutral-600">$</span> <span className="text-neutral-200">npm install @pyrpc/client</span></div>
+                <div className="text-neutral-600">Resolved 12 packages in 1.4s</div>
+                <div className="text-neutral-600">+ @pyrpc/client@0.3.0</div>
+                <div className="text-neutral-600">+ @pyrpc/types@0.3.0</div>
+                <div className="mt-2"><span className="text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
+              </div>
+            }
           >
-            <div className="whitespace-pre leading-relaxed">
+            <div className="whitespace-pre-wrap leading-relaxed">
               <code>
-                <span className="text-purple-400">import</span>{' '}{'{'}{' '}<span className="text-sky-400">createClient</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/client"</span>;{'\n'}
-                <span className="text-purple-400">import</span>{' '}<span className="text-purple-400">type</span>{' '}{'{'}{' '}<span className="text-sky-400">Types</span>{' '}{'}'}{' '}<span className="text-purple-400">from</span>{' '}<span className="text-emerald-400">"@pyrpc/types"</span>;{'\n'}
+                <span className="text-[#b4b7ff]">import</span>{' '}{'{'}{' '}<span className="text-[#74c7ff]">createClient</span>{' '}{'}'}{' '}<span className="text-[#b4b7ff]">from</span>{' '}<span className="text-[#8cd992]">"@pyrpc/client"</span>;{'\n'}
+                <span className="text-[#b4b7ff]">import</span>{' '}<span className="text-[#b4b7ff]">type</span>{' '}{'{'}{' '}<span className="text-[#86e1d8]">Types</span>{' '}{'}'}{' '}<span className="text-[#b4b7ff]">from</span>{' '}<span className="text-[#8cd992]">"@pyrpc/types"</span>;{'\n'}
                 {'\n'}
-                <span className="text-purple-400">const</span>{' '}client = <span className="text-sky-400">createClient</span>&lt;<span className="text-sky-400">Types</span>&gt;();{'\n'}
+                <span className="text-[#b4b7ff]">const</span>{' '}client = <span className="text-[#74c7ff]">createClient</span>&lt;<span className="text-[#86e1d8]">Types</span>&gt;();{'\n'}
                 {'\n'}
-                <span className="text-purple-400">const</span>{' '}user = <span className="text-purple-400">await</span> client.<span className="text-sky-400">get_user</span>(<span className="text-pink-400">1</span>);{'\n'}
-                console.<span className="text-sky-400">log</span>(user.name);{' '}<span className="text-neutral-600 italic">// Fully typed!</span>{'\n'}
+                <span className="text-[#b4b7ff]">const</span>{' '}result = <span className="text-[#b4b7ff]">await</span> client.<span className="text-[#74c7ff]">greet</span>(<span className="text-[#8cd992]">"World"</span>);{'\n'}
+                console.<span className="text-[#74c7ff]">log</span>(result);{' '}<span className="text-[#6c6c6c] italic">// "Hello World!"</span>{'\n'}
               </code>
-            </div>
-            <div className="border-t border-neutral-800 mt-5 pt-4 font-mono text-[11px] leading-[1.7] space-y-1">
-              <div><span className="text-neutral-600">$</span> <span className="text-neutral-200">npm install @pyrpc/client</span></div>
-              <div className="text-neutral-600">Resolved 12 packages in 1.4s</div>
-              <div className="text-neutral-600">+ @pyrpc/client@0.3.0</div>
-              <div className="text-neutral-600">+ @pyrpc/types@0.3.0</div>
-              <div className="mt-2"><span className="text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
             </div>
           </QuickstartStep>
 
