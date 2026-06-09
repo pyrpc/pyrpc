@@ -265,7 +265,7 @@ export default function PlaygroundPage() {
                     <div>
                         <h1 className="text-sm font-bold tracking-tight uppercase font-mono opacity-30">Interactive Playground</h1>
                         <p className="text-[10px] font-mono text-fd-muted-foreground/50 mt-0.5">
-                            Write Python procedures, call them from TypeScript — live in the browser.
+                            Write Python procedures, call them from TypeScript - live in the browser.
                         </p>
                     </div>
                     <button

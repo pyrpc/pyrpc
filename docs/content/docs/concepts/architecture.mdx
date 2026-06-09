@@ -42,7 +42,7 @@ pyRPC stores project settings in a dedicated `pyrpc.json` file:
 - **framework**: The web framework adapter to use (fastapi, flask, asgi)
 - **entrypoint**: The Python module to scan for `@rpc` procedures
 - **client_root**: Relative path to the TypeScript client project
-- **distribution**: How types are delivered to the client — `workspace` (monorepo) or `server` (remote)
+- **distribution**: How types are delivered to the client - `workspace` (monorepo) or `server` (remote)
 
 All paths are resolved relative to `pyrpc.json`'s directory at config load time. The types output path is derived automatically from `client_root`.
 
@@ -64,7 +64,7 @@ When backend and frontend live in the same repository, the server writes generat
 ```
 
 - Types are regenerated automatically on every file change (300ms debounce).
-- No network round-trip — the frontend sees updates instantly.
+- No network round-trip - the frontend sees updates instantly.
 - The TypeScript client imports types from `@pyrpc/types` as if they were a regular npm package.
 
 ### Server Mode (Remote / Separate Repos)
@@ -89,7 +89,7 @@ Both modes use the same introspection schema (from `GET /rpc`). The difference i
 - **Workspace**: `pyrpc dev` calls `save_typescript_client()` on regeneration, writing directly to the resolved `client_root`.
 - **Server**: `pyrpc dev` only updates the in-memory schema. The client's `npx pyrpc sync` fetches it over HTTP and runs `save_typescript_client()` locally.
 
-This means you can switch between modes without changing your Python code — only the `distribution` field and the client's setup process differ.
+This means you can switch between modes without changing your Python code - only the `distribution` field and the client's setup process differ.
 
 ## 5. Contract Synchronization
 
