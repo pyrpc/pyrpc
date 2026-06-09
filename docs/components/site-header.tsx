@@ -22,10 +22,10 @@ const RESOURCES_ITEMS = [
   },
   {
     name: 'Community',
-    href: 'https://github.com/pyrpc/pyrpc/discussions',
-    description: 'GitHub Discussions',
+    href: '/community',
+    description: 'Discussions, Telegram, YouTube, and more',
     icon: Users,
-    external: true,
+    external: false,
   },
 ];
 
@@ -42,7 +42,7 @@ export function SiteHeader() {
     setMounted(true);
     fetch('https://api.github.com/repos/pyrpc/pyrpc')
       .then(r => r.json())
-      .then(d => d.stargazers_count && setStars(d.stargazers_count))
+      .then(d => setStars(d.stargazers_count ?? 0))
       .catch(() => {});
   }, []);
 
@@ -94,24 +94,22 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="fixed top-0 z-[100] w-full bg-white dark:bg-[#000000] border-b border-neutral-200 dark:border-white/[0.08] h-14 flex items-center justify-between">
+    <header className="sticky top-0 z-[100] w-full bg-white dark:bg-[#000000] border-b border-neutral-200 dark:border-white/[0.08] h-14 flex items-center justify-between relative">
       {/* Left: Logo */}
       <div className="flex items-center h-full px-6">
         <Link href="/" className="flex items-center gap-2 font-bold text-fd-foreground tracking-tighter text-lg">
-          <picture>
-            <source srcSet="/branding/png/pyrpc-mark-bg-dark.png" media="(prefers-color-scheme: dark)" />
-            <img src="/branding/png/pyrpc-mark-bg-light.png" alt="" className="w-5 h-5" />
-          </picture>
+          <img src="/branding/png/pyrpc-mark-bg-light.png" alt="" className="w-5 h-5 block dark:hidden" />
+          <img src="/branding/png/pyrpc-mark-bg-dark.png" alt="" className="w-5 h-5 hidden dark:block" />
           pyRPC
         </Link>
       </div>
 
-      {/* Right: Nav Segmented */}
-      <div className="flex items-center h-full">
+      {/* Center: Nav Links */}
+      <nav className="absolute left-1/2 -translate-x-1/2 flex items-center h-full">
         <Link 
           href="/demo" 
           className={cn(
-            "h-full px-6 flex items-center border-l border-fd-border text-[10px] font-medium uppercase tracking-[0.2em] transition-colors hover:bg-fd-accent/50",
+            "h-full px-6 flex items-center text-[10px] font-medium uppercase tracking-[0.2em] transition-colors hover:bg-fd-accent/50",
             pathname === '/demo' ? "text-fd-foreground" : "text-fd-muted-foreground hover:text-fd-foreground"
           )}
         >
@@ -200,7 +198,10 @@ export function SiteHeader() {
             })}
           </div>
         </div>
+      </nav>
 
+      {/* Right: GitHub Stars + Theme */}
+      <div className="flex items-center h-full">
         <Link
           href="https://github.com/pyrpc/pyrpc"
           target="_blank"
