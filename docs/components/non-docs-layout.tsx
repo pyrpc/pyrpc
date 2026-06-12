@@ -69,11 +69,9 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
           <nav className="flex items-center gap-2">
             <Link href="/docs" className="hover:text-fd-foreground transition-colors">Docs</Link>
             <span className="text-fd-foreground/15">/</span>
-            <Link href="/blog" className="hover:text-fd-foreground transition-colors">Blog</Link>
+            <Link href="/legal/privacy" className="hover:text-fd-foreground transition-colors">Privacy</Link>
             <span className="text-fd-foreground/15">/</span>
-            <a href="https://github.com/pyrpc/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-colors">GitHub</a>
-            <span className="text-fd-foreground/15">/</span>
-            <Link href="/community" className="hover:text-fd-foreground transition-colors">Community</Link>
+            <Link href="/legal/terms" className="hover:text-fd-foreground transition-colors">Terms</Link>
           </nav>
 
           {/* Right: social icons + copyright */}
@@ -98,11 +96,6 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
             <a href="https://t.me/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-colors text-fd-foreground/30">
               <svg role="img" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg">
                 <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.127.087.497.04.82-.076.534-.599 2.86-.634 3.054a.737.737 0 0 0 .002.312c.044.17.16.305.288.386.002 0 .587.426.587.426s.162.096.264.18c.112.093.227.27.151.444-.074.168-.344.266-.344.266s-.56.182-1.975.693c-.748.27-1.663.6-2.232.496a3.3 3.3 0 0 1-.326-.059c-.595-.148-.998-.388-1.387-.626-.605-.374-1.116-.835-1.62-1.291-.24-.218-.472-.44-.685-.677-.618-.687-.005-1.695.004-1.706.003-.004.563-.896 1.775-2.053.64-.613 1.476-1.29 1.86-1.536.143-.09.278-.118.318-.116zm-4.019 2.645a.558.558 0 0 0-.433.3 217 217 0 0 0-1.46 2.833c-.063.121-.074.273-.013.394.087.153.268.213.433.172.124-.022.157-.028.157-.028s.004.002.004.004c.004 0 .02.002.04.034.021.032.028.077.028.106v.002c.053.1.138.163.196.215.014.012.015.013.002.015z"/>
-              </svg>
-            </a>
-            <a href="https://youtube.com/@pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-colors text-fd-foreground/30">
-              <svg role="img" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
               </svg>
             </a>
             <a href="https://www.npmjs.com/org/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-colors text-fd-foreground/30">
