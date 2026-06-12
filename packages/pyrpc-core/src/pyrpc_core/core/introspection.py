@@ -18,6 +18,7 @@ class ProcedureSchema(BaseModel):
     return_type: str
     return_schema: Dict[str, Any]
     doc: Optional[str] = None
+    is_async: bool = False
 
 
 def get_procedure_schema(proc: Procedure) -> ProcedureSchema:
@@ -60,6 +61,7 @@ def get_procedure_schema(proc: Procedure) -> ProcedureSchema:
         return_type=str(return_type),
         return_schema=return_json_schema,
         doc=inspect.getdoc(proc.fn),
+        is_async=proc.is_async,
     )
 
 
