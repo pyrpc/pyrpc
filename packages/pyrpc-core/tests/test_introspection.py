@@ -63,3 +63,16 @@ def test_get_registry_schema():
     assert len(registry_schema) == 2
     assert registry_schema["ping"].name == "ping"
     assert registry_schema["greet"].parameters[0].name == "name"
+
+def test_procedure_schema_is_async():
+    def sync_fn(a: int) -> int:
+        return a
+
+    async def async_fn(a: int) -> int:
+        return a
+
+    sync_schema = get_procedure_schema(Procedure(sync_fn))
+    assert sync_schema.is_async is False
+
+    async_schema = get_procedure_schema(Procedure(async_fn))
+    assert async_schema.is_async is True
