@@ -39,6 +39,41 @@ class RPCClient:
         self.base_url = base_url.rstrip("/")
         self._async_client = async_client or httpx.AsyncClient(base_url=self.base_url)
         self._sync_client = sync_client or httpx.Client(base_url=self.base_url)
+        self._schema_loaded = False
+        self._schema_fetch_attempted = False
+        self._is_async_cache: Dict[str, bool] = {}
+
+    def set_schema(self, schema: Dict[str, bool]) -> None:
+        """Manually set procedure schema for sync/async dispatch.
+
+        Bypasses the HTTP introspection fetch. Useful for testing or when
+        the metadata is known ahead of time.
+
+        Args:
+            schema: Mapping of procedure name → ``is_async`` flag.
+        """
+        self._is_async_cache = schema.copy()
+        self._schema_loaded = True
+        self._schema_fetch_attempted = True
+
+    def _ensure_schema_loaded(self) -> None:
+        """Lazily fetch procedure metadata from the server's GET /rpc introspection endpoint.
+
+        Only attempts once; on failure falls back to legacy event-loop detection.
+        """
+        if self._schema_fetch_attempted:
+            return
+        self._schema_fetch_attempted = True
+        try:
+            response = self._sync_client.get("/rpc")
+            response.raise_for_status()
+            data = response.json()
+            for method_name, schema_data in data.items():
+                if isinstance(schema_data, dict):
+                    self._is_async_cache[method_name] = schema_data.get("is_async", False)
+            self._schema_loaded = True
+        except Exception:
+            pass
 
     def __getattr__(self, name: str) -> "RPCCallable":
         return RPCCallable(self, name)
@@ -105,11 +140,23 @@ class RPCCallable:
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """
-        If a running event loop is detected, returns an awaitable that calls call_async.
-        Otherwise, calls call_sync and returns the result.
+        Dispatch based on the server-side procedure type when schema is available.
+
+        - If the server procedure is async → returns an awaitable (requires ``await``).
+        - If the server procedure is sync → calls synchronously and returns the value directly.
+        - If schema is unavailable → falls back to legacy event-loop detection.
         """
         self._args = args
         self._kwargs = kwargs
+
+        # Try schema-based dispatch first
+        self.client._ensure_schema_loaded()
+        if self.client._schema_loaded and self.method in self.client._is_async_cache:
+            if self.client._is_async_cache[self.method]:
+                return self.client.call_async(self.method, *args, **kwargs)
+            return self.client.call_sync(self.method, *args, **kwargs)
+
+        # Fallback: detect running event loop
         try:
             asyncio.get_running_loop()
             return self.client.call_async(self.method, *args, **kwargs)

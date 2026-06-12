@@ -2,6 +2,7 @@ import json
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from ..core.interpreter import handle_request
+from ..core.introspection import get_registry_schema
 
 CORS_HEADERS: List[Tuple[bytes, bytes]] = [
     (b"access-control-allow-origin", b"*"),
@@ -51,8 +52,7 @@ class PyRPCAsgiApp:
         """
         Handle a GET /rpc request for introspection.
         """
-        from ..core.introspection import get_registry_schema
-        # We need to convert the schema objects to dicts for JSON serialization
+        # Convert Pydantic models to dicts for JSON serialization
         # Since get_registry_schema returns a dict of ProcedureSchema, 
         # and ProcedureSchema is likely a Pydantic model.
         schemas = get_registry_schema(self.router)
