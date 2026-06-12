@@ -367,3 +367,51 @@ aside button[aria-label*="Search"] {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+/* =============================================
+   Code Block Hero — typography & syntax tokens
+   ============================================= */
+.code-block-hero code {
+  font-family: "Geist Mono", monospace !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 17.1429px !important;
+  color: rgb(225, 228, 232);
+}
+
+:root:not(.dark) .code-block-hero code {
+  color: #1e1e1e;
+}
+
+/* Shiki dual-theme token colors */
+.code-block-hero .shiki code span {
+  color: var(--shiki-light);
+}
+.dark .code-block-hero .shiki code span {
+  color: var(--shiki-dark);
+}
+
+/* Syntax highlight tokens (manual spans, used in QuickstartStep) */
+.hl-kw   { color: #b4b7ff; }
+.hl-fn   { color: #74c7ff; }
+.hl-type { color: #86e1d8; }
+.hl-dec  { color: #d6b76c; }
+.hl-str  { color: #8cd992; }
+.hl-cmt  { color: #6c6c6c; font-style: italic; }
+.hl-ln   { color: #555; }
+
+.dark .hl-kw   { color: #b4b7ff; }
+.dark .hl-fn   { color: #74c7ff; }
+.dark .hl-type { color: #86e1d8; }
+.dark .hl-dec  { color: #d6b76c; }
+.dark .hl-str  { color: #8cd992; }
+.dark .hl-cmt  { color: #6c6c6c; }
+.dark .hl-ln   { color: #555; }
+
+:root:not(.dark) .hl-kw   { color: #8250df; }
+:root:not(.dark) .hl-fn   { color: #0550ae; }
+:root:not(.dark) .hl-type { color: #116329; }
+:root:not(.dark) .hl-dec  { color: #953800; }
+:root:not(.dark) .hl-str  { color: #0a3069; }
+:root:not(.dark) .hl-cmt  { color: #656d76; }
+:root:not(.dark) .hl-ln   { color: #8b949e; }
