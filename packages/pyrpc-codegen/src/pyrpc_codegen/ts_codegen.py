@@ -27,11 +27,11 @@ def _pytype_to_ts(type_str: str) -> str:
     m = re.match(r"<class\s+'([^']+)'>", type_str)
     if m:
         name = m.group(1)
+        if '.' in name:
+            name = name.rsplit('.', 1)[1]
         if name in _TYPE_MAP:
             return _TYPE_MAP[name]
-        if name[0].isupper():
-            return name
-        return "any"
+        return name
 
     if type_str.startswith("typing."):
         type_str = type_str[7:]

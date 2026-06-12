@@ -40,9 +40,9 @@ function toTs(t) {
   var m = t.match(/^<class\s+'([^'>]+)'>$/);
   if (m) {
     var n = m[1];
+    if (n.indexOf('.') !== -1) n = n.split('.').pop();
     if (TYPE_MAP[n]) return TYPE_MAP[n];
-    if (n[0] >= 'A' && n[0] <= 'Z') return n;
-    return 'any';
+    return n;
   }
   var s = t.replace(/^typing\./, '');
   var o = s.match(/^Optional\[(.+)\]$/);
