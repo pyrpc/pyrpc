@@ -23,6 +23,10 @@ PYRPC_CONFIG = dict | None
 CONFIG_FILE = "pyrpc.json"
 CONFIG_VERSION = 1
 DISTRIBUTION_MODES = ["workspace", "server"]
+DISTRIBUTION_CHOICES = [
+    questionary.Choice("workspace — server writes types directly to your project", value="workspace"),
+    questionary.Choice("server — clients fetch types via HTTP (npx pyrpc sync)", value="server"),
+]
 
 
 def _find_pyrpc_json() -> Path | None:
@@ -84,8 +88,8 @@ def _prompt_for_config(previous: dict | None = None) -> dict | None:
 
     default_distribution = (previous or {}).get("distribution", "workspace")
     distribution = questionary.select(
-        "How are types distributed to the client?",
-        choices=DISTRIBUTION_MODES,
+        "How are types distributed to the client? [workspace|server]",
+        choices=DISTRIBUTION_CHOICES,
         default=default_distribution,
     ).ask()
     if distribution is None:
@@ -546,7 +550,7 @@ def dev(
     framework: str = typer.Option(None, "--framework", help="Web framework to use (fastapi, flask, asgi)"),
     entry: str = typer.Option(None, "--entry", help="Python module to scan for @rpc procedures"),
     client_root: str = typer.Option(None, "--client-root", help="Relative path to TypeScript client project"),
-    distribution: str = typer.Option(None, "--distribution", help="How types reach the client (workspace, server)"),
+    distribution: str = typer.Option(None, "--distribution", help="How types reach the client [workspace|server]: workspace=server writes types directly to project, server=client fetches via HTTP"),
 ):
     """Start the pyRPC dev server with auto-type regeneration and interactive console."""
     config_path = _find_pyrpc_json()
