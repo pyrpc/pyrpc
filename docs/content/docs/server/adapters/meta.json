@@ -6,6 +6,7 @@
         "index",
         "fastapi",
         "flask",
+        "django",
         "standalone",
         "community-adapters"
     ],
