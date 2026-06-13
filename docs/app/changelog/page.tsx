@@ -2,6 +2,30 @@ import Link from 'next/link'
 
 const releases = [
     {
+        version: 'v0.7.4',
+        date: '2026-06-13',
+        tag: 'v0.7.4',
+        description: 'Reordered CLI prompts, filled documentation stubs, and removed empty plugins section.',
+        sections: [
+            {
+                title: 'CLI',
+                items: [
+                    'Setup wizard prompts reordered: Framework → Distribution → Entry point → Client root. Distribution mode now asked before entry point — high-level architectural choice before implementation detail.',
+                ]
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'Community pages filled: contributing, testimonials, sponsors',
+                    'Plugins section removed from navigation (no plugins exist yet)',
+                    'FAQ, Spec, and Further Reading filled with real content',
+                    'Full API references written for Core, Python Client, and TypeScript Client',
+                    'Changed "Python module to scan for @rpc procedures" to "Entry point to your application" in quickstart',
+                ]
+            },
+        ]
+    },
+    {
         version: 'v0.7.3',
         date: '2026-06-13',
         tag: 'v0.7.3',

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.7.4 (2026-06-13)
+
+### Features
+
+- **cli**: Reordered setup wizard prompts to ask distribution mode before entry point. The new order (Framework → Distribution → Entry point → Client root) places the high-level architectural decision (monorepo vs separate projects) before the implementation detail of the module path.
+
+### Documentation
+
+- **community**: Filled contributing, testimonials, and sponsors pages with real content
+- **plugins**: Removed empty plugins section from navigation
+- **extras**: Filled FAQ, Spec, and Further Reading pages
+- **references**: Wrote full API references for Core, Python Client, and TypeScript Client
+- Fixed reference meta.json to match actual page slugs
+
 ## 0.7.3 (2026-06-13)
 
 ### Features
