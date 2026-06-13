@@ -25,7 +25,7 @@ CONFIG_VERSION = 1
 DISTRIBUTION_MODES = ["workspace", "server"]
 DISTRIBUTION_CHOICES = [
     questionary.Choice("workspace - client and server in the same project (types written directly)", value="workspace"),
-    questionary.Choice("server - client and server are in separate projects (client fetches via npx pyrpc sync)", value="server"),
+    questionary.Choice("server - client and server are in separate projects (client fetches types via npx pyrpc sync)", value="server"),
 ]
 
 
@@ -550,7 +550,7 @@ def dev(
     framework: str = typer.Option(None, "--framework", help="Web framework to use (fastapi, flask, asgi)"),
     entry: str = typer.Option(None, "--entry", help="Entry point to your application (e.g. main, app.main)"),
     client_root: str = typer.Option(None, "--client-root", help="Relative path to TypeScript client project"),
-    distribution: str = typer.Option(None, "--distribution", help="How types reach the client [workspace|server]: workspace=client and server in the same project (types written directly), server=separate projects (client fetches via npx pyrpc sync)"),
+    distribution: str = typer.Option(None, "--distribution", help="How types reach the client [workspace|server]: workspace=client and server in the same project (types written directly), server=separate projects (client fetches types via npx pyrpc sync)"),
 ):
     """Start the pyRPC dev server with auto-type regeneration and interactive console."""
     config_path = _find_pyrpc_json()
