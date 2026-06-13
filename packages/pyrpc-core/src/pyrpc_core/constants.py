@@ -1,1 +1,1 @@
-FRAMEWORKS = ["fastapi", "flask", "asgi"]
+FRAMEWORKS = ["fastapi", "flask", "django", "asgi"]

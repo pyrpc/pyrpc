@@ -26,7 +26,7 @@ jobs:
       - name: Build python packages
         run: |
           mkdir -p dist
-          for pkg in pyrpc-core pyrpc-codegen pyrpc-fastapi pyrpc-flask; do
+          for pkg in pyrpc-core pyrpc-codegen pyrpc-fastapi pyrpc-flask pyrpc-django-adapter; do
             python -m build "packages/$pkg" --outdir dist/
           done
 
