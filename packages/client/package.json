@@ -6,7 +6,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "bin": {
-    "pyrpc": "./cli.js"
+    "pyrpc": "cli.js"
   },
   "files": [
     "dist",
