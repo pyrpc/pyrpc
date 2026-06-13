@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.2 (2026-06-13)
+
+### Bug Fixes
+
+- **codegen/client**: Resolve model type references with lowercase or module-qualified names. The type mappers in `ts_codegen.py`, `cli.js`, and `postinstall.js` returned `any` for models whose `str()` representation included a module prefix (e.g., `<class '__main__.user'>`) or used lowercase names, because they checked `name[0].isupper()` before returning the reference. Module prefixes are now stripped and the bare class name is used directly, fixing type inference for all models regardless of naming convention.
+
+### Chores
+
+- **cli**: Rewrite help text and prompts to describe distribution modes by user scenario (monorepo vs separate projects) rather than implementation details. Module arguments now say "Entry point to your application" instead of "Python module to scan for @rpc procedures".
+
 ## 0.7.1 (2026-06-13)
 
 ### Bug Fixes
