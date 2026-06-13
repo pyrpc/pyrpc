@@ -1,0 +1,68 @@
+---
+title: Django Adapter
+description: Mount pyRPC on a Django application using mount_django.
+
+---
+
+# Django Adapter
+
+The Django adapter exposes your pyRPC procedures on a Django application with native async views.
+
+## Installation
+
+```bash
+uv add pyrpc-core[django]
+```
+
+Or install directly:
+
+```bash
+uv add pyrpc-django-adapter
+```
+
+## Basic Setup
+
+```python
+# app/views.py
+from pyrpc_core import rpc
+
+@rpc
+def add(a: int, b: int) -> int:
+    return a + b
+```
+
+```python
+# app/urls.py
+from django.urls import path
+from pyrpc_django import mount_django
+
+urlpatterns = [
+    *mount_django(),
+]
+```
+
+## How It Works
+
+- `@rpc` registers functions in the global registry.
+- `mount_django()` returns a list of URL patterns:
+  - `POST /rpc` — dispatch procedure calls
+  - `GET /rpc` — introspection (schema)
+- The adapter uses Django's native `async def` views — no `anyio.run` bridge needed.
+
+## Custom Router
+
+```python
+from pyrpc_core import Router
+from pyrpc_django import mount_django
+
+router = Router()
+router.register(...)
+
+urlpatterns = [
+    *mount_django(router=router),
+]
+```
+
+## Requirements
+
+- Django 4.2+ (for async view support)

@@ -1,9 +1,0 @@
-{
-    "title": "Plugins",
-    "description": "Extend pyRPC with tooling and behavioral add-ons",
-    "icon": "Plug",
-    "pages": [
-        "index",
-        "pyrpc-codegen"
-    ]
-}

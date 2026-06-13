@@ -1,9 +1,60 @@
 ---
-title: Next.js
-description: API reference for the Next.js client.
+title: TypeScript Client
+description: API reference for the TypeScript client.
 
 ---
 
-# Next.js Reference
+# TypeScript Client Reference
 
-coming soon...
+## createClient
+
+```typescript
+import { createClient } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+const client = createClient<Types>()
+```
+
+Creates a typed proxy that maps each procedure name to an async function. All procedure calls return `Promise<T>`.
+
+### Options
+
+```typescript
+interface ClientOptions {
+  baseUrl?: string
+  headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>)
+}
+```
+
+| Option | Description |
+|--------|-------------|
+| `baseUrl` | Server base URL. Defaults to current origin + `/rpc` in browser environments. |
+| `headers` | Optional headers, can be static or async factory function. |
+
+### Usage
+
+```typescript
+const client = createClient<Types>()
+
+// Fully typed — parameters and return type inferred from the server
+const result = await client.add(10, 5)
+const message = await client.greet("World")
+```
+
+## PyRPCError
+
+```typescript
+import { PyRPCError } from "@pyrpc/client"
+```
+
+Thrown when the server returns a JSON-RPC error response.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `code` | `number` | JSON-RPC error code |
+| `message` | `string` | Error message |
+| `data` | `any` | Optional error data payload |
+
+## Further Reading
+
+See the [Building a full-stack app with pyRPC](/blog/building-a-full-stack-app-with-pyrpc) tutorial for a complete TypeScript client example.

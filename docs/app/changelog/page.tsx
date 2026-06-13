@@ -2,6 +2,39 @@ import Link from 'next/link'
 
 const releases = [
     {
+        version: 'v0.7.3',
+        date: '2026-06-13',
+        tag: 'v0.7.3',
+        description: 'Django adapter, FastAPI/Flask introspection fix, and package rename.',
+        sections: [
+            {
+                title: 'New Adapter',
+                items: [
+                    'New pyrpc-django-adapter package with mount_django() for Django 4.2+',
+                    'Native async views — no anyio.run bridge needed',
+                    'Both POST /rpc and GET /rpc endpoints for dispatch and introspection',
+                    'Custom router support via mount_django(router=router)',
+                    'Install with: pip install pyrpc-core[django] or pip install pyrpc-django-adapter',
+                ]
+            },
+            {
+                title: 'Bug Fixes',
+                items: [
+                    'Fixed AttributeError in mount_fastapi() and mount_flask() when no router is provided — both now resolve router or default_router before calling get_registry_schema()',
+                ]
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'New Django adapter guide under Server → Adapters',
+                    'Installation page updated with Django section',
+                    'Blog post: Django adapter release',
+                    'Changelog entry: v0.7.3',
+                ]
+            },
+        ]
+    },
+    {
         version: 'v0.6.0',
         date: '2026-06-06',
         tag: 'v0.6.0',

@@ -6,4 +6,153 @@ description: API reference for the pyrpc-core package.
 
 # Core Reference
 
-coming soon...
+## Router
+
+```python
+from pyrpc_core import Router
+
+router = Router()
+```
+
+The `Router` manages a set of RPC procedures. It can be used as a decorator and merged with other routers.
+
+### `router.rpc(name=None)`
+
+Decorator to register a function as an RPC procedure.
+
+```python
+@router.rpc
+def add(a: int, b: int) -> int:
+    return a + b
+
+@router.rpc(name="custom_name")
+def my_func():
+    ...
+```
+
+### `router.register(name, proc)`
+
+Register a `Procedure` instance with an explicit name.
+
+### `router.merge(other, prefix="")`
+
+Merge another router's procedures into this one, optionally with a name prefix.
+
+```python
+router.merge(sub_router, prefix="admin_")
+```
+
+### `router.get(name)`
+
+Look up a procedure by name. Returns `Procedure` or `None`.
+
+### `router.list()`
+
+Return a list of all registered procedure names.
+
+### `router.reload_module(module_path)`
+
+Reload a Python module and atomically replace this router's procedures. Returns `True` if the router was updated.
+
+---
+
+## Global Decorators
+
+```python
+from pyrpc_core import rpc, model, default_router
+```
+
+- `rpc` — Alias for `default_router.rpc`. Registers in the global default router.
+- `model` — Alias for `pydantic.dataclasses.dataclass`. Use to define structured parameter types.
+- `default_router` — A module-level `Router()` singleton used by the `rpc` decorator.
+
+---
+
+## handle_request
+
+```python
+from pyrpc_core import handle_request
+
+await handle_request(payload, router=None)
+```
+
+Parse and dispatch an incoming JSON-RPC request. Returns a JSON-RPC response dict.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `payload` | `Dict[str, Any]` | The parsed JSON-RPC request body |
+| `router` | `Router \| None` | Router to dispatch against; defaults to `default_router` |
+
+Error codes: `-32600` (invalid request), `-32601` (method not found), `-32602` (invalid params), `-32603` (internal error).
+
+---
+
+## get_registry_schema
+
+```python
+from pyrpc_core import get_registry_schema
+
+schemas = get_registry_schema(router)
+```
+
+Generate a dict of `ProcedureSchema` objects for all procedures in a router. Used by the `GET /rpc` introspection endpoint.
+
+Returns `Dict[str, ProcedureSchema]`.
+
+---
+
+## get_procedure_schema
+
+```python
+from pyrpc_core import get_procedure_schema
+
+schema = get_procedure_schema(procedure)
+```
+
+Generate a `ProcedureSchema` from a compiled `Procedure` instance.
+
+---
+
+## PyRPCAsgiApp
+
+```python
+from pyrpc_core import PyRPCAsgiApp, asgi_app
+
+app = PyRPCAsgiApp(router=None)
+app = asgi_app  # pre-configured instance with default_router
+```
+
+Standalone ASGI transport. Handles `POST /rpc` and `GET /rpc` with CORS headers.
+
+```python
+import uvicorn
+uvicorn.run(asgi_app)
+```
+
+---
+
+## RpcRequest / RpcResponse
+
+```python
+from pyrpc_core import RpcRequest, RpcResponse
+```
+
+Pydantic models for JSON-RPC request and response envelopes. Used internally by `handle_request`.
+
+---
+
+## ProcedureSchema
+
+```python
+class ProcedureSchema(BaseModel):
+    name: str
+    parameters: List[ParameterSchema]
+    return_type: str
+    return_schema: Dict[str, Any]
+    doc: Optional[str] = None
+    is_async: bool = False
+```
+
+Schema describing a registered procedure. Returned by `get_registry_schema`.
+
+Each `ParameterSchema` has: `name`, `type`, `schema_` (JSON schema), `required`, `default`.

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.7.3 (2026-06-13)
+
+### Features
+
+- **django**: New `pyrpc-django-adapter` package with native `mount_django()` support for Django 4.2+. The adapter uses Django's async view support directly (no `anyio.run` bridge) and exposes both `POST /rpc` and `GET /rpc` endpoints for procedure dispatch and introspection. Install with `pip install pyrpc-django-adapter` or `pip install pyrpc-core[django]`.
+
+### Bug Fixes
+
+- **fastapi/flask**: Fixed `AttributeError` when calling `get_registry_schema()` with no router argument. Both `mount_fastapi()` and `mount_flask()` now resolve `router or default_router` before passing to introspection, matching the Django adapter pattern.
+
+### Chores
+
+- **ci**: Added `pyrpc-django-adapter` to the automated build-and-publish workflow for PyPI releases.
+
 ## 0.7.2 (2026-06-13)
 
 ### Bug Fixes

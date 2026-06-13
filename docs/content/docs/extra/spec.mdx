@@ -6,4 +6,27 @@ description: pyRPC protocol specification.
 
 # Spec
 
-coming soon...
+pyRPC uses **JSON-RPC 2.0** over HTTP. See [Protocol Design](/docs/concepts/protocol-design) for a detailed explanation.
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/rpc` | Dispatch an RPC method call |
+| `GET` | `/rpc` | Introspection — returns schema of all registered procedures |
+
+## Error Codes
+
+| Code | Message | Description |
+|------|---------|-------------|
+| `-32600` | Invalid Request | Malformed JSON-RPC envelope |
+| `-32601` | Method not found | Procedure name not registered in router |
+| `-32602` | Invalid params | Type validation failure on arguments |
+| `-32603` | Internal error | Unhandled exception during procedure execution |
+
+## Transport
+
+- HTTP/1.1 or HTTP/2
+- Content-Type: `application/json`
+- The standalone ASGI transport adds CORS headers (all origins)
+- Framework adapters defer CORS to the host application
