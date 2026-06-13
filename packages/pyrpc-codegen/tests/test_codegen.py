@@ -156,6 +156,71 @@ def test_collect_defs_at_model():
     assert "Item" in defs
 
 
+def test_collect_defs_nested_base_model():
+    class Address(BaseModel):
+        city: str
+        zip: str
+
+    class UserNested(BaseModel):
+        name: str
+        address: Address
+
+    @rpc
+    def get_user(u: UserNested) -> UserNested:
+        return u
+
+    schemas = get_registry_schema(default_router)
+    defs = _collect_schema_defs(schemas)
+    assert "UserNested" in defs
+    assert "Address" in defs
+
+
+def test_collect_defs_nested_at_model():
+    @dataclass
+    class Address:
+        city: str
+        zip: str
+
+    @dataclass
+    class Person:
+        name: str
+        address: Address
+
+    @rpc
+    def get_person(p: Person) -> Person:
+        return p
+
+    schemas = get_registry_schema(default_router)
+    defs = _collect_schema_defs(schemas)
+    assert "Person" in defs
+    assert "Address" in defs
+
+
+def test_collect_defs_nested_mixed():
+    class Address(BaseModel):
+        city: str
+        zip: str
+
+    @dataclass
+    class Person:
+        name: str
+        address: Address
+
+    class Organization(BaseModel):
+        name: str
+        owner: Person
+
+    @rpc
+    def get_org(o: Organization) -> Organization:
+        return o
+
+    schemas = get_registry_schema(default_router)
+    defs = _collect_schema_defs(schemas)
+    assert "Organization" in defs
+    assert "Person" in defs
+    assert "Address" in defs
+
+
 @pytest.mark.skipif(not npx_available, reason="requires npx (json-schema-to-typescript)")
 def test_generate_typescript_client_with_base_model():
     class UserModel(BaseModel):

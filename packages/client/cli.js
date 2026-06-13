@@ -65,59 +65,95 @@ function toTs(t) {
   return 'any';
 }
 
-function extractModelName(typeStr) {
-  var m = String(typeStr).match(/^<class\s+'([^'>]+)'>$/);
-  if (!m) return null;
-  var name = m[1];
-  if (name.indexOf('.') !== -1) name = name.split('.').pop();
-  if (TYPE_MAP[name]) return null;
-  return name;
+function ensureInlineModels(schemas) {
+  var allSchemas = [];
+  var names = Object.keys(schemas);
+  for (var i = 0; i < names.length; i++) {
+    var schema = schemas[names[i]];
+    if (schema.return_schema) allSchemas.push(schema.return_schema);
+    var params = schema.parameters || [];
+    for (var j = 0; j < params.length; j++) {
+      var p = params[j];
+      if (p.schema_) allSchemas.push(p.schema_);
+      if (p.schema) allSchemas.push(p.schema);
+    }
+  }
+
+  if (allSchemas.length === 0) return allSchemas;
+
+  var sharedDefs = {};
+  var processed = allSchemas.map(function(s) {
+    return walkAndPromote(JSON.parse(JSON.stringify(s)), sharedDefs, false);
+  });
+
+  var defKeys = Object.keys(sharedDefs);
+  if (defKeys.length > 0) {
+    for (var i = 0; i < processed.length; i++) {
+      if (!processed[i].$defs) processed[i].$defs = {};
+      for (var k = 0; k < defKeys.length; k++) {
+        if (!processed[i].$defs[defKeys[k]]) {
+          processed[i].$defs[defKeys[k]] = sharedDefs[defKeys[k]];
+        }
+      }
+    }
+  }
+
+  return processed;
 }
 
-function ensureInlinedModel(typeStr, schema, sources) {
-  var modelName = extractModelName(typeStr);
-  if (modelName && schema && schema.type === 'object' && schema.properties && !schema.$ref) {
-    var wrapped = { '$ref': '#/$defs/' + modelName, '$defs': {} };
-    wrapped['$defs'][modelName] = schema;
-    sources.push(wrapped);
-  } else if (schema) {
-    sources.push(schema);
+function walkAndPromote(node, sharedDefs, inDefs) {
+  if (!node || typeof node !== 'object') return node;
+  if (Array.isArray(node)) {
+    return node.map(function(v) { return walkAndPromote(v, sharedDefs, inDefs); });
+  }
+
+  if (!inDefs && node.type === 'object' && node.properties && typeof node.title === 'string') {
+    var title = node.title;
+    if (!sharedDefs[title]) {
+      var promoted = {};
+      for (var k in node) {
+        if (k === '$defs' || k === 'definitions') {
+          promoted[k] = {};
+          for (var dk in node[k]) {
+            promoted[k][dk] = walkAndPromote(node[k][dk], sharedDefs, true);
+          }
+        } else {
+          promoted[k] = walkAndPromote(node[k], sharedDefs, false);
+        }
+      }
+      sharedDefs[title] = promoted;
+    }
+    return { '$ref': '#/$defs/' + title };
+  }
+
+  var result = {};
+  for (var k in node) {
+    result[k] = walkAndPromote(node[k], sharedDefs, inDefs || k === '$defs' || k === 'definitions');
+  }
+  return result;
+}
+
+function walk(node, collected) {
+  if (!node || typeof node !== 'object') return;
+  if (Array.isArray(node)) { node.forEach(function(v) { walk(v, collected); }); return; }
+  if (node.$defs || node.definitions) {
+    var container = node.$defs || node.definitions;
+    for (var key in container) {
+      if (!collected[key]) collected[key] = container[key];
+      walk(container[key], collected);
+    }
+  }
+  for (var k in node) {
+    if (k === '$defs' || k === 'definitions') continue;
+    walk(node[k], collected);
   }
 }
 
 function collectDefs(schemas) {
-  var sources = [];
-  function walk(node, collected) {
-    if (!node || typeof node !== 'object') return;
-    if (Array.isArray(node)) { node.forEach(function(v) { walk(v, collected); }); return; }
-    if (node.$defs || node.definitions) {
-      var container = node.$defs || node.definitions;
-      for (var key in container) {
-        if (!collected[key]) collected[key] = container[key];
-        walk(container[key], collected);
-      }
-    }
-    for (var k in node) {
-      if (k === '$defs' || k === 'definitions') continue;
-      walk(node[k], collected);
-    }
-  }
+  var processed = ensureInlineModels(schemas);
   var defs = {};
-  var names = Object.keys(schemas);
-  for (var i = 0; i < names.length; i++) {
-    var schema = schemas[names[i]];
-    var returnType = schema.return_type || '';
-    if (schema.return_schema) ensureInlinedModel(returnType, schema.return_schema, sources);
-    var params = schema.parameters || [];
-    for (var j = 0; j < params.length; j++) {
-      var p = params[j];
-      var pType = p.type || '';
-      if (p.schema_) ensureInlinedModel(pType, p.schema_, sources);
-      if (p.schema) ensureInlinedModel(pType, p.schema, sources);
-    }
-  }
-  for (var s = 0; s < sources.length; s++) {
-    walk(sources[s], defs);
+  for (var i = 0; i < processed.length; i++) {
+    walk(processed[i], defs);
   }
   return defs;
 }
