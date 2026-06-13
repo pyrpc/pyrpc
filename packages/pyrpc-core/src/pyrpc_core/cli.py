@@ -24,8 +24,8 @@ CONFIG_FILE = "pyrpc.json"
 CONFIG_VERSION = 1
 DISTRIBUTION_MODES = ["workspace", "server"]
 DISTRIBUTION_CHOICES = [
-    questionary.Choice("workspace - client and server live in the same project (types are generated directly into your client code)", value="workspace"),
-    questionary.Choice("server - client and server are in separate projects (client fetches types from the running server via npx pyrpc sync)", value="server"),
+    questionary.Choice("workspace - client and server in the same project (types written directly)", value="workspace"),
+    questionary.Choice("server - client and server are in separate projects (client fetches via npx pyrpc sync)", value="server"),
 ]
 
 
