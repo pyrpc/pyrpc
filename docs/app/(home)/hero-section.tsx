@@ -92,7 +92,7 @@ export default function HeroSection({
           Build APIs in Python and consume them in TypeScript with full inference. No schemas. No drift. No OpenAPI.
         </p>
         <div className="flex flex-wrap items-center gap-3">
-          <Link href="/docs/get-started/installation">
+          <Link href="/demo">
             <button className="px-6 py-2.5 bg-neutral-900 dark:bg-fd-foreground text-white dark:text-fd-background font-medium text-[13px] tracking-tight hover:opacity-90 transition-all active:scale-[0.98] rounded-md w-fit cursor-pointer">
               Try it live
             </button>
