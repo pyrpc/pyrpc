@@ -23,7 +23,7 @@ const RESOURCES_ITEMS = [
   {
     name: 'Community',
     href: '/community',
-    description: 'Discussions, Telegram, and more',
+    description: 'X/Twitter, Telegram, and more',
     icon: Users,
     external: false,
   },
