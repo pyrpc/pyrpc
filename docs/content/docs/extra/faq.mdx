@@ -6,4 +6,42 @@ description: Frequently asked questions about pyRPC.
 
 # FAQ
 
-coming soon...
+## What is pyRPC?
+
+pyRPC is a type-safe RPC framework for Python backends with TypeScript frontends. Define procedures with `@rpc`, get TypeScript types automatically — no OpenAPI, no codegen pipelines.
+
+## How is this different from tRPC?
+
+tRPC is TypeScript-only. pyRPC brings the same end-to-end typing to Python + TypeScript stacks.
+
+## How is this different from OpenAPI?
+
+OpenAPI is a specification file that must be manually kept in sync with your implementation. pyRPC treats your Python functions as the source of truth — types are derived directly from your code, not from a separate spec.
+
+## Does pyRPC support async procedures?
+
+Yes. The interpreter detects whether your function is `async def` or `def` and dispatches accordingly. The TypeScript client uses schema introspection to determine whether to `await` a call.
+
+## Which frameworks are supported?
+
+FastAPI, Flask, and Django. See [Adapters](/docs/server/adapters) for details.
+
+## Can I use pyRPC without a framework?
+
+Yes. The standalone ASGI adapter (`PyRPCAsgiApp`) can be deployed directly without FastAPI, Flask, or Django.
+
+## Do I need to install anything besides pyrpc-core?
+
+Install `pyrpc-core` for the runtime, CLI, and codegen. Add framework adapters via extras: `pyrpc-core[fastapi]`, `pyrpc-core[flask]`, `pyrpc-core[django]`.
+
+## How do I generate TypeScript types?
+
+Run `pyrpc dev`. On first run it walks you through setup, creates a `pyrpc.json` config, and generates types automatically. For CI, use `pyrpc codegen`.
+
+## What is the distribution mode?
+
+Workspace mode (default) writes types directly to your client project for monorepos. Server mode exposes types via `GET /rpc` for separate repositories.
+
+## Is pyRPC production-ready?
+
+pyRPC is in active development. APIs may change. Follow the [changelog](/changelog) and [roadmap](https://github.com/pyrpc/pyrpc/blob/main/ROADMAP.md) for direction.

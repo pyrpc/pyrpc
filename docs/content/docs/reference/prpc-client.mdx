@@ -1,9 +1,98 @@
 ---
-title: Client
-description: API reference for the Python client.
+title: Python Client
+description: API reference for the Python RPC client.
 
 ---
 
-# Client Reference
+# Python Client Reference
 
-coming soon...
+## RPCClient
+
+```python
+from pyrpc_core import RPCClient
+
+client = RPCClient("http://localhost:8000")
+```
+
+A dynamic RPC client that lets you call remote procedures as if they were local methods.
+
+### Constructor
+
+```python
+RPCClient(base_url, async_client=None, sync_client=None)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `base_url` | `str` | Base URL of the pyRPC server (e.g. `http://localhost:8000`) |
+| `async_client` | `httpx.AsyncClient \| None` | Optional custom async HTTP client |
+| `sync_client` | `httpx.Client \| None` | Optional custom sync HTTP client |
+
+### Dynamic Dispatch
+
+```python
+with RPCClient("http://localhost:8000") as client:
+    result = client.add(a=10, b=5)  # sync if procedure is sync, async if async
+    print(result)  # 15
+```
+
+The client fetches the procedure schema via `GET /rpc` on first call to determine whether a procedure is sync or async. If the schema is unavailable, it falls back to running event-loop detection.
+
+### `call_sync(method, *args, **kwargs)`
+
+Explicit synchronous call:
+
+```python
+result = client.call_sync("add", a=10, b=5)
+```
+
+### `call_async(method, *args, **kwargs)`
+
+Explicit asynchronous call:
+
+```python
+result = await client.call_async("add", a=10, b=5)
+```
+
+### `.aio()`
+
+Force async dispatch on a specific call:
+
+```python
+result = await client.add.aio(a=10, b=5)
+```
+
+### `set_schema(schema)`
+
+Manually provide the procedure schema, bypassing the HTTP introspection fetch:
+
+```python
+client.set_schema({"add": False, "greet": True})
+```
+
+### Context Manager
+
+```python
+# Sync
+with RPCClient("http://localhost:8000") as client:
+    ...
+
+# Async
+async with RPCClient("http://localhost:8000") as client:
+    ...
+```
+
+---
+
+## RPCError
+
+```python
+from pyrpc_core import RPCError
+```
+
+Raised when the server returns a JSON-RPC error response.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `code` | `int` | JSON-RPC error code |
+| `message` | `str` | Error message |
