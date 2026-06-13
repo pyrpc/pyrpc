@@ -32,8 +32,8 @@ describe('toTs (type conversion)', () => {
     expect(toTs("<class 'UserProfile'>")).toBe('UserProfile');
   });
 
-  it('preserves unknown class names for model reference', () => {
-    expect(toTs("<class 'unknown_thing'>")).toBe('unknown_thing');
+  it('converts unknown class names to PascalCase for model reference', () => {
+    expect(toTs("<class 'unknown_thing'>")).toBe('UnknownThing');
   });
 
   it('handles None and empty', () => {

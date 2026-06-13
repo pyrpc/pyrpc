@@ -1,11 +1,12 @@
 import os
 import re
+import unicodedata
 from pathlib import Path
 from typing import Any, Dict
 
 from jinja2 import Environment, FileSystemLoader
 from jsonschema_ts import Options as JsonschemaTsOptions
-from jsonschema_ts import assemble, collect_defs, convert_all
+from jsonschema_ts import assemble, collect_defs, convert_all, ensure_inline_models
 
 DEFAULT_OUTPUT = "node_modules/@pyrpc/types/src/index.ts"
 
@@ -20,6 +21,27 @@ _TYPE_MAP: Dict[str, str] = {
 }
 
 
+def _to_safe_name(name: str) -> str:
+    s = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("ascii")
+    s = re.sub(r"[^a-zA-Z0-9]", " ", s)
+    s = _to_pascal_case(s)
+    return s or "GeneratedType"
+
+
+def _to_pascal_case(s: str) -> str:
+    parts = s.split()
+    result: list[str] = []
+    for part in parts:
+        sub_parts = re.findall(
+            r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z][a-z]|\d|\b)|[A-Z]+|\d+",
+            part,
+        )
+        if not sub_parts:
+            sub_parts = [part]
+        result.extend(sub_parts)
+    return "".join(seg.capitalize() for seg in result if seg)
+
+
 def _pytype_to_ts(type_str: str) -> str:
     if not type_str:
         return "any"
@@ -31,7 +53,7 @@ def _pytype_to_ts(type_str: str) -> str:
             name = name.rsplit('.', 1)[1]
         if name in _TYPE_MAP:
             return _TYPE_MAP[name]
-        return name
+        return _to_safe_name(name)
 
     if type_str.startswith("typing."):
         type_str = type_str[7:]
@@ -106,13 +128,21 @@ def _collect_schema_defs(schemas: Dict[str, Any]) -> dict:
         else:
             params = schema.parameters
         for param in params:
-            js = param.get("schema") if isinstance(param, dict) else param.schema_
+            if isinstance(param, dict):
+                js = param.get("schema") or param.get("schema_")
+            else:
+                js = param.schema_
             if js:
                 schema_sources.append(js)
-        rs = schema.get("return_schema") if isinstance(schema, dict) else schema.return_schema
+        if isinstance(schema, dict):
+            rs = schema.get("return_schema")
+        else:
+            rs = schema.return_schema
         if rs:
             schema_sources.append(rs)
-    return collect_defs(*schema_sources)
+
+    processed = ensure_inline_models(*schema_sources)
+    return collect_defs(*processed)
 
 
 def generate_typescript_client(schemas: Dict[str, Any]) -> str:

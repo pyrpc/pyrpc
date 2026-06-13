@@ -1,6 +1,6 @@
 [project]
 name = "pyrpc-flask"
-version = "0.7.4"
+version = "0.7.5"
 description = "Flask adapter for pyRPC"
 requires-python = ">=3.11"
 dependencies = [
