@@ -24,8 +24,8 @@ CONFIG_FILE = "pyrpc.json"
 CONFIG_VERSION = 1
 DISTRIBUTION_MODES = ["workspace", "server"]
 DISTRIBUTION_CHOICES = [
-    questionary.Choice("workspace — server writes types directly to your project", value="workspace"),
-    questionary.Choice("server — clients fetch types via HTTP (npx pyrpc sync)", value="server"),
+    questionary.Choice("workspace - client and server live in the same project (types are generated directly into your client code)", value="workspace"),
+    questionary.Choice("server - client and server are in separate projects (client fetches types from the running server via npx pyrpc sync)", value="server"),
 ]
 
 
@@ -80,7 +80,7 @@ def _prompt_for_config(previous: dict | None = None) -> dict | None:
 
     default_entry = (previous or {}).get("entrypoint", "main")
     entry = questionary.text(
-        "Python module to scan for @rpc procedures (e.g. main, app.main)",
+        "Entry point to your application (e.g. main, app.main)",
         default=default_entry,
     ).ask()
     if entry is None:
@@ -88,7 +88,7 @@ def _prompt_for_config(previous: dict | None = None) -> dict | None:
 
     default_distribution = (previous or {}).get("distribution", "workspace")
     distribution = questionary.select(
-        "How are types distributed to the client? [workspace|server]",
+        "How are types delivered to the client? [workspace|server]",
         choices=DISTRIBUTION_CHOICES,
         default=default_distribution,
     ).ask()
@@ -317,7 +317,7 @@ def version():
 
 @app.command()
 def pull(
-    module: str = typer.Argument(..., help="Python module to scan for @rpc procedures (e.g. main, app.main)"),
+    module: str = typer.Argument(..., help="Entry point to your application (e.g. main, app.main)"),
     output: str = typer.Option("pyrpc-schema.json", "--output", "-o", help="Output JSON schema file path"),
 ):
     """Extract RPC schema from a Python module and save as JSON."""
@@ -334,7 +334,7 @@ def pull(
 
 @app.command()
 def serve(
-    module: str = typer.Argument(..., help="Python module to scan for @rpc procedures (e.g. main, app.main)"),
+    module: str = typer.Argument(..., help="Entry point to your application (e.g. main, app.main)"),
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Bind socket to this host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind socket to this port"),
     reload: bool = typer.Option(False, "--reload", help="Enable auto-reload"),
@@ -542,15 +542,15 @@ class _DevConsole:
 
 @app.command()
 def dev(
-    module: str = typer.Argument(None, help="Python module to scan for @rpc procedures (e.g. main, app.main)"),
+    module: str = typer.Argument(None, help="Entry point to your application (e.g. main, app.main)"),
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Bind socket to this host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind socket to this port"),
     types_only: bool = typer.Option(False, "--types-only", help="Only regenerate types, skip starting the server"),
     reconfigure: bool = typer.Option(False, "--reconfigure", help="Re-run setup prompts with previous answers as defaults"),
     framework: str = typer.Option(None, "--framework", help="Web framework to use (fastapi, flask, asgi)"),
-    entry: str = typer.Option(None, "--entry", help="Python module to scan for @rpc procedures"),
+    entry: str = typer.Option(None, "--entry", help="Entry point to your application (e.g. main, app.main)"),
     client_root: str = typer.Option(None, "--client-root", help="Relative path to TypeScript client project"),
-    distribution: str = typer.Option(None, "--distribution", help="How types reach the client [workspace|server]: workspace=server writes types directly to project, server=client fetches via HTTP"),
+    distribution: str = typer.Option(None, "--distribution", help="How types reach the client [workspace|server]: workspace=client and server in the same project (types written directly), server=separate projects (client fetches via npx pyrpc sync)"),
 ):
     """Start the pyRPC dev server with auto-type regeneration and interactive console."""
     config_path = _find_pyrpc_json()
