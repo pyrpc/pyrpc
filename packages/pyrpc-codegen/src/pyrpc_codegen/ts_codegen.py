@@ -1,5 +1,6 @@
 import os
 import re
+import unicodedata
 from pathlib import Path
 from typing import Any, Dict
 
@@ -20,6 +21,13 @@ _TYPE_MAP: Dict[str, str] = {
 }
 
 
+def _to_safe_name(name: str) -> str:
+    s = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("ascii")
+    s = re.sub(r"[^a-zA-Z0-9]", " ", s)
+    s = s.title().replace(" ", "")
+    return s or "GeneratedType"
+
+
 def _pytype_to_ts(type_str: str) -> str:
     if not type_str:
         return "any"
@@ -31,7 +39,7 @@ def _pytype_to_ts(type_str: str) -> str:
             name = name.rsplit('.', 1)[1]
         if name in _TYPE_MAP:
             return _TYPE_MAP[name]
-        return name
+        return _to_safe_name(name)
 
     if type_str.startswith("typing."):
         type_str = type_str[7:]
@@ -98,6 +106,26 @@ def _return_type_to_ts(return_type: str) -> str:
     return _pytype_to_ts(return_type)
 
 
+def _extract_model_name(type_str: str) -> str | None:
+    m = re.match(r"<class\s+'([^']+)'>", str(type_str))
+    if not m:
+        return None
+    name = m.group(1)
+    if '.' in name:
+        name = name.rsplit('.', 1)[1]
+    return name if name not in _TYPE_MAP else None
+
+
+def _ensure_inlined_model(type_str: str, schema: dict, sources: list) -> None:
+    """If schema is an inline object (from @model), wrap it in $defs so collect_defs can pick it up."""
+    model_name = _extract_model_name(type_str)
+    if model_name and schema.get("type") == "object" and "properties" in schema and "$ref" not in schema:
+        wrapped = {"$ref": f"#/$defs/{model_name}", "$defs": {model_name: schema}}
+        sources.append(wrapped)
+    else:
+        sources.append(schema)
+
+
 def _collect_schema_defs(schemas: Dict[str, Any]) -> dict:
     schema_sources = []
     for _name, schema in schemas.items():
@@ -106,12 +134,22 @@ def _collect_schema_defs(schemas: Dict[str, Any]) -> dict:
         else:
             params = schema.parameters
         for param in params:
-            js = param.get("schema") if isinstance(param, dict) else param.schema_
+            if isinstance(param, dict):
+                js = param.get("schema") or param.get("schema_")
+                ptype = param.get("type", "")
+            else:
+                js = param.schema_
+                ptype = param.type
             if js:
-                schema_sources.append(js)
-        rs = schema.get("return_schema") if isinstance(schema, dict) else schema.return_schema
+                _ensure_inlined_model(ptype, js, schema_sources)
+        if isinstance(schema, dict):
+            rs = schema.get("return_schema")
+            rtype = schema.get("return_type", "")
+        else:
+            rs = schema.return_schema
+            rtype = schema.return_type
         if rs:
-            schema_sources.append(rs)
+            _ensure_inlined_model(rtype, rs, schema_sources)
     return collect_defs(*schema_sources)
 
 
