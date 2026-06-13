@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.6 (2026-06-14)
+
+### Bug Fixes
+
+- **core**: Pin `pyrpc-codegen>=0.7.6` dependency to ensure `jsonschema-ts>=0.2.0` is pulled in correctly on fresh installs. Previously `pyrpc-core` had no version constraint on `pyrpc-codegen`, so older versions (0.6.x) that required only `jsonschema-ts>=0.1.0` could be installed, causing `ensure_inline_models` import errors.
+
+### Chores
+
+- **version**: Bump all packages to v0.7.6 (pyrpc-core, pyrpc-codegen, pyrpc-flask, pyrpc-fastapi, pyrpc-django-adapter, @pyrpc/client, @pyrpc/types)
+- **deps**: Pin `pyrpc-core>=0.7.6` in flask, fastapi, and django adapter packages
+
 ## 0.7.5 (2026-06-13)
 
 ### Bug Fixes
