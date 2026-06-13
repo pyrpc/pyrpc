@@ -78,14 +78,6 @@ def _prompt_for_config(previous: dict | None = None) -> dict | None:
     if framework is None:
         return None
 
-    default_entry = (previous or {}).get("entrypoint", "main")
-    entry = questionary.text(
-        "Entry point to your application (e.g. main, app.main)",
-        default=default_entry,
-    ).ask()
-    if entry is None:
-        return None
-
     default_distribution = (previous or {}).get("distribution", "workspace")
     distribution = questionary.select(
         "How are types delivered to the client? [workspace|server]",
@@ -93,6 +85,14 @@ def _prompt_for_config(previous: dict | None = None) -> dict | None:
         default=default_distribution,
     ).ask()
     if distribution is None:
+        return None
+
+    default_entry = (previous or {}).get("entrypoint", "main")
+    entry = questionary.text(
+        "Entry point to your application (e.g. main, app.main)",
+        default=default_entry,
+    ).ask()
+    if entry is None:
         return None
 
     client_root = None
@@ -105,7 +105,7 @@ def _prompt_for_config(previous: dict | None = None) -> dict | None:
         if client_root is None:
             return None
 
-    config = {"framework": framework, "entrypoint": entry, "distribution": distribution}
+    config = {"framework": framework, "distribution": distribution, "entrypoint": entry}
     if client_root:
         config["client_root"] = client_root
     return config
