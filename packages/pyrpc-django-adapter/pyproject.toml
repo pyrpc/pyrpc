@@ -1,5 +1,5 @@
 [project]
-name = "pyrpc-django"
+name = "pyrpc-django-adapter"
 version = "0.7.2"
 description = "Django adapter for pyRPC"
 requires-python = ">=3.11"

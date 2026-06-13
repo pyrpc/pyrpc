@@ -30,14 +30,14 @@ dev = [
 members = [
     "packages/pyrpc-core",
     "packages/pyrpc-codegen",
-    "packages/pyrpc-django",
+    "packages/pyrpc-django-adapter",
     "packages/pyrpc-fastapi",
     "packages/pyrpc-flask",
 ]
 
 [tool.uv.sources]
 pyrpc-core = { workspace = true }
-pyrpc-django = { workspace = true }
+pyrpc-django-adapter = { workspace = true }
 pyrpc-flask = { workspace = true }
 pyrpc-fastapi = { workspace = true }
 pyrpc-codegen = { workspace = true }
@@ -54,14 +54,14 @@ target-version = "py311"
 [tool.pytest.ini_options]
 testpaths = [
     "packages/pyrpc-core/tests",
-    "packages/pyrpc-django/tests",
+    "packages/pyrpc-django-adapter/tests",
     "packages/pyrpc-fastapi/tests",
     "packages/pyrpc-flask/tests",
     "packages/pyrpc-codegen/tests",
 ]
 pythonpath = [
     "packages/pyrpc-core/src",
-    "packages/pyrpc-django/src",
+    "packages/pyrpc-django-adapter/src",
     "packages/pyrpc-fastapi/src",
     "packages/pyrpc-flask/src",
     "packages/pyrpc-codegen/src"
@@ -76,7 +76,7 @@ dev = [
     "jinja2>=3.1.6",
     "pydantic-core==2.41.5",
     "pyrpc-codegen",
-    "pyrpc-django",
+    "pyrpc-django-adapter",
     "pyrpc-fastapi",
     "pytest>=9.0.2",
     "pytest-asyncio>=0.25.0",
