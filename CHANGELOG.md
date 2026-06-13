@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.5 (2026-06-13)
+
+### Bug Fixes
+
+- **codegen**: Fix model type inference for `@model` dataclasses and `BaseModel`. Updated `jsonschema-ts` dependency to v0.2.0 which fixes `_to_safe_name()` PascalCase conversion and adds native `ensure_inline_models()` for promoting inline object schemas into `$defs`. The band-aid `_ensure_inlined_model()` workaround is removed in favor of the library's built-in solution.
+
 ## 0.7.4 (2026-06-13)
 
 ### Features
