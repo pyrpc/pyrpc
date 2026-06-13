@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.7 (2026-06-14)
+
+### Bug Fixes
+
+- **codegen**: Pin `jsonschema-ts>=0.2.1` to pull in the Windows `npx.cmd` fix. `jsonschema-ts` v0.2.0 used `npx` directly in `subprocess.run()`, which fails on Windows because `npx` is a script file (not `.exe`). v0.2.1 uses `npx.cmd` on Windows, resolving `[WinError 2]` during type generation.
+
+### Chores
+
+- **version**: Bump all packages to v0.7.7 (pyrpc-core, pyrpc-codegen, pyrpc-flask, pyrpc-fastapi, pyrpc-django-adapter, @pyrpc/client, @pyrpc/types)
+- **deps**: Pin `pyrpc-codegen>=0.7.7` in pyrpc-core, and `pyrpc-core>=0.7.7` in adapter packages
+
 ## 0.7.6 (2026-06-14)
 
 ### Bug Fixes

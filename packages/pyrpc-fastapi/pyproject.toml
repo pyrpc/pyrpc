@@ -1,10 +1,10 @@
 [project]
 name = "pyrpc-fastapi"
-version = "0.7.6"
+version = "0.7.7"
 description = "FastAPI adapter for pyRPC"
 requires-python = ">=3.11"
 dependencies = [
-    "pyrpc-core>=0.7.6",
+    "pyrpc-core>=0.7.7",
     "fastapi>=0.100.0",
 ]
 
