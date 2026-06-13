@@ -159,3 +159,5 @@ system-design/
 
 # Scripts
 scripts/seed_downloads.py
+# pyrpc client config
+pyrpc-client.json

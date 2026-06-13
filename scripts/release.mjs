@@ -43,9 +43,21 @@ for (const pkg of packages) {
     fs.writeFileSync(pyprojectPath, tomlContent);
     console.log(`Updated ${pkg}/pyproject.toml`);
   }
+
+  // 3. Update Python __init__.py __version__ if it exists
+  const srcDir = path.join(pkgDir, 'src', pkg.replace(/-/g, '_'));
+  const initPath = path.join(srcDir, '__init__.py');
+  if (fs.existsSync(initPath)) {
+    let initContent = fs.readFileSync(initPath, 'utf8');
+    if (initContent.includes('__version__')) {
+      initContent = initContent.replace(/(__version__\s*=\s*)"[^"]+"/, `$1"${cleanVersion}"`);
+      fs.writeFileSync(initPath, initContent);
+      console.log(`Updated ${pkg}/src/${pkg.replace(/-/g, '_')}/__init__.py`);
+    }
+  }
 }
 
-// 3. Update root pyproject.toml
+// 4. Update root pyproject.toml
 const rootPyprojectPath = path.join(rootDir, 'pyproject.toml');
 if (fs.existsSync(rootPyprojectPath)) {
   let tomlContent = fs.readFileSync(rootPyprojectPath, 'utf8');
