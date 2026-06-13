@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.8.0 (2026-06-14)
+
+### Features
+
+- **codegen**: Adopt `jsonschema-ts` v0.3.0 npx daemon for sub-10ms type generation. Instead of spawning `npx json-schema-to-typescript` as a subprocess on every conversion (3.3s/call), a persistent Node.js process runs in the background, keeping `json-schema-to-typescript` loaded in V8's code cache. Subsequent conversions drop to ~4.6ms — a ~715x speedup.
+- **dev**: Reduce file watcher debounce from 1.6s to 200ms for faster type regeneration on save.
+
+### Chores
+
+- **version**: Bump all packages to v0.8.0 (pyrpc-core, pyrpc-codegen, pyrpc-flask, pyrpc-fastapi, pyrpc-django-adapter, @pyrpc/client, @pyrpc/types)
+- **deps**: Pin `jsonschema-ts>=0.3.0` in pyrpc-codegen
+
 ## 0.7.7 (2026-06-14)
 
 ### Bug Fixes

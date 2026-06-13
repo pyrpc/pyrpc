@@ -689,7 +689,7 @@ def dev(
     stop_event = threading.Event()
 
     def watcher_loop():
-        for changes in watch(*watched_dirs, stop_event=stop_event, yield_on_timeout=True):
+        for changes in watch(*watched_dirs, stop_event=stop_event, yield_on_timeout=True, debounce=200):
             if stop_event.is_set():
                 break
             if any(f.endswith(".py") for _, f in changes):
