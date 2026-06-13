@@ -1,6 +1,6 @@
 [project]
 name = "pyrpc-django-adapter"
-version = "0.7.3"
+version = "0.7.4"
 description = "Django adapter for pyRPC"
 requires-python = ">=3.11"
 dependencies = [
