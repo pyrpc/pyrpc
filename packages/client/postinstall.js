@@ -210,25 +210,13 @@ function generate(schemas) {
     if (iface) { lines.push(iface); lines.push(''); }
   }
   var names = Object.keys(schemas);
+  lines.push('export interface Types {');
   for (var i = 0; i < names.length; i++) {
     var name = names[i];
     var schema = schemas[name];
-    lines.push('export interface ' + name + 'Params {');
     var params = schema.parameters || [];
-    for (var j = 0; j < params.length; j++) {
-      var p = params[j];
-      lines.push('  ' + p.name + ': ' + toTs(p.type) + ';');
-    }
-    lines.push('}');
-    lines.push('');
-    lines.push('export interface ' + name + 'Result {');
-    lines.push('  data: ' + toTs(schema.return_type) + ';');
-    lines.push('}');
-    lines.push('');
-  }
-  lines.push('export interface Types {');
-  for (var k = 0; k < names.length; k++) {
-    lines.push('  ' + names[k] + ': { params: ' + names[k] + 'Params; result: ' + names[k] + 'Result };');
+    var typedParams = params.map(function(p) { return p.name + ': ' + toTs(p.type); });
+    lines.push('  ' + name + '(' + typedParams.join(', ') + '): Promise<' + toTs(schema.return_type) + '>;');
   }
   lines.push('}');
   lines.push('');

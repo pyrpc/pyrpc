@@ -83,7 +83,7 @@ describe('generate (TypeScript codegen)', () => {
     generate = await loadCli();
   });
 
-  it('generates interfaces for a single procedure', () => {
+  it('generates callable signatures for a single procedure', () => {
     const schemas = {
       add: {
         parameters: [
@@ -94,15 +94,11 @@ describe('generate (TypeScript codegen)', () => {
       },
     };
     const output = generate(schemas);
-    expect(output).toContain('export interface addParams');
-    expect(output).toContain('export interface addResult');
-    expect(output).toContain('a: number');
-    expect(output).toContain('b: number');
-    expect(output).toContain('data: number');
-    expect(output).toContain('add: { params: addParams; result: addResult }');
+    expect(output).toContain('export interface Types {');
+    expect(output).toContain('add(a: number, b: number): Promise<number>;');
   });
 
-  it('generates interfaces for multiple procedures', () => {
+  it('generates callable signatures for multiple procedures', () => {
     const schemas = {
       add: { parameters: [], return_type: "<class 'int'>" },
       greet: {
@@ -111,11 +107,8 @@ describe('generate (TypeScript codegen)', () => {
       },
     };
     const output = generate(schemas);
-    expect(output).toContain('export interface addParams');
-    expect(output).toContain('export interface greetParams');
-    expect(output).toContain('name: string');
-    expect(output).toContain('add: { params: addParams; result: addResult }');
-    expect(output).toContain('greet: { params: greetParams; result: greetResult }');
+    expect(output).toContain('add(): Promise<number>;');
+    expect(output).toContain('greet(name: string): Promise<string>;');
   });
 
   it('handles empty schemas', () => {
