@@ -81,10 +81,15 @@ export function SiteHeader() {
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
   }, [mobileMenuOpen]);
 
   // Close resources dropdown on click outside
@@ -121,7 +126,9 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-[100] w-full bg-white dark:bg-[#000000] border-b border-neutral-200 dark:border-white/[0.08] h-14 flex items-center justify-between relative">
+    <header className={cn(
+      "fixed top-0 inset-x-0 z-[100] w-full bg-white dark:bg-[#000000] border-b border-neutral-200 dark:border-white/[0.08] h-14 flex items-center justify-between",
+    )}>
       {/* Left: Logo */}
       <div className="flex items-center h-full px-6">
         <Link href="/" className="flex items-center gap-2 font-bold text-fd-foreground tracking-tighter text-lg">
@@ -260,16 +267,16 @@ export function SiteHeader() {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 top-14 z-50 md:hidden">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-[200] md:hidden">
+          {/* Backdrop - covers full viewport including header */}
           <div
             className="absolute inset-0 bg-black/20 backdrop-blur-xs"
             onClick={() => setMobileMenuOpen(false)}
           />
-          {/* Menu Panel */}
+          {/* Menu Panel - starts below header */}
           <div
             ref={mobileMenuRef}
-            className="absolute right-0 top-0 w-[280px] h-full bg-white dark:bg-[#0a0a0a] border-l border-neutral-200 dark:border-white/[0.08] shadow-xl animate-fd-sidebar-in overflow-y-auto"
+            className="absolute right-0 top-14 w-[280px] h-[calc(100vh-3.5rem)] bg-white dark:bg-[#0a0a0a] border-l border-neutral-200 dark:border-white/[0.08] shadow-xl animate-fd-sidebar-in overflow-y-auto"
           >
             <nav className="flex flex-col py-4">
               <Link
