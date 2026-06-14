@@ -24,14 +24,6 @@ interface Post {
 
 const posts: Post[] = [
     {
-        slug: 'v0-7-3-django-adapter',
-        title: 'v0.7.3 - Django adapter, FastAPI/Flask fixes',
-        description: 'A new Django adapter (pyrpc-django-adapter) with native async views, plus an introspection crash fix that affected all adapters when no explicit router was provided.',
-        date: 'June 13, 2026 at 8:00am',
-        readTime: '4 min',
-        category: 'release',
-    },
-    {
         slug: 'building-a-full-stack-app-with-pyrpc',
         title: 'Building a full-stack app with pyRPC',
         description: 'A step-by-step tutorial: FastAPI backend, TypeScript React frontend, end-to-end type safety with pyRPC.',
@@ -269,6 +261,14 @@ const posts: Post[] = [
         description: 'npx pyrpc sync, postinstall prompt, framework extras (pyrpc-core[fastapi], pyrpc-core[flask]), adapter auto-install, pyrpc.json config, distribution modes, and package standardization.',
         date: 'June 6, 2026 at 2:00pm',
         readTime: '10 min',
+        category: 'release',
+    },
+    {
+        slug: 'v0-7-3-django-adapter',
+        title: 'v0.7.3 - Django adapter, FastAPI/Flask fixes',
+        description: 'A new Django adapter (pyrpc-django-adapter) with native async views, plus an introspection crash fix that affected all adapters when no explicit router was provided.',
+        date: 'June 13, 2026 at 8:00am',
+        readTime: '4 min',
         category: 'release',
     },
     {
