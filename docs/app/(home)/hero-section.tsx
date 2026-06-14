@@ -82,7 +82,7 @@ export default function HeroSection({
   }, []);
 
   return (
-    <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-28 md:pt-40 pb-24">
+    <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-[10.5rem] md:pt-[13.5rem] pb-24">
       {/* Left Column */}
       <div className="flex flex-col items-start gap-10 max-w-[480px]">
         <h1 className="relative text-[42px] md:text-[64px] font-normal leading-[48px] md:leading-[72px] tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] heading-display">

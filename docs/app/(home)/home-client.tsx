@@ -106,7 +106,8 @@ export default function HomeClient({
             Fits your stack.
           </motion.h2>
           <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-[280px] md:max-w-xl mx-auto font-sans">
-            pyRPC adapts to whatever backend and frontend you already use.
+            <span className="hidden md:inline">pyRPC adapts to whatever backend and frontend you already use.</span>
+            <span className="inline md:hidden">pyRPC adapts to your stack.</span>
           </p>
         </div>
 
