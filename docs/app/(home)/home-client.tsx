@@ -94,7 +94,7 @@ export default function HomeClient({
         </div>
       </div>
 
-      <div className="my-20 max-w-[1100px] mx-auto">
+      <div className="my-20 max-w-[1100px] mx-auto px-6 md:px-0">
         <div className="flex flex-col items-center text-center mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 16 }}
@@ -105,12 +105,12 @@ export default function HomeClient({
           >
             Fits your stack.
           </motion.h2>
-          <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-xl mx-auto font-sans">
+          <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-[280px] md:max-w-xl mx-auto font-sans">
             pyRPC adapts to whatever backend and frontend you already use.
           </p>
         </div>
 
-        <div className="flex items-start gap-16 justify-center">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-12 md:gap-16 justify-center px-6 md:px-0">
           <div className="flex flex-col items-center gap-5">
             <span className="text-[11px] font-semibold tracking-widest uppercase text-fd-foreground/30">Python</span>
             <div className="flex items-center gap-6">

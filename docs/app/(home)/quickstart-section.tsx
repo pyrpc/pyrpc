@@ -42,7 +42,7 @@ function QuickstartStep({ step, title, description, filename, children, terminal
               <span className="text-[11px] font-mono text-neutral-500 tracking-tight">{filename}</span>
             </div>
           )}
-          <div className="flex">
+          <div className="flex flex-col md:flex-row">
             <div className="flex-1 min-w-0 overflow-x-auto">
               {lines ? (
                 <div className="grid grid-cols-[40px_1fr] font-mono text-sm leading-relaxed">
@@ -60,7 +60,7 @@ function QuickstartStep({ step, title, description, filename, children, terminal
               )}
             </div>
             {terminal && (
-              <div className="flex-1 min-w-0 border-l border-neutral-200 dark:border-[#1a1a1a] p-4 font-mono text-[12px] leading-relaxed bg-neutral-100/60 dark:bg-[#0f0f0f]/60 overflow-x-auto">
+              <div className="hidden md:block flex-1 min-w-0 border-l border-neutral-200 dark:border-[#1a1a1a] p-4 font-mono text-[12px] leading-relaxed bg-neutral-100/60 dark:bg-[#0f0f0f]/60 overflow-x-auto">
                 {terminal}
               </div>
             )}
@@ -90,7 +90,7 @@ export default function QuickstartSection({
 
   return (
     <div className="mt-32 mb-20 relative w-full">
-      <div className="mb-20 flex flex-col items-center text-center max-w-5xl mx-auto">
+      <div className="mb-20 flex flex-col items-center text-center max-w-5xl mx-auto px-6 md:px-0">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -100,10 +100,10 @@ export default function QuickstartSection({
         >
           Ship in Three commands.
         </motion.h2>
-        <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-2xl mx-auto font-sans whitespace-nowrap">From zero to a running pyRPC server with a type-safe TypeScript client in under two minutes.</p>
+        <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-[280px] md:max-w-2xl mx-auto font-sans">From zero to a running pyRPC server with a type-safe TypeScript client in under two minutes.</p>
       </div>
 
-      <div className="flex flex-col gap-20 max-w-5xl mx-auto">
+      <div className="flex flex-col gap-20 max-w-5xl mx-auto px-6 md:px-0">
         <QuickstartStep
           step={1}
           title="Add pyRPC to your Python project."
