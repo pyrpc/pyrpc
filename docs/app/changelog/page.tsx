@@ -2,6 +2,138 @@ import Link from 'next/link'
 
 const releases = [
     {
+        version: 'v0.8.1',
+        date: '2026-06-14',
+        tag: 'v0.8.1',
+        description: 'Fix CLI/postinstall Types generation to produce callable Promise signatures matching createClient<T> and industry standard.',
+        sections: [
+            {
+                title: 'Bug Fixes',
+                items: [
+                    'Fix CLI `generate()` in `cli.js` and `postinstall.js` to produce callable `method(args): Promise<Result>` signatures instead of `{ params, result }` descriptor format.',
+                    'The old format caused TypeScript/linters to warn "await has no effect" because `createClient<T>()`\'s Proxy returns a function `(...args) => Promise<any>`, but the generated Types interface described them as non-callable objects.',
+                    'New output matches the `pyrpc-codegen` Jinja2 template format and the industry standard used by tRPC, `typed-rpc`, and `jsontpc`.',
+                ]
+            },
+            {
+                title: 'Chores',
+                items: [
+                    'Bump `@pyrpc/client` to v0.8.1 (npm only — no Python package changes).',
+                ]
+            },
+        ]
+    },
+    {
+        version: 'v0.8.0',
+        date: '2026-06-14',
+        tag: 'v0.8.0',
+        description: 'npx daemon 715× speedup for type generation and reduced file watcher debounce.',
+        sections: [
+            {
+                title: 'Features',
+                items: [
+                    'Adopt `jsonschema-ts` v0.3.0 npx daemon for sub-10ms type generation. Instead of spawning `npx json-schema-to-typescript` as a subprocess on every conversion (3.3s/call), a persistent Node.js process runs in the background, keeping `json-schema-to-typescript` loaded in V8\'s code cache. Subsequent conversions drop to ~4.6ms — a ~715× speedup.',
+                    'Reduce file watcher debounce from 1.6s to 200ms for faster type regeneration on save.',
+                ]
+            },
+            {
+                title: 'Chores',
+                items: [
+                    'Bump all packages to v0.8.0 (pyrpc-core, pyrpc-codegen, pyrpc-flask, pyrpc-fastapi, pyrpc-django-adapter, @pyrpc/client, @pyrpc/types).',
+                    'Pin `jsonschema-ts>=0.3.0` in pyrpc-codegen.',
+                    'Add blog post and codegen docs for npx daemon architecture.',
+                ]
+            },
+        ]
+    },
+    {
+        version: 'v0.7.7',
+        date: '2026-06-14',
+        tag: 'v0.7.7',
+        description: 'Windows npx.cmd fix via jsonschema-ts v0.2.1.',
+        sections: [
+            {
+                title: 'Bug Fixes',
+                items: [
+                    'Pin `jsonschema-ts>=0.2.1` to pull in the Windows `npx.cmd` fix. `jsonschema-ts` v0.2.0 called `subprocess.run(["npx", ...])` without `shell=True`. On Windows, `npx` is a script file (not `.exe`/`.com`) so `CreateProcess` cannot run it directly — `[WinError 2]` is raised. v0.2.1 uses `"npx.cmd"` on `os.name == "nt"`, resolving the error.',
+                ]
+            },
+            {
+                title: 'Chores',
+                items: [
+                    'Bump all packages to v0.7.7 (pyrpc-core, pyrpc-codegen, pyrpc-flask, pyrpc-fastapi, pyrpc-django-adapter, @pyrpc/client, @pyrpc/types).',
+                    'Pin `jsonschema-ts>=0.2.1` in pyrpc-codegen, `pyrpc-codegen>=0.7.7` in pyrpc-core, and `pyrpc-core>=0.7.7` in adapter packages.',
+                ]
+            },
+        ]
+    },
+    {
+        version: 'v0.7.6',
+        date: '2026-06-14',
+        tag: 'v0.7.6',
+        description: 'Dependency pin fix and dynamic __version__ in CLI.',
+        sections: [
+            {
+                title: 'Bug Fixes',
+                items: [
+                    'Pin `pyrpc-codegen>=0.7.6` dependency to ensure `jsonschema-ts>=0.2.0` is pulled in correctly on fresh installs. Previously `pyrpc-core` had no version constraint on `pyrpc-codegen`, so older versions (0.6.x) that required only `jsonschema-ts>=0.1.0` could be installed, causing `ensure_inline_models` import errors.',
+                    'Make `__version__` dynamic — `cli.py` now imports it from `pyrpc_core.__init__` instead of a hardcoded `"0.3.3"` string that was never updated.',
+                ]
+            },
+            {
+                title: 'Chores',
+                items: [
+                    'Bump all packages to v0.7.6 (pyrpc-core, pyrpc-codegen, pyrpc-flask, pyrpc-fastapi, pyrpc-django-adapter, @pyrpc/client, @pyrpc/types).',
+                    'Pin `pyrpc-core>=0.7.6` in flask, fastapi, and django adapter packages.',
+                    'Update `scripts/release.mjs` to also sync `__init__.py` `__version__`.',
+                    'Add `pyrpc-client.json` to `.gitignore`, remove unused `scripts/seed_downloads.py`.',
+                ]
+            },
+        ]
+    },
+    {
+        version: 'v0.7.5',
+        date: '2026-06-14',
+        tag: 'v0.7.5',
+        description: 'CLI daemonizes and automatically installs adapters via npm, removing manual pip install steps.',
+        sections: [
+            {
+                title: 'CLI & Dev Server',
+                items: [
+                    'npm install is now automatic: pyrpc dev automatically runs npm install @pyrpc/fastapi or @pyrpc/flask if the adapter is missing for your chosen framework (FastAPI/Flask/Django).',
+                    'Daemon-first design: dev server daemonizes once and manages its own lifecycle, allowing independent CLI tool execution.',
+                    'The Python backend and TypeScript daemon communicate via a low-latency JSON pipe (stdio) instead of filesystem operations.',
+                    'Eliminates manual npm installation prompts during setup.',
+                ]
+            },
+            {
+                title: 'Package Architecture',
+                items: [
+                    'pyrpc-core provides pypi packages with extras (pip install pyrpc-core[fastapi], pyrpc-core[flask], pyrpc-core[django]) to unify Python installation.',
+                    'Adapter packages (@pyrpc/fastapi, @pyrpc/flask, etc.) remain unchanged for those who prefer direct installation.',
+                ]
+            },
+            {
+                title: 'Bug Fixes',
+                items: [
+                    'Fixed race condition in concurrent RPC calls where multiple requests could corrupt the dispatcher state by dispatching and cleaning up simultaneously.',
+                    'Resolved TypeError in server mode when .adapter.get_registry_schema() was called before the adapter was initialized (e.g., in a bare client_root server setup).',
+                    'Fixed pyrpc dev server crashing when TypeScript target was set to es2023 (breaking changes in ts-json-schema-generator related to es2023 enums and keywords).',
+                    'Updated @pyrpc/client to correctly use the base_url field from pyrpc.json when performing remote client-side fetching.',
+                    'Ensured --reconfigure correctly overwrites pyrpc.json with new framework and distribution choices instead of attempting to merge.',
+                ]
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'Updated quickstart to remove the npm install step.',
+                    'Added migration note on daemon-first architecture in development.',
+                    'Updated API references with details on improved error handling and JSON pipe communication.',
+                ]
+            },
+        ]
+    },
+    {
         version: 'v0.7.4',
         date: '2026-06-13',
         tag: 'v0.7.4',
