@@ -27,11 +27,18 @@ source .venv/bin/activate
 If you're using **uv** (recommended), you can initialize a new project:
 
 ```bash
-# Initialize a new uv project
+# Initialize a new uv project (which creates the virtual environment)
 uv init
 
 # Or if your project already exists, just create the venv
 uv venv
+
+# Activate it
+# macOS / Linux:
+source .venv/bin/activate
+
+# Windows:
+.venv\Scripts\activate
 ```
 
 ### TypeScript / npm
@@ -43,9 +50,6 @@ For the frontend client, you'll need a TypeScript project. Create one if you hav
 npm init -y
 npm install typescript --save-dev
 npx tsc --init
-
-# Or with a framework like Next.js
-npx create-next-app@latest frontend
 ```
 
 The `@pyrpc/client` package will be installed later when you generate types.
@@ -69,19 +73,31 @@ Install the adapter for your favorite web framework.
 ### FastAPI
 
 ```bash
+# Using uv
 uv add pyrpc-core[fastapi]
+
+# Using pip
+pip install pyrpc-core[fastapi]
 ```
 
 ### Flask
 
 ```bash
+# Using uv
 uv add pyrpc-core[flask]
+
+# Using pip
+pip install pyrpc-core[flask]
 ```
 
 ### Django
 
 ```bash
+# Using uv
 uv add pyrpc-core[django]
+
+# Using pip
+pip install pyrpc-core[django]
 ```
 
 ## CLI & Code Generation
@@ -168,7 +184,7 @@ npm install @pyrpc/client
 npx pyrpc sync
 ```
 
-The postinstall script of `@pyrpc/client` prompts for the distribution mode:
+The `npm install @pyrpc/client` creates a `pyrpc-client.json` config file in your client project. The postinstall script then prompts for the distribution mode:
 
 ```
 ? How are types distributed?
