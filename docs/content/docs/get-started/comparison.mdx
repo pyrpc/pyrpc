@@ -8,16 +8,16 @@ pyRPC brings tRPC-level type safety to Python + TypeScript stacks. It syncs your
 
 ## At a Glance
 
-| Feature | pyRPC | tRPC | gRPC | FastAPI + OpenAPI |
-|---|---|---|---|---|
-| Backend language | Python | TypeScript | Multi-language | Python |
-| Frontend types | Auto-generated TypeScript | Built-in TypeScript | Generated stubs | Manual or generated |
-| Schema / IDL required | None (Python types) | None (TypeScript types) | `.proto` files | OpenAPI spec |
-| Framework-agnostic | Yes (ASGI) | Node.js only | Yes (polyglot) | FastAPI only |
-| Transport | HTTP/JSON | HTTP/JSON | HTTP/2 (binary) | HTTP/JSON |
-| Works in monorepo | Yes (workspace mode) | Yes | Yes | Manual |
-| Cross-repo types | Yes (server mode) | No (same repo) | Yes (shared proto) | Only via OpenAPI |
-| Setup time | One command | One command | Proto compilation | Scaffold + generator |
+| Feature | pyRPC | tRPC | gRPC |
+|---|---|---|---|
+| Backend language | Python | TypeScript | Multi-language |
+| Frontend types | Auto-generated TypeScript | Built-in TypeScript | Generated stubs |
+| Schema / IDL required | None (Python types) | None (TypeScript types) | `.proto` files |
+| Framework-agnostic | Yes (ASGI) | Node.js only | Yes (polyglot) |
+| Transport | HTTP/JSON | HTTP/JSON | HTTP/2 (binary) |
+| Works in monorepo | Yes (workspace mode) | Yes | Yes |
+| Cross-repo types | Yes (server mode) | No (same repo) | Yes (shared proto) |
+| Setup time | One command | One command | Proto compilation |
 
 ## Key Differences
 
@@ -28,10 +28,6 @@ pyRPC brings tRPC-level type safety to Python + TypeScript stacks. It syncs your
 ### vs gRPC
 - **pyRPC**: Zero-config. No `.proto` files or IDLs. Uses standard Python functions as the source of truth over HTTP/JSON.
 - **gRPC**: Requires strict IDLs (Protocol Buffers) and binary serialization. More performant for inter-service communication, but carries much higher DX overhead for web-to-server apps.
-
-### vs FastAPI
-- **pyRPC**: Built for procedure-calls. Python backend types are automatically available in your TypeScript frontend with zero manual mapping.
-- **FastAPI**: Built for REST. OpenAPI schema is generated, but you still need separate client code, generators, or manual type definitions on the frontend.
 
 ## When to Use pyRPC
 
