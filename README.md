@@ -79,6 +79,7 @@ The `pyrpc` CLI (dev, serve, inspect, codegen, pull) is included out of the box.
 ```bash
 uv add pyrpc-core[fastapi]   # FastAPI adapter
 uv add pyrpc-core[flask]     # Flask adapter
+uv add pyrpc-core[django]     # Django adapter
 ```
 
 ## Quick Start
