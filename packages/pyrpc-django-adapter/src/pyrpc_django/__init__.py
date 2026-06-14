@@ -6,6 +6,7 @@ def mount_django(urlpatterns: list, router: Optional[Router] = None) -> None:
     from django.http import HttpRequest, JsonResponse
     from django.urls import path
     from django.views.decorators.csrf import csrf_exempt
+    import inspect
     import json
 
     resolved = router or default_router
@@ -15,7 +16,8 @@ def mount_django(urlpatterns: list, router: Optional[Router] = None) -> None:
         if request.method != "POST":
             return JsonResponse({"error": "Method not allowed"}, status=405)
         try:
-            payload = json.loads(request.body)
+            body = await request.body if inspect.isawaitable(request.body) else request.body
+            payload = json.loads(body)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
         response_dict = await handle_request(payload, router=resolved)
@@ -28,7 +30,7 @@ def mount_django(urlpatterns: list, router: Optional[Router] = None) -> None:
         from pyrpc_core import get_registry_schema
         schemas = get_registry_schema(resolved)
         return JsonResponse({
-            name: schema.model_dump() if hasattr(schema, "model_dump") else schema
+            name: schema.model_dump()
             for name, schema in schemas.items()
         })
 
