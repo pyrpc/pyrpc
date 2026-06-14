@@ -17,23 +17,26 @@
 
 ### Bug Fixes
 
-- **codegen**: Pin `jsonschema-ts>=0.2.1` to pull in the Windows `npx.cmd` fix. `jsonschema-ts` v0.2.0 used `npx` directly in `subprocess.run()`, which fails on Windows because `npx` is a script file (not `.exe`). v0.2.1 uses `npx.cmd` on Windows, resolving `[WinError 2]` during type generation.
+- **codegen**: Pin `jsonschema-ts>=0.2.1` to pull in the Windows `npx.cmd` fix. `jsonschema-ts` v0.2.0 called `subprocess.run(["npx", ...])` without `shell=True`. On Windows, `npx` is a script file (not `.exe`/`.com`) so `CreateProcess` cannot run it directly — `[WinError 2]` is raised. v0.2.1 uses `"npx.cmd"` on `os.name == "nt"`, resolving the error.
 
 ### Chores
 
 - **version**: Bump all packages to v0.7.7 (pyrpc-core, pyrpc-codegen, pyrpc-flask, pyrpc-fastapi, pyrpc-django-adapter, @pyrpc/client, @pyrpc/types)
-- **deps**: Pin `pyrpc-codegen>=0.7.7` in pyrpc-core, and `pyrpc-core>=0.7.7` in adapter packages
+- **deps**: Pin `jsonschema-ts>=0.2.1` in pyrpc-codegen, `pyrpc-codegen>=0.7.7` in pyrpc-core, and `pyrpc-core>=0.7.7` in adapter packages
 
 ## 0.7.6 (2026-06-14)
 
 ### Bug Fixes
 
 - **core**: Pin `pyrpc-codegen>=0.7.6` dependency to ensure `jsonschema-ts>=0.2.0` is pulled in correctly on fresh installs. Previously `pyrpc-core` had no version constraint on `pyrpc-codegen`, so older versions (0.6.x) that required only `jsonschema-ts>=0.1.0` could be installed, causing `ensure_inline_models` import errors.
+- **cli**: Make `__version__` dynamic — `cli.py` now imports it from `pyrpc_core.__init__` instead of a hardcoded `"0.3.3"` string that was never updated.
 
 ### Chores
 
 - **version**: Bump all packages to v0.7.6 (pyrpc-core, pyrpc-codegen, pyrpc-flask, pyrpc-fastapi, pyrpc-django-adapter, @pyrpc/client, @pyrpc/types)
 - **deps**: Pin `pyrpc-core>=0.7.6` in flask, fastapi, and django adapter packages
+- **tooling**: Update `scripts/release.mjs` to also sync `__init__.py` `__version__`
+- **housekeeping**: Add `pyrpc-client.json` to `.gitignore`, remove unused `scripts/seed_downloads.py`
 
 ## 0.7.5 (2026-06-13)
 
