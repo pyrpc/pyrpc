@@ -11,6 +11,7 @@
 
 - **version**: Bump all packages to v0.8.0 (pyrpc-core, pyrpc-codegen, pyrpc-flask, pyrpc-fastapi, pyrpc-django-adapter, @pyrpc/client, @pyrpc/types)
 - **deps**: Pin `jsonschema-ts>=0.3.0` in pyrpc-codegen
+- **docs**: Add blog post and codegen docs for npx daemon architecture
 
 ## 0.7.7 (2026-06-14)
 
