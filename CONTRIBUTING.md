@@ -33,7 +33,7 @@ pyrpc/
 ```bash
 uv sync
 # or
-pip install -e packages/pyrpc-core -e packages/pyrpc-codegen -e packages/pyrpc-flask -e packages/pyrpc-fastapi
+pip install -e packages/pyrpc-core -e packages/pyrpc-codegen -e packages/pyrpc-flask -e packages/pyrpc-fastapi -e packages/pyrpc-django-adapter
 ```
 
 ### TypeScript Setup
