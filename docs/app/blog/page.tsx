@@ -271,6 +271,14 @@ const posts: Post[] = [
         readTime: '10 min',
         category: 'release',
     },
+    {
+        slug: 'npx-daemon-715x-speedup',
+        title: '715x faster type generation with the npx daemon',
+        description: 'A persistent Node.js daemon replaces per-call npx subprocesses, dropping type regeneration from 3.3s to 4.6ms. How it works, the benchmarks, and the edge cases we handled.',
+        date: 'June 14, 2026 at 3:00am',
+        readTime: '8 min',
+        category: 'deep-dive',
+    },
 ]
 
 export default function BlogPage() {

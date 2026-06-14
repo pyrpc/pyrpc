@@ -133,6 +133,7 @@ pyrpc codegen http://localhost:8000
 - Full type inference (int ↔ number, str ↔ string, etc.)
 - Documentation comments preserved
 - Auto-regeneration on file change (when using `pyrpc dev`)
+- **Persistent npx daemon** &mdash; type conversion uses a long-lived Node.js process instead of spawning `npx` on every change. First call starts the daemon (~5.9s one-time install + spawn). Subsequent calls average **4.6ms** (715x faster than the old subprocess path). Disabled automatically if Node.js is not available.
 
 ## Generated Output
 
