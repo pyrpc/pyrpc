@@ -100,7 +100,7 @@ export default function QuickstartSection({
         >
           Ship in Three commands.
         </motion.h2>
-        <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-[280px] md:max-w-2xl mx-auto font-sans">From zero to a running pyRPC server with a type-safe TypeScript client in under two minutes.</p>
+        <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-[280px] md:max-w-2xl mx-auto font-sans md:whitespace-nowrap">From zero to a running pyRPC server with a type-safe TypeScript client in under two minutes.</p>
       </div>
 
       <div className="flex flex-col gap-20 max-w-5xl mx-auto px-6 md:px-0">
