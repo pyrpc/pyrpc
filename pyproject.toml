@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pyrpc-workspace"
-version = "0.7.6"
+version = "0.8.0"
 description = "pyRPC Monorepo Workspace"
 requires-python = ">=3.11"
 dependencies = []
@@ -47,9 +47,15 @@ pyrpc-codegen = { workspace = true }
 bypass-selection = true
 
 [tool.ruff]
-select = ["E", "F", "B", "I"]
 line-length = 88
 target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "TCH", "SIM", "UP", "YTT"]
+ignore = ["SIM108", "SIM117"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["SIM"]
 
 [tool.pytest.ini_options]
 testpaths = [

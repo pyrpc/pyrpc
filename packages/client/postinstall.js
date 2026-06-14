@@ -289,6 +289,7 @@ function main() {
           console.log('  \u2713 @pyrpc/types: generated for ' + Object.keys(schemas).length + ' procedures');
         }).catch(function(err) {
           console.log('  \u2717 @pyrpc/types: could not connect (' + err.message + ')');
+          console.error('  Details:', err);
           console.log('  Run later: npx pyrpc sync');
         });
       } else {
@@ -299,7 +300,10 @@ function main() {
 }
 
 if (require.main === module) {
-  main().catch(function(e) {});
+  main().catch(function(e) {
+    console.error('  \u2717 pyrpc postinstall error:', e && e.message ? e.message : e);
+    process.exit(1);
+  });
 }
 
 module.exports = { main, toTs, generate, fetchSchema, findProjectRoot, getConfigPath, TYPES_FILE };

@@ -308,6 +308,7 @@ function main() {
       console.log('  Import: import { createClient, type Types } from "@pyrpc/client"');
     }).catch(function(err) {
       console.log('  \u2717 Could not fetch schema from ' + url + ' (' + err.message + ')');
+      console.error('  Details:', err);
     });
   }
 
@@ -316,7 +317,10 @@ function main() {
 }
 
 if (require.main === module) {
-  main().catch(function(e) {});
+  main().catch(function(e) {
+    console.error('  \u2717 pyrpc CLI error:', e && e.message ? e.message : e);
+    process.exit(1);
+  });
 }
 
 module.exports = { main, toTs, generate, fetchSchema, findConfig, printHelp };

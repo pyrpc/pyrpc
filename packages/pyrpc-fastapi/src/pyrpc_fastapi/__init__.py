@@ -21,6 +21,6 @@ def mount_fastapi(app: Any, router: Optional[Router] = None) -> None:
         from pyrpc_core import get_registry_schema
         schemas = get_registry_schema(resolved)
         return {
-            name: schema.model_dump() if hasattr(schema, "model_dump") else schema
+            name: schema.model_dump()
             for name, schema in schemas.items()
         }

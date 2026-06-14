@@ -59,7 +59,7 @@ class PyRPCAsgiApp:
         
         # Convert Pydantic models to dicts
         response_data = {
-            name: schema.model_dump() if hasattr(schema, "model_dump") else schema
+            name: schema.model_dump()
             for name, schema in schemas.items()
         }
         

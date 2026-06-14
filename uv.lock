@@ -240,11 +240,11 @@ wheels = [
 
 [[package]]
 name = "jsonschema-ts"
-version = "0.2.0"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a6/b7/7aeceaef49f431360d54d6785fee36bcf08e44b22cf23d1c1dabbb4aafe4/jsonschema_ts-0.2.0.tar.gz", hash = "sha256:8783189a86ae0add3992e1b71f06b83b2b22dc4f627f483d17c18f66d6c2d086", size = 83469, upload-time = "2026-06-13T09:50:23.66Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f0/7a/56d95a607bc6f7fb972194fc5b11692a1883ace66c12fbe13278c198b339/jsonschema_ts-0.3.0.tar.gz", hash = "sha256:f26025f974e1775811d00136165200cc4f615722ae8a9ca7b0c65c37257da753", size = 90752, upload-time = "2026-06-13T23:36:42.701Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ed/08/8a4a089e8b995651f88fce46fd68e9362287b2c3eb1862be792572207f5b/jsonschema_ts-0.2.0-py3-none-any.whl", hash = "sha256:38d545424f84798206e1a30e83f0e8c608876a7e26971979de529693f8680d80", size = 8224, upload-time = "2026-06-13T09:50:21.805Z" },
+    { url = "https://files.pythonhosted.org/packages/b4/60/552813a34b9e988b45323862a81d933555757bf08f13eb30ede107ddeb39/jsonschema_ts-0.3.0-py3-none-any.whl", hash = "sha256:f60c52a8f6fb3b8d26f95944bdc61ed8b5a6bb647380db39001f819afb11402f", size = 10670, upload-time = "2026-06-13T23:36:38.746Z" },
 ]
 
 [[package]]
@@ -495,7 +495,7 @@ wheels = [
 
 [[package]]
 name = "pyrpc-codegen"
-version = "0.7.5"
+version = "0.8.0"
 source = { editable = "packages/pyrpc-codegen" }
 dependencies = [
     { name = "jinja2" },
@@ -505,12 +505,12 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "jinja2", specifier = ">=3.1.0" },
-    { name = "jsonschema-ts", specifier = ">=0.2.0" },
+    { name = "jsonschema-ts", specifier = ">=0.3.0" },
 ]
 
 [[package]]
 name = "pyrpc-core"
-version = "0.7.5"
+version = "0.8.0"
 source = { editable = "packages/pyrpc-core" }
 dependencies = [
     { name = "anyio" },
@@ -561,7 +561,7 @@ provides-extras = ["fastapi", "flask", "django"]
 
 [[package]]
 name = "pyrpc-django-adapter"
-version = "0.7.5"
+version = "0.8.0"
 source = { editable = "packages/pyrpc-django-adapter" }
 dependencies = [
     { name = "django", version = "5.2.15", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -577,7 +577,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-fastapi"
-version = "0.7.5"
+version = "0.8.0"
 source = { editable = "packages/pyrpc-fastapi" }
 dependencies = [
     { name = "fastapi" },
@@ -592,7 +592,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-flask"
-version = "0.7.5"
+version = "0.8.0"
 source = { editable = "packages/pyrpc-flask" }
 dependencies = [
     { name = "flask" },
@@ -607,7 +607,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-workspace"
-version = "0.7.5"
+version = "0.8.0"
 source = { editable = "." }
 
 [package.optional-dependencies]
