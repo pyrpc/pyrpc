@@ -27,7 +27,7 @@ Pre-release versions (alpha, beta, rc) get best-effort evaluation with no SLA.
 ## What is in Scope
 
 - **Core protocol layer** in `packages/pyrpc-core/` - JSON deserialization, Pydantic validation, procedure dispatch
-- **Adapter boundary** in `packages/pyrpc-fastapi/` and `packages/pyrpc-flask/` - how HTTP requests become core calls
+- **Adapter boundary** in `packages/pyrpc-fastapi/`, `packages/pyrpc-flask/` and `packages/pyrpc-django-adapter/` - how HTTP requests become core calls
 - **Generated code** in `packages/pyrpc-codegen/` - TypeScript type output that must not contain executable code
 - **Introspection endpoint** - `GET /rpc` exposes procedure names and type signatures; leaking information is in scope
 - **Error responses** - stack traces or internal paths must not leak to clients
