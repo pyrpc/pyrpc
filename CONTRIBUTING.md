@@ -22,6 +22,7 @@ pyrpc/
 │   ├── pyrpc-codegen/   # Python codegen library (pure, standalone)
 │   ├── pyrpc-fastapi/   # FastAPI adapter
 │   └── pyrpc-flask/     # Flask adapter
+|   └── pyrpc-django-adapter/ # Django adapter
 ├── docs/                # Documentation site (Next.js + fumadocs)
 ├── examples/            # Example projects
 └── scripts/             # Release and utility scripts
@@ -55,7 +56,7 @@ PRs should be scoped to one subsystem. A single PR touching core, adapters, and 
 | Subsystem | Path | Review focus |
 |-----------|------|-------------|
 | Core | `packages/pyrpc-core/` | Protocol behavior, validation invariants, router semantics |
-| Adapter | `packages/pyrpc-fastapi/`, `packages/pyrpc-flask/` | Correct HTTP translation, error mapping, framework integration |
+| Adapter | `packages/pyrpc-fastapi/`, `packages/pyrpc-flask/`, `packages/pyrpc-django-adapter/` | Correct HTTP translation, error mapping, framework integration |
 | Client | `packages/client/`, `packages/types/` | TypeScript ergonomics, type inference, postinstall flow, API surface |
 | Codegen | `packages/pyrpc-codegen/` | Type mapping accuracy, output correctness, introspection alignment |
 | Docs | `docs/` | Accuracy, build output |
