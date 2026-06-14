@@ -1,0 +1,161 @@
+---
+title: Code Generation
+description: Generate TypeScript types from your pyRPC server automatically.
+
+---
+
+# pyrpc-codegen
+
+Automatically generate a TypeScript types interface from your pyRPC server definition.
+
+## Installation
+
+```bash
+# One install - runtime, CLI, and codegen all included
+pip install pyrpc-core
+```
+
+> `pyrpc-codegen` is an internal dependency of `pyrpc-core`. You only install it separately if you need to call the codegen API programmatically without the runtime (e.g., a CI script). Most users never need this.
+
+## Quick Setup
+
+Run `pyrpc dev` from your Python project root:
+
+```bash
+pyrpc dev
+```
+
+On first run, it will prompt for your web framework, Python module path, and TypeScript client project location. This creates a `pyrpc.json` config file and generates types automatically.
+
+### Configuration file (`pyrpc.json`)
+
+```json
+{
+  "version": 1,
+  "framework": "fastapi",
+  "entrypoint": "main",
+  "client_root": "../frontend"
+}
+```
+
+All paths in `pyrpc.json` are resolved relative to the config file's directory. The types output is derived from `client_root` automatically.
+
+## CLI Usage
+
+The `pyrpc` CLI (included with `pyrpc-core`) provides these subcommands:
+
+| Command | Description |
+|---------|-------------|
+| `dev` | Start dev server with auto-type regeneration and interactive console |
+| `pull` | Extract RPC schema from a Python module and save as JSON |
+| `codegen` | Generate TypeScript types from a schema file, running server, or module |
+| `serve` | Start the pyRPC ASGI server |
+| `inspect` | List all registered RPC procedures in a module |
+| `version` | Show pyRPC version |
+
+### `pyrpc dev`
+
+Start the development server with automatic type regeneration and interactive console.
+
+```bash
+pyrpc dev
+```
+
+Flags:
+
+| Flag | Description |
+|------|-------------|
+| `--framework` | Web framework to use (fastapi, flask, asgi) |
+| `--entry` | Python module to scan for `@rpc` procedures |
+| `--client-root` | Relative path to TypeScript client project |
+| `--reconfigure` | Re-run setup prompts with previous answers as defaults |
+| `--types-only` | Only regenerate types, skip starting the server |
+| `--host`, `-h` | Bind socket to this host (default: 127.0.0.1) |
+| `--port`, `-p` | Bind socket to this port (default: 8000) |
+
+When `client_root` changes, pyRPC handles migration:
+
+- **New location is empty**: Prompts to move existing types
+- **Both locations have identical types**: Automatically removes the old copy
+- **Both locations have different types**: Prompts to regenerate, keep both, or cancel
+
+### `pyrpc pull`
+
+Extract the RPC schema from your Python module into a JSON file:
+
+```bash
+pyrpc pull my_app.main -o pyrpc-schema.json
+```
+
+This is useful for CI workflows - commit the schema file to your repo so frontend builds can generate types without a running Python server:
+
+```bash
+git add pyrpc-schema.json
+git commit -m "chore(codegen): update RPC schema"
+```
+
+### `pyrpc codegen`
+
+Generate TypeScript types from a schema file:
+
+```bash
+pyrpc codegen pyrpc-schema.json
+```
+
+Or directly from a running server (no `pull` required):
+
+```bash
+pyrpc codegen http://localhost:8000
+```
+
+Or from a Python module:
+
+```bash
+pyrpc codegen my_app.main
+```
+
+### Full Workflow (Manual)
+
+```bash
+# Install everything
+pip install pyrpc-core
+
+# Or use the dev server
+pyrpc dev
+
+# Manual codegen
+pyrpc codegen http://localhost:8000
+```
+
+## Features
+
+- TypeScript types interface generation
+- Full type inference (int ↔ number, str ↔ string, etc.)
+- Documentation comments preserved
+- Auto-regeneration on file change (when using `pyrpc dev`)
+- **Persistent npx daemon** &mdash; type conversion uses a long-lived Node.js process instead of spawning `npx` on every change. First call starts the daemon (~5.9s one-time install + spawn). Subsequent calls average **4.6ms** (715x faster than the old subprocess path). Disabled automatically if Node.js is not available.
+
+## Generated Output
+
+```typescript
+// {client_root}/node_modules/@pyrpc/types/src/index.ts
+export interface Types {
+  add(a: number, b: number): Promise<number>;
+  greet(name: string): Promise<string>;
+}
+```
+
+Use it with `@pyrpc/client`:
+
+```typescript
+import { createClient } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+const client = createClient<Types>()
+const result = await client.add(10, 5) // Fully typed, with autocompletion!
+```
+
+## Next Steps
+
+- Learn about [Client Usage](/docs/client)
+- Explore [TypeScript Integration](/docs/client/vanilla)
