@@ -345,7 +345,7 @@ model {
 views {
   // ── LEVEL 1: SYSTEM LANDSCAPE ──
   view index {
-    title 'pyRPC — System Landscape'
+    title 'pyRPC - System Landscape'
 
     description 'High-level view of pyRPC showing how developers and external standards interact with the system.'
 
@@ -354,7 +354,7 @@ views {
 
   // ── LEVEL 2: CONTAINER DIAGRAM ──
   view of pyrpc {
-    title 'pyRPC — Container Diagram'
+    title 'pyRPC - Container Diagram'
 
     description 'All seven packages (containers) within pyRPC, their relationships, external actors, and supporting config files.'
 
@@ -363,7 +363,7 @@ views {
 
   // ── LEVEL 3a: pyrpc-core COMPONENTS ──
   view of pyrpc_core {
-    title 'pyrpc-core — Internal Components'
+    title 'pyrpc-core - Internal Components'
 
     description 'Deep dive into the core package: the Router, Procedure compilation, request interpreter, introspection engine, ASGI transport, CLI, and Python client.'
 
@@ -378,7 +378,7 @@ views {
 
   // ── LEVEL 3b: pyrpc-codegen COMPONENTS ──
   view of pyrpc_codegen {
-    title 'pyrpc-codegen — Pipeline Internals'
+    title 'pyrpc-codegen - Pipeline Internals'
 
     description 'The TypeScript code generation pipeline: from runtime schema through type conversion, template rendering, and jsonschema_ts model interface generation.'
 
@@ -390,7 +390,7 @@ views {
 
   // ── LEVEL 3c: @pyrpc/client COMPONENTS ──
   view of pyrpc_client {
-    title '@pyrpc/client — Internal Components'
+    title '@pyrpc/client - Internal Components'
 
     description 'The TypeScript client internals: Proxy-based dispatch, error handling, CLI sync tool, and post-install setup wizard.'
 
@@ -405,7 +405,7 @@ views {
 
   // ── LEVEL 4: ADAPTER PATTERN COMPARISON ──
   view adapters {
-    title 'Adapter Pattern — Framework Integration Comparison'
+    title 'Adapter Pattern - Framework Integration Comparison'
 
     description 'Side-by-side comparison of all four adapter implementations. Each adapter follows the "thin shell" pattern: it translates HTTP into core interpreter calls without adding protocol logic.'
 
@@ -436,7 +436,7 @@ views {
 
   // ── DYNAMIC: RPC CALL FLOW ──
   dynamic view rpc_call_flow {
-    title 'RPC Call Flow — Request/Response Sequence'
+    title 'RPC Call Flow - Request/Response Sequence'
 
     description 'The life cycle of an RPC call: from TypeScript client through HTTP, adapter, interpreter, and procedure execution, then back with a response.'
 
@@ -479,7 +479,7 @@ views {
 
   // ── DYNAMIC: CODEFLOW ──
   dynamic view codegen_flow {
-    title 'Codegen Flow — From @rpc to TypeScript Types'
+    title 'Codegen Flow - From @rpc to TypeScript Types'
 
     description 'How TypeScript type definitions are generated: starting from @rpc decorators at import time, through introspection, code generation, and final file write.'
 
@@ -529,7 +529,7 @@ views {
 
   // ── DYNAMIC: DEV LOOP ──
   dynamic view dev_loop_flow {
-    title 'Dev Loop — pyrpc dev File Watching & Hot Reload'
+    title 'Dev Loop - pyrpc dev File Watching & Hot Reload'
 
     description 'The interactive development loop: pyrpc dev starts a server, watches Python files for changes, debounces regeneration, and provides an interactive console.'
 
