@@ -6,20 +6,20 @@
   </picture>
 </div>
 
-<p align="center">
+<h1 align="center">
   Type-safe RPC for Python &amp; TypeScript
-</p>
+</h1>
 
-<p align="center">
+<h4 align="center">
   One <code>@rpc</code> decorator defines the endpoint, generates TypeScript types, and validates every request at runtime.
-</p>
+</h4>
 
 <p align="center">
   <a href="https://pyrpc.com/docs"><b>Docs</b></a>
   ·
   <a href="https://pyrpc.com/changelog"><b>Changelog</b></a>
   ·
-  <a href="https://github.com/pyrpc/pyrpc/discussions"><b>Community</b></a>
+  <a href="https://x.com/pyrpc_dev"><b>Community</b></a>
 </p>
 
 <p align="center">
@@ -35,24 +35,7 @@
   <img src="docs/public/demo/pyrpc_demo.gif" alt="pyRPC demo" width="100%" />
   <p align="center"><em>Change a Python type. TypeScript knows instantly.</em></p>
 </div>
-
-```python
-from pyrpc_core import rpc
-
-@rpc
-def add(a: int, b: int) -> int:
-    return a + b
-```
-
-```ts
-import { createClient } from "@pyrpc/client"
-import type { Types } from "@pyrpc/types"
-
-const client = createClient<Types>()
-const result = await client.add(10, 5)  // typed as number
-```
-
----
+<br />
 
 ## Install
 
