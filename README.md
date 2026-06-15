@@ -7,41 +7,34 @@
 </div>
 
 <p align="center">
-  <a href="https://pyrpc.com"><b>Website</b></a>
-  ·
+  Type-safe RPC for Python &amp; TypeScript
+</p>
+
+<p align="center">
+  One <code>@rpc</code> decorator defines the endpoint, generates TypeScript types, and validates every request at runtime.
+</p>
+
+<p align="center">
   <a href="https://pyrpc.com/docs"><b>Docs</b></a>
   ·
-  <a href="https://github.com/pyrpc/pyrpc/issues"><b>Issues</b></a>
+  <a href="https://pyrpc.com/changelog"><b>Changelog</b></a>
+  ·
+  <a href="https://github.com/pyrpc/pyrpc/discussions"><b>Community</b></a>
 </p>
 
 <p align="center">
   <a href="https://pypi.org/project/pyrpc-core/">
     <img src="https://img.shields.io/pypi/v/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI version"/>
   </a>
-  <a href="https://github.com/pyrpc/pyrpc/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/pyrpc/pyrpc?style=flat&colorA=000000&colorB=000000" alt="License"/>
-  </a>
-  <a href="https://pepy.tech/project/pyrpc-core">
-    <img src="https://img.shields.io/pypi/dm/pyrpc-core?style=flat&colorA=000000&colorB=000000" alt="PyPI downloads"/>
-  </a>
   <a href="https://github.com/pyrpc/pyrpc/stargazers">
     <img src="https://img.shields.io/github/stars/pyrpc/pyrpc?style=flat&colorA=000000&colorB=000000" alt="GitHub stars"/>
   </a>
 </p>
 
-> [!WARNING]
-> pyRPC is in active development. APIs may change as we approach a stable release. Read the [changelog](https://pyrpc.com/changelog) and [roadmap](./ROADMAP.md) for direction.
-
 <div align="center">
   <img src="docs/public/demo/pyrpc_demo.gif" alt="pyRPC demo" width="100%" />
-  <p align="center"><em>The client above is <strong>not</strong> importing any code from the server, only its type declarations.</em></p>
+  <p align="center"><em>Change a Python type. TypeScript knows instantly.</em></p>
 </div>
-
----
-
-## What is pyRPC?
-
-pyRPC is a type-safe RPC framework for Python backends with TypeScript frontends. One `@rpc` decorator defines the endpoint, generates TypeScript types, and validates every request at runtime. No OpenAPI schemas, no codegen pipelines, no manual contract files.
 
 ```python
 from pyrpc_core import rpc
@@ -59,11 +52,11 @@ const client = createClient<Types>()
 const result = await client.add(10, 5)  // typed as number
 ```
 
-### Why pyRPC?
-
-End-to-end type safety across Python and TypeScript is a half-solved problem. Existing approaches rely on OpenAPI schemas that drift from implementation, manual type definitions that go out of sync, or heavy codegen pipelines. pyRPC treats your Python functions as the source of truth and derives TypeScript types directly from them. No middle layer, no drift.
+---
 
 ## Install
+
+> pyRPC is in active development. APIs may change as we approach a stable release. Read the [changelog](https://pyrpc.com/changelog) and [roadmap](./ROADMAP.md) for direction.
 
 ```bash
 # Using uv
