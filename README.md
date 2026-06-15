@@ -33,7 +33,7 @@
 > pyRPC is in active development. APIs may change as we approach a stable release. Read the [changelog](https://pyrpc.com/changelog) and [roadmap](./ROADMAP.md) for direction.
 
 <figure align="center">
-  <video src="https://cdn.jsdelivr.net/gh/pyrpc/pyrpc@main/docs/public/demo/pyrpc_demo.mp4" autoplay muted loop playsinline style="width: 100%; max-width: 800px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin: 24px 0;"></video>
+  https://github.com/user-attachments/assets/068b0740-dbb8-43e2-b9f3-43c7ec10ed6
   <figcaption>
     <p align="center">
       The client above is <strong>not</strong> importing any code from the server, only its type declarations.
