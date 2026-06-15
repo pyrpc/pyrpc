@@ -32,6 +32,30 @@ export default function HomeClient({
           clientCode={clientCode}
         />
 
+        {/* Demo video */}
+        <div className="mt-24 mb-16 flex flex-col items-center text-center max-w-[1100px] mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.4 }}
+            className="relative text-[28px] md:text-[40px] font-normal leading-[34px] md:leading-[48px] tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-10 heading-display"
+          >
+            See pyRPC in action.
+          </motion.h2>
+          <div className="w-full rounded-xl overflow-hidden border border-fd-border shadow-2xl bg-black transition-shadow duration-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.2)] dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.05)]">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto block"
+            >
+              <source src="/demo/pyrpc_demo.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </div>
+
         <div className="mt-20 mb-16 flex flex-col items-center text-center max-w-[1100px] mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 16 }}
