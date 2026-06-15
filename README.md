@@ -6,12 +6,6 @@
   </picture>
 </div>
 
-<h3 align="center">Type-safe RPC for Python &amp; TypeScript</h3>
-
-<p align="center">
-  Define procedures in Python. Consume them in TypeScript with full type safety - whether in a monorepo or across repositories.
-</p>
-
 <p align="center">
   <a href="https://pyrpc.com"><b>Website</b></a>
   ·
@@ -37,6 +31,15 @@
 
 > [!WARNING]
 > pyRPC is in active development. APIs may change as we approach a stable release. Read the [changelog](https://pyrpc.com/changelog) and [roadmap](./ROADMAP.md) for direction.
+
+<figure align="center">
+  <video src="docs/public/demo/pyrpc_demo.mp4" autoplay muted loop playsinline style="width: 100%; max-width: 800px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin: 24px 0;"></video>
+  <figcaption>
+    <p align="center">
+      The client above is <strong>not</strong> importing any code from the server, only its type declarations.
+    </p>
+  </figcaption>
+</figure>
 
 ---
 
