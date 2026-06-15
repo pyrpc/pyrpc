@@ -1,0 +1,55 @@
+---
+title: Architecture
+description: pyrpc architecture diagrams and design documentation.
+---
+
+# Architecture
+
+pyrpc uses [LikeC4](https://likec4.dev) architecture-as-code diagrams to document its structure
+across multiple levels of detail. The source file is at `architecture/pyrpc.c4`.
+
+## Interactive Diagrams
+
+```sh
+# Start the LikeC4 viewer
+npx likec4 start architecture
+```
+
+This opens an interactive browser at `http://localhost:5173` with all 8 diagrams.
+
+## Static Build
+
+```sh
+npx likec4 build architecture --output-dir architecture/dist
+```
+
+Open `architecture/dist/index.html` to browse the rendered diagrams.
+
+## Diagram Guide
+
+### System Landscape
+The broadest view: Python Developer, TypeScript Developer, JSON-RPC 2.0 Protocol,
+and pyrpc as a black-box system.
+
+### Container Diagram
+All 7 packages (pyrpc-core, pyrpc-fastapi, pyrpc-flask, pyrpc-django-adapter,
+pyrpc-codegen, @pyrpc/client, @pyrpc/types) with their relationships.
+
+### Component Diagrams
+- **pyrpc-core** — Router, Procedure, Interpreter, CLI, ASGI transport (10 components)
+- **pyrpc-codegen** — TypeScript code generation pipeline (5 components)
+- **@pyrpc/client** — Proxy dispatch, error handling, CLI sync, postinstall
+
+### Adapter Pattern Comparison
+All four adapters (FastAPI, Flask, Django, ASGI) side by side, showing the "thin shell" pattern.
+
+### Dynamic Views
+- **RPC Call Flow** — From TypeScript Proxy through HTTP to Procedure execution and back
+- **Codegen Flow** — From @rpc decorator to TypeScript file output
+- **Dev Loop** — File watching, hot reload, and auto-regeneration in `pyrpc dev`
+
+## Related Blog Posts
+
+- [Architecture as Code: Mapping pyrpc with LikeC4](/blog/architecture-as-code)
+- [A Visual Tour of pyrpc's Architecture](/blog/visual-tour)
+- [Following an RPC Call: From TypeScript to Python and Back](/blog/rpc-call-flow)

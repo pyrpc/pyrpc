@@ -5,6 +5,7 @@
     "pages": [
         "faq",
         "spec",
+        "architecture",
         "further-reading"
     ]
 }
