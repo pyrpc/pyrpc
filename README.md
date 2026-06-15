@@ -33,7 +33,7 @@
 > pyRPC is in active development. APIs may change as we approach a stable release. Read the [changelog](https://pyrpc.com/changelog) and [roadmap](./ROADMAP.md) for direction.
 
 <figure align="center">
-  <img src="docs/public/demo/pyrpc_demo.gif" alt="pyRPC demo" style="width: 100%; max-width: 800px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin: 24px 0;" />
+  <img src="docs/public/demo/pyrpc_demo.gif" alt="pyRPC demo" style="width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin: 24px 0;" />
   <figcaption>
     <p align="center">
       The client above is <strong>not</strong> importing any code from the server, only its type declarations.
