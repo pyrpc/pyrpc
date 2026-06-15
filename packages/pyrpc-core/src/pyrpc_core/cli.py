@@ -362,7 +362,10 @@ def serve(
         tmp.close()
         module_path = os.path.splitext(os.path.basename(tmp.name))[0]
         sys.path.insert(0, os.path.dirname(tmp.name))
-        uvicorn.run(f"{module_path}:app", host=host, port=port, reload=reload)
+        try:
+            uvicorn.run(f"{module_path}:app", host=host, port=port, reload=reload)
+        finally:
+            os.unlink(tmp.name)
     else:
         uvicorn.run(app_instance, host=host, port=port, reload=reload)
 
@@ -563,13 +566,17 @@ def dev(
     cfg = dict(old_cfg) if old_cfg else {}
     has_override = False
     if framework:
-        cfg["framework"] = framework; has_override = True
+        cfg["framework"] = framework
+        has_override = True
     if entry:
-        cfg["entrypoint"] = entry; has_override = True
+        cfg["entrypoint"] = entry
+        has_override = True
     if client_root:
-        cfg["client_root"] = client_root; has_override = True
+        cfg["client_root"] = client_root
+        has_override = True
     if distribution:
-        cfg["distribution"] = distribution; has_override = True
+        cfg["distribution"] = distribution
+        has_override = True
 
     missing_distribution = old_cfg and "distribution" not in old_cfg and not distribution
     if not module and (reconfigure or not old_cfg or missing_distribution):
@@ -658,6 +665,7 @@ def dev(
 
     server_proc = None
     tmp_path = None
+    tmp_file = None
     server_args = None
     server_cwd = None
     if not types_only:
@@ -672,7 +680,8 @@ def dev(
         )
         tmp.write(startup_code)
         tmp.close()
-        tmp_path = f"{os.path.splitext(os.path.basename(tmp.name))[0]}:app"
+        tmp_file = tmp.name
+        tmp_path = f"{os.path.splitext(os.path.basename(tmp_file))[0]}:app"
         os.environ.setdefault("PYTHONPATH", cwd)
         server_args = [sys.executable, "-m", "uvicorn", tmp_path, "--host", host, "--port", str(port), "--reload", "--log-level", "error"]
         server_cwd = os.path.dirname(tmp.name)
@@ -717,6 +726,8 @@ def dev(
         if server_proc:
             server_proc.terminate()
             server_proc.wait()
+        if tmp_file and os.path.isfile(tmp_file):
+            os.unlink(tmp_file)
 
 
 
