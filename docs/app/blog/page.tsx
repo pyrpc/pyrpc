@@ -279,6 +279,30 @@ const posts: Post[] = [
         readTime: '8 min',
         category: 'deep-dive',
     },
+    {
+        slug: 'architecture-as-code',
+        title: 'Architecture as Code: Mapping pyrpc with LikeC4',
+        description: 'How we turned pyrpc\'s architecture into version-controlled, interactive diagrams using LikeC4 — and why every framework should do the same.',
+        date: 'June 15, 2026 at 12:00pm',
+        readTime: '8 min',
+        category: 'deep-dive',
+    },
+    {
+        slug: 'visual-tour',
+        title: 'A Visual Tour of pyrpc\'s Architecture',
+        description: 'Eight diagrams, seven packages, one framework: a guided walkthrough of pyrpc\'s architecture from the system landscape down to individual components and dynamic flows.',
+        date: 'June 15, 2026 at 12:15pm',
+        readTime: '10 min',
+        category: 'deep-dive',
+    },
+    {
+        slug: 'rpc-call-flow',
+        title: 'Following an RPC Call: From TypeScript Client to Python Function and Back',
+        description: 'A step-by-step trace through pyrpc\'s RPC Call Flow: Proxy interception, HTTP transport, envelope validation, Router lookup, Procedure execution with TypeAdapters, and the error path.',
+        date: 'June 15, 2026 at 12:30pm',
+        readTime: '8 min',
+        category: 'deep-dive',
+    },
 ]
 
 export default function BlogPage() {

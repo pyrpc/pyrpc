@@ -1,0 +1,582 @@
+specification {
+  element actor {
+    style {
+      shape person
+      color secondary
+    }
+  }
+  element system {
+    style {
+      shape component
+      color muted
+    }
+  }
+  element container {
+    style {
+      shape component
+      color primary
+    }
+  }
+  element component {
+    style {
+      shape rectangle
+      color secondary
+    }
+  }
+  element storage {
+    style {
+      shape storage
+      color muted
+    }
+  }
+}
+
+model {
+  // ═══════════════════════════════════════════
+  // ACTORS
+  // ═══════════════════════════════════════════
+  python_dev = actor 'Python Developer' {
+    description 'Writes @rpc-decorated functions in Python that become RPC endpoints. Uses pyrpc CLI for dev server and code generation.'
+  }
+  ts_dev = actor 'TypeScript Developer' {
+    description 'Consumes the typed RPC client in frontend applications. Imports createClient<Types>() from @pyrpc/client.'
+  }
+
+  // ═══════════════════════════════════════════
+  // EXTERNAL SYSTEMS
+  // ═══════════════════════════════════════════
+  jsonrpc_protocol = system 'JSON-RPC 2.0' {
+    description 'Wire protocol standard defining the request/response envelope structure. pyrpc uses id, method, params, result, error fields.'
+  }
+
+  // ═══════════════════════════════════════════
+  // pyRPC SYSTEM
+  // ═══════════════════════════════════════════
+  pyrpc = system 'pyRPC' {
+    description 'Type-safe RPC framework for Python backends with TypeScript frontends. One @rpc decorator defines the endpoint, generates TS types, and validates every request at runtime.'
+
+    pyrpc_core = container 'pyrpc-core' {
+      description 'The heart of pyRPC. Contains the protocol implementation, router, request interpreter, CLI, introspection engine, ASGI transport, and Python client.'
+      technology 'Python 3.11+ / Pydantic v2'
+
+      core_router = component 'Router' {
+        description 'Thread-safe registry managing named Procedure instances. Supports register(), merge(), get(), list(), reload_module() for hot-reload in dev mode.'
+        technology 'registry.py'
+      }
+      core_procedure = component 'Procedure' {
+        description 'Compiled RPC handler wrapping a Python function. At init time, pre-builds Pydantic TypeAdapters for all parameters and return type for zero-overhead validation on the hot path.'
+        technology 'procedure.py'
+      }
+      core_rpc_dec = component '@rpc decorator' {
+        description 'Alias for default_router.rpc(). Decorator that compiles a function into a Procedure and registers it in the global Router. Also aliased for direct import from pyrpc_core.'
+        technology 'decorators.py'
+      }
+      core_model_dec = component '@model decorator' {
+        description 'Alias for pydantic.dataclasses.dataclass. Marks Python classes for JSON Schema generation. Types derived from these are emitted as TypeScript interfaces by codegen.'
+        technology 'decorators.py'
+      }
+      core_interpreter = component 'handle_request()' {
+        description 'Core request dispatcher: validates the JSON-RPC 2.0 envelope via RpcRequest model, looks up the Procedure via Router, executes with validated params, returns a JSON-RPC 2.0 response. Handles sync and async functions transparently.'
+        technology 'interpreter.py'
+      }
+      core_introspection = component 'get_registry_schema()' {
+        description 'Single source of truth for both runtime introspection and TypeScript code generation. Reads Router._procedures and generates ProcedureSchema objects with parameter types, return types, JSON schemas, and docstrings.'
+        technology 'introspection.py'
+      }
+      core_models = component 'RpcRequest / RpcResponse' {
+        description 'Pydantic v2 models for the JSON-RPC 2.0 envelope. RpcRequest validates incoming payloads. RpcResponse structures success/error responses with typed ErrorModel.'
+        technology 'models.py'
+      }
+      core_asgi = component 'PyRPCAsgiApp' {
+        description 'Standalone ASGI application serving POST /rpc (RPC calls) and GET /rpc (introspection). Handles CORS headers, JSON parsing, and response serialization. Can be used directly without adapters.'
+        technology 'transport/asgi.py'
+      }
+      core_cli = component 'CLI' {
+        description 'Typer-based CLI with commands: dev (file-watching dev server with interactive console), serve (production ASGI server), inspect (list procedures), pull (extract schema to JSON), codegen (generate TypeScript), version.'
+        technology 'cli.py'
+      }
+      core_pyclient = component 'Python RPCClient' {
+        description 'Dynamic Python client using httpx. Wraps sync/async HTTP calls. Auto-fetches schema via GET /rpc for method introspection. Supports named and positional arguments. Context manager compatible.'
+        technology 'client/python_client.py'
+      }
+    }
+
+    pyrpc_fastapi = container 'pyrpc-fastapi' {
+      description 'FastAPI adapter. Registers POST /rpc and GET /rpc routes on a FastAPI application. Fully async, no bridging needed.'
+      technology 'Python / FastAPI'
+
+      fastapi_mount = component 'mount_fastapi()' {
+        description 'Registers two async routes on a FastAPI app: POST /rpc calls await handle_request(), GET /rpc returns schema. Adheres to the "thin shell" pattern - zero protocol logic.'
+        technology '__init__.py / 26 lines'
+      }
+    }
+
+    pyrpc_flask = container 'pyrpc-flask' {
+      description 'Flask adapter. Registers POST /rpc and GET /rpc routes on a Flask application. Uses anyio.run() to bridge Flask sync to async interpreter.'
+      technology 'Python / Flask'
+
+      flask_mount = component 'mount_flask()' {
+        description 'Registers two sync routes. POST handler uses anyio.run(handle_request, payload, router) to bridge Flask sync world to the async interpreter. Flask and anyio imported lazily inside function to avoid hard dependency.'
+        technology '__init__.py / 33 lines'
+      }
+    }
+
+    pyrpc_django = container 'pyrpc-django-adapter' {
+      description 'Django adapter. Extends a urlpatterns list with async POST /rpc and GET /rpc views decorated with @csrf_exempt.'
+      technology 'Python / Django'
+
+      django_mount = component 'mount_django()' {
+        description 'Extends urlpatterns with two async Django views, both @csrf_exempt. POST view runs await handle_request(). GET view returns schema. Each view validates request.method explicitly.'
+        technology '__init__.py / 38 lines'
+      }
+    }
+
+    pyrpc_codegen = container 'pyrpc-codegen' {
+      description 'Library for generating TypeScript type definitions from pyRPC schema. Converts Python type annotations and Pydantic JSON schemas into TypeScript interfaces and procedure signatures.'
+      technology 'Python / Jinja2 / jsonschema_ts'
+
+      codegen_generate = component 'generate_typescript_client()' {
+        description 'Main entry point: collects JSON Schema defs from all procedures, generates TS model interfaces via jsonschema_ts, renders procedure signatures via Jinja2 template, assembles the complete TypeScript output.'
+        technology 'ts_codegen.py'
+      }
+      codegen_save = component 'save_typescript_client()' {
+        description 'Writes generated TypeScript to an absolute output path. Creates directories if needed. Raises ValueError if given a relative path. Called by CLI and pyrpc dev watcher.'
+        technology 'ts_codegen.py'
+      }
+      codegen_py2ts = component '_pytype_to_ts()' {
+        description 'Recursive Python type string to TypeScript type converter. Handles Optional, Union, List, Dict, Tuple, Set, class references, and nested generics. Also provides return_type_to_ts and _to_safe_name utilities.'
+        technology 'ts_codegen.py'
+      }
+      codegen_template = component 'client.ts.j2' {
+        description 'Jinja2 template that renders the export interface Types { ... } block. Uses custom Jinja2 filters (pytype_to_ts, return_type_to_ts) to convert Python types in the template context.'
+        technology 'Jinja2 template / 24 lines'
+      }
+      codegen_jschema = component 'jsonschema_ts' {
+        description 'Third-party library (npm). Converts Pydantic JSON Schema definitions into TypeScript interfaces. Pipeline: ensure_inline_models -> collect_defs -> convert_all -> assemble.'
+        technology 'npm: jsonschema_ts'
+      }
+    }
+
+    pyrpc_client = container '@pyrpc/client' {
+      description 'Universal TypeScript client for pyRPC. Uses a JavaScript Proxy to forward any method call to POST /rpc. Published on npm. Also ships a CLI for syncing types in server mode.'
+      technology 'TypeScript / npm'
+
+      client_proxy = component 'createClient<Types>()' {
+        description 'Factory function returning a Proxy object. The Proxy intercepts any property access and returns a function that sends a JSON-RPC 2.0 POST request to /rpc. Normalizes arguments: single object arg is sent as named params, positional args as array. The Types generic provides full type safety.'
+        technology 'src/client.ts'
+      }
+      client_error = component 'PyRPCError' {
+        description 'Custom Error subclass carrying code, message, and data fields from JSON-RPC error responses. Enables structured error handling on the client side.'
+        technology 'src/error.ts'
+      }
+      client_types = component 'RpcRequest / RpcResponse / ClientOptions' {
+        description 'TypeScript interfaces for the JSON-RPC 2.0 envelope and client configuration. RpcRequest: id, method, params. RpcResponse: id, result, error. ClientOptions: baseUrl, headers.'
+        technology 'src/types.ts'
+      }
+      client_cli_sync = component 'npx pyrpc sync (CLI)' {
+        description 'Standalone Node.js CLI (CommonJS, no build step). Reads pyrpc-client.json, fetches schema from server_url/GET /rpc, generates TypeScript types with its own built-in type conversion logic, writes to @pyrpc/types/src/index.ts. Self-contained in a single JS file.'
+        technology 'cli.js / 322 lines'
+      }
+      client_postinstall = component 'postinstall.js' {
+        description 'Post-install wizard that creates pyrpc-client.json. In TTY mode: prompts for distribution mode (workspace/server) and server URL. In CI/non-TTY: defaults to workspace with localhost. Also contains duplicate type conversion logic for immediate type generation in server mode.'
+        technology 'postinstall.js / 305 lines'
+      }
+    }
+
+    pyrpc_types = container '@pyrpc/types' {
+      description 'Placeholder npm package for generated TypeScript type definitions. The src/index.ts file starts as an empty interface (Record<string, never>) and is replaced by pyrpc codegen with actual procedure signatures and model interfaces.'
+      technology 'TypeScript / npm'
+
+      types_index = component 'src/index.ts' {
+        description 'Generated file. Contains TypeScript interfaces for all Pydantic/dataclass models (via jsonschema_ts) and an export interface Types { ... } block with typed method signatures for every @rpc procedure in the registry. Imported by consumers as import type { Types } from "@pyrpc/types".'
+        technology 'src/index.ts (output)'
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  // CONFIG FILES
+  // ═══════════════════════════════════════════
+  cfg_pyrpc_json = storage 'pyrpc.json' {
+    description 'Project configuration file. Fields: version (config schema version), framework (fastapi/flask/django/asgi), entrypoint (Python module path), client_root (relative path to TS client), distribution (workspace/server). Created by pyrpc dev setup wizard.'
+    technology 'JSON'
+  }
+  cfg_client_json = storage 'pyrpc-client.json' {
+    description 'Client-side configuration file. Fields: distribution (workspace/server), server_url (where to fetch schema in server mode). Created by postinstall.js during npm install. Read by cli.js for npx pyrpc sync.'
+    technology 'JSON'
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // RELATIONSHIPS
+  // ═══════════════════════════════════════════════════════════════
+
+  // ── Developer -> Code ──
+  python_dev -> core_rpc_dec 'defines RPC endpoints via @rpc decorator' {
+    description 'Each @rpc-decorated function becomes a named RPC endpoint with automatic parameter/return type validation.'
+  }
+  python_dev -> core_model_dec 'defines data models via @model decorator' {
+    description 'Type-annotated dataclasses generate JSON Schema, which becomes TypeScript interfaces on the client.'
+  }
+  python_dev -> core_cli 'runs pyrpc dev / serve / codegen / inspect commands' {
+    description 'CLI is the primary developer interface for running servers, inspecting procedures, and generating types.'
+  }
+
+  // ── Core Internal Flow ──
+  core_rpc_dec -> core_router 'registers Procedure(name, fn) in the router' {
+    description 'At import time, the decorator compiles the function into a Procedure and stores it in the Router.'
+  }
+  core_router -> core_procedure 'stores compiled Procedure with pre-built TypeAdapters' {
+    description 'Each Procedure wraps the user function with pre-built Pydantic TypeAdapters for all parameters and return type.'
+  }
+  core_router -> core_procedure 'get(name) retrieves Procedure for dispatch' {
+    description 'The interpreter looks up the Procedure by method name from the router.'
+  }
+
+  // ── Interpreter Dispatch ──
+  core_interpreter -> core_models 'validates incoming JSON-RPC 2.0 envelope via RpcRequest.model_validate()' {
+    description 'The interpreter uses Pydantic to validate that the incoming payload conforms to JSON-RPC 2.0 structure.'
+  }
+  core_interpreter -> core_router 'get(method) to look up the Procedure by name' {
+    description 'After envelope validation, the interpreter searches the router for the named procedure.'
+  }
+  core_interpreter -> core_procedure 'execute(params) runs the function with Pydantic-validated arguments' {
+    description 'The Procedure binds arguments, validates each via pre-built TypeAdapters, calls the function (sync or async), validates the return type, and returns the result.'
+  }
+  core_procedure -> jsonrpc_protocol 'conforms to JSON-RPC 2.0 request/response structure' {
+    description 'The envelope (RpcRequest/RpcResponse) follows the JSON-RPC 2.0 specification for id, method, params, result, and error fields.'
+  }
+
+  // ── Adapter -> Interpreter ──
+  fastapi_mount -> core_interpreter 'await handle_request(payload, router)' {
+    description 'FastAPI is natively async, so the adapter directly awaits the core interpreter.'
+  }
+  flask_mount -> core_interpreter 'anyio.run(handle_request, payload, router)' {
+    description 'Flask is synchronous, so the adapter uses anyio.run() to bridge to the async interpreter.'
+  }
+  django_mount -> core_interpreter 'await handle_request(payload, router)' {
+    description 'Django supports async views natively (since 3.1), so the adapter awaits the interpreter directly.'
+  }
+  core_asgi -> core_interpreter 'await handle_request(payload, router)' {
+    description 'The built-in ASGI application awaits the interpreter directly for POST /rpc requests.'
+  }
+
+  // ── Adapter -> Introspection (GET /rpc) ──
+  fastapi_mount -> core_introspection 'GET /rpc: returns registry schema as JSON' {
+    description 'All adapters expose GET /rpc for schema introspection. Returns ProcedureSchema data for every registered procedure.'
+  }
+  flask_mount -> core_introspection 'GET /rpc: returns registry schema as JSON'
+  django_mount -> core_introspection 'GET /rpc: returns registry schema as JSON'
+  core_asgi -> core_introspection 'GET /rpc: returns registry schema as JSON'
+
+  // ── Introspection -> Router ──
+  core_introspection -> core_router 'reads _procedures dict to build ProcedureSchema list' {
+    description 'get_registry_schema() iterates the router procedures and generates a ProcedureSchema for each one.'
+  }
+
+  // ── CLI -> Everything ──
+  core_cli -> cfg_pyrpc_json 'reads/writes pyrpc.json via _read/_write_pyrpc_config()' {
+    description 'The CLI reads pyrpc.json for startup configuration and writes it during setup wizard.'
+  }
+  core_cli -> core_introspection 'pyrpc inspect reads schema; pyrpc codegen triggers generation' {
+    description 'The CLI reads the registry schema for inspection, and passes it to codegen for TypeScript generation.'
+  }
+  core_cli -> core_pyclient 'pyrpc pull extracts schema and outputs as JSON file' {
+    description 'The pull command uses module import and introspection to dump the schema to a JSON file.'
+  }
+
+  // ── Codegen Pipeline ──
+  core_cli -> pyrpc_codegen 'pyrpc codegen triggers TypeScript generation from schema or module' {
+    description 'The codegen command reads a schema (from file, URL, or module import) and generates TypeScript.'
+  }
+  codegen_generate -> codegen_py2ts 'converts Python type strings to TypeScript types recursively' {
+    description 'Handles Optional[T] -> T | null, List[T] -> T[], Dict[K,V] -> Record<K,V>, Union[A,B] -> A | B, etc.'
+  }
+  codegen_generate -> codegen_template 'renders the Types interface with Jinja2 using pytype_to_ts/return_type_to_ts filters' {
+    description 'The Jinja2 template iterates all procedures and renders method signatures with converted TypeScript types.'
+  }
+  codegen_generate -> codegen_jschema 'converts Pydantic JSON Schema definitions to TypeScript interfaces' {
+    description 'jsonschema_ts takes the JSON Schema $defs and generates export interface declarations for each model.'
+  }
+  codegen_generate -> codegen_save 'writes assembled TypeScript output to absolute path' {
+    description 'The assembled output (model interfaces + Types interface) is written to @pyrpc/types/src/index.ts.'
+  }
+  codegen_save -> types_index 'generates/overwrites node_modules/@pyrpc/types/src/index.ts' {
+    description 'The output file contains all model interfaces and the Types interface with every procedure signature.'
+  }
+
+  // ── Client Relationships ──
+  ts_dev -> client_proxy 'imports createClient<Types>() and calls procedures as local methods' {
+    description 'The Proxy-based client translates method calls to HTTP POST /rpc requests. The Types generic provides full IDE autocompletion.'
+  }
+  client_proxy -> client_error 'throws PyRPCError on server error responses' {
+    description 'When the server returns a JSON-RPC error, the client parses code, message, and data into a PyRPCError instance.'
+  }
+  client_proxy -> fastapi_mount 'HTTP POST /rpc (JSON-RPC 2.0 request body)' {
+    description 'The client issues a POST request containing the JSON-RPC 2.0 envelope: id, method, params.'
+  }
+  client_proxy -> flask_mount 'HTTP POST /rpc'
+  client_proxy -> django_mount 'HTTP POST /rpc'
+  client_proxy -> core_asgi 'HTTP POST /rpc'
+
+  client_cli_sync -> cfg_client_json 'reads pyrpc-client.json for distribution mode and server_url' {
+    description 'The CLI reads the client config to determine if it should sync types from a server endpoint.'
+  }
+  client_cli_sync -> fastapi_mount 'HTTP GET /rpc to fetch schema in server mode' {
+    description 'In server distribution mode, npx pyrpc sync fetches the schema via HTTP GET and regenerates types locally.'
+  }
+  client_cli_sync -> types_index 'regenerates @pyrpc/types/src/index.ts in server mode' {
+    description 'The CLI has its own built-in type generation logic (duplicated from pyrpc-codegen) to produce types client-side.'
+  }
+
+  client_postinstall -> cfg_client_json 'creates pyrpc-client.json during npm install' {
+    description 'The postinstall script sets up distribution mode and server URL, creating the client config file.'
+  }
+
+  // ── Cross-boundary type safety ──
+  types_index -> client_proxy 'Types generic parameter provides full type safety and autocompletion' {
+    description 'The generated Types interface is passed as a generic to createClient<Types>(), enabling type-safe RPC calls with IDE autocompletion.'
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VIEWS
+// ═══════════════════════════════════════════════════════════════
+
+views {
+  // ── LEVEL 1: SYSTEM LANDSCAPE ──
+  view index {
+    title 'pyRPC — System Landscape'
+
+    description 'High-level view of pyRPC showing how developers and external standards interact with the system.'
+
+    include *
+  }
+
+  // ── LEVEL 2: CONTAINER DIAGRAM ──
+  view of pyrpc {
+    title 'pyRPC — Container Diagram'
+
+    description 'All seven packages (containers) within pyRPC, their relationships, external actors, and supporting config files.'
+
+    include *
+  }
+
+  // ── LEVEL 3a: pyrpc-core COMPONENTS ──
+  view of pyrpc_core {
+    title 'pyrpc-core — Internal Components'
+
+    description 'Deep dive into the core package: the Router, Procedure compilation, request interpreter, introspection engine, ASGI transport, CLI, and Python client.'
+
+    include *
+    style python_dev {
+      color muted
+    }
+    style jsonrpc_protocol {
+      color muted
+    }
+  }
+
+  // ── LEVEL 3b: pyrpc-codegen COMPONENTS ──
+  view of pyrpc_codegen {
+    title 'pyrpc-codegen — Pipeline Internals'
+
+    description 'The TypeScript code generation pipeline: from runtime schema through type conversion, template rendering, and jsonschema_ts model interface generation.'
+
+    include *
+    style cfg_pyrpc_json {
+      color muted
+    }
+  }
+
+  // ── LEVEL 3c: @pyrpc/client COMPONENTS ──
+  view of pyrpc_client {
+    title '@pyrpc/client — Internal Components'
+
+    description 'The TypeScript client internals: Proxy-based dispatch, error handling, CLI sync tool, and post-install setup wizard.'
+
+    include *
+    style cfg_client_json {
+      color muted
+    }
+    style jsonrpc_protocol {
+      color muted
+    }
+  }
+
+  // ── LEVEL 4: ADAPTER PATTERN COMPARISON ──
+  view adapters {
+    title 'Adapter Pattern — Framework Integration Comparison'
+
+    description 'Side-by-side comparison of all four adapter implementations. Each adapter follows the "thin shell" pattern: it translates HTTP into core interpreter calls without adding protocol logic.'
+
+    include core_interpreter
+    include core_introspection
+    include core_asgi
+    include fastapi_mount
+    include flask_mount
+    include django_mount
+    include client_proxy
+    include client_cli_sync
+    include python_dev
+    include cfg_pyrpc_json
+
+    style python_dev {
+      color muted
+    }
+    style client_proxy {
+      color muted
+    }
+    style client_cli_sync {
+      color muted
+    }
+    style cfg_pyrpc_json {
+      color muted
+    }
+  }
+
+  // ── DYNAMIC: RPC CALL FLOW ──
+  dynamic view rpc_call_flow {
+    title 'RPC Call Flow — Request/Response Sequence'
+
+    description 'The life cycle of an RPC call: from TypeScript client through HTTP, adapter, interpreter, and procedure execution, then back with a response.'
+
+    include client_proxy
+    include fastapi_mount
+    include core_interpreter
+    include core_router
+    include core_procedure
+    include core_models
+    include client_error
+
+    client_proxy -> fastapi_mount 'HTTP POST /rpc' {
+      description 'Sends JSON-RPC 2.0 envelope with id, method, params'
+    }
+    fastapi_mount -> core_interpreter 'await handle_request(payload)' {
+      description 'FastAPI adapter passes the parsed JSON payload to core'
+    }
+    core_interpreter -> core_models 'RpcRequest.model_validate()' {
+      description 'Validates envelope structure, extracts method name'
+    }
+    core_interpreter -> core_router 'get(method)' {
+      description 'Looks up compiled Procedure by name'
+    }
+    core_interpreter -> core_procedure 'execute(params)' {
+      description 'Binds args, validates each via TypeAdapter, calls function'
+    }
+    core_procedure -> core_models 'validates return type via TypeAdapter' {
+      description 'Validates return value against declared return type'
+    }
+    core_interpreter -> fastapi_mount 'returns RpcResponse dict' {
+      description 'Structured JSON-RPC 2.0 response with result or error'
+    }
+    fastapi_mount -> client_proxy 'HTTP 200 JSON-RPC response' {
+      description 'Serialized RpcResponse returned to client'
+    }
+    client_proxy -> client_error 'on error: throws PyRPCError' {
+      description 'If error field is present, client creates and throws PyRPCError'
+    }
+  }
+
+  // ── DYNAMIC: CODEFLOW ──
+  dynamic view codegen_flow {
+    title 'Codegen Flow — From @rpc to TypeScript Types'
+
+    description 'How TypeScript type definitions are generated: starting from @rpc decorators at import time, through introspection, code generation, and final file write.'
+
+    include core_rpc_dec
+    include core_router
+    include core_introspection
+    include codegen_generate
+    include codegen_py2ts
+    include codegen_template
+    include codegen_jschema
+    include codegen_save
+    include types_index
+    include python_dev
+    include core_cli
+
+    python_dev -> core_rpc_dec 'writes @rpc functions' {
+      description 'Developer decorates functions with @rpc'
+    }
+    core_rpc_dec -> core_router 'registers Procedure(name, fn)' {
+      description 'At import time, decorator creates and registers Procedure'
+    }
+    core_cli -> core_introspection 'pyrpc codegen invokes get_registry_schema()' {
+      description 'CLI triggers schema extraction from router'
+    }
+    core_introspection -> core_router 'reads _procedures' {
+      description 'get_registry_schema() iterates all registered procedures'
+    }
+    core_introspection -> codegen_generate 'passes ProcedureSchema dict' {
+      description 'Schema data is passed to TypeScript generator'
+    }
+    codegen_generate -> codegen_py2ts 'converts Python type annotations' {
+      description 'Python types (int, str, Optional, List, etc.) converted to TypeScript'
+    }
+    codegen_generate -> codegen_template 'renders Types interface' {
+      description 'Jinja2 template generates method signatures with TS types'
+    }
+    codegen_generate -> codegen_jschema 'generates model interfaces' {
+      description 'Pydantic JSON schemas converted to TypeScript interfaces'
+    }
+    codegen_generate -> codegen_save 'assembles and writes output' {
+      description 'Combines model interfaces + Types interface, writes to file'
+    }
+    codegen_save -> types_index 'writes index.ts' {
+      description 'Final TypeScript file at node_modules/@pyrpc/types/src/index.ts'
+    }
+  }
+
+  // ── DYNAMIC: DEV LOOP ──
+  dynamic view dev_loop_flow {
+    title 'Dev Loop — pyrpc dev File Watching & Hot Reload'
+
+    description 'The interactive development loop: pyrpc dev starts a server, watches Python files for changes, debounces regeneration, and provides an interactive console.'
+
+    include core_cli
+    include cfg_pyrpc_json
+    include python_dev
+    include core_router
+    include core_introspection
+    include codegen_save
+    include types_index
+    include fastapi_mount
+
+    python_dev -> core_cli 'pyrpc dev' {
+      description 'Developer starts the dev server'
+    }
+    core_cli -> cfg_pyrpc_json 'reads config' {
+      description 'Loads framework, entrypoint, client_root, distribution'
+    }
+    core_cli -> python_dev 'prompts if no config' {
+      description 'First-run wizard asks for framework, entrypoint, client_root'
+    }
+    core_cli -> python_dev 'imports user module' {
+      description 'Imports the entry point to trigger @rpc registration'
+    }
+    core_cli -> core_cli 'starts file watcher' {
+      description 'watchfiles monitors .py files in project directories'
+    }
+    core_cli -> core_cli 'starts uvicorn + dev console' {
+      description 'ASGI server starts and interactive console (pyrpc>) opens'
+    }
+    python_dev -> core_cli 'edits .py file' {
+      description 'Developer changes a Python file'
+    }
+    core_cli -> core_router 'reload_module() after debounce (300ms)' {
+      description 'Re-imports module, clears and re-populates router procedures'
+    }
+    core_router -> core_introspection 'get_registry_schema()' {
+      description 'Extracts updated schema from router'
+    }
+    core_introspection -> codegen_save 'save_typescript_client()' {
+      description 'Regenerates TypeScript types from updated schema'
+    }
+    codegen_save -> types_index 'overwrites index.ts' {
+      description 'Types file updated on disk'
+    }
+    core_cli -> python_dev 'console output: regenerated N procs' {
+      description 'Console confirms regeneration and shows procedure count'
+    }
+  }
+}
