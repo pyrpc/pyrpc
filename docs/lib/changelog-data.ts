@@ -13,6 +13,41 @@ export interface Release {
 
 export const releases: Release[] = [
     {
+        version: 'v0.9.0',
+        date: '2026-07-27',
+        tag: 'v0.9.0',
+        description: 'Framework adapters (React, Next.js, Vue, Svelte), server procedure kinds, and a unified one-api-object DX on TanStack Query.',
+        sections: [
+            {
+                title: 'Features',
+                items: [
+                    'New npm packages: `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte` — thin TanStack Query adapters over `@pyrpc/client`.',
+                    'One `api` object DX: `api.Provider`, `api.greet.useQuery`, and (Next) `api.prefetch` / `api.dehydrate` / `api.HydrationBoundary` on the same export.',
+                    'Server procedure kinds: `@rpc.query` and `@rpc.mutation` (bare `@rpc` defaults to query). Codegen brands `Types` with `_pyrpcKind`; adapters apply kinds automatically.',
+                    'Next.js App Router: `createNextClient` with RSC prefetch, hydration, and `createCaller` for server Promise calls.',
+                    'Vue: `createPyrpcVue` with `api.plugin` for TanStack `VueQueryPlugin`. Svelte: `createSvelteClient` with `createQuery` / `createMutation`.',
+                ],
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'Client docs for React, Next.js, Vue, and Svelte.',
+                    'Blog posts: adapters deep dive, Next tutorial, one-api-object, query vs mutation, publishing guide, v0.9.0 release notes.',
+                    'Example app: `examples/nextjs` with FastAPI backend.',
+                    'Updated LikeC4 architecture diagram for framework adapters.',
+                ],
+            },
+            {
+                title: 'Chores',
+                items: [
+                    'Bump all packages to v0.9.0 (Python + npm).',
+                    'Extend `.github/workflows/publish.yml` to publish new npm adapter packages.',
+                    'Add `PUBLISH.md` release guide.',
+                ],
+            },
+        ],
+    },
+    {
         version: 'v0.8.1',
         date: '2026-06-14',
         tag: 'v0.8.1',
