@@ -2,31 +2,83 @@
 
 High-level direction and explicit non-goals for the project.
 
-## Current (v0.1.x – v0.2.x)
+## Shipped (v0.1.0-alpha.1 → v0.9.0)
 
-- Core protocol and interpreter stability
-- FastAPI and Flask adapter parity
-- TypeScript client with generated types (postinstall setup)
-- Working async/sync dispatch in `RPCCallable`
-- Introspection endpoint and codegen alignment
-- Docs site with guides, examples, and API reference
+### Core & protocol
 
-## Near-term (v0.3.x – v0.5.x)
+- JSON-RPC 2.0 protocol with structured error responses
+- Async and sync procedure dispatch (`RPCCallable` auto-detects event loop)
+- `Router` with `merge()` for modular procedure organization
+- Introspection endpoint (`GET /rpc`)
+- Pydantic v2 TypeAdapter-based runtime validation
 
-- **Pydantic model → TypeScript interface generation**  -  emit typed interfaces for `@model` classes, not just procedure parameters.
-- **File-watcher dev mode**  -  `pyrpc dev` that starts the server and regenerates types on Python file change (no HTTP polling).
-- **Routers / namespaces**  -  group procedures under namespaces for larger projects.
-- **Middleware hooks**  -  request/response middleware at the core level (auth, logging, rate limiting as user-space patterns).
-- **Error type standardization**  -  typed error codes and error data shapes that flow through both Python and TypeScript.
-- **Performance benchmarks**  -  baseline latency and throughput numbers per adapter.
+### Server adapters
 
-## Longer-term (v0.6.x+)
+- **FastAPI** — `mount_fastapi(app)`
+- **Flask** — `mount_flask(app)`
+- **Django** — `mount_django(app)` (native async views, no anyio bridge)
+- **Standalone ASGI** — `PyRPCAsgiApp`
+- Framework extras: `pip install pyrpc-core[fastapi]`, `[flask]`, `[django]`
 
-- **WebSocket transport**  -  persistent connection with JSON-RPC 2.0 over WebSocket.
-- **Subscription support**  -  server-push procedures via the WebSocket transport.
-- **Plugin system**  -  user-space plugins that hook into core events without modifying core.
-- **Context propagation**  -  request-scoped context that flows through procedure chains.
-- **OpenTelemetry integration**  -  trace spans at adapter and core boundaries.
+### Code generation
+
+- Python → TypeScript type mapper (int, str, bool, Optional, List, Dict, unions, nested generics)
+- `@model` → typed TypeScript interfaces via `jsonschema-ts` (with npx daemon, ~4.6ms)
+- `pyrpc codegen` accepts file paths and URLs
+- `pyrpc pull <module> -o schema.json` for portable schema export
+
+### TypeScript client
+
+- `createClient<Types>()` — proxy-based with full type inference
+- `@pyrpc/types` with postinstall codegen
+- `@pyrpc/client` with `PyRPCError` (code, message, data)
+
+### Client framework adapters (v0.9.0)
+
+- `@pyrpc/react` — TanStack Query hooks + utils
+- `@pyrpc/next` — App Router: `createNextClient`, RSC prefetch, HydrateClient
+- `@pyrpc/vue` — Vue 3 + TanStack VueQueryPlugin
+- `@pyrpc/svelte` — Svelte + TanStack Query
+- Procedure kinds: `@rpc.query` / `@rpc.mutation` (bare `@rpc` = query)
+- One `api` object: Provider, hooks, server helpers on the same export
+
+### CLI & dev tools
+
+- `pyrpc dev` — integrated setup wizard, file watcher, type regeneration, dev server
+- `pyrpc serve` — standalone server
+- `pyrpc version`, `pyrpc inspect`
+- Daemon-first design: JSON pipe (stdio) for Python ↔ TypeScript communication
+- 715× speedup via persistent npx daemon
+- Auto adapter installation (`npm install @pyrpc/<adapter>` on first run)
+
+### Distribution & config
+
+- `pyrpc.json` — dedicated config (replaces `[tool.pyrpc]` in pyproject.toml)
+- Workspace mode — types written directly to client root
+- Server mode — schema exposed at `GET /rpc`, clients fetch via `npx pyrpc sync`
+- SHA256 migration strategy for client root changes
+
+### Docs & publishing
+
+- Fumadocs documentation site with guides, API reference, and blog
+- npm: `@pyrpc/types`, `@pyrpc/client`, `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`
+- PyPI: `pyrpc-core`, `pyrpc-codegen`, `pyrpc-fastapi`, `pyrpc-flask`, `pyrpc-django-adapter`
+- GitHub Actions CI: OIDC-based PyPI publish, npm publish on tag push
+- Architecture diagrams via LikeC4
+
+## Near-term (v0.10.x)
+
+- **Middleware hooks** — request/response middleware at the core level (auth, logging, rate limiting as user-space patterns)
+- **Typed errors** — user-defined error codes and data shapes that flow from Python procedures through codegen into `PyRPCError` on the TypeScript side
+- **Performance benchmarks** — baseline latency and throughput numbers per adapter, with a repeatable benchmark suite
+
+## Longer-term
+
+- **WebSocket transport** — persistent connection with JSON-RPC 2.0 over WebSocket
+- **Subscription support** — server-push procedures via the WebSocket transport
+- **Context propagation** — request-scoped context that flows through procedure chains
+- **Plugin system** — user-space plugins that hook into core events without modifying core
+- **OpenTelemetry integration** — trace spans at adapter and core boundaries
 
 ## Non-goals
 
