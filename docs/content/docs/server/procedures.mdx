@@ -18,6 +18,27 @@ def add(a: int, b: int) -> int:
     return a + b
 ```
 
+## Query vs mutation
+
+Procedures can declare a **kind** so framework adapters expose the right TanStack Query hook:
+
+```python
+from pyrpc_core import rpc
+
+@rpc.query
+def get_user(user_id: int) -> dict:
+    return {"id": user_id}
+
+@rpc.mutation
+def update_user(user_id: int, name: str) -> dict:
+    return {"id": user_id, "name": name}
+```
+
+- `@rpc` and `@rpc.query` → kind `query` (React/Vue: `useQuery`, Svelte: `createQuery`)
+- `@rpc.mutation` → kind `mutation` (`useMutation` / `createMutation`)
+
+Codegen emits `ProcedureKinds` and `procedureKinds` in `@pyrpc/types` for the adapters.
+
 ### The @model Decorator
 
 The `@model` decorator is the preferred way to define complex data structures in pyRPC. It is a thin wrapper around Pydantic dataclasses that ensures your types are perfectly captured during introspection.

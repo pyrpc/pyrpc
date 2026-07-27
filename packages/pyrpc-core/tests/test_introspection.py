@@ -76,3 +76,16 @@ def test_procedure_schema_is_async():
 
     async_schema = get_procedure_schema(Procedure(async_fn))
     assert async_schema.is_async is True
+
+
+def test_procedure_schema_includes_kind():
+    @rpc.query
+    def get_item() -> str:
+        return "x"
+
+    @rpc.mutation
+    def set_item() -> str:
+        return "y"
+
+    assert get_procedure_schema(default_router.get("get_item")).kind == "query"
+    assert get_procedure_schema(default_router.get("set_item")).kind == "mutation"

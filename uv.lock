@@ -103,9 +103,9 @@ resolution-markers = [
     "python_full_version < '3.12'",
 ]
 dependencies = [
-    { name = "asgiref", marker = "python_full_version < '3.12'" },
-    { name = "sqlparse", marker = "python_full_version < '3.12'" },
-    { name = "tzdata", marker = "python_full_version < '3.12' and sys_platform == 'win32'" },
+    { name = "asgiref" },
+    { name = "sqlparse" },
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2b/e3/31722f7284c9f43333daff9aee9184678e4487adcb5506af0db8cea09ce1/django-5.2.15.tar.gz", hash = "sha256:5154a9bf84ac01dde011e367f355c07dbb329532e06810dcf3ef2af269e236e7", size = 10873669, upload-time = "2026-06-03T13:03:35.892Z" }
 wheels = [
@@ -120,9 +120,9 @@ resolution-markers = [
     "python_full_version >= '3.12'",
 ]
 dependencies = [
-    { name = "asgiref", marker = "python_full_version >= '3.12'" },
-    { name = "sqlparse", marker = "python_full_version >= '3.12'" },
-    { name = "tzdata", marker = "python_full_version >= '3.12' and sys_platform == 'win32'" },
+    { name = "asgiref" },
+    { name = "sqlparse" },
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/78/29/ac41e16097af67066d97a7d5775c5d8e7efc5d0284f6b0a159e07b9adb92/django-6.0.6.tar.gz", hash = "sha256:ad03916ba59523d781ae5c3f631960c23d69a9d9c43cecda52fc23b47e953713", size = 10905525, upload-time = "2026-06-03T13:02:46.503Z" }
 wheels = [
@@ -495,7 +495,7 @@ wheels = [
 
 [[package]]
 name = "pyrpc-codegen"
-version = "0.8.0"
+version = "0.9.0"
 source = { editable = "packages/pyrpc-codegen" }
 dependencies = [
     { name = "jinja2" },
@@ -510,7 +510,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-core"
-version = "0.8.0"
+version = "0.9.0"
 source = { editable = "packages/pyrpc-core" }
 dependencies = [
     { name = "anyio" },
@@ -561,7 +561,7 @@ provides-extras = ["fastapi", "flask", "django"]
 
 [[package]]
 name = "pyrpc-django-adapter"
-version = "0.8.0"
+version = "0.9.0"
 source = { editable = "packages/pyrpc-django-adapter" }
 dependencies = [
     { name = "django", version = "5.2.15", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -577,7 +577,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-fastapi"
-version = "0.8.0"
+version = "0.9.0"
 source = { editable = "packages/pyrpc-fastapi" }
 dependencies = [
     { name = "fastapi" },
@@ -592,7 +592,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-flask"
-version = "0.8.0"
+version = "0.9.0"
 source = { editable = "packages/pyrpc-flask" }
 dependencies = [
     { name = "flask" },
@@ -607,7 +607,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-workspace"
-version = "0.8.0"
+version = "0.9.0"
 source = { editable = "." }
 
 [package.optional-dependencies]

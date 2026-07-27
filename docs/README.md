@@ -6,9 +6,9 @@
 
 ### Website & Docs
 
-The main website and documentation for [pyrpc.io](https://pyrpc.io)
+The main website and documentation for [pyrpc.com](https://pyrpc.com)
 
-[![Website](https://img.shields.io/badge/pyrpc.io-000?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDUiIHZpZXdCb3g9IjAgMCA2MCA0NSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTAgMEgxNVYxNUgzMFYzMEgxNVY0NUgwVjMwVjE1VjBaTTQ1IDMwVjE1SDMwVjBINDVINjBWMTVWMzBWNDVINDVIMzBWMzBINDVaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==&logoColor=white)](https://pyrpc.io)
+[![Website](https://img.shields.io/badge/pyrpc.com-000?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDUiIHZpZXdCb3g9IjAgMCA2MCA0NSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTAgMEgxNVYxNUgzMFYzMEgxNVY0NUgwVjMwVjE1VjBaTTQ1IDMwVjE1SDMwVjBINDVINjBWMTVWMzBWNDVINDVIMzBWMzBINDVaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==&logoColor=white)](https://pyrpc.com)
 [![GitHub Stars](https://img.shields.io/github/stars/pyrpc/pyrpc?style=flat&logo=github&label=stars&color=24292e)](https://github.com/pyrpc/pyrpc)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat)](LICENSE)
 

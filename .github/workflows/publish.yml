@@ -14,7 +14,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -26,7 +26,7 @@ jobs:
       - name: Build python packages
         run: |
           mkdir -p dist
-          for pkg in pyrpc-core pyrpc-codegen pyrpc-fastapi pyrpc-flask pyrpc-django-adapter; do
+          for pkg in pyrpc-codegen pyrpc-core pyrpc-fastapi pyrpc-flask pyrpc-django-adapter; do
             python -m build "packages/$pkg" --outdir dist/
           done
 
@@ -44,8 +44,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Publish @pyrpc/types to npm
         working-directory: ./packages/types
@@ -53,63 +53,125 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "::error::NPM_TOKEN secret is not set. Add it at: https://github.com/${{ github.repository }}/settings/secrets/actions"
+            echo "::error::NPM_TOKEN secret is not set."
             exit 1
           fi
           VERSION="${GITHUB_REF_NAME#v}"
           if [[ "$VERSION" == *"-"* ]]; then
             TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
-            echo "Publishing prerelease with tag: $TAG"
             npm publish --access public --tag "$TAG"
           else
-            echo "Publishing stable release"
             npm publish --access public
           fi
 
-  publish-npm:
+  publish-npm-client:
     runs-on: ubuntu-latest
     needs: [publish-npm-types]
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-          
-      - name: Install dependencies
-        working-directory: ./packages/client
-        run: npm install
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
-      - name: Build TypeScript package
-        working-directory: ./packages/client
-        run: npm run build
+      - name: Install and build
+        run: |
+          npm install
+          npm run build --workspace=@pyrpc/client
 
-      - name: Publish to npm
+      - name: Publish @pyrpc/client
         working-directory: ./packages/client
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "::error::NPM_TOKEN secret is not set. Add it at: https://github.com/${{ github.repository }}/settings/secrets/actions"
-            exit 1
-          fi
           VERSION="${GITHUB_REF_NAME#v}"
           if [[ "$VERSION" == *"-"* ]]; then
             TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
-            echo "Publishing prerelease with tag: $TAG"
             npm publish --access public --tag "$TAG"
           else
-            echo "Publishing stable release"
             npm publish --access public
           fi
+
+  publish-npm-react:
+    runs-on: ubuntu-latest
+    needs: [publish-npm-client]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install and build
+        run: |
+          npm install
+          npm run build --workspace=@pyrpc/client
+          npm run build --workspace=@pyrpc/react
+
+      - name: Publish @pyrpc/react
+        working-directory: ./packages/react
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [[ "$VERSION" == *"-"* ]]; then
+            TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
+            npm publish --access public --tag "$TAG"
+          else
+            npm publish --access public
+          fi
+
+  publish-npm-adapters:
+    runs-on: ubuntu-latest
+    needs: [publish-npm-react]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install and build adapters
+        run: |
+          npm install
+          npm run build --workspace=@pyrpc/client
+          npm run build --workspace=@pyrpc/react
+          npm run build --workspace=@pyrpc/next
+          npm run build --workspace=@pyrpc/vue
+          npm run build --workspace=@pyrpc/svelte
+
+      - name: Publish @pyrpc/next, vue, svelte
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          PUBLISH_ARGS="--access public"
+          if [[ "$VERSION" == *"-"* ]]; then
+            TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
+            PUBLISH_ARGS="--access public --tag $TAG"
+          fi
+          (cd packages/next && npm publish $PUBLISH_ARGS)
+          (cd packages/vue && npm publish $PUBLISH_ARGS)
+          (cd packages/svelte && npm publish $PUBLISH_ARGS)
 
   create-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    needs: [publish-pypi, publish-npm-types, publish-npm]
+    needs:
+      [
+        publish-pypi,
+        publish-npm-types,
+        publish-npm-client,
+        publish-npm-react,
+        publish-npm-adapters,
+      ]
     steps:
       - uses: actions/checkout@v4
 

@@ -5,6 +5,10 @@
     "pages": [
         "overview",
         "typescript",
+        "react",
+        "nextjs",
+        "vue",
+        "svelte",
         "vanilla",
         "advanced"
     ]

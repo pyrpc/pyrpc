@@ -42,7 +42,23 @@ def test_generate_typescript_client():
     content = generate_typescript_client(schemas)
 
     assert "export interface Types" in content
-    assert "add(a: number, b: number): Promise<number>;" in content
+    assert "add:" in content
+    assert "(a: number, b: number) => Promise<number>" in content
+    assert '_pyrpcKind: "query"' in content
+    assert "export type ProcedureKinds" in content
+    assert 'add: "query"' in content
+    assert "export const procedureKinds" in content
+
+
+def test_generate_typescript_client_mutation_kind():
+    @rpc.mutation
+    def update_name(name: str) -> str:
+        return name
+
+    schemas = get_registry_schema(default_router)
+    content = generate_typescript_client(schemas)
+
+    assert 'update_name: "mutation"' in content
 
 
 def test_generate_typescript_client_empty():
@@ -79,7 +95,8 @@ def test_save_typescript_client_from_file():
             content = f.read()
 
         assert "export interface Types" in content
-        assert "greet(name: string): Promise<string>;" in content
+        assert "greet:" in content
+        assert "(name: string) => Promise<string>" in content
 
 
 def test_save_typescript_client_serialized_schema():
@@ -109,7 +126,8 @@ def test_save_typescript_client_serialized_schema():
             content = f.read()
 
         assert "export interface Types" in content
-        assert "add(a: number): Promise<number>;" in content
+        assert "add:" in content
+        assert "(a: number) => Promise<number>" in content
 
 
 def test_to_pascal_case():

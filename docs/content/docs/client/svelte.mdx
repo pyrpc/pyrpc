@@ -1,0 +1,33 @@
+---
+title: Svelte
+description: Svelte + TanStack Query adapter with @pyrpc/svelte.
+
+---
+
+# Svelte
+
+```bash
+npm install @pyrpc/svelte @pyrpc/client @pyrpc/types @tanstack/svelte-query
+```
+
+```ts
+import { createSvelteClient } from "@pyrpc/svelte"
+import type { Types } from "@pyrpc/types"
+
+export const api = createSvelteClient<Types>({
+  baseUrl: "http://localhost:8000",
+})
+```
+
+Wrap the app with TanStack Svelte Query’s `QueryClientProvider` (their standard). Svelte uses `createQuery` / `createMutation`:
+
+```svelte
+<script lang="ts">
+  import { api } from "$lib/pyrpc"
+  const query = api.greet.createQuery({ name: "Ada" })
+</script>
+
+{#if $query.isSuccess}
+  <p>{$query.data}</p>
+{/if}
+```
