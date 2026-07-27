@@ -94,6 +94,8 @@ const result = await client.add(10, 5)
 console.log(result)  // 15
 ```
 
+Framework adapters (TanStack Query): `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`. See [docs](https://pyrpc.com/docs/client/react) and `examples/nextjs`.
+
 ### 4. Or from Python
 
 ```python

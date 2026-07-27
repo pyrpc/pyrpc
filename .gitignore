@@ -161,3 +161,9 @@ system-design/
 scripts/seed_downloads.py
 # pyrpc client config
 pyrpc-client.json
+
+
+# agents
+plan.md
+.agents/
+skills-lock.json
