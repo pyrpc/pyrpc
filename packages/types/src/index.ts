@@ -7,3 +7,9 @@
 // This file is replaced when codegen runs.
 
 export type Types = Record<string, never>;
+
+/** @internal Runtime kind map — loaded automatically by framework adapters. */
+export type ProcedureKinds = Record<string, never>;
+
+/** @internal Runtime kind map — loaded automatically by framework adapters. */
+export const procedureKinds = {} as const satisfies ProcedureKinds;
