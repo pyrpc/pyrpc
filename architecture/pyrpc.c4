@@ -64,12 +64,12 @@ model {
         technology 'registry.py'
       }
       core_procedure = component 'Procedure' {
-        description 'Compiled RPC handler wrapping a Python function. At init time, pre-builds Pydantic TypeAdapters for all parameters and return type for zero-overhead validation on the hot path.'
+        description 'Compiled RPC handler wrapping a Python function. Stores kind (query|mutation). At init time, pre-builds Pydantic TypeAdapters for all parameters and return type for zero-overhead validation on the hot path.'
         technology 'procedure.py'
       }
       core_rpc_dec = component '@rpc decorator' {
-        description 'Alias for default_router.rpc(). Decorator that compiles a function into a Procedure and registers it in the global Router. Also aliased for direct import from pyrpc_core.'
-        technology 'decorators.py'
+        description 'RpcDecorator on the Router: @rpc / @rpc.query / @rpc.mutation. Compiles a function into a Procedure with kind query|mutation (bare @rpc defaults to query) and registers it.'
+        technology 'rpc_decorator.py / decorators.py'
       }
       core_model_dec = component '@model decorator' {
         description 'Alias for pydantic.dataclasses.dataclass. Marks Python classes for JSON Schema generation. Types derived from these are emitted as TypeScript interfaces by codegen.'
@@ -80,7 +80,7 @@ model {
         technology 'interpreter.py'
       }
       core_introspection = component 'get_registry_schema()' {
-        description 'Single source of truth for both runtime introspection and TypeScript code generation. Reads Router._procedures and generates ProcedureSchema objects with parameter types, return types, JSON schemas, and docstrings.'
+        description 'Single source of truth for both runtime introspection and TypeScript code generation. Reads Router._procedures and generates ProcedureSchema objects with parameter types, return types, JSON schemas, docstrings, and procedure kind.'
         technology 'introspection.py'
       }
       core_models = component 'RpcRequest / RpcResponse' {
@@ -148,8 +148,8 @@ model {
         technology 'ts_codegen.py'
       }
       codegen_template = component 'client.ts.j2' {
-        description 'Jinja2 template that renders the export interface Types { ... } block. Uses custom Jinja2 filters (pytype_to_ts, return_type_to_ts) to convert Python types in the template context.'
-        technology 'Jinja2 template / 24 lines'
+        description 'Jinja2 template that renders Types, ProcedureKinds, and procedureKinds. Uses custom Jinja2 filters (pytype_to_ts, return_type_to_ts) to convert Python types in the template context.'
+        technology 'Jinja2 template'
       }
       codegen_jschema = component 'jsonschema_ts' {
         description 'Third-party library (npm). Converts Pydantic JSON Schema definitions into TypeScript interfaces. Pipeline: ensure_inline_models -> collect_defs -> convert_all -> assemble.'
@@ -184,12 +184,68 @@ model {
     }
 
     pyrpc_types = container '@pyrpc/types' {
-      description 'Placeholder npm package for generated TypeScript type definitions. The src/index.ts file starts as an empty interface (Record<string, never>) and is replaced by pyrpc codegen with actual procedure signatures and model interfaces.'
+      description 'Placeholder npm package for generated TypeScript type definitions. The src/index.ts file starts empty and is replaced by pyrpc codegen with procedure signatures, model interfaces, ProcedureKinds, and procedureKinds.'
       technology 'TypeScript / npm'
 
       types_index = component 'src/index.ts' {
-        description 'Generated file. Contains TypeScript interfaces for all Pydantic/dataclass models (via jsonschema_ts) and an export interface Types { ... } block with typed method signatures for every @rpc procedure in the registry. Imported by consumers as import type { Types } from "@pyrpc/types".'
+        description 'Generated file. Contains model interfaces, export interface Types { ... }, export type ProcedureKinds, and export const procedureKinds. Imported by consumers as import type { Types } from "@pyrpc/types" and import { procedureKinds } from "@pyrpc/types".'
         technology 'src/index.ts (output)'
+      }
+    }
+
+    pyrpc_react = container '@pyrpc/react' {
+      description 'React + TanStack Query adapter. Thin glue over @pyrpc/client: createReactClient, PyRPCProvider (QueryClientProvider convenience), per-procedure useQuery/useMutation, useUtils.'
+      technology 'TypeScript / React / TanStack Query'
+
+      react_factory = component 'createReactClient()' {
+        description 'Builds createClient under the hood, then a Proxy that exposes useQuery/useMutation per procedure. Optional kinds map restricts hooks to query or mutation.'
+        technology 'src/createReactClient.ts'
+      }
+      react_provider = component 'PyRPCProvider' {
+        description 'Convenience wrapper around TanStack Query QueryClientProvider. Not an auth/session context — same provider requirement as tRPC + React Query.'
+        technology 'src/provider.tsx'
+      }
+      react_utils = component 'createUtils / useUtils' {
+        description 'Invalidate, prefetch, fetch, and getQueryKey helpers keyed as ["pyrpc", procedure, input?].'
+        technology 'src/utils.ts'
+      }
+    }
+
+    pyrpc_next = container '@pyrpc/next' {
+      description 'Next.js App Router adapter. createNextClient returns a bundle: React hooks api, createCaller, prefetch, dehydrate, HydrateClient, getQueryClient.'
+      technology 'TypeScript / Next.js / React'
+
+      next_factory = component 'createNextClient()' {
+        description 'Composes createReactClient with RSC-safe getQueryClient (React cache on server, singleton in browser), prefetch helpers, dehydrate, and HydrateClient.'
+        technology 'src/createNextClient.ts'
+      }
+      next_provider = component 'NextPyRPCProvider' {
+        description 'App Router provider wiring the shared browser QueryClient into PyRPCProvider.'
+        technology 'src/provider.tsx'
+      }
+      next_hydrate = component 'HydrateClient' {
+        description 'Client boundary around TanStack HydrationBoundary for RSC-prefetched state.'
+        technology 'src/HydrateClient.tsx'
+      }
+    }
+
+    pyrpc_vue = container '@pyrpc/vue' {
+      description 'Vue 3 + TanStack Query adapter via createVueClient. Uses VueQueryPlugin from TanStack (no extra pyRPC context).'
+      technology 'TypeScript / Vue / TanStack Query'
+
+      vue_factory = component 'createVueClient()' {
+        description 'Proxy over createClient exposing useQuery/useMutation with optional procedure kinds.'
+        technology 'src/createVueClient.ts'
+      }
+    }
+
+    pyrpc_svelte = container '@pyrpc/svelte' {
+      description 'Svelte + TanStack Query adapter via createSvelteClient (createQuery/createMutation). Uses Svelte Query provider from TanStack.'
+      technology 'TypeScript / Svelte / TanStack Query'
+
+      svelte_factory = component 'createSvelteClient()' {
+        description 'Proxy over createClient exposing createQuery/createMutation with optional procedure kinds.'
+        technology 'src/createSvelteClient.ts'
       }
     }
   }
@@ -308,6 +364,25 @@ model {
   ts_dev -> client_proxy 'imports createClient<Types>() and calls procedures as local methods' {
     description 'The Proxy-based client translates method calls to HTTP POST /rpc requests. The Types generic provides full IDE autocompletion.'
   }
+  ts_dev -> react_factory 'imports createReactClient for TanStack Query hooks' {
+    description 'Framework adapters sit on top of createClient; procedure names stay flat.'
+  }
+  ts_dev -> next_factory 'imports createNextClient for App Router hooks + RSC prefetch' {
+    description 'Next bundle includes api, createCaller, prefetch, dehydrate, HydrateClient.'
+  }
+  ts_dev -> vue_factory 'imports createVueClient'
+  ts_dev -> svelte_factory 'imports createSvelteClient'
+
+  react_factory -> client_proxy 'wraps createClient; no second transport'
+  next_factory -> react_factory 'reuses createReactClient for api hooks'
+  next_factory -> client_proxy 'createCaller uses createClient on the server'
+  vue_factory -> client_proxy 'wraps createClient'
+  svelte_factory -> client_proxy 'wraps createClient'
+  react_factory -> types_index 'Types + procedureKinds generics'
+  next_factory -> types_index 'Types + procedureKinds generics'
+  react_provider -> react_factory 'provides QueryClient for hooks'
+  next_provider -> react_provider 'App Router QueryClient wiring'
+  next_hydrate -> next_factory 'rehydrates dehydrated prefetch state'
   client_proxy -> client_error 'throws PyRPCError on server error responses' {
     description 'When the server returns a JSON-RPC error, the client parses code, message, and data into a PyRPCError instance.'
   }
@@ -356,9 +431,33 @@ views {
   view of pyrpc {
     title 'pyRPC - Container Diagram'
 
-    description 'All seven packages (containers) within pyRPC, their relationships, external actors, and supporting config files.'
+    description 'Core, server adapters, codegen, @pyrpc/client/types, and framework adapters (react/next/vue/svelte), plus external actors and config files.'
 
     include *
+  }
+
+  // ── LEVEL 3d: FRAMEWORK ADAPTERS ──
+  view framework_adapters {
+    title 'Framework adapters - TanStack Query layer'
+
+    description 'How @pyrpc/react, next, vue, and svelte sit on @pyrpc/client and @pyrpc/types without a second transport.'
+
+    include client_proxy
+    include types_index
+    include react_factory
+    include react_provider
+    include react_utils
+    include next_factory
+    include next_provider
+    include next_hydrate
+    include vue_factory
+    include svelte_factory
+    include ts_dev
+    include fastapi_mount
+
+    style fastapi_mount {
+      color muted
+    }
   }
 
   // ── LEVEL 3a: pyrpc-core COMPONENTS ──
