@@ -21,7 +21,10 @@ class TestSaveTypescriptClient:
             save_typescript_client(schemas, out)
             assert os.path.isfile(out)
             with open(out) as f:
-                assert "ping()" in f.read()
+                content = f.read()
+                assert "ping:" in content
+                assert "ProcedureKinds" in content
+                assert "procedureKinds" in content
 
     def test_default_output_is_relative(self):
         assert not os.path.isabs(DEFAULT_OUTPUT)
