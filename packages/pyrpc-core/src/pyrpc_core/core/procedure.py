@@ -1,7 +1,9 @@
 import inspect
 import asyncio
-from typing import Any, Callable, Dict, Optional, List
+from typing import Any, Callable, Dict, Literal, Optional, List
 from pydantic import TypeAdapter, ValidationError
+
+ProcedureKind = Literal["query", "mutation"]
 
 def _format_validation_error(e: ValidationError) -> Dict[str, Any]:
     errors = e.errors()
@@ -28,9 +30,15 @@ class Procedure:
     All expensive introspection and validator setup happens during initialization.
     """
 
-    def __init__(self, fn: Callable[..., Any], name: Optional[str] = None):
+    def __init__(
+        self,
+        fn: Callable[..., Any],
+        name: Optional[str] = None,
+        kind: ProcedureKind = "query",
+    ):
         self.fn = fn
         self.name = name or fn.__name__
+        self.kind: ProcedureKind = kind
         self.sig = inspect.signature(fn)
         self.is_async = inspect.iscoroutinefunction(fn)
         

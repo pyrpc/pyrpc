@@ -10,6 +10,7 @@ def test_rpc_decorator_default_name():
         
     assert "hello" in default_router.list()
     assert default_router.get("hello").fn == hello
+    assert default_router.get("hello").kind == "query"
     assert hello() == "world"
 
 def test_rpc_decorator_custom_name():
@@ -26,6 +27,8 @@ def test_rpc_decorator_custom_name():
     assert hello() == "world"
 
 def test_rpc_decorator_preserves_metadata():
+    default_router._procedures.clear()
+
     @rpc
     def my_documented_func():
         """This is a docstring."""
@@ -33,3 +36,24 @@ def test_rpc_decorator_preserves_metadata():
         
     assert my_documented_func.__name__ == "my_documented_func"
     assert my_documented_func.__doc__ == "This is a docstring."
+
+
+def test_rpc_query_and_mutation_kinds():
+    default_router._procedures.clear()
+
+    @rpc.query
+    def get_user(user_id: int) -> dict:
+        return {"id": user_id}
+
+    @rpc.mutation
+    def update_user(user_id: int, name: str) -> dict:
+        return {"id": user_id, "name": name}
+
+    @rpc.query("fetch_status")
+    def status() -> str:
+        return "ok"
+
+    assert default_router.get("get_user").kind == "query"
+    assert default_router.get("update_user").kind == "mutation"
+    assert default_router.get("fetch_status").kind == "query"
+    assert default_router.get("fetch_status").fn == status
