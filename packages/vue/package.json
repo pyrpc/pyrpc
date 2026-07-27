@@ -1,0 +1,48 @@
+{
+  "name": "@pyrpc/vue",
+  "version": "0.9.0",
+  "description": "Vue + TanStack Query adapter for pyRPC",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --external vue --external @tanstack/vue-query --external @pyrpc/client",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --external vue --external @tanstack/vue-query --external @pyrpc/client",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "rpc",
+    "pyrpc",
+    "vue",
+    "tanstack-query"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@pyrpc/client": "^0.9.0",
+    "@pyrpc/types": "^0.9.0",
+    "@tanstack/vue-query": "^5.0.0",
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@pyrpc/client": "*",
+    "@pyrpc/types": "*",
+    "@tanstack/vue-query": "^5.83.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^26.1.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0",
+    "vue": "^3.5.17"
+  }
+}
