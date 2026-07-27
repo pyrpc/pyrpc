@@ -47,7 +47,7 @@ export const procedureKinds = {} as const satisfies ProcedureKinds`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why both a type and a const</h2>
                 <p>
-                    TypeScript types are erased at runtime. If codegen only emitted <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">type ProcedureKinds = { ... }</code>, the adapter could not read the kinds at runtime. The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">const procedureKinds</code> is the actual value the adapter's Proxy handler checks.
+                    TypeScript types are erased at runtime. If codegen only emitted <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{"type ProcedureKinds = { ... }"}</code>, the adapter could not read the kinds at runtime. The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">const procedureKinds</code> is the actual value the adapter's Proxy handler checks.
                 </p>
                 <p>
                     The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">as const satisfies ProcedureKinds</code> pattern ensures the const matches the type at compile time while preserving literal types.

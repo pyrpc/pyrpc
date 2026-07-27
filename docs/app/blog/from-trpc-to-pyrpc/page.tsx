@@ -94,7 +94,7 @@ const { data } = api.greet.useQuery({ name: "Ada" })`}
                     <li>Replace <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createTRPCReact</code> with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createNextClient</code></li>
                     <li>Replace <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">trpc.</code> prefix with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.</code></li>
                     <li>Remove Zod schemas from the server — use Python type hints</li>
-                    <li>Replace <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">import type { AppRouter } from</code> with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">import type { Types } from "@pyrpc/types"</code></li>
+                    <li>Replace <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{"import type { AppRouter } from"}</code> with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{"import type { Types } from \"@pyrpc/types\""}</code></li>
                 </ol>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What you lose</h2>

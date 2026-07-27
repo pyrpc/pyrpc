@@ -75,13 +75,7 @@ steps:
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Pre-release handling</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
-{`VERSION="${GITHUB_REF_NAME#v}"
-if [[ "$VERSION" == *"-"* ]]; then
-  TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
-  npm publish --access public --tag "$TAG"
-else
-  npm publish --access public
-fi`}
+{"VERSION=$(echo \"$GITHUB_REF_NAME\" | sed 's/^v//')\nif [[ \"$VERSION\" == *\"-\"* ]]; then\n  TAG=$(echo \"$VERSION\" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')\n  npm publish --access public --tag \"$TAG\"\nelse\n  npm publish --access public\nfi"}
                 </pre>
                 <p>
                     If the tag is <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">v0.9.0-beta.1</code>, npm publishes with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">--tag beta</code>. The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">latest</code> tag stays on the stable release.
