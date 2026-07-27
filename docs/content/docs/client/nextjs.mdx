@@ -1,0 +1,77 @@
+---
+title: Next.js
+description: Full App Router adapter with RSC prefetch and hydration.
+
+---
+
+# Next.js
+
+One `api` object — no destructuring required.
+
+## Install
+
+```bash
+npm install @pyrpc/next @pyrpc/react @pyrpc/client @pyrpc/types @tanstack/react-query
+```
+
+## Setup
+
+```ts
+// src/lib/pyrpc.ts
+import { createNextClient } from "@pyrpc/next"
+import type { Types } from "@pyrpc/types"
+
+export const api = createNextClient<Types>({
+  baseUrl: process.env.PYRPC_URL ?? "http://localhost:8000",
+})
+```
+
+```tsx
+// app/providers.tsx
+"use client"
+import { api } from "@/lib/pyrpc"
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <api.Provider>{children}</api.Provider>
+}
+```
+
+## Server + client
+
+```tsx
+// app/page.tsx
+import { api } from "@/lib/pyrpc"
+import { Greeting } from "./greeting"
+
+export default async function Page() {
+  await api.prefetch.greet({ name: "Ada" })
+  return (
+    <api.HydrationBoundary state={api.dehydrate()}>
+      <Greeting />
+    </api.HydrationBoundary>
+  )
+}
+```
+
+```tsx
+// app/greeting.tsx
+"use client"
+import { api } from "@/lib/pyrpc"
+
+export function Greeting() {
+  const { data } = api.greet.useQuery({ name: "Ada" })
+  return <p>{data}</p>
+}
+```
+
+### What’s on `api`
+
+| | |
+|--|--|
+| `api.greet.useQuery` | Client hooks |
+| `api.Provider` | App-wide TanStack cache |
+| `api.prefetch.*` | Server query warm-up |
+| `api.dehydrate` / `api.HydrationBoundary` | Cache handoff to the browser |
+| `api.createCaller()` | Server Promise calls (incl. mutations) |
+
+See [`examples/nextjs`](https://github.com/pyrpc/pyrpc/tree/main/examples/nextjs).

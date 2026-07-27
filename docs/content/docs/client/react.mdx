@@ -1,0 +1,50 @@
+---
+title: React
+description: Typed TanStack Query hooks for React with @pyrpc/react.
+
+---
+
+# React
+
+One `api` object: procedures, provider, and utils.
+
+## Install
+
+```bash
+npm install @pyrpc/react @pyrpc/client @pyrpc/types @tanstack/react-query
+```
+
+## Setup
+
+```tsx
+import { createReactClient } from "@pyrpc/react"
+import type { Types } from "@pyrpc/types"
+
+export const api = createReactClient<Types>({
+  baseUrl: "http://localhost:8000",
+})
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <api.Provider>{children}</api.Provider>
+}
+```
+
+## Usage
+
+```tsx
+"use client"
+import { api } from "@/lib/pyrpc"
+
+export function Greeting() {
+  const { data } = api.greet.useQuery({ name: "Ada" })
+  const mutation = api.update_user.useMutation()
+  return <p>{data}</p>
+}
+```
+
+```tsx
+const utils = api.useUtils()
+await utils.greet.invalidate({ name: "Ada" })
+```
+
+For App Router, use [`@pyrpc/next`](/docs/client/nextjs).

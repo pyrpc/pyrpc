@@ -1,0 +1,27 @@
+---
+title: Vue
+description: Vue 3 + TanStack Query adapter with @pyrpc/vue.
+
+---
+
+# Vue
+
+```bash
+npm install @pyrpc/vue @pyrpc/client @pyrpc/types @tanstack/vue-query
+```
+
+```ts
+import { createApp } from "vue"
+import { createPyrpcVue } from "@pyrpc/vue"
+import type { Types } from "@pyrpc/types"
+
+export const api = createPyrpcVue<Types>({
+  baseUrl: "http://localhost:8000",
+})
+
+createApp(App).use(api.plugin).mount("#app")
+```
+
+```ts
+const { data } = api.greet.useQuery({ name: "Ada" })
+```
