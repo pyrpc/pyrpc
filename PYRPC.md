@@ -59,8 +59,11 @@ pyRPC is a Python-first RPC system with TypeScript reach. It gives you type safe
 │  pyrpc-codegen                                            │
 │  Introspection → TypeScript type generation (library)     │
 ├──────────────────────────────────────────────────────────┤
-│  pyrpc.json                                               │
-│  Single config file - framework, entrypoint, client_root   │
+│  pyrpc.json (written by pyrpc dev on first run)           │
+│  Minimal config: module, framework, output path           │
+├──────────────────────────────────────────────────────────┤
+│  src/__pyrpc.d.ts (generated, committed to git)           │
+│  Resolved via tsconfig paths: "@pyrpc/types"              │
 ├──────────────────────────────────────────────────────────┤
 │  @pyrpc/client (@pyrpc/types)                              │
 │  TypeScript client + generated type definitions            │
@@ -81,14 +84,17 @@ The wire format is part of the product identity. Changing the protocol shape mus
 **Introspection and codegen share the same truth.**
 `get_registry_schema()` is the single source of truth for both runtime introspection (used by debug tools) and TypeScript code generation. Codegen must not re-invent schema extraction. If introspection changes, codegen and the TypeScript client must be evaluated together.
 
-**Config is pyrpc.json, not pyproject.toml.**
-`pyrpc.json` is the single source of truth for project configuration. All paths are resolved relative to the config file location at load time. There is no `[tool.pyrpc]` section in `pyproject.toml`.
+**Config is pyrpc.json, written by `pyrpc dev` on first run.**
+`pyrpc.json` holds three fields: `module` (entry point), `framework` (detected), and `output` (generated types path). All other configuration is derived from these. There are no distribution modes, no client_root, no entrypoint field. The wizard that writes pyrpc.json asks exactly two questions and never runs again.
 
-**Client root determines types output.**
-`client_root` in `pyrpc.json` points to the TypeScript project directory. Types are always written to `{client_root}/node_modules/@pyrpc/types/src/index.ts`. When `client_root` changes, migration logic handles moving/cleaning up old types.
+**Generated types live in the user's source tree.**
+`pyrpc dev` writes TypeScript types to the `output` path in `pyrpc.json` (default: `src/__pyrpc.d.ts`). This file is in source control — it is the user's file, committed to their repo, diffable in PRs. TypeScript resolves `import type { Types } from "@pyrpc/types"` to this file via a `tsconfig.json` paths alias injected by `@pyrpc/client` postinstall.
 
-**All paths are absolute after config load.**
-Config loading resolves `client_root` to an absolute path relative to `pyrpc.json`'s directory. Downstream code never receives relative paths. `save_typescript_client()` raises `ValueError` if given a relative path.
+**`@pyrpc/client` postinstall wires tsconfig paths once.**
+Installing `@pyrpc/client` adds `"@pyrpc/types": ["./src/__pyrpc.d.ts"]` to `tsconfig.json` automatically. This runs once and is never modified again by pyrpc. The developer owns the entry.
+
+**pyrpc dev is the single dev command.**
+`pyrpc dev` reads `pyrpc.json`, starts uvicorn if the port is free (skips if server already running), runs the type watcher, and exposes an interactive console. `pyrpc watch` is the watcher-only variant for developers who manage their own server. Neither command requires flags after first run.
 
 **Versioning is lockstep.**
 All PyPI packages and all npm packages release together at the same version. Drift between Python and npm package versions is a release bug, not an inconvenience. The `scripts/release.mjs` script enforces this.

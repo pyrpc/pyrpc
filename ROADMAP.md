@@ -4,6 +4,8 @@ High-level direction and explicit non-goals for the project.
 
 ## Shipped (v0.1.0-alpha.1 → v0.9.0)
 
+> **v0.10.0 note:** Distribution modes (workspace/server), `pyrpc.json` entrypoint/client_root/distribution fields, `pyrpc-client.json`, and the postinstall wizard have been simplified. See below.
+
 ### Core & protocol
 
 - JSON-RPC 2.0 protocol with structured error responses

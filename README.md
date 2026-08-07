@@ -43,18 +43,18 @@
 
 ```bash
 # Using uv
-uv add pyrpc-core
+uv add pyrpc-core[fastapi]
 
 # Using pip
-pip install pyrpc-core
+pip install pyrpc-core[fastapi]
 ```
 
-The `pyrpc` CLI (dev, serve, inspect, codegen, pull) is included out of the box. Framework adapters are available as extras:
+Framework adapters are available as extras — the adapter is included in the same install:
 
 ```bash
-uv add pyrpc-core[fastapi]   # FastAPI adapter
-uv add pyrpc-core[flask]     # Flask adapter
-uv add pyrpc-core[django]     # Django adapter
+pip install pyrpc-core[fastapi]   # FastAPI
+pip install pyrpc-core[flask]     # Flask
+pip install pyrpc-core[django]    # Django
 ```
 
 ## Quick Start
@@ -66,9 +66,12 @@ from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 from fastapi import FastAPI
 
+# Your FastAPI app — you own it fully.
+# mount_fastapi() adds POST /rpc and GET /rpc to it.
+# No wrapping, no separate server — just two new routes.
 app = FastAPI()
 
-@rpc
+@rpc.query
 def add(a: int, b: int) -> int:
     return a + b
 
@@ -81,20 +84,31 @@ mount_fastapi(app)
 pyrpc dev
 ```
 
-On first run, it prompts for your framework, Python module, distribution mode, and client path - then generates types automatically.
+First run: answers 2 quick questions (entry module + frontend framework) and writes `pyrpc.json`. Every run after: reads `pyrpc.json`, no questions asked. Starts the server, watches `.py` files, and regenerates TypeScript types automatically.
 
 ### 3. Call from TypeScript
 
 ```ts
-import { createClient } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
+import { createClient } from "@pyrpc/client"
 
-const client = createClient<Types>()
+// @pyrpc/types resolves to src/__pyrpc.d.ts via tsconfig paths
+// (wired automatically by @pyrpc/client postinstall)
+const client = createClient<Types>({ baseUrl: "http://localhost:8000" })
 const result = await client.add(10, 5)
 console.log(result)  // 15
 ```
 
-Framework adapters (TanStack Query): `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`. See [docs](https://pyrpc.com/docs/client/react) and `examples/nextjs`.
+Framework adapters (TanStack Query): `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`.
+
+```bash
+npm install @pyrpc/client @pyrpc/next    # Next.js
+npm install @pyrpc/client @pyrpc/react   # React (Vite)
+npm install @pyrpc/client @pyrpc/vue     # Vue
+npm install @pyrpc/client @pyrpc/svelte  # Svelte
+```
+
+See [docs](https://pyrpc.com/docs/client/react) and `examples/nextjs`.
 
 ### 4. Or from Python
 
@@ -108,24 +122,17 @@ with RPCClient("http://localhost:8000") as client:
 
 ---
 
-## Distribution Modes
+## How types flow
 
-pyRPC supports two ways to sync TypeScript types:
-
-- **Workspace** (default) - for monorepos. The server writes types directly into your client's `node_modules/@pyrpc/types`.
-- **Server** - for separate repositories. The client fetches types via `npx pyrpc sync` over HTTP.
-
-Configure via `pyrpc.json`:
-
-```json
-{
-  "version": 1,
-  "framework": "fastapi",
-  "entrypoint": "server",
-  "client_root": "../frontend",
-  "distribution": "workspace"
-}
 ```
+Python @rpc decorator
+  → pyrpc dev watches .py files
+  → regenerates src/__pyrpc.d.ts
+  → tsconfig paths: "@pyrpc/types" → "./src/__pyrpc.d.ts"
+  → import type { Types } from "@pyrpc/types"  ✓
+```
+
+`@pyrpc/client` postinstall adds the tsconfig paths entry automatically on `npm install`. `pyrpc.json` (written on first `pyrpc dev` run) stores the module and output path — no further config needed.
 
 ---
 

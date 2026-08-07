@@ -1,4 +1,30 @@
-# Publishing pyRPC 0.9.0
+# Publishing pyRPC
+
+## Current release: v0.10.0
+
+The branch `feat/cleanup-config-codegen` contains all v0.10.0 changes.
+Merge the PR, then follow the steps below.
+
+## npm
+
+Packages to publish:
+
+- `@pyrpc/types@0.10.0`
+- `@pyrpc/client@0.10.0`
+- `@pyrpc/react@0.10.0`
+- `@pyrpc/next@0.10.0`
+- `@pyrpc/vue@0.10.0`
+- `@pyrpc/svelte@0.10.0`
+
+## PyPI
+
+Packages to publish:
+
+- `pyrpc-core==0.10.0`
+- `pyrpc-codegen==0.10.0`
+- `pyrpc-fastapi==0.10.0`
+- `pyrpc-flask==0.10.0`
+- `pyrpc-django-adapter==0.10.0`
 
 ## npm (done for 0.9.0)
 
