@@ -1,6 +1,6 @@
 {
   "name": "@pyrpc/react",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "React + TanStack Query adapter for pyRPC",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -29,8 +29,8 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@pyrpc/client": "^0.9.0",
-    "@pyrpc/types": "^0.9.0",
+    "@pyrpc/client": "^0.10.0",
+    "@pyrpc/types": "^0.10.0",
     "@tanstack/react-query": "^5.0.0",
     "react": ">=18.0.0"
   },

@@ -8,8 +8,6 @@ from jinja2 import Environment, FileSystemLoader
 from jsonschema_ts import Options as JsonschemaTsOptions
 from jsonschema_ts import assemble, collect_defs, convert_all, ensure_inline_models
 
-DEFAULT_OUTPUT = "node_modules/@pyrpc/types/src/index.ts"
-
 _TYPE_MAP: Dict[str, str] = {
     "int": "number",
     "float": "number",

@@ -13,6 +13,49 @@ export interface Release {
 
 export const releases: Release[] = [
     {
+        version: 'v0.10.0',
+        date: '2026-08-04',
+        tag: 'v0.10.0',
+        description: 'Zero-config setup: pyrpc dev wizard, tsconfig paths injection, source-tree type generation, and server-detection.',
+        sections: [
+            {
+                title: 'Features',
+                items: [
+                    'pyrpc dev first-run wizard: 2 questions (entry module + frontend framework), writes pyrpc.json, never runs again.',
+                    'Framework auto-detection: scans for next.config.*, vite.config.*, svelte.config.*, nuxt.config.*, astro.config.* and pre-fills the framework answer.',
+                    'Generated types now live in src/__pyrpc.d.ts (user source tree, committed to git) — no more writing into node_modules.',
+                    '@pyrpc/client postinstall injects "@pyrpc/types": ["./src/__pyrpc.d.ts"] into tsconfig.json automatically and silently.',
+                    'pyrpc dev server-detection: probes GET /rpc on startup — if server is already running, skips uvicorn and attaches watcher only.',
+                    'pyrpc dev watches pyrpc.json itself: module or output changes re-wire the watcher and restart uvicorn automatically.',
+                    'pyrpc dev starts uvicorn with --reload by default (disable with --no-reload).',
+                    'New pyrpc watch command: type-watcher-only variant for developers who manage their own server.',
+                    'pyrpc.json reduced to 3 fields: module, framework, output. No distribution, no client_root, no entrypoint.',
+                ],
+            },
+            {
+                title: 'Breaking Changes',
+                items: [
+                    'Removed pyrpc-client.json and @pyrpc/client postinstall wizard. Postinstall now silently injects tsconfig paths only.',
+                    'Removed npx pyrpc sync (TS-side CLI). Types come from source tree, not remote fetch.',
+                    'Removed distribution modes (workspace / server). pyRPC is monorepo-first.',
+                    'Removed client_root, entrypoint, distribution fields from pyrpc.json.',
+                    'createClient() no longer reads pyrpc-client.json for server_url. Pass baseUrl explicitly.',
+                    'DEFAULT_OUTPUT removed from pyrpc_codegen public API. Default path (src/__pyrpc.d.ts) is now a CLI-layer constant.',
+                    'questionary removed from dev dependencies for interactive prompts — re-added for the focused first-run wizard.',
+                ],
+            },
+            {
+                title: 'Upgrade',
+                items: [
+                    'Delete existing pyrpc.json and pyrpc-client.json.',
+                    'Run npm install to get new postinstall (adds tsconfig paths entry).',
+                    'Run pyrpc dev — 2-question wizard creates new pyrpc.json.',
+                    'The @pyrpc/types import path and all framework adapter APIs are unchanged.',
+                ],
+            },
+        ],
+    },
+    {
         version: 'v0.9.0',
         date: '2026-07-27',
         tag: 'v0.9.0',
