@@ -16,6 +16,7 @@ from watchfiles import watch
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 CONFIG_FILE = "pyrpc.json"
+_DEFAULT_OUTPUT = "src/__pyrpc.d.ts"
 _DEBOUNCE_SECONDS = 0.3
 
 # Framework detection: config file name → canonical label → default output path
@@ -452,7 +453,7 @@ def serve(
 @app.command()
 def codegen(
     source: str = typer.Argument(..., help="Schema file, URL, or module"),
-    output: str = typer.Option("src/__pyrpc.d.ts", "--output", "-o"),
+    output: str = typer.Option(_DEFAULT_OUTPUT, "--output", "-o"),
 ):
     """Generate TypeScript types from a schema, URL, or module."""
     try:
@@ -474,7 +475,7 @@ def watch(
     cwd = os.getcwd()
     cfg = _read_config() or {}
     module = module or cfg.get("module")
-    output = output or cfg.get("output", "src/__pyrpc.d.ts")
+    output = output or cfg.get("output", _DEFAULT_OUTPUT)
     if not module:
         console.print("[red]No module specified. Run pyrpc dev first to create pyrpc.json.[/red]")
         raise typer.Exit(1)
