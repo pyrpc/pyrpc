@@ -5,8 +5,8 @@ Full-stack example: FastAPI backend + Next.js App Router frontend, connected by 
 ## Setup
 
 ```bash
-# 1. Install Python deps
-pip install pyrpc-core pyrpc-fastapi
+# 1. Install Python deps — one command with the adapter included
+pip install pyrpc-core[fastapi]
 
 # 2. Install frontend deps
 npm install

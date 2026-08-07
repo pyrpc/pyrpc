@@ -40,6 +40,11 @@ def set_display_name(name: str) -> dict:
 
 mount_fastapi(app)
 
+# mount_fastapi() adds two routes to your existing FastAPI app:
+#   POST /rpc  — JSON-RPC 2.0 dispatch endpoint
+#   GET  /rpc  — introspection schema (used by pyrpc dev for codegen)
+# It does not create a new app or wrap yours — same pattern as app.include_router().
+
 if __name__ == "__main__":
     print("pyRPC server: http://localhost:8000/rpc")
     uvicorn.run(app, host="0.0.0.0", port=8000)

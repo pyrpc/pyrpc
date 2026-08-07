@@ -1,21 +1,31 @@
-# pyRPC v0.10.0 — Verification Example
+# pyRPC v0.10.0 — Verification Walkthrough
 
-End-to-end walkthrough to verify everything works after the config cleanup.
+End-to-end steps to verify everything works after the v0.10.0 changes.
 
 ## 1. Fresh project setup
 
 ```bash
 mkdir my-app && cd my-app
-npm init -y
 npx create-next-app@latest . --typescript --app --no-tailwind --no-eslint --src-dir
-pip install pyrpc-core pyrpc-fastapi
-npm install @pyrpc/client @pyrpc/next @pyrpc/react
+
+# Python server deps — one command with the adapter as an extra
+pip install pyrpc-core[fastapi]
+
+# TypeScript client deps — one command per framework
+# Next.js:
+npm install @pyrpc/client @pyrpc/next
+# React (Vite):
+npm install @pyrpc/client @pyrpc/react
+# Vue:
+npm install @pyrpc/client @pyrpc/vue
+# Svelte:
+npm install @pyrpc/client @pyrpc/svelte
 ```
 
 After `npm install` completes you should see:
 ```
   ✓ @pyrpc/types → src/__pyrpc.d.ts (tsconfig.json)
-  Run 'pyrpc dev main:app' to start generating types.
+  Run 'pyrpc dev' to start generating types.
 ```
 
 Check your `tsconfig.json` — it should now contain:
@@ -36,8 +46,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 
+# This is your FastAPI app — you own and control it fully.
+# mount_fastapi() adds POST /rpc and GET /rpc to YOUR app.
+# It does not create a new app or wrap yours.
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @rpc.query
 def greet(name: str = "World") -> str:
@@ -49,10 +67,20 @@ def set_name(name: str) -> dict:
     """Sets a display name."""
     return {"ok": True, "name": name}
 
+# Registers POST /rpc (dispatch) and GET /rpc (introspection) on your app.
 mount_fastapi(app)
 ```
 
-## 3. First pyrpc dev run
+### What `mount_fastapi(app)` actually does
+
+`mount_fastapi` takes your existing FastAPI app and registers two routes on it:
+- `POST /rpc` — receives JSON-RPC 2.0 calls, dispatches to your `@rpc` procedures
+- `GET /rpc` — returns introspection schema (used by pyrpc dev for codegen)
+
+You then run this same `app` with uvicorn as normal. pyrpc does not create a
+separate server — it adds to yours. Same pattern as `app.include_router()`.
+
+## 3. First `pyrpc dev` run
 
 ```bash
 pyrpc dev
@@ -66,13 +94,18 @@ pyRPC setup (runs once — saved to pyrpc.json)
 ? Frontend framework  › Next.js ← auto-detected from next.config.ts
 
   ✓ pyrpc.json created
-  ✓ types generated (2 procs) → /path/to/my-app/src/__pyrpc.d.ts
+  ✓ types generated (2 procs) → src/__pyrpc.d.ts
   pyRPC dev  http://127.0.0.1:8000/rpc
   pyrpc>
 ```
 
-Check that `src/__pyrpc.d.ts` was created and contains `greet` and `set_name`.
-Check that `pyrpc.json` was created with:
+If the frontend config isn't detected (server-first setup), the wizard asks:
+```
+? Output path for generated types  › src/__pyrpc.d.ts
+```
+
+Check `src/__pyrpc.d.ts` exists and contains `greet` and `set_name`.
+Check `pyrpc.json`:
 ```json
 {
   "module": "main",
@@ -84,6 +117,8 @@ Check that `pyrpc.json` was created with:
 ## 4. Wire up the TypeScript client
 
 Create `lib/pyrpc.ts`:
+
+**Next.js:**
 ```ts
 import type { Types } from '@pyrpc/types';
 import { createNextClient } from '@pyrpc/next';
@@ -93,12 +128,21 @@ export const api = createNextClient<Types>({
 });
 ```
 
-In your editor, verify that `api.greet` and `api.set_name` have full type inference —
-hover over them and confirm the parameter and return types match your Python code.
+**React (Vite):**
+```ts
+import type { Types } from '@pyrpc/types';
+import { createReactClient } from '@pyrpc/react';
+
+export const api = createReactClient<Types>({
+  baseUrl: import.meta.env.VITE_API_URL ?? 'http://localhost:8000',
+});
+```
+
+Hover over `api.greet` and `api.set_name` — confirm full type inference.
 
 ## 5. Verify hot reload
 
-With `pyrpc dev` still running, add a new procedure to `main.py`:
+With `pyrpc dev` running, add a new procedure to `main.py`:
 
 ```python
 @rpc.query
@@ -107,28 +151,16 @@ def ping() -> str:
     return "pong"
 ```
 
-Within ~300ms you should see:
+Within ~300ms:
 ```
   ✓ types regenerated (3 procs)
 ```
 
-Check `src/__pyrpc.d.ts` — `ping` should now appear. In your editor,
-`api.ping` should now autocomplete.
+`api.ping` now autocompletes in TypeScript.
 
-## 6. Verify pyrpc.json reload
+## 6. Verify server detection
 
-While `pyrpc dev` is running, change the module name in `pyrpc.json`:
-```json
-{ "module": "main", "framework": "Next.js", "output": "src/__pyrpc.d.ts" }
-```
-(no actual change needed — just save the file). You should see:
-```
-  pyrpc.json changed — reloading...
-```
-
-## 7. Verify server detection
-
-Stop `pyrpc dev`. Start uvicorn yourself:
+Stop `pyrpc dev`. Start your server manually:
 ```bash
 uvicorn main:app --reload
 ```
@@ -137,23 +169,51 @@ Now run `pyrpc dev` in another terminal:
 ```
   ○ server already running at http://127.0.0.1:8000/rpc — skipping uvicorn
   ✓ types generated (3 procs) → src/__pyrpc.d.ts
-  pyRPC dev  http://127.0.0.1:8000/rpc
   pyrpc>
 ```
 
-pyrpc attaches the watcher without starting a second server.
-
-## 8. Verify pyrpc watch (watcher only)
+## 7. Verify `pyrpc watch` (watcher only)
 
 ```bash
 uvicorn main:app --reload   # terminal 1
-pyrpc watch                 # terminal 2
+pyrpc watch                 # terminal 2 — reads pyrpc.json
 ```
 
-Expected:
 ```
   ✓ types generated (3 procs) → src/__pyrpc.d.ts
   watching... (Ctrl+C to stop)
 ```
 
-Edit `main.py` — types regenerate automatically.
+## 8. Flask example
+
+```python
+from flask import Flask
+from pyrpc_core import rpc
+from pyrpc_flask import mount_flask  # pip install pyrpc-core[flask]
+
+app = Flask(__name__)
+
+@rpc.query
+def greet(name: str = "World") -> str:
+    return f"Hello, {name}!"
+
+# Same pattern as FastAPI — adds /rpc routes to your existing Flask app
+mount_flask(app)
+
+if __name__ == "__main__":
+    app.run(port=8000)
+```
+
+## 9. Django example
+
+```python
+# urls.py
+from pyrpc_django import mount_django  # pip install pyrpc-core[django]
+from pyrpc_core import rpc
+
+@rpc.query
+def greet(name: str = "World") -> str:
+    return f"Hello, {name}!"
+
+urlpatterns = mount_django()
+```

@@ -43,18 +43,18 @@
 
 ```bash
 # Using uv
-uv add pyrpc-core
+uv add pyrpc-core[fastapi]
 
 # Using pip
-pip install pyrpc-core
+pip install pyrpc-core[fastapi]
 ```
 
-The `pyrpc` CLI (dev, serve, inspect, codegen, pull) is included out of the box. Framework adapters are available as extras:
+Framework adapters are available as extras — the adapter is included in the same install:
 
 ```bash
-uv add pyrpc-core[fastapi]   # FastAPI adapter
-uv add pyrpc-core[flask]     # Flask adapter
-uv add pyrpc-core[django]     # Django adapter
+pip install pyrpc-core[fastapi]   # FastAPI
+pip install pyrpc-core[flask]     # Flask
+pip install pyrpc-core[django]    # Django
 ```
 
 ## Quick Start
@@ -66,9 +66,12 @@ from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 from fastapi import FastAPI
 
+# Your FastAPI app — you own it fully.
+# mount_fastapi() adds POST /rpc and GET /rpc to it.
+# No wrapping, no separate server — just two new routes.
 app = FastAPI()
 
-@rpc
+@rpc.query
 def add(a: int, b: int) -> int:
     return a + b
 
@@ -96,7 +99,16 @@ const result = await client.add(10, 5)
 console.log(result)  // 15
 ```
 
-Framework adapters (TanStack Query): `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`. See [docs](https://pyrpc.com/docs/client/react) and `examples/nextjs`.
+Framework adapters (TanStack Query): `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`.
+
+```bash
+npm install @pyrpc/client @pyrpc/next    # Next.js
+npm install @pyrpc/client @pyrpc/react   # React (Vite)
+npm install @pyrpc/client @pyrpc/vue     # Vue
+npm install @pyrpc/client @pyrpc/svelte  # Svelte
+```
+
+See [docs](https://pyrpc.com/docs/client/react) and `examples/nextjs`.
 
 ### 4. Or from Python
 

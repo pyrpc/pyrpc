@@ -133,7 +133,19 @@ def _run_wizard(root: str) -> dict:
     module = module.strip()
 
     # Question 2: frontend framework — auto-detect pre-fills the answer
+    # Detection scans cwd first, then common frontend subdirectories
     detected = _detect_framework(root)
+    if not detected:
+        # Try common frontend subdirectory names before giving up
+        for subdir in ["frontend", "client", "web", "ui"]:
+            candidate = os.path.join(root, subdir)
+            if os.path.isdir(candidate):
+                detected = _detect_framework(candidate)
+                if detected:
+                    # Store the subdirectory so output path is relative to it
+                    detected = (detected[0], os.path.join(subdir, detected[1]))
+                    break
+
     default_fw = detected[0] if detected else "Next.js"
 
     framework = questionary.select(
@@ -148,7 +160,16 @@ def _run_wizard(root: str) -> dict:
     if detected and detected[0] == framework:
         raw_output = detected[1]
     else:
-        raw_output = "src/__pyrpc.d.ts"
+        # No framework config detected anywhere — ask for the output path explicitly
+        # so the developer can point us at wherever their frontend lives
+        raw_output = questionary.text(
+            "Output path for generated types",
+            default="src/__pyrpc.d.ts",
+            instruction="(relative to this directory — e.g. src/__pyrpc.d.ts or frontend/src/__pyrpc.d.ts)",
+        ).ask()
+        if raw_output is None:
+            raise typer.Exit(code=0)
+        raw_output = raw_output.strip()
 
     output = _resolve_output_path(root, framework, raw_output)
 
