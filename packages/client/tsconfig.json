@@ -8,9 +8,22 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "outDir": "dist",
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "@pyrpc/types": [
+        "./src/__pyrpc.d.ts"
+      ]
+    }
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src    *"
+  ]
 }
