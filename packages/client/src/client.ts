@@ -8,31 +8,9 @@ Provide a baseUrl when creating the client:
 
   const api = createClient({ baseUrl: "http://localhost:8000" })
 
-Or set up your client configuration by running:
-
-  npx pyrpc init
+In a browser the client defaults to the current origin (same-domain Next.js
+apps work without an explicit baseUrl).
 `;
-
-function readPyrpcClientConfig(): { distribution?: string; server_url?: string } | null {
-  if (typeof process === 'undefined' || typeof require === 'undefined') return null;
-  try {
-    const fs = require('fs') as { existsSync: (p: string) => boolean; readFileSync: (p: string, enc: string) => string };
-    const p = require('path') as { join: (...args: string[]) => string; dirname: (p: string) => string };
-
-    let dir = process.cwd();
-    while (true) {
-      const cfgPath = p.join(dir, 'pyrpc-client.json');
-      if (fs.existsSync(cfgPath)) {
-        return JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
-      }
-      const parent = p.dirname(dir);
-      if (parent === dir) return null;
-      dir = parent;
-    }
-  } catch {
-    return null;
-  }
-}
 
 class PyRPCClient {
   private url: string;
@@ -44,10 +22,8 @@ class PyRPCClient {
     let baseUrl = options.baseUrl;
 
     if (!baseUrl) {
-      const config = readPyrpcClientConfig();
-      if (config?.server_url) {
-        baseUrl = config.server_url;
-      } else if (typeof window !== 'undefined' && window.location) {
+      // Browser-only fallback: same-origin requests work without an explicit baseUrl
+      if (typeof window !== 'undefined' && window.location) {
         baseUrl = window.location.origin;
       }
     }
