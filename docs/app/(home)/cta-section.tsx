@@ -19,11 +19,11 @@ export default function CTASection() {
           transition={{ duration: 0.4 }}
           className="text-xl md:text-4xl font-bold tracking-tighter text-neutral-900 dark:text-white mb-2 md:mb-4 heading-display"
         >
-          Ready to ship type-safe APIs?
+          The type-safe API layer Python was missing.
         </motion.h2>
         <p className="text-[13px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-[280px] md:max-w-xl mx-auto font-sans mb-4 md:mb-8">
-          <span className="md:hidden">One command. Type-safe APIs, shipped.</span>
-          <span className="hidden md:inline">One command to get started. Define your procedures in Python, generate TypeScript clients, and ship in minutes.</span>
+          <span className="md:hidden">No OpenAPI. No schemas. No drift.</span>
+          <span className="hidden md:inline">Define procedures in Python. Get fully typed TypeScript clients automatically. No OpenAPI. No schemas. No drift.</span>
         </p>
         <div className="flex flex-row items-center gap-2 md:gap-3 justify-center">
           <Link href="/docs/get-started/installation">

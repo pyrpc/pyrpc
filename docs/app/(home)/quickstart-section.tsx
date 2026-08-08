@@ -125,7 +125,7 @@ export default function QuickstartSection({
               </div>
               <div className="text-neutral-600 dark:text-neutral-500">Resolved 8 packages in 320ms</div>
               <div className="text-neutral-600 dark:text-neutral-500">Installed 4 packages in 45ms</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ pyrpc-core==0.3.0</div>
+              <div className="text-neutral-600 dark:text-neutral-500">+ pyrpc-core==0.10.1</div>
               <div className="text-neutral-600 dark:text-neutral-500">+ pydantic==2.7.1</div>
               <div className="mt-2"><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
             </div>
@@ -143,10 +143,10 @@ export default function QuickstartSection({
           terminal={
             <div className="space-y-1">
               <div><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="text-neutral-800 dark:text-neutral-200">pyrpc dev</span></div>
-              <div className="text-neutral-600 dark:text-neutral-500">Starting pyRPC dev server...</div>
-              <div className="text-neutral-600 dark:text-neutral-500">Found 1 procedure</div>
-              <div><span className="text-emerald-600 dark:text-emerald-500">✓</span> <span className="text-neutral-800 dark:text-neutral-200">Serving at http://localhost:8000</span></div>
-              <div className="mt-2"><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
+              <div className="text-emerald-600 dark:text-emerald-500">  ✓  types generated (1 procs) → src/__pyrpc.d.ts</div>
+              <div className="text-neutral-600 dark:text-neutral-500">  pyRPC dev  http://localhost:8000/rpc</div>
+              <div className="text-neutral-500 dark:text-neutral-600">type help for commands</div>
+              <div className="mt-2"><span className="text-cyan-600 dark:text-cyan-400">pyrpc&gt;</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
             </div>
           }
         >
@@ -161,10 +161,10 @@ export default function QuickstartSection({
           lines={8}
           terminal={
             <div className="space-y-1">
-              <div><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="text-neutral-800 dark:text-neutral-200">npm install @pyrpc/client</span></div>
-              <div className="text-neutral-600 dark:text-neutral-500">Resolved 12 packages in 1.4s</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/client@0.3.0</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/types@0.3.0</div>
+              <div><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="text-neutral-800 dark:text-neutral-200">npm install @pyrpc/react</span></div>
+              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/react@0.10.0</div>
+              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/client@0.10.0</div>
+              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/types@0.10.0</div>
               <div className="mt-2"><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
             </div>
           }
