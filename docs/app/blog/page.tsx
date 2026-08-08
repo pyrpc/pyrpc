@@ -434,7 +434,7 @@ const posts: Post[] = [
     {
         slug: 'building-nextjs-example',
         title: 'Building the Next.js example app: file by file',
-        description: 'Walkthrough of examples/nextjs: server.py, lib/pyrpc.ts, layout, RSC prefetch, and client hooks.',
+        description: 'Walkthrough of examples/fastapi-nextjs: server.py, lib/pyrpc.ts, layout, RSC prefetch, and client hooks.',
         date: 'July 27, 2026 at 7:15am',
         readTime: '12 min',
         category: 'tutorial',

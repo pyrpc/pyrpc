@@ -53,7 +53,7 @@ export default function PackageVersioningPage() {
 {`git checkout -b feat/framework-adapters
 git add packages/react packages/next packages/vue packages/svelte \\
         packages/pyrpc-core packages/pyrpc-codegen packages/types \\
-        examples/nextjs docs architecture plan.md
+        examples/fastapi-nextjs docs architecture plan.md
 git commit -m "feat: TanStack framework adapters, procedure kinds, docs"
 git push -u origin HEAD
 gh pr create --title "feat: framework adapters + procedure kinds" --body "..."`}

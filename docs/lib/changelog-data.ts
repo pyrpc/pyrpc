@@ -76,7 +76,7 @@ export const releases: Release[] = [
                 items: [
                     'Client docs for React, Next.js, Vue, and Svelte.',
                     'Blog posts: adapters deep dive, Next tutorial, one-api-object, query vs mutation, publishing guide, v0.9.0 release notes.',
-                    'Example app: `examples/nextjs` with FastAPI backend.',
+                    'Example app: `examples/fastapi-nextjs` with FastAPI backend.',
                     'Updated LikeC4 architecture diagram for framework adapters.',
                 ],
             },

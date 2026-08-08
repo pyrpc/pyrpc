@@ -22,7 +22,7 @@ export default function NextjsTanstackTutorialPage() {
                     Build a typed full-stack slice: Python procedures with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc.query</code> / <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc.mutation</code>, a Next.js App Router UI, RSC prefetch, and client hooks — all through <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/next</code>.
                 </p>
                 <p>
-                    Prefer a ready-made tree? Clone the repo and open <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">examples/nextjs</code>. This tutorial walks the same path from scratch.
+                    Prefer a ready-made tree? Clone the repo and open <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">examples/fastapi-nextjs</code>. This tutorial walks the same path from scratch.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What you will build</h2>
