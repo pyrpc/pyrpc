@@ -13,23 +13,82 @@ export interface Release {
 
 export const releases: Release[] = [
     {
+        version: 'v0.10.1',
+        date: '2026-08-08',
+        tag: 'v0.10.1',
+        description: 'CLI --yes flag to skip the setup wizard, full docs rewrite for all 12 framework combinations, and 12 new tutorial blog posts.',
+        sections: [
+            {
+                title: 'Features',
+                items: [
+                    '`pyrpc dev --yes` / `-y`: skip the first-run setup wizard entirely. Auto-detects entry module and output path.',
+                    '`pyrpc dev --yes --module main --output ../client/src/__pyrpc.d.ts`: fully non-interactive, CI-safe execution.',
+                    '`pyrpc dev --reconfigure`: re-run the setup wizard even when pyrpc.json already exists, pre-filling current values.',
+                    '`pyrpc dev --module` / `-m` and `--output` / `-o` flags for explicit non-interactive values.',
+                ],
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'Full rewrite of `server/adapters/fastapi.mdx`: numbered steps, real example code, CORS origins table, --yes usage, example links.',
+                    'Full rewrite of `server/adapters/flask.mdx`: same treatment with port-5000 callout and flask-cors notes.',
+                    'Full rewrite of `server/adapters/django.mdx`: complete project scaffold (django-admin startproject, settings.py middleware order), URLconf wiring, why the views import is required, custom router section.',
+                    'Full rewrite of `client/react.mdx`: explanation of why @pyrpc/types is a separate install (peer dep + postinstall mechanics), step-by-step setup, invalidation example.',
+                    'Full rewrite of `client/nextjs.mdx`: complete App Router flow (providers, prefetch, HydrationBoundary, client hooks), api property reference table, createCaller for Server Actions.',
+                    'Full rewrite of `client/vue.mdx`: plugin vs Provider explanation, reactive args getter pattern, config table.',
+                    'Full rewrite of `client/svelte.mdx`: layout QueryClientProvider, $store subscription, reactive args, config table.',
+                ],
+            },
+            {
+                title: 'Blog',
+                items: [
+                    '12 new tutorial posts covering every framework combination: FastAPI/Flask/Django x React/Next.js/Vue/Svelte.',
+                    'Each post is grounded in the actual working example code from the examples/ directory.',
+                ],
+            },
+            {
+                title: 'Landing Page',
+                items: [
+                    'Removed "Coming soon" badges from React, Next.js, Vue, and Svelte in the Fits Your Stack section -- all four are now fully supported.',
+                    'Removed standalone TypeScript icon from the frontend list (the framework adapters cover it).',
+                ],
+            },
+            {
+                title: 'CI',
+                items: [
+                    'Publish workflow: switched PyPI from OIDC to API token (`PYPI_API_TOKEN` secret).',
+                    'Publish workflow: npm publish steps now read version from each package.json and skip packages that are already published at that version (skip-existing parity with PyPI).',
+                ],
+            },
+        ],
+    },
+    {
         version: 'v0.10.0',
         date: '2026-08-04',
         tag: 'v0.10.0',
-        description: 'Zero-config setup: pyrpc dev wizard, tsconfig paths injection, source-tree type generation, and server-detection.',
+        description: 'Zero-config setup: pyrpc dev wizard, tsconfig paths injection, source-tree type generation, server-detection, and 12 full-stack examples (FastAPI/Flask/Django x React/Next.js/Vue/Svelte).',
         sections: [
             {
                 title: 'Features',
                 items: [
                     'pyrpc dev first-run wizard: 2 questions (entry module + frontend framework), writes pyrpc.json, never runs again.',
                     'Framework auto-detection: scans for next.config.*, vite.config.*, svelte.config.*, nuxt.config.*, astro.config.* and pre-fills the framework answer.',
-                    'Generated types now live in src/__pyrpc.d.ts (user source tree, committed to git) — no more writing into node_modules.',
+                    'Generated types now live in src/__pyrpc.d.ts (user source tree, committed to git) -- no more writing into node_modules.',
                     '@pyrpc/client postinstall injects "@pyrpc/types": ["./src/__pyrpc.d.ts"] into tsconfig.json automatically and silently.',
-                    'pyrpc dev server-detection: probes GET /rpc on startup — if server is already running, skips uvicorn and attaches watcher only.',
+                    'pyrpc dev server-detection: probes GET /rpc on startup -- if server is already running, skips uvicorn and attaches watcher only.',
                     'pyrpc dev watches pyrpc.json itself: module or output changes re-wire the watcher and restart uvicorn automatically.',
                     'pyrpc dev starts uvicorn with --reload by default (disable with --no-reload).',
                     'New pyrpc watch command: type-watcher-only variant for developers who manage their own server.',
-                    'pyrpc.json reduced to 3 fields: module, framework, output. No distribution, no client_root, no entrypoint.',
+                    'Zero codegen step: pyrpc dev watches Python files and regenerates src/__pyrpc.d.ts on every save. No manual codegen command needed.',
+                ],
+            },
+            {
+                title: 'Examples',
+                items: [
+                    '12 complete working examples covering every supported combination: FastAPI + React, FastAPI + Next.js, FastAPI + Vue, FastAPI + Svelte, Flask + React, Flask + Next.js, Flask + Vue, Flask + Svelte, Django + React, Django + Next.js, Django + Vue, Django + Svelte.',
+                    'Each example has a server/ directory (Python) and a client/ directory (TypeScript) that can be run independently.',
+                    'Replaced legacy examples/nextjs, examples/basic_server.py, examples/basic_usage.py, and examples/flask_server.py with the structured 12-example layout.',
+                    'examples/README.md with a table of all 12 combinations and quick-start commands.',
                 ],
             },
             {
@@ -41,7 +100,6 @@ export const releases: Release[] = [
                     'Removed client_root, entrypoint, distribution fields from pyrpc.json.',
                     'createClient() no longer reads pyrpc-client.json for server_url. Pass baseUrl explicitly.',
                     'DEFAULT_OUTPUT removed from pyrpc_codegen public API. Default path (src/__pyrpc.d.ts) is now a CLI-layer constant.',
-                    'questionary removed from dev dependencies for interactive prompts — re-added for the focused first-run wizard.',
                 ],
             },
             {
@@ -49,7 +107,7 @@ export const releases: Release[] = [
                 items: [
                     'Delete existing pyrpc.json and pyrpc-client.json.',
                     'Run npm install to get new postinstall (adds tsconfig paths entry).',
-                    'Run pyrpc dev — 2-question wizard creates new pyrpc.json.',
+                    'Run pyrpc dev -- 2-question wizard creates new pyrpc.json.',
                     'The @pyrpc/types import path and all framework adapter APIs are unchanged.',
                 ],
             },

@@ -90,8 +90,8 @@ export default function HomeClient({
             },
             {
               id: "04",
-              title: "Monorepo or Separate Repos - both work.",
-              description: "In a monorepo? The server writes typed contracts directly to the client. Separate repos? The client fetches them via HTTP at build time.",
+              title: "Zero codegen step.",
+              description: "pyrpc dev watches your Python files and regenerates TypeScript types on every save. Your editor sees the change before you switch tabs.",
             },
             {
               id: "05",
