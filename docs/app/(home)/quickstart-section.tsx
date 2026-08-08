@@ -36,7 +36,7 @@ function QuickstartStep({ step, title, description, filename, children, terminal
       </p>
 
       <div className="relative w-full code-block-hero">
-        <div className="relative w-full border border-neutral-200 dark:border-[#1a1a1a] bg-neutral-50 dark:bg-black overflow-hidden">
+        <div className="relative w-full border border-neutral-200 dark:border-[#1a1a1a] bg-white dark:bg-black overflow-hidden">
           {filename && (
             <div className="border-b border-neutral-200 dark:border-[#1a1a1a] px-4 py-2">
               <span className="text-[11px] font-mono text-neutral-500 tracking-tight">{filename}</span>
@@ -46,7 +46,7 @@ function QuickstartStep({ step, title, description, filename, children, terminal
             <div className="flex-1 min-w-0 overflow-x-auto">
               {lines ? (
                 <div className="grid grid-cols-[40px_1fr] font-mono text-sm leading-relaxed">
-                  <div className="whitespace-pre text-center hl-ln border-r border-neutral-200 dark:border-[#1a1a1a] select-none leading-relaxed pb-6 pt-5">
+                  <div className="whitespace-pre text-center text-neutral-400 dark:text-neutral-700 border-r border-neutral-200 dark:border-[#1a1a1a] select-none leading-relaxed pb-6 pt-5 text-[12px] px-3">
                     {Array.from({ length: lines }, (_, i) => `${i + 1}\n`).join('')}
                   </div>
                   <div className="overflow-x-auto whitespace-pre-wrap leading-relaxed pb-6 pt-5 pl-4 pr-8">
@@ -60,7 +60,7 @@ function QuickstartStep({ step, title, description, filename, children, terminal
               )}
             </div>
             {terminal && (
-              <div className="hidden md:block flex-1 min-w-0 border-l border-neutral-200 dark:border-[#1a1a1a] p-4 font-mono text-[12px] leading-relaxed bg-neutral-100/60 dark:bg-[#0f0f0f]/60 overflow-x-auto">
+              <div className="hidden md:block flex-1 min-w-0 border-l border-neutral-200 dark:border-[#1a1a1a] p-4 font-mono text-[12px] leading-relaxed bg-neutral-50 dark:bg-[#0f0f0f]/60 overflow-x-auto">
                 {terminal}
               </div>
             )}
@@ -123,10 +123,10 @@ export default function QuickstartSection({
                   {copiedStep === 1 ? <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-500" /> : <Copy className="w-3 h-3" />}
                 </button>
               </div>
-              <div className="text-neutral-600 dark:text-neutral-500">Resolved 8 packages in 320ms</div>
-              <div className="text-neutral-600 dark:text-neutral-500">Installed 4 packages in 45ms</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ pyrpc-core==0.10.1</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ pydantic==2.7.1</div>
+              <div className="text-neutral-500 dark:text-neutral-500">Resolved 8 packages in 320ms</div>
+              <div className="text-neutral-500 dark:text-neutral-500">Installed 4 packages in 45ms</div>
+              <div className="text-neutral-500 dark:text-neutral-500">+ pyrpc-core==0.10.1</div>
+              <div className="text-neutral-500 dark:text-neutral-500">+ pydantic==2.7.1</div>
               <div className="mt-2"><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
             </div>
           }
@@ -144,7 +144,7 @@ export default function QuickstartSection({
             <div className="space-y-1">
               <div><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="text-neutral-800 dark:text-neutral-200">pyrpc dev</span></div>
               <div className="text-emerald-600 dark:text-emerald-500">  ✓  types generated (1 procs) → src/__pyrpc.d.ts</div>
-              <div className="text-neutral-600 dark:text-neutral-500">  pyRPC dev  http://localhost:8000/rpc</div>
+              <div className="text-neutral-500 dark:text-neutral-500">  pyRPC dev  http://localhost:8000/rpc</div>
               <div className="text-neutral-500 dark:text-neutral-600">type help for commands</div>
               <div className="mt-2"><span className="text-cyan-600 dark:text-cyan-400">pyrpc&gt;</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
             </div>
@@ -162,9 +162,9 @@ export default function QuickstartSection({
           terminal={
             <div className="space-y-1">
               <div><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="text-neutral-800 dark:text-neutral-200">npm install @pyrpc/react</span></div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/react@0.10.0</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/client@0.10.0</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/types@0.10.0</div>
+              <div className="text-neutral-500 dark:text-neutral-500">+ @pyrpc/react@0.10.0</div>
+              <div className="text-neutral-500 dark:text-neutral-500">+ @pyrpc/client@0.10.0</div>
+              <div className="text-neutral-500 dark:text-neutral-500">+ @pyrpc/types@0.10.0</div>
               <div className="mt-2"><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
             </div>
           }

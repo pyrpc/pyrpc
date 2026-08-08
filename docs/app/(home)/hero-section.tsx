@@ -27,7 +27,7 @@ function CodePanel({ code, className }: { code: ReactNode; className?: string })
       transition={{ duration: 0.15 }}
       className={cn("contents", className)}
     >
-      <div className="whitespace-pre text-center hl-ln border-r border-neutral-200 dark:border-[#1a1a1a] select-none leading-relaxed pb-12">
+      <div className="whitespace-pre text-center text-neutral-400 dark:text-neutral-700 border-r border-neutral-200 dark:border-[#1a1a1a] select-none leading-relaxed pb-12 text-[12px] px-3">
         {lines > 0 ? Array.from({ length: lines }, (_, i) => `${i + 1}\n`).join('') : ''}
       </div>
       <div ref={ref} className="pl-0 pr-8 whitespace-pre overflow-x-auto leading-relaxed pb-12 [&_pre]:inline [&_pre]:!bg-transparent [&_pre]:!p-0">
@@ -82,13 +82,29 @@ export default function HeroSection({
     return () => clearInterval(interval);
   }, []);
 
+  const LATEST_VERSION = 'v0.10.1';
+
   return (
     <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-[10.5rem] md:pt-[13.5rem] pb-24">
       {/* Left Column */}
       <div className="flex flex-col items-start gap-10 max-w-[480px]">
-        <h1 className="relative text-[42px] md:text-[64px] font-normal leading-[48px] md:leading-[72px] tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] heading-display">
-          Type-safe APIs<br />for Python.
-        </h1>
+
+        {/* Version pill - functional, links to changelog. Sits above h1 with tighter spacing */}
+        <div className="flex flex-col items-start gap-5">
+          <Link
+            href="/changelog"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all text-[11px] font-mono text-neutral-600 dark:text-neutral-400 group"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+            <span>{LATEST_VERSION}</span>
+            <span className="text-neutral-400 dark:text-neutral-600 group-hover:text-neutral-500 dark:group-hover:text-neutral-500 transition-colors">What&apos;s new</span>
+            <span className="text-neutral-300 dark:text-neutral-700 group-hover:translate-x-0.5 transition-transform inline-block">&#8594;</span>
+          </Link>
+
+          <h1 className="relative text-[42px] md:text-[64px] font-normal leading-[48px] md:leading-[72px] tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] heading-display">
+            Type-safe APIs<br />for Python.
+          </h1>
+        </div>
         <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-xl">
           Build APIs in Python and consume them in TypeScript with full inference. No schemas. No drift. No OpenAPI.
         </p>
@@ -118,7 +134,7 @@ export default function HeroSection({
 
       {/* Right Column - Code Viewer */}
       <div className="w-full max-w-[600px] lg:ml-auto code-block-hero">
-        <div className="w-full border border-neutral-200 dark:border-[#1a1a1a] bg-neutral-50 dark:bg-black">
+        <div className="w-full border border-neutral-200 dark:border-[#1a1a1a] bg-white dark:bg-black rounded-sm">
           <div className="border-b border-neutral-200 dark:border-[#1a1a1a]">
             <nav className="flex items-stretch px-3">
               {(['server', 'generated', 'client'] as const).map((tab) => (

@@ -1,10 +1,82 @@
 "use client";
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from "./hero-section";
 import QuickstartSection from "./quickstart-section";
 import CTASection from "./cta-section";
 import type { ReactNode } from 'react';
+
+// Map of server+client → example slug and docs slug
+const EXAMPLE_LINKS: Record<string, { github: string; docs: string }> = {
+  'FastAPI+React':   { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-react',   docs: '/docs/client/react' },
+  'FastAPI+Next.js': { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-nextjs',  docs: '/docs/client/nextjs' },
+  'FastAPI+Vue':     { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-vue',     docs: '/docs/client/vue' },
+  'FastAPI+Svelte':  { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-svelte',  docs: '/docs/client/svelte' },
+  'Flask+React':     { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/flask-react',     docs: '/docs/client/react' },
+  'Flask+Next.js':   { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/flask-nextjs',    docs: '/docs/client/nextjs' },
+  'Flask+Vue':       { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/flask-vue',       docs: '/docs/client/vue' },
+  'Flask+Svelte':    { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/flask-svelte',    docs: '/docs/client/svelte' },
+  'Django+React':    { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/django-react',    docs: '/docs/client/react' },
+  'Django+Next.js':  { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/django-nextjs',   docs: '/docs/client/nextjs' },
+  'Django+Vue':      { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/django-vue',      docs: '/docs/client/vue' },
+  'Django+Svelte':   { github: 'https://github.com/pyrpc/pyrpc/tree/main/examples/django-svelte',   docs: '/docs/client/svelte' },
+};
+
+function CompatDot({ server, client }: { server: string; client: string }) {
+  const [open, setOpen] = useState(false);
+  const key = `${server}+${client}`;
+  const links = EXAMPLE_LINKS[key];
+
+  return (
+    <div className="relative flex items-center justify-center">
+      <button
+        onClick={() => setOpen(v => !v)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        className="group/dot inline-flex items-center justify-center w-8 h-8 rounded-full cursor-pointer focus:outline-none"
+        aria-label={`${server} + ${client} example`}
+      >
+        <span className="w-2 h-2 rounded-full bg-emerald-500/70 ring-2 ring-emerald-500/20 group-hover/dot:bg-emerald-500 group-hover/dot:ring-emerald-500/40 transition-all duration-150" />
+      </button>
+
+      {open && links && (
+        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-50 w-max">
+          <div className="bg-neutral-900 dark:bg-neutral-950 border border-neutral-700 dark:border-neutral-800 rounded-lg px-3 py-2.5 shadow-xl">
+            <p className="text-[11px] font-mono text-white/80 mb-2 text-center whitespace-nowrap">
+              {server} + {client}
+            </p>
+            <div className="flex items-center gap-2">
+              <a
+                href={links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-2 py-1 rounded bg-neutral-800 hover:bg-neutral-700 transition-colors text-[10px] font-mono text-neutral-300 whitespace-nowrap"
+                onClick={e => e.stopPropagation()}
+              >
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="opacity-70">
+                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                </svg>
+                Example
+              </a>
+              <a
+                href={links.docs}
+                className="flex items-center gap-1.5 px-2 py-1 rounded bg-neutral-800 hover:bg-neutral-700 transition-colors text-[10px] font-mono text-neutral-300 whitespace-nowrap"
+                onClick={e => e.stopPropagation()}
+              >
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="opacity-70">
+                  <path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V3.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z" />
+                </svg>
+                Docs
+              </a>
+            </div>
+          </div>
+          {/* Caret */}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-neutral-700 dark:border-t-neutral-800" />
+        </div>
+      )}
+    </div>
+  );
+}
 
 // invertServer: Flask and Django icons from simpleicons are black SVGs — invert them in dark mode
 const COMBOS = [
@@ -26,8 +98,8 @@ function FrameworkMarquee() {
   const doubled = [...COMBOS, ...COMBOS];
   return (
     <div className="relative w-full overflow-hidden py-2.5 border-y border-fd-border/50 bg-neutral-50/50 dark:bg-black/30">
-      <div className="absolute left-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-r from-neutral-50 dark:from-fd-background to-transparent pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-l from-neutral-50 dark:from-fd-background to-transparent pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-r from-white dark:from-fd-background to-transparent pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-l from-white dark:from-fd-background to-transparent pointer-events-none" />
       <motion.div
         className="flex items-center gap-10 w-max"
         animate={{ x: ['0%', '-50%'] }}
@@ -175,7 +247,7 @@ export default function HomeClient({
             transition={{ duration: 0.5 }}
             className="group p-10 md:p-14 border-b border-fd-border relative overflow-hidden bg-neutral-50 dark:bg-[#050505]"
           >
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(ellipse_50%_60%_at_5%_50%,rgba(0,0,0,0.02)_0%,transparent_100%)] dark:bg-[radial-gradient(ellipse_50%_60%_at_5%_50%,rgba(255,255,255,0.015)_0%,transparent_100%)]" />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(ellipse_50%_60%_at_5%_50%,rgba(0,0,0,0.03)_0%,transparent_100%)] dark:bg-[radial-gradient(ellipse_50%_60%_at_5%_50%,rgba(255,255,255,0.015)_0%,transparent_100%)]" />
             <span className="text-fd-foreground/15 font-mono text-[10px] mb-6 block uppercase tracking-widest group-hover:text-fd-foreground/35 transition-colors">01</span>
             <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-start">
               <div>
@@ -276,9 +348,7 @@ export default function HomeClient({
                     </td>
                     {tsClients.map(client => (
                       <td key={client.name} className="py-4 text-center">
-                        <span className="inline-flex items-center justify-center w-5 h-5">
-                          <span className="w-2 h-2 rounded-full bg-emerald-500/70 ring-2 ring-emerald-500/20" />
-                        </span>
+                        <CompatDot server={server.name} client={client.name} />
                       </td>
                     ))}
                   </tr>

@@ -1,7 +1,7 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link'
-import { useState } from 'react'
 import { cn } from '@/lib/cn'
 
 type Category = 'all' | 'release' | 'deep-dive' | 'tutorial'

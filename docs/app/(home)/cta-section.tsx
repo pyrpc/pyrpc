@@ -9,8 +9,8 @@ export default function CTASection() {
   const [copied, setCopied] = useState(false);
 
   return (
-    <div className="mt-24 relative overflow-hidden border-t border-b border-neutral-200 dark:border-white/[0.08] bg-gradient-to-b from-neutral-100 to-neutral-50 dark:from-black dark:to-[#0a0a0a]">
-      <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.08)_0%,transparent_60%)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,transparent_60%)]" />
+    <div className="mt-24 relative overflow-hidden border-t border-b border-neutral-200 dark:border-white/[0.08] bg-gradient-to-b from-neutral-50 to-white dark:from-black dark:to-[#0a0a0a]">
+      <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.04)_0%,transparent_60%)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,transparent_60%)]" />
       <div className="relative z-10 py-10 md:py-20 flex flex-col items-center text-center px-6">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
@@ -37,7 +37,7 @@ export default function CTASection() {
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             }}
-            className="flex items-center gap-1 md:gap-2 px-2.5 md:px-5 py-1 md:py-2.5 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-[#111] font-mono text-[10px] md:text-[13px] text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors rounded-md cursor-pointer"
+            className="flex items-center gap-1 md:gap-2 px-2.5 md:px-5 py-1 md:py-2.5 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#111] font-mono text-[10px] md:text-[13px] text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors rounded-md cursor-pointer"
           >
             <span className="text-neutral-400 dark:text-neutral-500 select-none">{'>'}</span>
             <span className="tracking-tight">uv add pyrpc-core</span>
