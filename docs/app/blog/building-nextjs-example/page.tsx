@@ -19,7 +19,7 @@ export default function BuildingNextjsExamplePage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">examples/nextjs</code> directory is a complete working app: FastAPI backend, Next.js App Router frontend, end-to-end type safety. This post walks through every file and what it does.
+                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">examples/fastapi-nextjs</code> directory is a complete working app: FastAPI backend, Next.js App Router frontend, end-to-end type safety. This post walks through every file and what it does.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">server.py — the Python backend</h2>
@@ -131,7 +131,7 @@ export function Providers({ children }) {
                 </p>
 
                 <p>
-                    <a href="https://github.com/pyrpc/pyrpc/tree/main/examples/nextjs" className="text-fd-foreground underline underline-offset-2">examples/nextjs on GitHub</a> · <Link href="/docs/client/nextjs" className="text-fd-foreground underline underline-offset-2">Next.js docs</Link>
+                    <a href="https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-nextjs" className="text-fd-foreground underline underline-offset-2">examples/fastapi-nextjs on GitHub</a> · <Link href="/docs/client/nextjs" className="text-fd-foreground underline underline-offset-2">Next.js docs</Link>
                 </p>
             </section>
         </article>

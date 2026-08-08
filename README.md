@@ -108,7 +108,7 @@ npm install @pyrpc/client @pyrpc/vue     # Vue
 npm install @pyrpc/client @pyrpc/svelte  # Svelte
 ```
 
-See [docs](https://pyrpc.com/docs/client/react) and `examples/nextjs`.
+See [docs](https://pyrpc.com/docs/client/react) and `examples/fastapi-nextjs`.
 
 ### 4. Or from Python
 

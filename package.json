@@ -3,7 +3,18 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "examples/nextjs"
+    "examples/fastapi-nextjs",
+    "examples/fastapi-react",
+    "examples/fastapi-svelte",
+    "examples/fastapi-vue",
+    "examples/django-nextjs",
+    "examples/django-react",
+    "examples/django-svelte",
+    "examples/django-vue",
+    "examples/flask-nextjs",
+    "examples/flask-react",
+    "examples/flask-svelte",
+    "examples/flask-vue"
   ],
   "engines": {
     "node": ">=20.0.0"
