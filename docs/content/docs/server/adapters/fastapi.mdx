@@ -1,44 +1,152 @@
 ---
 title: FastAPI Adapter
 description: Mount pyRPC on a FastAPI application using mount_fastapi.
-
 ---
 
 # FastAPI Adapter
 
-The FastAPI adapter exposes your pyRPC procedures at `POST /rpc` on a FastAPI app.
+The FastAPI adapter mounts pyRPC onto a FastAPI app. Every registered procedure becomes callable at `POST /rpc`. Queries map to `useQuery` and mutations to `useMutation` on the frontend — no extra config needed.
 
-## Installation
+## 1. Install
 
 ```bash
 uv add pyrpc-core[fastapi]
+# or
+pip install "pyrpc-core[fastapi]"
 ```
 
-## Basic Setup
+## 2. Write the server
 
 ```python
+# main.py
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 
 app = FastAPI()
 
-@rpc
-def add(a: int, b: int) -> int:
-    return a + b
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # your frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@rpc.query
+def read_root():
+    return {"Hello": "World"}
+
+@rpc.query
+def read_item(item_id: int, q: str = None):
+    return {"item_id": item_id, "q": q}
+
+@rpc.mutation
+def create_item(name: str, description: str = None):
+    return {"name": name, "description": description, "created": True}
 
 mount_fastapi(app)
 ```
 
-This registers `add` in the global registry and mounts a `POST /rpc` endpoint that forwards requests to pyRPC.
+## 3. Start the dev server
 
-## How It Works
+From the directory containing `main.py`:
 
-- `@rpc` registers functions in the default registry.
-- `mount_fastapi(app)` adds a FastAPI route:
-  - path: `/rpc`
-  - method: `POST`
-  - body: JSON-RPC request payload
+```bash
+pyrpc dev
+```
 
-The adapter calls `handle_request(payload)` from `pyRPC`, then returns the JSON-RPC response.
+First run launches a short wizard (2 questions) and writes `pyrpc.json`. Every subsequent run reads that file — no prompts. To skip the wizard entirely:
 
+```bash
+# auto-detect everything
+pyrpc dev --yes
+
+# fully explicit — good for CI
+pyrpc dev --yes --module main --output ../client/src/__pyrpc.d.ts
+```
+
+`pyrpc dev` starts uvicorn, generates `src/__pyrpc.d.ts` in your frontend, and re-generates it on every `.py` save. If a server is already running on that port, it skips starting uvicorn and only runs the type watcher.
+
+## 4. Connect the frontend
+
+Install the adapter for your frontend framework:
+
+```bash
+# React
+npm install @pyrpc/react @pyrpc/client @pyrpc/types @tanstack/react-query
+
+# Next.js
+npm install @pyrpc/next @pyrpc/react @pyrpc/client @pyrpc/types @tanstack/react-query
+
+# Vue
+npm install @pyrpc/vue @pyrpc/client @pyrpc/types @tanstack/vue-query
+
+# Svelte
+npm install @pyrpc/svelte @pyrpc/client @pyrpc/types @tanstack/svelte-query
+```
+
+Then create the typed client — the import from `@pyrpc/types` is what `pyrpc dev` writes:
+
+```ts
+// React — lib/pyrpc.ts
+import { createReactClient } from "@pyrpc/react"
+import type { Types } from "@pyrpc/types"
+
+export const api = createReactClient<Types>({ baseUrl: "http://localhost:8000" })
+```
+
+See the [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) docs for complete setup per framework.
+
+## How it works
+
+- `@rpc.query` / `@rpc.mutation` register the function in a global procedure registry and tag it with a kind.
+- `mount_fastapi(app)` adds two routes:
+  - `POST /rpc` — procedure dispatch
+  - `GET /rpc` — schema introspection (used by `pyrpc dev` to generate types)
+- The kind tag (`query` vs `mutation`) flows through codegen into the generated `.d.ts` file, which is how the frontend adapter knows which TanStack hook to expose on each procedure.
+
+## CORS origins by frontend
+
+| Frontend | Default dev origin |
+|---|---|
+| React (CRA) | `http://localhost:3000` |
+| React (Vite) | `http://localhost:5173` |
+| Next.js | `http://localhost:3000` |
+| Vue (Vite) | `http://localhost:5173` |
+| Svelte (Vite) | `http://localhost:5173` |
+
+## Routers
+
+For larger projects, organize procedures into separate routers:
+
+```python
+from pyrpc_core import Router
+from pyrpc_fastapi import mount_fastapi
+
+users = Router()
+items = Router()
+
+@users.query
+def get_user(user_id: int): ...
+
+@items.mutation
+def create_item(name: str): ...
+
+# Merge into the default router before mounting
+from pyrpc_core import default_router
+default_router.include(users, prefix="users")
+default_router.include(items, prefix="items")
+
+mount_fastapi(app)
+```
+
+## Full working examples
+
+| Example | Frontend | Source |
+|---|---|---|
+| FastAPI + React | React + TanStack Query | [`examples/fastapi-react`](https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-react) |
+| FastAPI + Next.js | Next.js App Router + RSC | [`examples/fastapi-nextjs`](https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-nextjs) |
+| FastAPI + Vue | Vue 3 + TanStack Vue Query | [`examples/fastapi-vue`](https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-vue) |
+| FastAPI + Svelte | Svelte + TanStack Svelte Query | [`examples/fastapi-svelte`](https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-svelte) |

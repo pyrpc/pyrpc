@@ -1,27 +1,134 @@
 ---
 title: Vue
-description: Vue 3 + TanStack Query adapter with @pyrpc/vue.
-
+description: Vue 3 + TanStack Vue Query adapter with @pyrpc/vue.
 ---
 
 # Vue
+
+`@pyrpc/vue` gives you typed `createQuery` / `createMutation` composables for every pyRPC procedure. No hand-written types, no schema files.
+
+## Installation
 
 ```bash
 npm install @pyrpc/vue @pyrpc/client @pyrpc/types @tanstack/vue-query
 ```
 
+## Project structure
+
+```
+my-app/
+  src/
+    pyrpc.ts          ← createPyrpcVue — import this everywhere
+    main.ts           ← createApp().use(pyrpc.plugin).mount()
+    App.vue           ← pyrpc.greet.createQuery() etc.
+```
+
+## 1. Create the client
+
 ```ts
-import { createApp } from "vue"
+// src/pyrpc.ts
 import { createPyrpcVue } from "@pyrpc/vue"
 import type { Types } from "@pyrpc/types"
 
-export const api = createPyrpcVue<Types>({
-  baseUrl: "http://localhost:8000",
+export const pyrpc = createPyrpcVue<Types>({
+  baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:8000",
 })
-
-createApp(App).use(api.plugin).mount("#app")
 ```
+
+## 2. Install the plugin
+
+Vue uses a plugin instead of a Provider component. Install it once on the root app — this sets up the TanStack Vue Query cache:
 
 ```ts
-const { data } = api.greet.useQuery({ name: "Ada" })
+// src/main.ts
+import { createApp } from "vue"
+import App from "./App.vue"
+import { pyrpc } from "./pyrpc"
+
+createApp(App).use(pyrpc.plugin).mount("#app")
 ```
+
+## 3. Call procedures in components
+
+```vue
+<!-- src/App.vue -->
+<script setup lang="ts">
+import { ref } from "vue"
+import { pyrpc } from "./pyrpc"
+
+const name = ref("")
+
+// @rpc.query → createQuery
+const { data: greeting, isPending } = pyrpc.greet.createQuery()
+
+// pass reactive args as a getter function
+const { data: item } = pyrpc.read_item.createQuery(
+  () => ({ item_id: 42, q: "test" })
+)
+
+// @rpc.mutation → createMutation
+const createItem = pyrpc.create_item.createMutation()
+</script>
+
+<template>
+  <div>
+    <p v-if="isPending">Loading…</p>
+    <pre v-else>{{ JSON.stringify(greeting) }}</pre>
+
+    <pre>{{ JSON.stringify(item) }}</pre>
+
+    <input v-model="name" placeholder="Item name" />
+    <button
+      @click="createItem.mutate({ name, description: `Item: ${name}` })"
+      :disabled="createItem.isPending.value"
+    >
+      {{ createItem.isPending.value ? "Creating…" : "Create" }}
+    </button>
+    <pre v-if="createItem.isSuccess.value">
+      {{ JSON.stringify(createItem.data.value) }}
+    </pre>
+  </div>
+</template>
+```
+
+### Reactive args
+
+When a query's args depend on reactive state, pass them as a getter function so TanStack Vue Query re-fetches when they change:
+
+```ts
+const userId = ref(1)
+const { data: user } = pyrpc.get_user.createQuery(() => ({ id: userId.value }))
+// changes to userId.value automatically trigger a refetch
+```
+
+## TypeScript
+
+All parameter and return types are inferred from your Python function signatures:
+
+```ts
+pyrpc.greet.createQuery()                 // ✓ name has a default
+pyrpc.read_item.createQuery(() => ({      // ✓
+  item_id: 42,
+  q: "test",
+}))
+pyrpc.read_item.createQuery(() => ({
+  item_id: "not-a-number",               // ✗ — type error
+}))
+```
+
+## Client config
+
+`createPyrpcVue` accepts the same options as the vanilla client:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `baseUrl` | `string` | `""` | Root URL of the pyRPC server |
+| `headers` | `Record<string, string>` | `{}` | Static headers on every request |
+
+## Full working examples
+
+| Server | Source |
+|---|---|
+| FastAPI | [`examples/fastapi-vue`](https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-vue) |
+| Flask | [`examples/flask-vue`](https://github.com/pyrpc/pyrpc/tree/main/examples/flask-vue) |
+| Django | [`examples/django-vue`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-vue) |

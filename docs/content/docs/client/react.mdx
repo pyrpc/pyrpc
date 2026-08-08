@@ -1,50 +1,136 @@
 ---
 title: React
 description: Typed TanStack Query hooks for React with @pyrpc/react.
-
 ---
 
 # React
 
-One `api` object: procedures, provider, and utils.
+`@pyrpc/react` wraps your pyRPC procedures in TanStack Query hooks. Every procedure becomes a fully typed `useQuery` or `useMutation` — no hand-written types, no schema files.
 
-## Install
+## Installation
 
 ```bash
 npm install @pyrpc/react @pyrpc/client @pyrpc/types @tanstack/react-query
 ```
 
-## Setup
+## Project structure
 
-```tsx
+```
+my-app/
+  src/
+    lib/
+      pyrpc.ts        ← create the client once here
+    index.tsx         ← wrap root in api.Provider
+    App.tsx           ← call api.greet.useQuery() etc.
+    __pyrpc.d.ts      ← written by pyrpc dev (don't edit)
+```
+
+## 1. Create the client
+
+```ts
+// src/lib/pyrpc.ts
 import { createReactClient } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
 export const api = createReactClient<Types>({
-  baseUrl: "http://localhost:8000",
+  baseUrl: process.env.REACT_APP_API_URL ?? "http://localhost:8000",
 })
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  return <api.Provider>{children}</api.Provider>
-}
 ```
 
-## Usage
+`api` is a single object. It carries every procedure as a hook, plus `api.Provider` for the TanStack Query cache.
+
+## 2. Add the Provider
+
+Wrap your root component once — this sets up the shared TanStack Query cache:
 
 ```tsx
-"use client"
-import { api } from "@/lib/pyrpc"
+// src/index.tsx
+import React from "react"
+import ReactDOM from "react-dom/client"
+import App from "./App"
+import { api } from "./lib/pyrpc"
 
-export function Greeting() {
-  const { data } = api.greet.useQuery({ name: "Ada" })
-  const mutation = api.update_user.useMutation()
-  return <p>{data}</p>
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <api.Provider>
+      <App />
+    </api.Provider>
+  </React.StrictMode>
+)
+```
+
+## 3. Call procedures
+
+```tsx
+// src/App.tsx
+import { useState } from "react"
+import { api } from "./lib/pyrpc"
+
+export function App() {
+  const [name, setName] = useState("")
+
+  // @rpc.query → useQuery
+  const { data: greeting, isLoading } = api.greet.useQuery({ name: "World" })
+
+  // @rpc.mutation → useMutation
+  const createItem = api.create_item.useMutation()
+
+  return (
+    <div>
+      {isLoading ? <p>Loading…</p> : <pre>{JSON.stringify(greeting)}</pre>}
+
+      <input value={name} onChange={e => setName(e.target.value)} />
+      <button
+        onClick={() => createItem.mutate({ name })}
+        disabled={createItem.isPending}
+      >
+        {createItem.isPending ? "Creating…" : "Create"}
+      </button>
+
+      {createItem.isSuccess && <pre>{JSON.stringify(createItem.data)}</pre>}
+    </div>
+  )
 }
 ```
+
+`useQuery` / `useMutation` are the standard TanStack Query hooks — all their options (`enabled`, `staleTime`, `onSuccess`, etc.) work exactly as documented in [TanStack Query docs](https://tanstack.com/query/latest).
+
+## Invalidating after a mutation
 
 ```tsx
 const utils = api.useUtils()
-await utils.greet.invalidate({ name: "Ada" })
+const createItem = api.create_item.useMutation({
+  onSuccess: () => {
+    // refetch the items list after a successful create
+    utils.list_items.invalidate()
+  },
+})
 ```
 
-For App Router, use [`@pyrpc/next`](/docs/client/nextjs).
+## TypeScript
+
+All parameter types, return types, and error shapes are inferred from your Python function signatures. There's nothing extra to annotate.
+
+```ts
+// Python:  @rpc.query \n def greet(name: str) -> dict: ...
+// TypeScript infers:
+api.greet.useQuery({ name: "Ada" })  // ✓
+api.greet.useQuery({ nme: "Ada" })   // ✗ — typo caught at compile time
+```
+
+## Backend options
+
+`createReactClient` accepts the same config as the vanilla client:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `baseUrl` | `string` | `""` | Root URL of the pyRPC server |
+| `headers` | `Record<string, string>` | `{}` | Static headers sent on every request |
+
+## Full working examples
+
+| Server | Source |
+|---|---|
+| FastAPI | [`examples/fastapi-react`](https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-react) |
+| Flask | [`examples/flask-react`](https://github.com/pyrpc/pyrpc/tree/main/examples/flask-react) |
+| Django | [`examples/django-react`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-react) |

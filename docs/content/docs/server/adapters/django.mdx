@@ -1,68 +1,130 @@
 ---
 title: Django Adapter
 description: Mount pyRPC on a Django application using mount_django.
-
 ---
 
 # Django Adapter
 
-The Django adapter exposes your pyRPC procedures on a Django application with native async views.
+The Django adapter uses Django's native `async def` views — no sync wrapper needed. Register procedures in `views.py`, import that module in `urls.py`, and call `mount_django()` to wire everything up.
 
-## Installation
+## 1. Install
 
 ```bash
 uv add pyrpc-core[django]
+# or
+pip install "pyrpc-core[django]"
 ```
 
-Or install directly:
-
-```bash
-uv add pyrpc-django-adapter
-```
-
-## Basic Setup
+## 2. Write the server
 
 ```python
-# app/views.py
+# myproject/views.py
+from django.http import HttpResponse
 from pyrpc_core import rpc
 
-@rpc
-def add(a: int, b: int) -> int:
-    return a + b
+def index(request):
+    return HttpResponse("<h1>Django + pyRPC</h1>")
+
+@rpc.query
+async def greet(name: str = "World") -> dict:
+    return {"message": f"Hello, {name}!", "framework": "Django"}
+
+@rpc.query
+async def read_item(item_id: int, q: str = None) -> dict:
+    return {"item_id": item_id, "q": q}
+
+@rpc.mutation
+async def create_item(name: str, description: str = None) -> dict:
+    return {"name": name, "description": description, "created": True}
 ```
 
 ```python
-# app/urls.py
-from django.urls import path
-from pyrpc_django import mount_django
+# myproject/urls.py
+from django.urls import path, include
+from . import views  # this import triggers @rpc registration
 
 urlpatterns = [
-    *mount_django(),
+    path("", views.index),
+    path("rpc/", include("pyrpc_django_adapter.urls")),
 ]
 ```
 
-## How It Works
+> **Important:** importing `views` in `urls.py` is what executes the `@rpc` decorators. Without that import, procedures are never registered and `/rpc` returns an empty schema.
 
-- `@rpc` registers functions in the global registry.
-- `mount_django()` returns a list of URL patterns:
-  - `POST /rpc` — dispatch procedure calls
-  - `GET /rpc` — introspection (schema)
-- The adapter uses Django's native `async def` views — no `anyio.run` bridge needed.
+Add CORS for local frontend development. Install `django-cors-headers`:
 
-## Custom Router
+```bash
+uv add django-cors-headers
+```
+
+Then in `settings.py`:
 
 ```python
-from pyrpc_core import Router
-from pyrpc_django import mount_django
+INSTALLED_APPS = [
+    "corsheaders",
+    # ...
+]
 
-router = Router()
-router.register(...)
+MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # must be before CommonMiddleware
+    "django.middleware.common.CommonMiddleware",
+    # ...
+]
 
-urlpatterns = [
-    *mount_django(router=router),
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",   # React / Next.js
+    "http://localhost:5173",   # Vue / Svelte (Vite)
 ]
 ```
+
+## 3. Start the dev server
+
+From your Django project root:
+
+```bash
+pyrpc dev
+```
+
+First run: 2-question wizard, writes `pyrpc.json`. Subsequent runs: reads it automatically. To skip the wizard:
+
+```bash
+# auto-detect
+pyrpc dev --yes
+
+# explicit — point at the views module
+pyrpc dev --yes --module myproject.views --output ../client/src/__pyrpc.d.ts
+```
+
+## 4. Connect the frontend
+
+```ts
+// lib/pyrpc.ts (React)
+import { createReactClient } from "@pyrpc/react"
+import type { Types } from "@pyrpc/types"
+
+export const api = createReactClient<Types>({ baseUrl: "http://localhost:8000" })
+```
+
+See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) for full frontend setup.
+
+## How it works
+
+- `@rpc.query` / `@rpc.mutation` register the **async** function in the global registry.
+- `path("rpc/", include("pyrpc_django_adapter.urls"))` wires two URL patterns:
+  - `POST /rpc/` — procedure dispatch (native async view)
+  - `GET /rpc/` — schema introspection (used by `pyrpc dev`)
+- Procedures are `async def` because Django 4.2+ handles async views natively. No `anyio.run` bridge.
+- The `from . import views` line in `urls.py` is required — it's what triggers decorator execution.
 
 ## Requirements
 
-- Django 4.2+ (for async view support)
+- Django 4.2+
+
+## Full working examples
+
+| Example | Frontend | Source |
+|---|---|---|
+| Django + React | React + TanStack Query | [`examples/django-react`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-react) |
+| Django + Next.js | Next.js App Router + RSC | [`examples/django-nextjs`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-nextjs) |
+| Django + Vue | Vue 3 + TanStack Vue Query | [`examples/django-vue`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-vue) |
+| Django + Svelte | Svelte + TanStack Svelte Query | [`examples/django-svelte`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-svelte) |

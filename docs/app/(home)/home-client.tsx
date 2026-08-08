@@ -155,38 +155,17 @@ export default function HomeClient({
           <div className="flex flex-col items-center gap-5">
             <span className="text-[11px] font-semibold tracking-widest uppercase text-fd-foreground/30">TypeScript</span>
             <div className="flex items-center gap-6">
-              <span className="flex flex-col items-center gap-1.5">
-                <img src="https://cdn.simpleicons.org/typescript" alt="" className="w-6 h-6" />
-                <span className="text-[10px] font-mono text-fd-foreground/50">TypeScript</span>
-              </span>
-              <span className="flex flex-col items-center gap-1.5 opacity-40 relative saturate-[0.3]">
-                <div className="relative">
-                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="" className="w-6 h-6" />
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-neutral-700/90 text-[7px] text-neutral-300 px-1.5 py-[1px] rounded-full whitespace-nowrap">Coming soon</span>
-                </div>
-                <span className="text-[10px] font-mono text-fd-foreground/35">React</span>
-              </span>
-              <span className="flex flex-col items-center gap-1.5 opacity-40 relative saturate-[0.3]">
-                <div className="relative">
-                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="" className="w-6 h-6" />
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-neutral-700/90 text-[7px] text-neutral-300 px-1.5 py-[1px] rounded-full whitespace-nowrap">Coming soon</span>
-                </div>
-                <span className="text-[10px] font-mono text-fd-foreground/35">Next.js</span>
-              </span>
-              <span className="flex flex-col items-center gap-1.5 opacity-40 relative saturate-[0.3]">
-                <div className="relative">
-                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" alt="" className="w-6 h-6" />
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-neutral-700/90 text-[7px] text-neutral-300 px-1.5 py-[1px] rounded-full whitespace-nowrap">Coming soon</span>
-                </div>
-                <span className="text-[10px] font-mono text-fd-foreground/35">Vue</span>
-              </span>
-              <span className="flex flex-col items-center gap-1.5 opacity-40 relative saturate-[0.3]">
-                <div className="relative">
-                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg" alt="" className="w-6 h-6" />
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-neutral-700/90 text-[7px] text-neutral-300 px-1.5 py-[1px] rounded-full whitespace-nowrap">Coming soon</span>
-                </div>
-                <span className="text-[10px] font-mono text-fd-foreground/35">Svelte</span>
-              </span>
+              {[
+                { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+                { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
+                { name: 'Vue', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg' },
+                { name: 'Svelte', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg' },
+              ].map((fw) => (
+                <span key={fw.name} className="flex flex-col items-center gap-1.5">
+                  <img src={fw.icon} alt="" className="w-6 h-6" />
+                  <span className="text-[10px] font-mono text-fd-foreground/50">{fw.name}</span>
+                </span>
+              ))}
             </div>
           </div>
         </div>

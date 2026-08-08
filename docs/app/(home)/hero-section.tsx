@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ReactNode } from 'react';
 
+
 function CodePanel({ code, className }: { code: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [lines, setLines] = useState(0);

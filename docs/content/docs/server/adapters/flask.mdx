@@ -1,45 +1,105 @@
 ---
 title: Flask Adapter
 description: Mount pyRPC on a Flask application using mount_flask.
-
 ---
 
 # Flask Adapter
 
-The Flask adapter exposes your pyRPC procedures at `POST /rpc` on a Flask app.
+The Flask adapter mounts pyRPC onto a Flask app. Flask is sync-only, so the adapter handles async procedure execution internally — your procedure code stays the same.
 
-## Installation
+## 1. Install
 
 ```bash
 uv add pyrpc-core[flask]
+# or
+pip install "pyrpc-core[flask]"
 ```
 
-## Basic Setup
+This also installs `flask-cors`, which you'll need for local frontend development.
+
+## 2. Write the server
 
 ```python
+# main.py
 from flask import Flask
+from flask_cors import CORS
 from pyrpc_core import rpc
 from pyrpc_flask import mount_flask
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])  # your frontend origin
 
-@rpc
-def add(a: int, b: int) -> int:
-    return a + b
+@rpc.query
+def greet(name: str = "World") -> dict:
+    return {"message": f"Hello, {name}!", "framework": "Flask"}
+
+@rpc.query
+def read_item(item_id: int, q: str = None) -> dict:
+    return {"item_id": item_id, "q": q}
+
+@rpc.mutation
+def create_item(name: str, description: str = None) -> dict:
+    return {"name": name, "description": description, "created": True}
 
 mount_flask(app)
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)
 ```
 
-This registers `add` in the global registry and mounts a `POST /rpc` endpoint that forwards requests to pyRPC.
+## 3. Start the dev server
 
-## How It Works
+```bash
+pyrpc dev
+```
 
-- `@rpc` registers functions in the default registry.
-- `mount_flask(app)` adds a `/rpc` route on the Flask app.
-- The adapter:
-  - parses JSON from the request body
-  - calls `handle_request(payload)`
-  - returns a JSON response using `jsonify`
+First run: 2-question wizard writes `pyrpc.json`. Every run after: reads `pyrpc.json` automatically. To skip the wizard:
 
-Because Flask is sync-only, the adapter runs the async interpreter with `anyio.run`.
+```bash
+# auto-detect
+pyrpc dev --yes
 
+# fully explicit
+pyrpc dev --yes --module main --output ../client/src/__pyrpc.d.ts
+```
+
+## 4. Connect the frontend
+
+```ts
+// lib/pyrpc.ts (React)
+import { createReactClient } from "@pyrpc/react"
+import type { Types } from "@pyrpc/types"
+
+export const api = createReactClient<Types>({ baseUrl: "http://localhost:5000" })
+```
+
+Note: Flask's default port is `5000`, not `8000`. Adjust `baseUrl` accordingly.
+
+See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) for full frontend setup.
+
+## How it works
+
+- `@rpc.query` / `@rpc.mutation` register the function in the global registry with its kind.
+- `mount_flask(app)` adds two routes to the Flask app:
+  - `POST /rpc` — procedure dispatch (async execution via `anyio.run`)
+  - `GET /rpc` — schema introspection
+- Flask is sync-only — `mount_flask` runs async procedure execution with `anyio.run` internally. You don't need to change anything.
+
+## CORS origins by frontend
+
+| Frontend | Default dev origin |
+|---|---|
+| React (CRA) | `http://localhost:3000` |
+| React (Vite) | `http://localhost:5173` |
+| Next.js | `http://localhost:3000` |
+| Vue (Vite) | `http://localhost:5173` |
+| Svelte (Vite) | `http://localhost:5173` |
+
+## Full working examples
+
+| Example | Frontend | Source |
+|---|---|---|
+| Flask + React | React + TanStack Query | [`examples/flask-react`](https://github.com/pyrpc/pyrpc/tree/main/examples/flask-react) |
+| Flask + Next.js | Next.js App Router + RSC | [`examples/flask-nextjs`](https://github.com/pyrpc/pyrpc/tree/main/examples/flask-nextjs) |
+| Flask + Vue | Vue 3 + TanStack Vue Query | [`examples/flask-vue`](https://github.com/pyrpc/pyrpc/tree/main/examples/flask-vue) |
+| Flask + Svelte | Svelte + TanStack Svelte Query | [`examples/flask-svelte`](https://github.com/pyrpc/pyrpc/tree/main/examples/flask-svelte) |

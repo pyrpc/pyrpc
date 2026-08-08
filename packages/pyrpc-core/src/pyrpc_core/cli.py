@@ -503,11 +503,21 @@ def dev(
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Server host"),
     port: int = typer.Option(8000, "--port", "-p", help="Server port"),
     reload: bool = typer.Option(True, "--reload/--no-reload", help="Uvicorn auto-reload"),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Skip the setup wizard; auto-detect module and output."),
+    module: str = typer.Option(None, "--module", "-m", help="Entry module (skips wizard prompt). Requires --yes."),
+    output: str = typer.Option(None, "--output", "-o", help="Output path for generated types (skips wizard prompt). Requires --yes."),
+    reconfigure: bool = typer.Option(False, "--reconfigure", help="Re-run the setup wizard even if pyrpc.json exists."),
 ):
     """Start the dev server and keep TypeScript types in sync.
 
     First run: wizard asks 2 questions and writes pyrpc.json.
     Every run after: reads pyrpc.json, no questions asked.
+
+    Pass --yes to skip the wizard entirely. pyRPC will auto-detect your
+    entry module and output path, or you can provide them explicitly:
+
+      pyrpc dev --yes
+      pyrpc dev --yes --module main --output src/__pyrpc.d.ts
 
     Detects if a server is already running on host:port — if so, skips
     starting uvicorn and just runs the type watcher. Otherwise starts
@@ -520,7 +530,48 @@ def dev(
 
     # ── Config: read or run wizard ────────────────────────────────────────────
     cfg_path = _find_config()
-    if cfg_path is None:
+
+    if yes and module and output:
+        # Fully non-interactive: all values supplied on the command line.
+        cfg = {"module": module, "framework": "Other", "output": output}
+        if cfg_path is None:
+            cfg_path = _write_config(cfg)
+            console.print(f"  [green]✓[/green]  pyrpc.json created")
+    elif yes:
+        # --yes without explicit flags: auto-detect, no prompts.
+        if cfg_path is not None and not reconfigure:
+            with open(cfg_path) as f:
+                cfg = json.load(f)
+        else:
+            # Auto-detect module
+            default_module = "main"
+            for candidate in ["main.py", "server.py", "app.py", "app/main.py"]:
+                if (Path(cwd) / candidate).exists():
+                    default_module = candidate.replace(".py", "").replace("/", ".")
+                    break
+            resolved_module = module or default_module
+
+            # Auto-detect framework and output
+            detected = _detect_framework(cwd)
+            if not detected:
+                for subdir in ["frontend", "client", "web", "ui"]:
+                    candidate_dir = os.path.join(cwd, subdir)
+                    if os.path.isdir(candidate_dir):
+                        detected = _detect_framework(candidate_dir)
+                        if detected:
+                            detected = (detected[0], os.path.join(subdir, detected[1]))
+                            break
+            resolved_output = output or (
+                _resolve_output_path(cwd, detected[0], detected[1]) if detected else _DEFAULT_OUTPUT
+            )
+            resolved_framework = detected[0] if detected else "Other"
+
+            cfg = {"module": resolved_module, "framework": resolved_framework, "output": resolved_output}
+            if cfg_path is None:
+                cfg_path = _write_config(cfg)
+                console.print(f"  [green]✓[/green]  pyrpc.json created (auto-configured)")
+            console.print(f"  [dim]module={cfg['module']}  output={cfg['output']}[/dim]")
+    elif cfg_path is None or reconfigure:
         cfg = _run_wizard(cwd)
         cfg_path = _write_config(cfg)
         console.print(f"  [green]✓[/green]  pyrpc.json created")
