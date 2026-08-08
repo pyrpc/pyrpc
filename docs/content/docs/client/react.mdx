@@ -5,7 +5,15 @@ description: Typed TanStack Query hooks for React with @pyrpc/react.
 
 # React
 
-`@pyrpc/react` wraps your pyRPC procedures in TanStack Query hooks. Every procedure becomes a fully typed `useQuery` or `useMutation` — no hand-written types, no schema files.
+`@pyrpc/react` wraps your pyRPC procedures in TanStack Query hooks. Every procedure becomes a fully typed `useQuery` or `useMutation` -- no hand-written types, no schema files.
+
+## Why @pyrpc/types is a separate install
+
+`@pyrpc/types` ships as a peer dependency, not a regular dependency. This means npm will not install it automatically when you install `@pyrpc/react` or any other adapter. You need to list it explicitly.
+
+The package itself is a shell -- it contains a placeholder `src/index.ts`. The actual content is written by `pyrpc dev` into `src/__pyrpc.d.ts` in your project. The `@pyrpc/client` postinstall script injects a tsconfig path alias so `import type { Types } from "@pyrpc/types"` resolves to that file.
+
+Both steps are required: the npm package (for the alias target) and `pyrpc dev` (to write the actual types).
 
 ## Installation
 
@@ -19,10 +27,10 @@ npm install @pyrpc/react @pyrpc/client @pyrpc/types @tanstack/react-query
 my-app/
   src/
     lib/
-      pyrpc.ts        ← create the client once here
-    index.tsx         ← wrap root in api.Provider
-    App.tsx           ← call api.greet.useQuery() etc.
-    __pyrpc.d.ts      ← written by pyrpc dev (don't edit)
+      pyrpc.ts        <- create the client once here
+    index.tsx         <- wrap root in api.Provider
+    App.tsx           <- call api.greet.useQuery() etc.
+    __pyrpc.d.ts      <- written by pyrpc dev (do not edit)
 ```
 
 ## 1. Create the client
@@ -41,7 +49,7 @@ export const api = createReactClient<Types>({
 
 ## 2. Add the Provider
 
-Wrap your root component once — this sets up the shared TanStack Query cache:
+Wrap your root component once -- this sets up the shared TanStack Query cache:
 
 ```tsx
 // src/index.tsx
@@ -69,22 +77,22 @@ import { api } from "./lib/pyrpc"
 export function App() {
   const [name, setName] = useState("")
 
-  // @rpc.query → useQuery
+  // @rpc.query maps to useQuery
   const { data: greeting, isLoading } = api.greet.useQuery({ name: "World" })
 
-  // @rpc.mutation → useMutation
+  // @rpc.mutation maps to useMutation
   const createItem = api.create_item.useMutation()
 
   return (
     <div>
-      {isLoading ? <p>Loading…</p> : <pre>{JSON.stringify(greeting)}</pre>}
+      {isLoading ? <p>Loading</p> : <pre>{JSON.stringify(greeting)}</pre>}
 
       <input value={name} onChange={e => setName(e.target.value)} />
       <button
         onClick={() => createItem.mutate({ name })}
         disabled={createItem.isPending}
       >
-        {createItem.isPending ? "Creating…" : "Create"}
+        {createItem.isPending ? "Creating" : "Create"}
       </button>
 
       {createItem.isSuccess && <pre>{JSON.stringify(createItem.data)}</pre>}
@@ -93,7 +101,7 @@ export function App() {
 }
 ```
 
-`useQuery` / `useMutation` are the standard TanStack Query hooks — all their options (`enabled`, `staleTime`, `onSuccess`, etc.) work exactly as documented in [TanStack Query docs](https://tanstack.com/query/latest).
+`useQuery` and `useMutation` are the standard TanStack Query hooks. All their options (`enabled`, `staleTime`, `onSuccess`, etc.) work exactly as documented in the [TanStack Query docs](https://tanstack.com/query/latest).
 
 ## Invalidating after a mutation
 
@@ -101,7 +109,6 @@ export function App() {
 const utils = api.useUtils()
 const createItem = api.create_item.useMutation({
   onSuccess: () => {
-    // refetch the items list after a successful create
     utils.list_items.invalidate()
   },
 })
@@ -109,16 +116,15 @@ const createItem = api.create_item.useMutation({
 
 ## TypeScript
 
-All parameter types, return types, and error shapes are inferred from your Python function signatures. There's nothing extra to annotate.
+All parameter types, return types, and error shapes are inferred from your Python function signatures. There is nothing extra to annotate.
 
 ```ts
-// Python:  @rpc.query \n def greet(name: str) -> dict: ...
-// TypeScript infers:
-api.greet.useQuery({ name: "Ada" })  // ✓
-api.greet.useQuery({ nme: "Ada" })   // ✗ — typo caught at compile time
+// Python: @rpc.query \n def greet(name: str) -> dict: ...
+api.greet.useQuery({ name: "Ada" })  // correct
+api.greet.useQuery({ nme: "Ada" })   // type error -- typo caught at compile time
 ```
 
-## Backend options
+## Client config
 
 `createReactClient` accepts the same config as the vanilla client:
 
