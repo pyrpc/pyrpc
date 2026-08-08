@@ -10,7 +10,6 @@ jobs:
   publish-pypi:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: write
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +34,7 @@ jobs:
         with:
           packages-dir: dist/
           skip-existing: true
+          password: ${{ secrets.PYPI_API_TOKEN }}
 
   publish-npm-types:
     runs-on: ubuntu-latest
