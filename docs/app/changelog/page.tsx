@@ -12,9 +12,9 @@ function TagBadge({ tag }: { tag: string }) {
 export default function ChangelogPage() {
     return (
         <div className="max-w-3xl mx-auto px-6 py-20">
-            <h1 className="text-2xl font-bold tracking-tight uppercase font-mono mb-2">Changelog</h1>
+            <h1 className="text-2xl font-bold tracking-tight mb-2">Changelog</h1>
             <p className="text-sm text-fd-muted-foreground mb-12">
-                Release history for the pyrpc framework.
+                Release history for the pyRPC framework.
             </p>
 
             <div className="space-y-16">
@@ -41,16 +41,16 @@ export default function ChangelogPage() {
                             </div>
 
                             {/* Sections */}
-                            <div className="space-y-6">
+                            <div className="space-y-5">
                                 {release.sections.map((section) => (
                                     <div key={section.title}>
-                                        <h3 className="text-xs font-bold uppercase tracking-[0.15em] font-mono text-fd-foreground mb-2">
+                                        <h3 className="text-[12px] font-semibold text-fd-foreground mb-2">
                                             {section.title}
                                         </h3>
                                         <ul className="space-y-1.5">
                                             {section.items.map((item, i) => (
                                                 <li key={i} className="text-sm text-fd-muted-foreground pl-4 relative">
-                                                    <span className="absolute left-0 top-[0.45em] w-1.5 h-1.5 rounded-full bg-fd-muted-foreground/30" />
+                                                    <span className="absolute left-0 top-[0.45em] w-1.5 h-1.5 rounded-full bg-fd-muted-foreground/25" />
                                                     {item}
                                                 </li>
                                             ))}

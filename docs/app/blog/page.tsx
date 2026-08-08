@@ -605,6 +605,11 @@ export default function BlogPage() {
     const [active, setActive] = useState<Category>('all')
 
     const filtered = active === 'all' ? posts : posts.filter(p => p.category === active)
+    const sorted = [...filtered].reverse()
+
+    // Pinned featured posts shown at top when viewing all
+    const featuredSlugs = ['why-pyrpc', 'framework-adapters-deep-dive', 'from-trpc-to-pyrpc']
+    const featured = posts.filter(p => featuredSlugs.includes(p.slug))
 
     const tagLabel: Record<Category, string> = {
         'all': '',
@@ -613,51 +618,102 @@ export default function BlogPage() {
         'tutorial': 'Tutorial',
     }
 
+    const tagColor: Record<Category, string> = {
+        'all': '',
+        'release': 'bg-blue-500/10 text-blue-500/80 dark:text-blue-400/70',
+        'deep-dive': 'bg-purple-500/10 text-purple-500/80 dark:text-purple-400/70',
+        'tutorial': 'bg-emerald-500/10 text-emerald-500/80 dark:text-emerald-400/70',
+    }
+
     return (
         <div className="max-w-3xl mx-auto px-6 py-20">
-            <h1 className="text-2xl font-bold tracking-tight uppercase font-mono mb-2">Blog</h1>
+            <h1 className="text-2xl font-bold tracking-tight mb-1">Blog</h1>
             <p className="text-sm text-fd-muted-foreground mb-8">
-                Design notes, deep dives, and updates from the pyrpc team.
+                Design notes, deep dives, and release updates from the pyRPC team.
             </p>
 
-            <div className="flex items-center gap-2 mb-12 pb-6 border-b border-fd-border">
+            <div className="flex items-center gap-2 mb-10 pb-6 border-b border-fd-border">
                 {categories.map((cat) => (
                     <button
                         key={cat.key}
                         onClick={() => setActive(cat.key)}
                         className={cn(
-                            "px-3 py-1.5 text-[11px] font-medium tracking-wide rounded-full transition-colors",
+                            "px-3 py-1.5 text-[11px] font-medium tracking-wide rounded-full transition-colors cursor-pointer",
                             active === cat.key
-                                ? "bg-fd-foreground text-fd-background dark:text-black"
+                                ? "bg-fd-foreground text-fd-background"
                                 : "text-fd-muted-foreground hover:text-fd-foreground bg-fd-accent/30"
                         )}
                     >
                         {cat.label}
                     </button>
                 ))}
+                <span className="ml-auto text-[10px] font-mono text-fd-muted-foreground/50">
+                    {sorted.length} posts
+                </span>
             </div>
 
-            <div className="space-y-6">
-                {[...filtered].reverse().map((post) => (
+            {/* Featured 3-up — only on "all" tab */}
+            {active === 'all' && (
+                <div className="mb-10">
+                    <div className="grid md:grid-cols-3 gap-3 mb-10">
+                        {featured.map((post) => (
+                            <Link
+                                key={post.slug}
+                                href={`/blog/${post.slug}`}
+                                className="group block border border-fd-border rounded-lg p-4 hover:bg-fd-accent/20 transition-colors bg-fd-accent/5"
+                            >
+                                <span className={cn(
+                                    "inline-block text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded mb-3",
+                                    tagColor[post.category]
+                                )}>
+                                    {tagLabel[post.category]}
+                                </span>
+                                <h2 className="text-[13px] font-semibold leading-snug group-hover:text-fd-foreground transition-colors mb-2">
+                                    {post.title}
+                                </h2>
+                                <p className="text-[11px] text-fd-muted-foreground leading-relaxed line-clamp-2">
+                                    {post.description}
+                                </p>
+                                <div className="mt-3 text-[10px] font-mono text-fd-muted-foreground/50">
+                                    {post.readTime} read
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                    <div className="h-px bg-fd-border/50 mb-10" />
+                </div>
+            )}
+
+            {/* Main list */}
+            <div className="space-y-3">
+                {sorted.map((post) => (
                     <Link
                         key={post.slug}
                         href={`/blog/${post.slug}`}
-                        className="block group border border-edge rounded-lg p-5 hover:bg-fd-accent/30 transition-colors"
+                        className="flex items-start gap-4 group py-4 border-b border-fd-border/40 last:border-0 hover:bg-fd-accent/10 -mx-3 px-3 rounded-md transition-colors"
                     >
-                        <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground mb-2">
-                            <time>{post.date}</time>
-                            <span>&middot;</span>
-                            <span>{post.readTime}</span>
-                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-fd-accent/50 text-fd-muted-foreground font-bold">
-                                {tagLabel[post.category]}
-                            </span>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className={cn(
+                                    "text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0",
+                                    tagColor[post.category]
+                                )}>
+                                    {tagLabel[post.category]}
+                                </span>
+                                <span className="text-[10px] font-mono text-fd-muted-foreground/40 truncate">
+                                    {post.readTime}
+                                </span>
+                            </div>
+                            <h2 className="text-[14px] font-medium text-fd-foreground group-hover:text-fd-foreground/90 transition-colors leading-snug mb-1">
+                                {post.title}
+                            </h2>
+                            <p className="text-[12px] text-fd-muted-foreground leading-relaxed line-clamp-1">
+                                {post.description}
+                            </p>
                         </div>
-                        <h2 className="text-base font-semibold group-hover:text-fd-foreground transition-colors mb-1">
-                            {post.title}
-                        </h2>
-                        <p className="text-sm text-fd-muted-foreground leading-relaxed">
-                            {post.description}
-                        </p>
+                        <time className="text-[10px] font-mono text-fd-muted-foreground/35 shrink-0 pt-0.5 hidden sm:block">
+                            {post.date.split(' at')[0]}
+                        </time>
                     </Link>
                 ))}
             </div>

@@ -233,7 +233,7 @@ export default function PlaygroundPage() {
             setStatus('success')
         } catch (err: any) {
             const msg = err?.message ?? String(err);
-            setLogs((prev: string[]) => [...prev, `âœ- Error: ${msg}`]);
+            setLogs((prev: string[]) => [...prev, `Error: ${msg}`]);
             setResponse({ result: null, error: { message: msg } })
             setStatus('error');
         }
@@ -403,10 +403,10 @@ export default function PlaygroundPage() {
                         {logs.map((line, i) => (
                             <div key={i} className={cn(
                                 'whitespace-pre-wrap',
-                                line.startsWith('âœ-') && 'text-[#ff5555]',
-                                line.startsWith('âœ“') && 'text-[#33cc66]',
+                                line.startsWith('Error:') && 'text-[#ff5555]',
+                                line.startsWith('OK:') && 'text-[#33cc66]',
                                 line.startsWith('$') && 'text-[#5a6478]',
-                                !line.startsWith('âœ-') && !line.startsWith('âœ“') && !line.startsWith('$') && (isDark ? 'text-[#c9d1d9]' : 'text-[#374151]')
+                                !line.startsWith('Error:') && !line.startsWith('OK:') && !line.startsWith('$') && (isDark ? 'text-[#c9d1d9]' : 'text-[#374151]')
                             )}>
                                 <span className="text-[#33cc66] mr-2">$</span>
                                 {line.replace(/^\$\s*/, '')}
