@@ -1,68 +1,215 @@
 ---
 title: Django Adapter
-description: Mount pyRPC on a Django application using mount_django.
-
+description: Mount pyRPC on a Django application using pyrpc_django_adapter.
 ---
 
 # Django Adapter
 
-The Django adapter exposes your pyRPC procedures on a Django application with native async views.
-
-## Installation
-
-```bash
-uv add pyrpc-core[django]
-```
-
-Or install directly:
-
-```bash
-uv add pyrpc-django-adapter
-```
-
-## Basic Setup
-
-```python
-# app/views.py
-from pyrpc_core import rpc
-
-@rpc
-def add(a: int, b: int) -> int:
-    return a + b
-```
-
-```python
-# app/urls.py
-from django.urls import path
-from pyrpc_django import mount_django
-
-urlpatterns = [
-    *mount_django(),
-]
-```
-
-## How It Works
-
-- `@rpc` registers functions in the global registry.
-- `mount_django()` returns a list of URL patterns:
-  - `POST /rpc` — dispatch procedure calls
-  - `GET /rpc` — introspection (schema)
-- The adapter uses Django's native `async def` views — no `anyio.run` bridge needed.
-
-## Custom Router
-
-```python
-from pyrpc_core import Router
-from pyrpc_django import mount_django
-
-router = Router()
-router.register(...)
-
-urlpatterns = [
-    *mount_django(router=router),
-]
-```
+The Django adapter uses Django's native `async def` views (Django 4.2+). Register procedures with `@rpc.query` / `@rpc.mutation`, wire the URL include into your URLconf, and import the views module to trigger registration.
 
 ## Requirements
 
-- Django 4.2+ (for async view support)
+- Python 3.11+
+- Django 4.2+
+- `pyrpc-core[django]`
+
+## 1. Install
+
+```bash
+uv add pyrpc-core[django]
+# or
+pip install "pyrpc-core[django]"
+```
+
+For CORS during local development:
+
+```bash
+uv add django-cors-headers
+# or
+pip install django-cors-headers
+```
+
+## 2. Project scaffold
+
+If you are starting a new project, follow the [official Django tutorial](https://docs.djangoproject.com/en/stable/intro/tutorial01/) to create the project structure:
+
+```bash
+django-admin startproject myproject
+cd myproject
+python manage.py startapp myapp
+```
+
+The minimum file structure pyRPC needs:
+
+```
+myproject/
+  manage.py
+  myproject/
+    __init__.py
+    settings.py
+    urls.py
+    wsgi.py
+```
+
+## 3. Settings
+
+Add `corsheaders` and your app to `INSTALLED_APPS`. Put `CorsMiddleware` first in `MIDDLEWARE` -- this is required by [django-cors-headers](https://github.com/adamchainz/django-cors-headers).
+
+```python
+# myproject/settings.py
+INSTALLED_APPS = [
+    "corsheaders",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "myproject",
+]
+
+MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",   # must be first
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",   # React / Next.js
+    "http://localhost:5173",   # Vue / Svelte (Vite)
+]
+CORS_ALLOW_CREDENTIALS = True
+```
+
+## 4. Write procedures
+
+Procedures are `async def` functions decorated with `@rpc.query` or `@rpc.mutation`. Django 4.2+ runs them as native async views with no bridge needed.
+
+```python
+# myproject/views.py
+from django.http import HttpResponse
+from pyrpc_core import rpc
+
+
+def index(request):
+    return HttpResponse("<h1>Django + pyRPC</h1>")
+
+
+@rpc.query
+async def greet(name: str = "World") -> dict:
+    return {"message": f"Hello, {name}!", "framework": "Django"}
+
+
+@rpc.query
+async def read_item(item_id: int, q: str = None) -> dict:
+    return {"item_id": item_id, "q": q}
+
+
+@rpc.mutation
+async def create_item(name: str, description: str = None) -> dict:
+    return {"name": name, "description": description, "created": True}
+```
+
+## 5. Wire the URLs
+
+Include `pyrpc_django_adapter.urls` in your URLconf. The import of `views` at the top is required -- it executes the `@rpc` decorators. Without it the procedures are never registered and `/rpc/` returns an empty schema.
+
+```python
+# myproject/urls.py
+from django.contrib import admin
+from django.urls import path, include
+from . import views   # required: triggers @rpc decorator execution
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", views.index, name="index"),
+    path("rpc/", include("pyrpc_django_adapter.urls")),
+]
+```
+
+The include adds two URL patterns:
+
+- `POST /rpc/` -- procedure dispatch (native async view)
+- `GET /rpc/` -- schema introspection (used by `pyrpc dev`)
+
+## 6. Start the dev server
+
+From the directory containing `manage.py`:
+
+```bash
+pyrpc dev
+```
+
+First run: 2-question wizard, writes `pyrpc.json`. Every run after reads it automatically. To skip the wizard:
+
+```bash
+# auto-detect
+pyrpc dev --yes
+
+# explicit -- point at the views module
+pyrpc dev --yes --module myproject.views --output ../client/src/__pyrpc.d.ts
+```
+
+`pyrpc dev` starts Django via uvicorn, generates `src/__pyrpc.d.ts` in your frontend, and regenerates it on every `.py` save.
+
+## 7. Connect the frontend
+
+```ts
+// lib/pyrpc.ts (React example)
+import { createReactClient } from "@pyrpc/react"
+import type { Types } from "@pyrpc/types"
+
+export const api = createReactClient<Types>({ baseUrl: "http://localhost:8000" })
+```
+
+See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) for full frontend setup per framework.
+
+## How it works
+
+- `@rpc.query` / `@rpc.mutation` register the async function in the global procedure registry and tag it with a kind.
+- `include("pyrpc_django_adapter.urls")` wires the two RPC routes into Django's URL dispatcher.
+- The `from . import views` line in `urls.py` is what causes Python to execute the module and run the `@rpc` decorators. This is the same mechanism Django uses for signals and `AppConfig.ready()`.
+- Procedures use `async def` because Django 4.2+ dispatches async views natively. There is no `anyio.run` wrapper.
+
+## Custom router
+
+If you want to isolate procedures by app rather than using the global default router:
+
+```python
+# myapp/procedures.py
+from pyrpc_core import Router
+
+router = Router()
+
+@router.query
+async def list_items() -> list:
+    return []
+
+@router.mutation
+async def create_item(name: str) -> dict:
+    return {"name": name, "created": True}
+```
+
+```python
+# myproject/urls.py
+from myapp.procedures import router
+from pyrpc_django_adapter import get_urlpatterns
+
+urlpatterns = [
+    path("rpc/", include(get_urlpatterns(router=router))),
+]
+```
+
+## Full working examples
+
+| Example | Frontend | Source |
+|---|---|---|
+| Django + React | React + TanStack Query | [`examples/django-react`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-react) |
+| Django + Next.js | Next.js App Router + RSC | [`examples/django-nextjs`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-nextjs) |
+| Django + Vue | Vue 3 + TanStack Vue Query | [`examples/django-vue`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-vue) |
+| Django + Svelte | Svelte + TanStack Svelte Query | [`examples/django-svelte`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-svelte) |

@@ -1,33 +1,141 @@
 ---
 title: Svelte
-description: Svelte + TanStack Query adapter with @pyrpc/svelte.
-
+description: Svelte + TanStack Svelte Query adapter with @pyrpc/svelte.
 ---
 
 # Svelte
+
+`@pyrpc/svelte` gives you typed `createQuery` / `createMutation` stores for every pyRPC procedure. Works with SvelteKit and plain Svelte.
+
+## Installation
 
 ```bash
 npm install @pyrpc/svelte @pyrpc/client @pyrpc/types @tanstack/svelte-query
 ```
 
+## Project structure
+
+```
+my-app/
+  src/
+    lib/
+      pyrpc.ts              ← createSvelteClient — import everywhere
+    routes/
+      +layout.svelte        ← QueryClientProvider wrapper
+      +page.svelte          ← api.greet.createQuery() etc.
+```
+
+## 1. Create the client
+
 ```ts
+// src/lib/pyrpc.ts
 import { createSvelteClient } from "@pyrpc/svelte"
 import type { Types } from "@pyrpc/types"
 
 export const api = createSvelteClient<Types>({
-  baseUrl: "http://localhost:8000",
+  baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:8000",
 })
 ```
 
-Wrap the app with TanStack Svelte Query’s `QueryClientProvider` (their standard). Svelte uses `createQuery` / `createMutation`:
+## 2. Wrap the layout
+
+Svelte uses TanStack Svelte Query's `QueryClientProvider` directly in the layout — the standard approach:
 
 ```svelte
+<!-- src/routes/+layout.svelte -->
 <script lang="ts">
-  import { api } from "$lib/pyrpc"
-  const query = api.greet.createQuery({ name: "Ada" })
+  import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query"
+  const queryClient = new QueryClient()
 </script>
 
-{#if $query.isSuccess}
-  <p>{$query.data}</p>
+<QueryClientProvider client={queryClient}>
+  <slot />
+</QueryClientProvider>
+```
+
+## 3. Call procedures in pages
+
+```svelte
+<!-- src/routes/+page.svelte -->
+<script lang="ts">
+  import { api } from "$lib/pyrpc"
+
+  let name = ""
+
+  // @rpc.query → createQuery (returns a store)
+  const greeting = api.greet.createQuery()
+
+  // pass reactive args as a getter function
+  const item = api.read_item.createQuery(
+    () => ({ item_id: 42, q: "test" })
+  )
+
+  // @rpc.mutation → createMutation (returns a store)
+  const createItem = api.create_item.createMutation()
+
+  function handleCreate() {
+    if (name.trim()) {
+      $createItem.mutate({ name, description: `Item: ${name}` })
+      name = ""
+    }
+  }
+</script>
+
+{#if $greeting.isPending}
+  <p>Loading…</p>
+{:else}
+  <pre>{JSON.stringify($greeting.data)}</pre>
+{/if}
+
+<pre>{JSON.stringify($item.data)}</pre>
+
+<input bind:value={name} placeholder="Item name" />
+<button on:click={handleCreate} disabled={$createItem.isPending}>
+  {$createItem.isPending ? "Creating…" : "Create"}
+</button>
+
+{#if $createItem.isSuccess}
+  <pre>{JSON.stringify($createItem.data)}</pre>
 {/if}
 ```
+
+Prefix the store with `$` to subscribe to its value — this is standard Svelte store syntax.
+
+### Reactive args
+
+When query args come from reactive state, use a getter function:
+
+```ts
+let itemId = 1
+const item = api.get_item.createQuery(() => ({ id: itemId }))
+// changing itemId triggers a refetch automatically
+```
+
+## TypeScript
+
+All parameter and return types are inferred from Python:
+
+```ts
+api.greet.createQuery()                       // ✓
+api.read_item.createQuery(() => ({
+  item_id: 42, q: "test"
+}))                                           // ✓
+api.read_item.createQuery(() => ({
+  item_id: "oops"                             // ✗ — type error
+}))
+```
+
+## Client config
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `baseUrl` | `string` | `""` | Root URL of the pyRPC server |
+| `headers` | `Record<string, string>` | `{}` | Static headers on every request |
+
+## Full working examples
+
+| Server | Source |
+|---|---|
+| FastAPI | [`examples/fastapi-svelte`](https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-svelte) |
+| Flask | [`examples/flask-svelte`](https://github.com/pyrpc/pyrpc/tree/main/examples/flask-svelte) |
+| Django | [`examples/django-svelte`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-svelte) |

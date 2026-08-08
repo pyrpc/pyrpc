@@ -1,23 +1,35 @@
 ---
 title: Next.js
-description: Full App Router adapter with RSC prefetch and hydration.
-
+description: Full App Router adapter with RSC prefetch and hydration for @pyrpc/next.
 ---
 
 # Next.js
 
-One `api` object — no destructuring required.
+`@pyrpc/next` extends `@pyrpc/react` with React Server Component helpers: `api.prefetch`, `api.dehydrate()`, and `api.HydrationBoundary`. Server components warm the TanStack cache; client components call `useQuery` and get instant data with no loading flicker.
 
-## Install
+## Installation
 
 ```bash
 npm install @pyrpc/next @pyrpc/react @pyrpc/client @pyrpc/types @tanstack/react-query
 ```
 
-## Setup
+## Project structure
+
+```
+my-app/
+  app/
+    layout.tsx        ← RootLayout with <Providers>
+    page.tsx          ← Server component: prefetch
+    counter.tsx       ← Client component: useQuery/useMutation
+    providers.tsx     ← "use client" QueryClient + api.Provider
+  lib/
+    pyrpc.ts          ← createNextClient — import this everywhere
+```
+
+## 1. Create the client
 
 ```ts
-// src/lib/pyrpc.ts
+// lib/pyrpc.ts
 import { createNextClient } from "@pyrpc/next"
 import type { Types } from "@pyrpc/types"
 
@@ -26,52 +38,141 @@ export const api = createNextClient<Types>({
 })
 ```
 
+One file, one import everywhere — same variable on the server and in client components.
+
+## 2. Set up Providers
+
 ```tsx
 // app/providers.tsx
 "use client"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { api } from "@/lib/pyrpc"
+import { useState } from "react"
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <api.Provider>{children}</api.Provider>
-}
-```
-
-## Server + client
-
-```tsx
-// app/page.tsx
-import { api } from "@/lib/pyrpc"
-import { Greeting } from "./greeting"
-
-export default async function Page() {
-  await api.prefetch.greet({ name: "Ada" })
+  const [queryClient] = useState(() => new QueryClient())
   return (
-    <api.HydrationBoundary state={api.dehydrate()}>
-      <Greeting />
-    </api.HydrationBoundary>
+    <QueryClientProvider client={queryClient}>
+      <api.Provider>{children}</api.Provider>
+    </QueryClientProvider>
   )
 }
 ```
 
 ```tsx
-// app/greeting.tsx
-"use client"
-import { api } from "@/lib/pyrpc"
+// app/layout.tsx
+import { Providers } from "./providers"
 
-export function Greeting() {
-  const { data } = api.greet.useQuery({ name: "Ada" })
-  return <p>{data}</p>
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
 }
 ```
 
-### What’s on `api`
+## 3. Server component — prefetch
 
-| | |
-|--|--|
-| `api.greet.useQuery` | Client hooks |
-| `api.Provider` | App-wide TanStack cache |
-| `api.prefetch.*` | Server query warm-up |
-| `api.dehydrate` / `api.HydrationBoundary` | Cache handoff to the browser |
-| `api.createCaller()` | Server Promise calls (incl. mutations) |
+Prefetch in a Server Component so the client gets data on first render with no loading state:
 
-See [`examples/fastapi-nextjs`](https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-nextjs).
+```tsx
+// app/page.tsx
+import { api } from "@/lib/pyrpc"
+import { Counter } from "./counter"
+
+export default async function Page() {
+  // warm the cache server-side
+  await api.prefetch.read_root()
+  await api.prefetch.read_item({ item_id: 42, q: "test" })
+
+  return (
+    <api.HydrationBoundary state={api.dehydrate()}>
+      <Counter />
+    </api.HydrationBoundary>
+  )
+}
+```
+
+## 4. Client component — hooks
+
+```tsx
+// app/counter.tsx
+"use client"
+import { api } from "@/lib/pyrpc"
+import { useState } from "react"
+
+export function Counter() {
+  const [name, setName] = useState("")
+
+  // data is already in cache — no loading flicker
+  const { data: greeting } = api.read_root.useQuery()
+  const { data: item } = api.read_item.useQuery({ item_id: 42, q: "test" })
+  const createItem = api.create_item.useMutation()
+
+  return (
+    <div>
+      <pre>{JSON.stringify(greeting)}</pre>
+      <pre>{JSON.stringify(item)}</pre>
+
+      <input value={name} onChange={e => setName(e.target.value)} />
+      <button
+        onClick={() => createItem.mutate({ name, description: `Item: ${name}` })}
+        disabled={createItem.isPending}
+      >
+        {createItem.isPending ? "Creating…" : "Create"}
+      </button>
+      {createItem.isSuccess && <pre>{JSON.stringify(createItem.data)}</pre>}
+    </div>
+  )
+}
+```
+
+## What's on `api`
+
+| Property | Where | Description |
+|---|---|---|
+| `api.<proc>.useQuery(…)` | Client | TanStack `useQuery` hook |
+| `api.<proc>.useMutation(…)` | Client | TanStack `useMutation` hook |
+| `api.Provider` | Client | Provides the TanStack cache |
+| `api.useUtils()` | Client | Cache utilities (invalidate, setData…) |
+| `api.prefetch.<proc>(…)` | Server | Warms the cache before rendering |
+| `api.dehydrate()` | Server | Serializes the cache for handoff |
+| `api.HydrationBoundary` | Server → Client | Passes dehydrated cache to the browser |
+| `api.createCaller()` | Server | Direct Promise calls (queries + mutations) |
+
+## Skipping prefetch
+
+Prefetch is optional. If you skip it, the client component fetches on mount exactly like plain `@pyrpc/react`:
+
+```tsx
+// app/page.tsx — no prefetch
+export default function Page() {
+  return <Counter />
+}
+```
+
+## Server-side mutations with createCaller
+
+Mutations can't be prefetched (they have side effects), but you can call them from Server Actions or Route Handlers:
+
+```ts
+// app/actions.ts
+"use server"
+import { api } from "@/lib/pyrpc"
+
+export async function serverCreate(name: string) {
+  const caller = api.createCaller()
+  return caller.create_item({ name })
+}
+```
+
+## Full working examples
+
+| Server | Source |
+|---|---|
+| FastAPI | [`examples/fastapi-nextjs`](https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-nextjs) |
+| Flask | [`examples/flask-nextjs`](https://github.com/pyrpc/pyrpc/tree/main/examples/flask-nextjs) |
+| Django | [`examples/django-nextjs`](https://github.com/pyrpc/pyrpc/tree/main/examples/django-nextjs) |
