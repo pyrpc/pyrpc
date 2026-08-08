@@ -6,26 +6,52 @@ import QuickstartSection from "./quickstart-section";
 import CTASection from "./cta-section";
 import type { ReactNode } from 'react';
 
+// invertServer: Flask and Django icons from simpleicons are black SVGs — invert them in dark mode
 const COMBOS = [
-  "FastAPI + React", "FastAPI + Next.js", "FastAPI + Vue", "FastAPI + Svelte",
-  "Flask + React", "Flask + Next.js", "Flask + Vue", "Flask + Svelte",
-  "Django + React", "Django + Next.js", "Django + Vue", "Django + Svelte",
+  { server: 'FastAPI', serverIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invertServer: false, client: 'React',   clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invertClient: false },
+  { server: 'FastAPI', serverIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invertServer: false, client: 'Next.js', clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invertClient: true  },
+  { server: 'FastAPI', serverIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invertServer: false, client: 'Vue',     clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invertClient: false },
+  { server: 'FastAPI', serverIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invertServer: false, client: 'Svelte',  clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invertClient: false },
+  { server: 'Flask',   serverIcon: 'https://cdn.simpleicons.org/flask',  invertServer: true,  client: 'React',   clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invertClient: false },
+  { server: 'Flask',   serverIcon: 'https://cdn.simpleicons.org/flask',  invertServer: true,  client: 'Next.js', clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invertClient: true  },
+  { server: 'Flask',   serverIcon: 'https://cdn.simpleicons.org/flask',  invertServer: true,  client: 'Vue',     clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invertClient: false },
+  { server: 'Flask',   serverIcon: 'https://cdn.simpleicons.org/flask',  invertServer: true,  client: 'Svelte',  clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invertClient: false },
+  { server: 'Django',  serverIcon: 'https://cdn.simpleicons.org/django', invertServer: true,  client: 'React',   clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invertClient: false },
+  { server: 'Django',  serverIcon: 'https://cdn.simpleicons.org/django', invertServer: true,  client: 'Next.js', clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invertClient: true  },
+  { server: 'Django',  serverIcon: 'https://cdn.simpleicons.org/django', invertServer: true,  client: 'Vue',     clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invertClient: false },
+  { server: 'Django',  serverIcon: 'https://cdn.simpleicons.org/django', invertServer: true,  client: 'Svelte',  clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invertClient: false },
 ];
 
 function FrameworkMarquee() {
   const doubled = [...COMBOS, ...COMBOS];
   return (
-    <div className="relative w-full overflow-hidden py-3 border-y border-fd-border/50 bg-neutral-50/50 dark:bg-black/30">
-      <div className="absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-neutral-50 dark:from-fd-background to-transparent pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-neutral-50 dark:from-fd-background to-transparent pointer-events-none" />
+    <div className="relative w-full overflow-hidden py-2.5 border-y border-fd-border/50 bg-neutral-50/50 dark:bg-black/30">
+      <div className="absolute left-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-r from-neutral-50 dark:from-fd-background to-transparent pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-l from-neutral-50 dark:from-fd-background to-transparent pointer-events-none" />
       <motion.div
-        className="flex gap-8 w-max"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 32, ease: "linear", repeat: Infinity }}
+        className="flex items-center gap-10 w-max"
+        animate={{ x: ['0%', '-50%'] }}
+        transition={{ duration: 42, ease: 'linear', repeat: Infinity }}
       >
         {doubled.map((combo, i) => (
-          <span key={i} className="text-[11px] font-mono text-fd-foreground/35 tracking-wide whitespace-nowrap">
-            {combo}
+          <span key={i} className="flex items-center gap-1.5 shrink-0">
+            <img
+              src={combo.serverIcon}
+              alt={combo.server}
+              width={14}
+              height={14}
+              className={`w-3.5 h-3.5 opacity-50${combo.invertServer ? ' dark:invert' : ''}`}
+            />
+            <span className="text-[10px] font-mono text-fd-foreground/40">{combo.server}</span>
+            <span className="text-[10px] font-mono text-fd-foreground/20 mx-0.5 select-none">+</span>
+            <img
+              src={combo.clientIcon}
+              alt={combo.client}
+              width={14}
+              height={14}
+              className={`w-3.5 h-3.5 opacity-50${combo.invertClient ? ' dark:invert' : ''}`}
+            />
+            <span className="text-[10px] font-mono text-fd-foreground/40">{combo.client}</span>
           </span>
         ))}
       </motion.div>
@@ -62,16 +88,16 @@ const supportingFeatures = [
 ];
 
 const pythonServers = [
-  { name: 'FastAPI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg' },
-  { name: 'Flask', icon: 'https://cdn.simpleicons.org/flask' },
-  { name: 'Django', icon: 'https://cdn.simpleicons.org/django' },
+  { name: 'FastAPI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invert: false },
+  { name: 'Flask',   icon: 'https://cdn.simpleicons.org/flask',  invert: true  },
+  { name: 'Django',  icon: 'https://cdn.simpleicons.org/django', invert: true  },
 ];
 
 const tsClients = [
-  { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
-  { name: 'Vue', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg' },
-  { name: 'Svelte', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg' },
+  { name: 'React',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invert: false },
+  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invert: true  },
+  { name: 'Vue',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invert: false },
+  { name: 'Svelte',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invert: false },
 ];
 
 export default function HomeClient({
@@ -101,7 +127,7 @@ export default function HomeClient({
         />
       </div>
 
-      {/* 12-combo marquee - shows coverage at a glance */}
+      {/* 12-combo marquee - icon + name pairs, proves coverage at a glance */}
       <FrameworkMarquee />
 
       <div className="px-6 md:px-12 lg:px-20">
@@ -194,7 +220,7 @@ export default function HomeClient({
 
       </div>
 
-      {/* Fits your stack - full-bleed section with compatibility matrix */}
+      {/* Fits your stack - full-bleed with compatibility matrix */}
       <div className="py-20 border-t border-fd-border bg-neutral-50/60 dark:bg-[#040404]">
         <div className="max-w-[1100px] mx-auto px-6 md:px-12 lg:px-0">
           <div className="flex flex-col items-center text-center mb-14">
@@ -220,7 +246,13 @@ export default function HomeClient({
                   {tsClients.map(fw => (
                     <th key={fw.name} className="pb-5 text-center">
                       <div className="flex flex-col items-center gap-2">
-                        <img src={fw.icon} alt={fw.name} className="w-5 h-5" />
+                        <img
+                          src={fw.icon}
+                          alt={fw.name}
+                          width={20}
+                          height={20}
+                          className={`w-5 h-5${fw.invert ? ' dark:invert' : ''}`}
+                        />
                         <span className="text-[10px] font-mono text-fd-foreground/45">{fw.name}</span>
                       </div>
                     </th>
@@ -228,11 +260,17 @@ export default function HomeClient({
                 </tr>
               </thead>
               <tbody>
-                {pythonServers.map((server, si) => (
+                {pythonServers.map((server) => (
                   <tr key={server.name} className="border-t border-fd-border/50">
                     <td className="py-4 pr-8">
                       <div className="flex items-center gap-2.5">
-                        <img src={server.icon} alt={server.name} className="w-4 h-4" />
+                        <img
+                          src={server.icon}
+                          alt={server.name}
+                          width={16}
+                          height={16}
+                          className={`w-4 h-4${server.invert ? ' dark:invert' : ''}`}
+                        />
                         <span className="text-[12px] font-mono text-fd-foreground/55">{server.name}</span>
                       </div>
                     </td>
