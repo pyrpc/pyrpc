@@ -56,7 +56,12 @@ jobs:
             echo "::error::NPM_TOKEN secret is not set."
             exit 1
           fi
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION=$(node -p "require('./package.json').version")
+          EXISTING=$(npm view @pyrpc/types@$VERSION version 2>/dev/null || echo "")
+          if [ "$EXISTING" = "$VERSION" ]; then
+            echo "@pyrpc/types@$VERSION already published, skipping."
+            exit 0
+          fi
           if [[ "$VERSION" == *"-"* ]]; then
             TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
             npm publish --access public --tag "$TAG"
@@ -86,7 +91,12 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION=$(node -p "require('./package.json').version")
+          EXISTING=$(npm view @pyrpc/client@$VERSION version 2>/dev/null || echo "")
+          if [ "$EXISTING" = "$VERSION" ]; then
+            echo "@pyrpc/client@$VERSION already published, skipping."
+            exit 0
+          fi
           if [[ "$VERSION" == *"-"* ]]; then
             TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
             npm publish --access public --tag "$TAG"
@@ -117,7 +127,12 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION=$(node -p "require('./package.json').version")
+          EXISTING=$(npm view @pyrpc/react@$VERSION version 2>/dev/null || echo "")
+          if [ "$EXISTING" = "$VERSION" ]; then
+            echo "@pyrpc/react@$VERSION already published, skipping."
+            exit 0
+          fi
           if [[ "$VERSION" == *"-"* ]]; then
             TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
             npm publish --access public --tag "$TAG"
@@ -150,15 +165,21 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          PUBLISH_ARGS="--access public"
-          if [[ "$VERSION" == *"-"* ]]; then
-            TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
-            PUBLISH_ARGS="--access public --tag $TAG"
-          fi
-          (cd packages/next && npm publish $PUBLISH_ARGS)
-          (cd packages/vue && npm publish $PUBLISH_ARGS)
-          (cd packages/svelte && npm publish $PUBLISH_ARGS)
+          for pkg in next vue svelte; do
+            PKG_NAME="@pyrpc/$pkg"
+            VERSION=$(node -p "require('./packages/$pkg/package.json').version")
+            EXISTING=$(npm view ${PKG_NAME}@${VERSION} version 2>/dev/null || echo "")
+            if [ "$EXISTING" = "$VERSION" ]; then
+              echo "${PKG_NAME}@${VERSION} already published, skipping."
+              continue
+            fi
+            PUBLISH_ARGS="--access public"
+            if [[ "$VERSION" == *"-"* ]]; then
+              TAG=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
+              PUBLISH_ARGS="--access public --tag $TAG"
+            fi
+            (cd packages/$pkg && npm publish $PUBLISH_ARGS)
+          done
 
   create-release:
     runs-on: ubuntu-latest
