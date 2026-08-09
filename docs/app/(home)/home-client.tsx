@@ -139,6 +139,31 @@ function FrameworkMarquee() {
   );
 }
 
+// ── Stats strip ───────────────────────────────────────────────────────────────
+
+function StatsStrip() {
+  const stats = [
+    { value: 'v0.10.1', label: 'latest release' },
+    { value: 'MIT', label: 'license' },
+    { value: 'Python 3.11+', label: 'required' },
+    { value: '12', label: 'framework combos' },
+  ];
+  return (
+    <div className="border-b border-fd-border/50 bg-white dark:bg-black">
+      <div className="max-w-[1100px] mx-auto px-6 md:px-12 lg:px-20 py-5">
+        <div className="flex flex-wrap items-center gap-x-10 gap-y-3">
+          {stats.map(s => (
+            <div key={s.label} className="flex items-baseline gap-2">
+              <span className="font-mono text-[14px] font-medium text-neutral-900 dark:text-white">{s.value}</span>
+              <span className="text-[11px] text-neutral-400 dark:text-neutral-600">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Before/After pain section ─────────────────────────────────────────────────
 
 function PainSection() {
@@ -159,48 +184,42 @@ function PainSection() {
         </p>
       </motion.div>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-px bg-fd-border rounded-xl overflow-hidden border border-fd-border">
         {/* Before */}
         <motion.div
-          initial={{ opacity: 0, x: -12 }}
+          initial={{ opacity: 0, x: -8 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.4 }}
-          className="rounded-xl border border-red-200/60 dark:border-red-800/40 bg-red-50/40 dark:bg-red-950/20 overflow-hidden"
+          className="bg-white dark:bg-[#0a0a0a] p-6"
         >
-          <div className="px-5 py-3 border-b border-red-200/60 dark:border-red-800/40 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-red-400/70" />
-            <span className="text-[11px] font-mono text-red-500/80 dark:text-red-400/60">Before</span>
-          </div>
-          <pre className="p-5 text-[11px] font-mono leading-relaxed text-neutral-600 dark:text-neutral-400 overflow-x-auto">{`# Python
+          <p className="text-[10px] font-mono text-neutral-400 dark:text-neutral-600 uppercase tracking-widest mb-4">Before</p>
+          <pre className="text-[11.5px] font-mono leading-relaxed text-neutral-500 dark:text-neutral-500 overflow-x-auto whitespace-pre-wrap">{`# Python — define in one language
 @app.post("/user/{id}")
 async def get_user(id: int) -> UserResponse:
     return await db.get_user(id)
 
-// TypeScript — written by hand, drifts over time
+// TypeScript — rewrite by hand, drift over time
 async function getUser(id: number): Promise<{
   id: number
   name: string
   email: string   // ← is this still accurate?
 }> {
-  const res = await fetch(\`/user/\${id}\`, { method: 'POST' })
+  const res = await fetch(\`/user/\${id}\`)
   return res.json() as any  // ← unsafe cast
 }`}</pre>
         </motion.div>
 
         {/* After */}
         <motion.div
-          initial={{ opacity: 0, x: 12 }}
+          initial={{ opacity: 0, x: 8 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="rounded-xl border border-emerald-200/60 dark:border-emerald-800/40 bg-emerald-50/40 dark:bg-emerald-950/20 overflow-hidden"
+          className="bg-white dark:bg-[#0a0a0a] p-6"
         >
-          <div className="px-5 py-3 border-b border-emerald-200/60 dark:border-emerald-800/40 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500/70" />
-            <span className="text-[11px] font-mono text-emerald-600/80 dark:text-emerald-400/60">With pyRPC</span>
-          </div>
-          <pre className="p-5 text-[11px] font-mono leading-relaxed text-neutral-600 dark:text-neutral-400 overflow-x-auto">{`# Python — one decorator, that's it
+          <p className="text-[10px] font-mono uppercase tracking-widest mb-4" style={{ color: '#34d59a' }}>With pyRPC</p>
+          <pre className="text-[11.5px] font-mono leading-relaxed text-neutral-600 dark:text-neutral-300 overflow-x-auto whitespace-pre-wrap">{`# Python — one decorator, that's it
 @rpc.query
 async def get_user(id: int) -> User:
     return await db.get_user(id)
@@ -208,7 +227,7 @@ async def get_user(id: int) -> User:
 // TypeScript — auto-generated, always current
 const { data } = api.get_user.useQuery({ id: 1 })
 //     ^? { id: number; name: string; email: string }
-//  fully typed, no cast, no drift, no maintenance`}</pre>
+//  fully typed · no cast · no drift · no maintenance`}</pre>
         </motion.div>
       </div>
     </div>
@@ -252,12 +271,13 @@ export default function HomeClient({
     <div className="text-fd-foreground font-sans min-h-screen overflow-x-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_80%_40%_at_50%_-10%,rgba(250,250,249,0.04)_0%,transparent_100%)]" />
 
-      {/* 1. Hero */}
-      <div className="px-6 md:px-12 lg:px-20">
-        <HeroSection serverCode={serverCode} generatedCode={generatedCode} clientCode={clientCode} />
-      </div>
+      {/* 1. Hero — full viewport, waves show through, text bottom-left */}
+      <HeroSection serverCode={serverCode} generatedCode={generatedCode} clientCode={clientCode} />
 
-      {/* 2. Framework marquee — coverage proof, full width */}
+      {/* 2. Stats strip */}
+      <StatsStrip />
+
+      {/* 3. Framework marquee — coverage proof, full width */}
       <FrameworkMarquee />
 
       {/* 3. Before/After pain moment */}

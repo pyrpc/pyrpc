@@ -5,6 +5,9 @@
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-mono-punctuation, ui-monospace, monospace;
+  /* pyRPC brand accent — single emerald, used for all interactive states */
+  --color-brand: #34d59a;
+  --color-brand-muted: #34d59a33;
 }
 
 html {
@@ -17,7 +20,7 @@ body {
 }
 
 /* =============================================
-   pyRPC Design System - Dark Mode Token Override
+   pyRPC Design System — Dark Mode Token Override
    ============================================= */
 html.dark {
   /* Core surfaces */
@@ -27,20 +30,44 @@ html.dark {
   /* Fumadocs overrides - raw RGB channel values */
   --fd-background: 0 0 0;
   --fd-foreground: 250 250 249;
-  --fd-muted: 40 40 40;
-  --fd-muted-foreground: 167 160 154;
-  --fd-accent: 40 40 40;
+  --fd-muted: 18 18 18;
+  --fd-muted-foreground: 140 140 140;
+  --fd-accent: 24 24 24;
   --fd-accent-foreground: 250 250 249;
-  --fd-border: 40 40 40;
-  --fd-input: 40 40 40;
-  --fd-primary: 250 250 249;
-  --fd-primary-foreground: 28 25 23;
-  --fd-secondary: 40 40 40;
+  --fd-border: 30 30 30;
+  --fd-input: 24 24 24;
+  --fd-primary: 52 213 154;
+  --fd-primary-foreground: 0 0 0;
+  --fd-secondary: 24 24 24;
   --fd-secondary-foreground: 250 250 249;
+  --fd-popover: 12 12 12;
+  --fd-popover-foreground: 250 250 249;
+
+  /* Heading color for dark mode */
+  --heading-dark: #f5f5f4;
 
   color-scheme: dark;
   background-color: #000000 !important;
 }
+
+/* Light mode — clean white with emerald accents */
+html:not(.dark) {
+  --fd-primary: 29 120 87;
+  --fd-primary-foreground: 255 255 255;
+  --heading-light: #0a0a0a;
+}
+
+html.dark body,
+html.dark #__next,
+html.dark header {
+  background-color: #000000 !important;
+}
+
+/* Brand accent utilities */
+.text-brand { color: #34d59a; }
+.bg-brand { background-color: #34d59a; }
+.border-brand { border-color: #34d59a; }
+.text-brand-muted { color: #34d59a66; }
 
 html.dark body,
 html.dark #__next,
