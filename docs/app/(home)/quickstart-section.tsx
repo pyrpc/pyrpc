@@ -31,7 +31,7 @@ function QuickstartStep({ step, title, description, filename, children, terminal
           {title}
         </h3>
       </div>
-      <p className="text-[13px] md:text-[14px] leading-relaxed text-neutral-600 dark:text-white/80 mb-8 max-w-xl font-sans">
+      <p className="text-[13px] md:text-[14px] leading-relaxed text-neutral-500 dark:text-neutral-400 mb-8 max-w-xl font-sans">
         {description}
       </p>
 
@@ -89,18 +89,18 @@ export default function QuickstartSection({
   };
 
   return (
-    <div className="mt-32 mb-20 relative w-full">
+    <div className="pt-32 mb-20 relative w-full">
       <div className="mb-20 flex flex-col items-center text-center max-w-5xl mx-auto px-6 md:px-0">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.4 }}
-          className="relative text-[28px] md:text-[40px] font-normal leading-[34px] md:leading-[48px] tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-6 heading-display"
+          className="relative text-[28px] md:text-[36px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-6 heading-display"
         >
-          Ship in Three commands.
+          Ship in three commands.
         </motion.h2>
-        <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-[280px] md:max-w-2xl mx-auto font-sans md:whitespace-nowrap">
+        <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-[280px] md:max-w-2xl mx-auto font-sans">
             <span className="hidden md:inline">From zero to a running pyRPC server with a type-safe TypeScript client in under two minutes.</span>
             <span className="inline md:hidden">From zero to a type-safe pyRPC server in under two minutes.</span>
         </p>

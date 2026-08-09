@@ -21,7 +21,7 @@ export default function CTASection() {
         >
           The type-safe API layer Python was missing.
         </motion.h2>
-        <p className="text-[13px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-[280px] md:max-w-xl mx-auto font-sans mb-4 md:mb-8">
+        <p className="text-[13px] md:text-[17px] leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-[280px] md:max-w-xl mx-auto font-sans mb-4 md:mb-8">
           <span className="md:hidden">No OpenAPI. No schemas. No drift.</span>
           <span className="hidden md:inline">Define procedures in Python. Get fully typed TypeScript clients automatically. No OpenAPI. No schemas. No drift.</span>
         </p>

@@ -50,7 +50,7 @@ function CompatDot({ server, client }: { server: string; client: string }) {
         className="group/dot inline-flex items-center justify-center w-8 h-8 rounded-full cursor-pointer focus:outline-none"
         aria-label={`${server} + ${client} — view example`}
       >
-        <span className="w-2 h-2 rounded-full bg-emerald-500/60 ring-2 ring-emerald-500/15 group-hover/dot:bg-emerald-500 group-hover/dot:ring-emerald-500/35 transition-all duration-150" />
+        <span className="w-2 h-2 rounded-full bg-emerald-500/60 ring-2 ring-emerald-500/15 group-hover/dot:bg-emerald-500 group-hover/dot:ring-emerald-500/35 group-hover/dot:scale-110 transition-all duration-150" />
       </button>
 
       {open && links && (
@@ -151,11 +151,11 @@ function PainSection() {
         transition={{ duration: 0.4 }}
         className="text-center mb-12"
       >
-        <h2 className="text-[28px] md:text-[40px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] heading-display mb-4">
-          The old way is a maintenance burden.
+        <h2 className="text-[28px] md:text-[36px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] heading-display mb-4">
+          You wrote the types twice. Now you don&apos;t.
         </h2>
-        <p className="text-[15px] text-neutral-500 dark:text-neutral-400 max-w-[42ch] mx-auto">
-          Manually keeping Python types and TypeScript types in sync doesn&apos;t scale. pyRPC eliminates the gap entirely.
+        <p className="text-[14px] text-neutral-500 dark:text-neutral-400 max-w-[44ch] mx-auto">
+          Two codebases, one type contract. pyRPC keeps Python and TypeScript in sync automatically.
         </p>
       </motion.div>
 
@@ -166,9 +166,9 @@ function PainSection() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.4 }}
-          className="rounded-xl border border-red-200/60 dark:border-red-900/30 bg-red-50/40 dark:bg-red-950/10 overflow-hidden"
+          className="rounded-xl border border-red-200/60 dark:border-red-800/40 bg-red-50/40 dark:bg-red-950/20 overflow-hidden"
         >
-          <div className="px-5 py-3 border-b border-red-200/60 dark:border-red-900/30 flex items-center gap-2">
+          <div className="px-5 py-3 border-b border-red-200/60 dark:border-red-800/40 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-red-400/70" />
             <span className="text-[11px] font-mono text-red-500/80 dark:text-red-400/60">Before</span>
           </div>
@@ -194,9 +194,9 @@ async function getUser(id: number): Promise<{
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="rounded-xl border border-emerald-200/60 dark:border-emerald-900/30 bg-emerald-50/40 dark:bg-emerald-950/10 overflow-hidden"
+          className="rounded-xl border border-emerald-200/60 dark:border-emerald-800/40 bg-emerald-50/40 dark:bg-emerald-950/20 overflow-hidden"
         >
-          <div className="px-5 py-3 border-b border-emerald-200/60 dark:border-emerald-900/30 flex items-center gap-2">
+          <div className="px-5 py-3 border-b border-emerald-200/60 dark:border-emerald-800/40 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500/70" />
             <span className="text-[11px] font-mono text-emerald-600/80 dark:text-emerald-400/60">With pyRPC</span>
           </div>
@@ -273,7 +273,7 @@ export default function HomeClient({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.4 }}
-            className="text-[28px] md:text-[40px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-10 heading-display"
+            className="text-[28px] md:text-[36px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-10 heading-display"
           >
             See pyRPC in action.
           </motion.h2>
@@ -293,9 +293,9 @@ export default function HomeClient({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.4 }}
-            className="text-[28px] md:text-[40px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-4 heading-display"
+            className="text-[28px] md:text-[36px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-4 heading-display"
           >
-            Everything you need.
+            One decorator. Full type safety.
           </motion.h2>
           <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">
             Python defines the types. TypeScript consumes them, automatically.
@@ -361,7 +361,7 @@ export default function HomeClient({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.4 }}
-              className="text-[28px] md:text-[40px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-4 heading-display"
+          className="text-[28px] md:text-[36px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-4 heading-display"
             >
               Fits your stack.
             </motion.h2>
