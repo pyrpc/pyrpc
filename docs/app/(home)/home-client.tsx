@@ -95,43 +95,39 @@ function CompatDot({ server, client }: { server: string; client: string }) {
   );
 }
 
-// ── Marquee data ──────────────────────────────────────────────────────────────
+// ── Individual framework marquee — separate logos, not pairs ─────────────────
 
-const COMBOS = [
-  { server: 'FastAPI', serverIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invertServer: false, client: 'React',   clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invertClient: false },
-  { server: 'FastAPI', serverIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invertServer: false, client: 'Next.js', clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invertClient: true  },
-  { server: 'FastAPI', serverIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invertServer: false, client: 'Vue',     clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invertClient: false },
-  { server: 'FastAPI', serverIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invertServer: false, client: 'Svelte',  clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invertClient: false },
-  { server: 'Flask',   serverIcon: 'https://cdn.simpleicons.org/flask',  invertServer: true,  client: 'React',   clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invertClient: false },
-  { server: 'Flask',   serverIcon: 'https://cdn.simpleicons.org/flask',  invertServer: true,  client: 'Next.js', clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invertClient: true  },
-  { server: 'Flask',   serverIcon: 'https://cdn.simpleicons.org/flask',  invertServer: true,  client: 'Vue',     clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invertClient: false },
-  { server: 'Flask',   serverIcon: 'https://cdn.simpleicons.org/flask',  invertServer: true,  client: 'Svelte',  clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invertClient: false },
-  { server: 'Django',  serverIcon: 'https://cdn.simpleicons.org/django', invertServer: true,  client: 'React',   clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invertClient: false },
-  { server: 'Django',  serverIcon: 'https://cdn.simpleicons.org/django', invertServer: true,  client: 'Next.js', clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invertClient: true  },
-  { server: 'Django',  serverIcon: 'https://cdn.simpleicons.org/django', invertServer: true,  client: 'Vue',     clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invertClient: false },
-  { server: 'Django',  serverIcon: 'https://cdn.simpleicons.org/django', invertServer: true,  client: 'Svelte',  clientIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invertClient: false },
+const FRAMEWORKS = [
+  { name: 'FastAPI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invert: false },
+  { name: 'Flask',   icon: 'https://cdn.simpleicons.org/flask',  invert: true  },
+  { name: 'Django',  icon: 'https://cdn.simpleicons.org/django', invert: true  },
+  { name: 'React',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invert: false },
+  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invert: true  },
+  { name: 'Vue',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invert: false },
+  { name: 'Svelte',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invert: false },
 ];
 
 function FrameworkMarquee() {
-  const doubled = [...COMBOS, ...COMBOS];
+  const tripled = [...FRAMEWORKS, ...FRAMEWORKS, ...FRAMEWORKS];
   return (
-    <div className="relative w-full overflow-hidden py-2.5 border-y border-fd-border/50 bg-neutral-50/50 dark:bg-black/30">
+    <div className="relative w-full overflow-hidden py-3 border-y border-fd-border/50 bg-neutral-50/30 dark:bg-black/20">
       <div className="absolute left-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-r from-white dark:from-fd-background to-transparent pointer-events-none" />
       <div className="absolute right-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-l from-white dark:from-fd-background to-transparent pointer-events-none" />
       <motion.div
-        className="flex items-center gap-10 w-max"
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ duration: 42, ease: 'linear', repeat: Infinity }}
+        className="flex items-center gap-12 w-max"
+        animate={{ x: ['0%', '-33.333%'] }}
+        transition={{ duration: 28, ease: 'linear', repeat: Infinity }}
       >
-        {doubled.map((combo, i) => (
-          <span key={i} className="flex items-center gap-1.5 shrink-0">
-            <img src={combo.serverIcon} alt={combo.server} width={14} height={14}
-              className={`w-3.5 h-3.5 opacity-50${combo.invertServer ? ' dark:invert' : ''}`} />
-            <span className="text-[10px] font-mono text-fd-foreground/40">{combo.server}</span>
-            <span className="text-[10px] font-mono text-fd-foreground/20 mx-0.5 select-none">+</span>
-            <img src={combo.clientIcon} alt={combo.client} width={14} height={14}
-              className={`w-3.5 h-3.5 opacity-50${combo.invertClient ? ' dark:invert' : ''}`} />
-            <span className="text-[10px] font-mono text-fd-foreground/40">{combo.client}</span>
+        {tripled.map((fw, i) => (
+          <span key={i} className="flex items-center gap-2.5 shrink-0">
+            <img
+              src={fw.icon}
+              alt={fw.name}
+              width={16}
+              height={16}
+              className={`w-4 h-4 opacity-45${fw.invert ? ' dark:invert' : ''}`}
+            />
+            <span className="text-[11px] font-mono text-fd-foreground/35">{fw.name}</span>
           </span>
         ))}
       </motion.div>
@@ -244,19 +240,16 @@ const supportingFeatures = [
   { title: "Modular routers.",               description: "Namespace procedures into isolated routers. Merge them at the root." },
 ];
 
-// ── Stack matrix data ─────────────────────────────────────────────────────────
+// ── Framework grid data — all 7, individually ─────────────────────────────────
 
-const pythonServers = [
-  { name: 'FastAPI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invert: false },
-  { name: 'Flask',   icon: 'https://cdn.simpleicons.org/flask',  invert: true  },
-  { name: 'Django',  icon: 'https://cdn.simpleicons.org/django', invert: true  },
-];
-
-const tsClients = [
-  { name: 'React',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invert: false },
-  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invert: true  },
-  { name: 'Vue',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invert: false },
-  { name: 'Svelte',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invert: false },
+const ALL_FRAMEWORKS = [
+  { name: 'FastAPI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', invert: false, href: '/docs/server/adapters/fastapi' },
+  { name: 'Flask',   icon: 'https://cdn.simpleicons.org/flask',  invert: true,  href: '/docs/server/adapters/flask'  },
+  { name: 'Django',  icon: 'https://cdn.simpleicons.org/django', invert: true,  href: '/docs/server/adapters/django' },
+  { name: 'React',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',   invert: false, href: '/docs/client/react'   },
+  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invert: true,  href: '/docs/client/nextjs'  },
+  { name: 'Vue',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',   invert: false, href: '/docs/client/vue'     },
+  { name: 'Svelte',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg',  invert: false, href: '/docs/client/svelte'  },
 ];
 
 // ── HomeClient ────────────────────────────────────────────────────────────────
@@ -372,63 +365,55 @@ export default function HomeClient({
         </div>
       </div>
 
-      {/* 6. Fits your stack — full-bleed, theme-aware CompatDot tooltips */}
-      <div className="py-20 border-t border-fd-border bg-neutral-50/60 dark:bg-[#040404]">
-        <div className="max-w-[1100px] mx-auto px-6 md:px-12 lg:px-0">
-          <div className="flex flex-col items-center text-center mb-14">
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.4 }}
-          className="text-[28px] md:text-[36px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-4 heading-display"
-            >
-              Fits your stack.
-            </motion.h2>
-            <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-[44ch] mx-auto">
-              Works with the Python server and TypeScript frontend you already use. Click any dot for the working example.
+      {/* 6. Connect your framework — icon grid */}
+      <div className="py-20 border-t border-fd-border bg-neutral-50/30 dark:bg-[#030303]">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-12 lg:px-20">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.4 }}
+            className="mb-3"
+          >
+            <h2 className="text-[28px] md:text-[36px] font-normal leading-tight tracking-tight text-neutral-900 dark:text-white mb-3 heading-display">
+              Connect your framework.
+            </h2>
+            <p className="text-[15px] text-neutral-500 dark:text-neutral-400 max-w-[52ch]">
+              Browse our{' '}
+              <a href="/docs/server/adapters/fastapi" className="underline underline-offset-2 decoration-neutral-300 dark:decoration-neutral-700 hover:decoration-current transition-colors">server adapter</a>
+              {' '}and{' '}
+              <a href="/docs/client/react" className="underline underline-offset-2 decoration-neutral-300 dark:decoration-neutral-700 hover:decoration-current transition-colors">client guide</a>
+              {' '}docs for full setup details.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[480px] border-collapse mx-auto max-w-[600px]">
-              <thead>
-                <tr>
-                  <th className="pb-5 pr-8 w-[130px]" />
-                  {tsClients.map(fw => (
-                    <th key={fw.name} className="pb-5 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <img src={fw.icon} alt={fw.name} width={20} height={20}
-                          className={`w-5 h-5${fw.invert ? ' dark:invert' : ''}`} />
-                        <span className="text-[10px] font-mono text-fd-foreground/45">{fw.name}</span>
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {pythonServers.map(server => (
-                  <tr key={server.name} className="border-t border-fd-border/50">
-                    <td className="py-3 pr-8">
-                      <div className="flex items-center gap-2.5">
-                        <img src={server.icon} alt={server.name} width={16} height={16}
-                          className={`w-4 h-4${server.invert ? ' dark:invert' : ''}`} />
-                        <span className="text-[12px] font-mono text-fd-foreground/55">{server.name}</span>
-                      </div>
-                    </td>
-                    {tsClients.map(client => (
-                      <td key={client.name} className="py-3 text-center">
-                        <CompatDot server={server.name} client={client.name} />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Icon grid layout */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-10">
+            {ALL_FRAMEWORKS.map((fw, i) => (
+              <motion.a
+                key={fw.name}
+                href={fw.href}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.3, delay: i * 0.04 }}
+                className="group flex items-center gap-3 px-4 py-3.5 rounded-lg border border-neutral-200 dark:border-white/[0.07] bg-white dark:bg-white/[0.03] hover:bg-neutral-50 dark:hover:bg-white/[0.06] hover:border-neutral-300 dark:hover:border-white/[0.12] transition-all"
+              >
+                <div className="w-8 h-8 rounded-md flex items-center justify-center bg-neutral-100 dark:bg-white/[0.06] shrink-0">
+                  <img
+                    src={fw.icon}
+                    alt={fw.name}
+                    width={18}
+                    height={18}
+                    className={`w-[18px] h-[18px]${fw.invert ? ' dark:invert' : ''}`}
+                  />
+                </div>
+                <span className="text-[13px] font-medium text-neutral-800 dark:text-neutral-200 group-hover:text-neutral-900 dark:group-hover:text-white transition-colors">
+                  {fw.name}
+                </span>
+              </motion.a>
+            ))}
           </div>
-          <p className="mt-6 text-center text-[11px] font-mono text-fd-foreground/30">
-            12 working examples in the repo
-          </p>
         </div>
       </div>
 

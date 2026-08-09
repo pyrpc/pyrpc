@@ -29,8 +29,8 @@ export default function HeroSection({
     // Full viewport hero — BackgroundWaves (fixed, z-0) shows through
     <div className="relative min-h-[100dvh] w-full flex flex-col">
 
-      {/* Content anchored to bottom-left — exactly Neon's layout */}
-      <div className="absolute bottom-0 left-0 right-0 px-6 md:px-12 lg:px-20 pb-14 md:pb-20">
+      {/* Content lifted up so the section below peeks — Neon pattern */}
+      <div className="absolute bottom-0 left-0 right-0 px-6 md:px-12 lg:px-20 pb-28 md:pb-40">
 
         {/* Badge */}
         <Link

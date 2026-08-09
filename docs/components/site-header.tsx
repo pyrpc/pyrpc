@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
-import { Sun, Moon, Github, BookOpen, Clock, Users, ChevronDown, Menu, X } from 'lucide-react';
+import { Sun, Moon, BookOpen, Clock, Users, ChevronDown, Menu, X } from 'lucide-react';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { cn } from '@/lib/cn';
 import { usePathname } from 'next/navigation';
@@ -235,19 +235,36 @@ export function SiteHeader() {
           </div>
         </nav>
 
-        {/* Right: GitHub Stars + Theme + Hamburger */}
+        {/* Right: Telegram + GitHub Stars + Theme + Hamburger */}
         <div className="flex items-center h-full">
+          {/* Telegram community */}
+          <a
+            href="https://t.me/pyrpc"
+            target="_blank"
+            rel="noreferrer"
+            className="hidden md:flex h-full px-4 items-center gap-2 border-l border-fd-border text-fd-muted-foreground hover:text-fd-foreground transition-colors hover:bg-fd-accent/50 text-[12px]"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 shrink-0" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.127.087.497.04.82-.076.534-.599 2.86-.634 3.054a.737.737 0 0 0 .002.312c.044.17.16.305.288.386.002 0 .587.426.587.426s.162.096.264.18c.112.093.227.27.151.444-.074.168-.344.266-.344.266s-.56.182-1.975.693c-.748.27-1.663.6-2.232.496a3.3 3.3 0 0 1-.326-.059c-.595-.148-.998-.388-1.387-.626-.605-.374-1.116-.835-1.62-1.291-.24-.218-.472-.44-.685-.677-.618-.687-.005-1.695.004-1.706.003-.004.563-.896 1.775-2.053.64-.613 1.476-1.29 1.86-1.536.143-.09.278-.118.318-.116zm-4.019 2.645a.558.558 0 0 0-.433.3 217 217 0 0 0-1.46 2.833c-.063.121-.074.273-.013.394.087.153.268.213.433.172z"/>
+            </svg>
+            <span className="text-[11px] font-mono tracking-tight">Community</span>
+          </a>
+
+          {/* GitHub Stars — Neon-style: icon + count */}
           <Link
             href="https://github.com/pyrpc/pyrpc"
             target="_blank"
             rel="noreferrer"
-            className={cn(
-              "h-full px-5 flex items-center gap-1.5 border-l border-fd-border text-[10px] font-medium uppercase tracking-[0.2em] transition-colors hover:bg-fd-accent/50",
-              "text-fd-muted-foreground hover:text-fd-foreground"
-            )}
+            className="h-full px-4 flex items-center gap-1.5 border-l border-fd-border text-fd-muted-foreground hover:text-fd-foreground transition-colors hover:bg-fd-accent/50"
           >
-            <Github className="w-3.5 h-3.5" />
-            {stars !== null && <span className="hidden md:inline text-[10px] font-mono font-normal normal-case tracking-tight text-fd-muted-foreground">{formatStars(stars)}</span>}
+            <svg viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+            </svg>
+            {stars !== null && (
+              <span className="hidden md:inline text-[11px] font-mono text-fd-muted-foreground">
+                {formatStars(stars)}
+              </span>
+            )}
           </Link>
           <button 
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
