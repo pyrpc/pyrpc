@@ -7,8 +7,9 @@ import { cn } from '@/lib/cn';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ReactNode } from 'react';
 
+const LATEST_VERSION = 'v0.10.1';
 
-function CodePanel({ code, className }: { code: ReactNode; className?: string }) {
+function CodePanel({ code }: { code: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const [lines, setLines] = useState(0);
 
@@ -25,12 +26,15 @@ function CodePanel({ code, className }: { code: ReactNode; className?: string })
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className={cn("contents", className)}
+      className="contents"
     >
-      <div className="whitespace-pre text-center text-neutral-400 dark:text-neutral-700 border-r border-neutral-200 dark:border-[#1a1a1a] select-none leading-relaxed pb-12 text-[12px] px-3">
+      <div className="whitespace-pre text-right text-neutral-300 dark:text-neutral-700 border-r border-neutral-200 dark:border-[#1e1e1e] select-none leading-[1.7] pb-6 text-[11px] px-3 pt-5 w-9">
         {lines > 0 ? Array.from({ length: lines }, (_, i) => `${i + 1}\n`).join('') : ''}
       </div>
-      <div ref={ref} className="pl-0 pr-8 whitespace-pre overflow-x-auto leading-relaxed pb-12 [&_pre]:inline [&_pre]:!bg-transparent [&_pre]:!p-0">
+      <div
+        ref={ref}
+        className="pl-4 pr-6 whitespace-pre overflow-x-auto leading-[1.7] pb-6 pt-5 text-[12.5px] [&_pre]:inline [&_pre]:!bg-transparent [&_pre]:!p-0"
+      >
         {code}
       </div>
     </motion.div>
@@ -46,21 +50,14 @@ export default function HeroSection({
   generatedCode: ReactNode;
   clientCode: ReactNode;
 }) {
-  const [manager, setManager] = useState<'uv' | 'pip' | 'npm' | 'pnpm' | 'bun'>('uv');
   const [copied, setCopied] = useState(false);
   const [codeTab, setCodeTab] = useState<'server' | 'generated' | 'client'>('server');
   const [codeLoaded, setCodeLoaded] = useState(false);
   const userInteractedRef = useRef(false);
   const prefersReducedMotionRef = useRef(false);
 
-  const command = manager === 'uv' ? 'uv add pyrpc-core' :
-    manager === 'pip' ? 'pip install pyrpc-core' :
-      manager === 'npm' ? 'npm install @pyrpc/client' :
-        manager === 'pnpm' ? 'pnpm add @pyrpc/client' :
-          'bun add @pyrpc/client';
-
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(command);
+    navigator.clipboard.writeText('uv add pyrpc-core');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -73,101 +70,127 @@ export default function HeroSection({
   useEffect(() => {
     if (userInteractedRef.current || prefersReducedMotionRef.current) return;
     const interval = setInterval(() => {
-      setCodeTab((prev) => {
-        if (prev === 'server') return 'generated';
-        if (prev === 'generated') return 'client';
-        return 'server';
-      });
+      setCodeTab(prev =>
+        prev === 'server' ? 'generated' : prev === 'generated' ? 'client' : 'server'
+      );
     }, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  const LATEST_VERSION = 'v0.10.1';
-
   return (
-    <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-[10.5rem] md:pt-[13.5rem] pb-24">
-      {/* Left Column */}
-      <div className="flex flex-col items-start gap-10 max-w-[480px]">
+    <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 w-full pt-[9rem] md:pt-[12rem] pb-20">
 
-        {/* Version pill - functional, links to changelog. Sits above h1 with tighter spacing */}
-        <div className="flex flex-col items-start gap-5">
-          <Link
-            href="/changelog"
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all text-[11px] font-mono text-neutral-600 dark:text-neutral-400 group"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-            <span>{LATEST_VERSION}</span>
-            <span className="text-neutral-400 dark:text-neutral-600 group-hover:text-neutral-500 dark:group-hover:text-neutral-500 transition-colors">What&apos;s new</span>
-            <span className="text-neutral-300 dark:text-neutral-700 group-hover:translate-x-0.5 transition-transform inline-block">&#8594;</span>
-          </Link>
+      {/* Left column */}
+      <div className="flex flex-col items-start gap-7 max-w-[480px]">
 
-          <h1 className="relative text-[42px] md:text-[64px] font-normal leading-[48px] md:leading-[72px] tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] heading-display">
+        {/* Version pill */}
+        <Link
+          href="/changelog"
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/40 hover:bg-neutral-50 dark:hover:bg-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-700 transition-all text-[11px] font-mono group"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+          <span className="text-neutral-700 dark:text-neutral-300 font-medium">{LATEST_VERSION}</span>
+          <span className="text-neutral-400 dark:text-neutral-600 group-hover:text-neutral-500 dark:group-hover:text-neutral-400 transition-colors">
+            What&apos;s new &#8594;
+          </span>
+        </Link>
+
+        {/* Headline + subtext */}
+        <div className="flex flex-col gap-4">
+          <h1 className="text-[44px] md:text-[64px] font-normal leading-[1.04] tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] heading-display">
             Type-safe APIs<br />for Python.
           </h1>
+          <p className="text-[16px] leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-[36ch]">
+            Write Python procedures, get fully-typed TypeScript clients. No schemas, no drift, no OpenAPI.
+          </p>
         </div>
-        <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-xl">
-          Build APIs in Python and consume them in TypeScript with full inference. No schemas. No drift. No OpenAPI.
-        </p>
-        <div className="flex flex-wrap items-center gap-3">
-          <Link href="/demo">
-            <button className="px-6 py-2.5 bg-neutral-900 dark:bg-fd-foreground text-white dark:text-fd-background font-medium text-[13px] tracking-tight hover:opacity-90 transition-all active:scale-[0.98] rounded-md w-fit cursor-pointer">
-              Try it live
+
+        {/* CTAs */}
+        <div className="flex items-center gap-3">
+          <Link href="/docs/get-started/installation">
+            <button className="px-5 py-2.5 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-medium text-[13px] tracking-tight hover:bg-neutral-700 dark:hover:bg-neutral-100 transition-colors active:scale-[0.98] rounded-md cursor-pointer">
+              Get started
             </button>
           </Link>
-          <div className="flex w-full sm:w-auto items-center gap-3 border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-[#0f0f0f] px-4 py-2.5 font-mono text-[12px] text-neutral-700 dark:text-neutral-300 group/install hover:border-neutral-400 dark:hover:border-neutral-700 transition-colors rounded-md">
-            <span className="text-emerald-600/70 dark:text-emerald-500/60 select-none shrink-0">$</span>
-            <span className="text-neutral-800 dark:text-white/85 tracking-tight flex-1">{command}</span>
-            <button onClick={copyToClipboard} className="text-neutral-500 dark:text-neutral-600 hover:text-neutral-800 dark:hover:text-white transition-colors shrink-0 ml-1 cursor-pointer">
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+          <Link href="/demo">
+            <button className="px-5 py-2.5 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium text-[13px] tracking-tight hover:bg-neutral-50 dark:hover:bg-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors rounded-md cursor-pointer">
+              Live demo
             </button>
-            <div className="flex items-center gap-2 pl-3 border-l border-neutral-300 dark:border-neutral-800">
-              {['uv', 'pip'].map((m, i) => (
-                <span key={m} className="flex items-center">
-                  {i > 0 && <span className="text-neutral-300 dark:text-neutral-800 select-none mx-1.5">|</span>}
-                  <button onClick={() => setManager(m as 'uv' | 'pip')} className={cn("text-[10px] uppercase tracking-widest transition-colors px-2 py-0.5 rounded cursor-pointer", manager === m ? "bg-neutral-300 dark:bg-neutral-700 text-neutral-800 dark:text-white font-bold" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300")}>{m}</button>
-                </span>
-              ))}
-            </div>
-          </div>
+          </Link>
         </div>
+
+        {/* Install command — single line, uv default */}
+        <div className="flex items-center gap-2.5 border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-[#0a0a0a] px-4 py-2.5 rounded-md group hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors w-full sm:w-auto">
+          <span className="text-neutral-400 dark:text-neutral-600 select-none font-mono text-[12px]">$</span>
+          <span className="font-mono text-[12px] text-neutral-800 dark:text-neutral-200 tracking-tight flex-1 select-all">
+            uv add pyrpc-core
+          </span>
+          <button
+            onClick={copyToClipboard}
+            className="text-neutral-400 dark:text-neutral-600 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors cursor-pointer shrink-0"
+            aria-label="Copy install command"
+          >
+            {copied
+              ? <Check className="w-3.5 h-3.5 text-emerald-500" />
+              : <Copy className="w-3.5 h-3.5" />
+            }
+          </button>
+        </div>
+
+        {/* pip footnote */}
+        <p className="text-[11px] text-neutral-400 dark:text-neutral-600 font-mono -mt-4">
+          or: pip install pyrpc-core
+        </p>
       </div>
 
-      {/* Right Column - Code Viewer */}
-      <div className="w-full max-w-[600px] lg:ml-auto code-block-hero">
-        <div className="w-full border border-neutral-200 dark:border-[#1a1a1a] bg-white dark:bg-black rounded-sm">
-          <div className="border-b border-neutral-200 dark:border-[#1a1a1a]">
-            <nav className="flex items-stretch px-3">
-              {(['server', 'generated', 'client'] as const).map((tab) => (
+      {/* Right column — code viewer */}
+      <div className="w-full max-w-[600px] lg:ml-auto">
+        <div className="w-full border border-neutral-200 dark:border-[#1e1e1e] bg-white dark:bg-[#0d0d0d] rounded-lg overflow-hidden shadow-sm dark:shadow-none">
+          {/* Tab bar */}
+          <div className="border-b border-neutral-200 dark:border-[#1e1e1e] bg-neutral-50 dark:bg-[#0a0a0a]">
+            <nav className="flex items-stretch px-2">
+              {(['server', 'generated', 'client'] as const).map(tab => (
                 <button
                   key={tab}
                   onClick={() => { setCodeTab(tab); userInteractedRef.current = true; }}
                   className={cn(
-                    "relative px-3 py-2.5 text-[11px] font-mono tracking-tight transition-colors duration-200 cursor-pointer",
-                    codeTab === tab ? "text-neutral-900 dark:text-white" : "text-neutral-400 dark:text-white/45 hover:text-neutral-600 dark:hover:text-white/70"
+                    "relative px-3 py-2.5 text-[11px] font-mono tracking-tight transition-colors duration-150 cursor-pointer",
+                    codeTab === tab
+                      ? "text-neutral-900 dark:text-white"
+                      : "text-neutral-400 dark:text-neutral-600 hover:text-neutral-600 dark:hover:text-neutral-400"
                   )}
                 >
                   {tab === 'server' ? 'server.py' : tab === 'generated' ? 'generated.ts' : 'client.ts'}
                   {codeTab === tab && (
-                    <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-[2px] bg-neutral-900 dark:bg-white/90" />
+                    <motion.div
+                      layoutId="tab-underline"
+                      className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-neutral-900 dark:bg-white/70"
+                    />
                   )}
                 </button>
               ))}
             </nav>
           </div>
-          <div className="grid grid-cols-[40px_1fr] font-mono text-sm leading-none min-h-[340px]">
+
+          {/* Code area */}
+          <div className="grid grid-cols-[36px_1fr] font-mono min-h-[360px]">
             {!codeLoaded && (
-              <div className="col-span-2 flex items-center justify-center min-h-[340px]">
+              <div className="col-span-2 flex items-center justify-center min-h-[360px]">
                 <div className="flex gap-1.5">
-                  <span className="w-2 h-2 bg-neutral-600 rounded-full animate-pulse" />
-                  <span className="w-2 h-2 bg-neutral-600 rounded-full animate-pulse [animation-delay:150ms]" />
-                  <span className="w-2 h-2 bg-neutral-600 rounded-full animate-pulse [animation-delay:300ms]" />
+                  {[0, 150, 300].map(d => (
+                    <span
+                      key={d}
+                      style={{ animationDelay: `${d}ms` }}
+                      className="w-1.5 h-1.5 bg-neutral-300 dark:bg-neutral-700 rounded-full animate-pulse"
+                    />
+                  ))}
                 </div>
               </div>
             )}
             <AnimatePresence mode="wait">
-              {codeLoaded && codeTab === 'server' && <CodePanel key="server" code={serverCode} />}
+              {codeLoaded && codeTab === 'server'    && <CodePanel key="server"    code={serverCode} />}
               {codeLoaded && codeTab === 'generated' && <CodePanel key="generated" code={generatedCode} />}
-              {codeLoaded && codeTab === 'client' && <CodePanel key="client" code={clientCode} />}
+              {codeLoaded && codeTab === 'client'    && <CodePanel key="client"    code={clientCode} />}
             </AnimatePresence>
           </div>
         </div>
