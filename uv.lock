@@ -239,6 +239,15 @@ wheels = [
 ]
 
 [[package]]
+name = "jsonc-edit"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/15/95/fa04af2619307115f5b6ce885aee94d2cfb726a932ed319adaccf6001487/jsonc_edit-0.2.0.tar.gz", hash = "sha256:6ece44225dea00d6bc8b808f93cb074c35148f5fb64c150b382fe09824805eb3", size = 88640, upload-time = "2026-08-10T23:31:21.785Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/60/75/243c039a2b0a91434ccc5a9991ff1e32ad6455849496bea0558387fdce7d/jsonc_edit-0.2.0-py3-none-any.whl", hash = "sha256:5d3036c5230c57c89f0ede622b2b50c4f4fbc752b2d92f25ca59c8e0c0dbd3c6", size = 11300, upload-time = "2026-08-10T23:31:22.827Z" },
+]
+
+[[package]]
 name = "jsonschema-ts"
 version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -495,7 +504,7 @@ wheels = [
 
 [[package]]
 name = "pyrpc-codegen"
-version = "0.9.0"
+version = "0.10.0"
 source = { editable = "packages/pyrpc-codegen" }
 dependencies = [
     { name = "jinja2" },
@@ -510,11 +519,12 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-core"
-version = "0.9.0"
+version = "0.10.1"
 source = { editable = "packages/pyrpc-core" }
 dependencies = [
     { name = "anyio" },
     { name = "httpx" },
+    { name = "jsonc-edit" },
     { name = "pydantic" },
     { name = "pyrpc-codegen" },
     { name = "questionary" },
@@ -546,6 +556,7 @@ requires-dist = [
     { name = "fastapi", marker = "extra == 'fastapi'", specifier = ">=0.100.0" },
     { name = "flask", marker = "extra == 'flask'", specifier = ">=3.0.0" },
     { name = "httpx", specifier = ">=0.24.0" },
+    { name = "jsonc-edit", specifier = ">=0.1.0" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pyrpc-codegen", editable = "packages/pyrpc-codegen" },
     { name = "pyrpc-django-adapter", marker = "extra == 'django'", editable = "packages/pyrpc-django-adapter" },
@@ -561,7 +572,7 @@ provides-extras = ["fastapi", "flask", "django"]
 
 [[package]]
 name = "pyrpc-django-adapter"
-version = "0.9.0"
+version = "0.10.0"
 source = { editable = "packages/pyrpc-django-adapter" }
 dependencies = [
     { name = "django", version = "5.2.15", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -577,7 +588,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-fastapi"
-version = "0.9.0"
+version = "0.10.0"
 source = { editable = "packages/pyrpc-fastapi" }
 dependencies = [
     { name = "fastapi" },
@@ -592,7 +603,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-flask"
-version = "0.9.0"
+version = "0.10.0"
 source = { editable = "packages/pyrpc-flask" }
 dependencies = [
     { name = "flask" },
