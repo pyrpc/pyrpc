@@ -1,4 +1,4 @@
-__version__ = "0.10.1"
+__version__ = "0.11.0"
 
 from .client.python_client import RPCClient, RPCError
 from .core.decorators import default_router, rpc, model
