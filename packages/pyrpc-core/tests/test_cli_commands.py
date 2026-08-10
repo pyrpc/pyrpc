@@ -6,7 +6,7 @@ import unittest.mock as mock
 
 import pytest
 from pyrpc_core import default_router, rpc
-from pyrpc_core.cli import app, _parse_entry, _DEFAULT_OUTPUT
+from pyrpc_core.cli import app, _parse_entry
 from typer.testing import CliRunner
 from pathlib import Path
 
@@ -88,14 +88,15 @@ def test_cli_codegen_module():
     mock_save.assert_called_once_with(schemas, mock.ANY)
 
 
-def test_cli_codegen_custom_output(tmp_path):
+def test_cli_codegen_custom_client(tmp_path):
     schemas = {"ping": {"name": "ping", "parameters": [], "return_type": "str", "return_schema": {}, "doc": ""}}
-    out = str(tmp_path / "custom" / "types.d.ts")
+    out = str(tmp_path / "custom")
     with mock.patch("pyrpc_core.cli._resolve_source", return_value=schemas):
         with mock.patch("pyrpc_codegen.save_typescript_client") as mock_save:
-            result = runner.invoke(app, ["codegen", "main", "--output", out])
+            result = runner.invoke(app, ["codegen", "main", "--client", out])
     assert result.exit_code == 0
-    mock_save.assert_called_once_with(schemas, os.path.abspath(out))
+    expected_path = os.path.abspath(os.path.join(out, "__pyrpc.d.ts"))
+    mock_save.assert_called_once_with(schemas, expected_path)
 
 
 def test_codegen_writes_actual_file(tmp_path):
@@ -114,8 +115,8 @@ def test_codegen_writes_actual_file(tmp_path):
     assert "multiply" in Path(out).read_text()
 
 
-def test_codegen_cli_writes_to_default_src_path(tmp_path):
-    """Default output is src/__pyrpc.d.ts (relative to cwd)."""
+def test_codegen_cli_writes_to_default_client_path(tmp_path):
+    """Default client root is . (relative to cwd)."""
     schemas = {"divide": {"name": "divide", "doc": "", "parameters": [], "return_type": "<class 'float'>"}}
     schema_file = tmp_path / "schema.json"
     schema_file.write_text(json.dumps(schemas))
@@ -124,7 +125,7 @@ def test_codegen_cli_writes_to_default_src_path(tmp_path):
     try:
         result = runner.invoke(app, ["codegen", str(schema_file)])
         assert result.exit_code == 0
-        generated = tmp_path / "src" / "__pyrpc.d.ts"
+        generated = tmp_path / "__pyrpc.d.ts"
         assert generated.exists(), f"Expected {generated} to exist"
         assert "divide" in generated.read_text()
     finally:
@@ -179,9 +180,57 @@ def test_cli_serve():
 
 # ── dev ───────────────────────────────────────────────────────────────────────
 
+def test_cli_dev_yes_zero_clients():
+    """dev --yes with 0 clients configures no client."""
+    with mock.patch("pyrpc_core.cli._find_config", return_value=None):
+        with mock.patch("pyrpc_core.cli._find_frontend_projects", return_value=[]):
+            with mock.patch("pyrpc_core.cli._write_config") as mock_write:
+                with mock.patch("pyrpc_core.cli._import_module"):
+                    with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
+                        with mock.patch("pyrpc_core.cli.subprocess.Popen"):
+                            with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
+                                with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
+                                    mock_console.return_value.run = mock.MagicMock()
+                                    result = runner.invoke(app, ["dev", "--yes"])
+    assert result.exit_code == 0
+    assert "no client configured" in result.output
+    # Ensure it writes config without 'client' key
+    cfg = mock_write.call_args[0][0]
+    assert "client" not in cfg
+
+def test_cli_dev_yes_one_client():
+    """dev --yes with 1 client automatically uses it."""
+    with mock.patch("pyrpc_core.cli._find_config", return_value=None):
+        with mock.patch("pyrpc_core.cli._find_frontend_projects", return_value=[("./apps/web", "Next.js")]):
+            with mock.patch("pyrpc_core.cli._write_config") as mock_write:
+                with mock.patch("pyrpc_core.cli._import_module"):
+                    with mock.patch("pyrpc_core.cli._run_codegen", return_value=1):
+                        with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
+                            with mock.patch("pyrpc_core.cli.subprocess.Popen"):
+                                with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
+                                    with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
+                                        mock_console.return_value.run = mock.MagicMock()
+                                        result = runner.invoke(app, ["dev", "--yes"])
+    assert result.exit_code == 0
+    assert "./apps/web" in result.output
+    cfg = mock_write.call_args[0][0]
+    assert cfg["client"] == "./apps/web"
+
+def test_cli_dev_yes_multiple_clients():
+    """dev --yes with >1 client fails and demands explicit selection."""
+    with mock.patch("pyrpc_core.cli._find_config", return_value=None):
+        with mock.patch("pyrpc_core.cli._find_frontend_projects", return_value=[("./apps/web", "Next.js"), ("./apps/admin", "React")]):
+            result = runner.invoke(app, ["dev", "--yes"])
+    assert result.exit_code == 1
+    assert "Multiple TypeScript projects found" in result.output
+    assert "./apps/web" in result.output
+    assert "./apps/admin" in result.output
+    assert "--client <path>" in result.output
+
+
 def test_cli_dev_attaches_when_server_running(tmp_path):
     """When server is already running, pyrpc dev skips uvicorn."""
-    config = {"module": "my_module", "framework": "Next.js", "output": "src/__pyrpc.d.ts"}
+    config = {"module": "my_module", "framework": "Next.js", "client": "../client"}
     cfg_file = tmp_path / "pyrpc.json"
     cfg_file.write_text(json.dumps(config))
 
@@ -199,7 +248,7 @@ def test_cli_dev_attaches_when_server_running(tmp_path):
 
 def test_cli_dev_starts_server_when_not_running(tmp_path):
     """When server is not running, pyrpc dev launches uvicorn."""
-    config = {"module": "my_module", "framework": "Next.js", "output": "src/__pyrpc.d.ts"}
+    config = {"module": "my_module", "framework": "Next.js", "client": "../client"}
     cfg_file = tmp_path / "pyrpc.json"
     cfg_file.write_text(json.dumps(config))
 
@@ -232,7 +281,7 @@ def test_cli_watch_runs_initial_codegen():
     with mock.patch("pyrpc_core.cli._import_module"):
         with mock.patch("pyrpc_core.cli._run_codegen", return_value=3) as mock_cg:
             with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
-                result = runner.invoke(app, ["watch", "my_module"])
+                result = runner.invoke(app, ["watch", "my_module", "--client", "my_client"])
     assert result.exit_code == 0
     mock_cg.assert_called_once()
     assert "types generated" in result.output
@@ -242,7 +291,7 @@ def test_cli_watch_help():
     result = runner.invoke(app, ["watch", "--help"])
     assert result.exit_code == 0
     output = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', result.output)
-    assert "--output" in output
+    assert "--client" in output
 
 
 # ── _parse_entry ──────────────────────────────────────────────────────────────
@@ -265,10 +314,11 @@ def test_parse_entry_complex():
     assert app_var == "create_app"
 
 
-# ── _DEFAULT_OUTPUT constant ──────────────────────────────────────────────────
+# ── _DEFAULT_CLIENT constant ──────────────────────────────────────────────────
 
-def test_default_output_constant():
-    assert _DEFAULT_OUTPUT == "src/__pyrpc.d.ts"
+def test_default_client_constant():
+    from pyrpc_core.cli import _DEFAULT_CLIENT
+    assert _DEFAULT_CLIENT == "."
 
 
 # ── CONFIG_FILE constant (needed for pyrpc.json watcher) ─────────────────────
