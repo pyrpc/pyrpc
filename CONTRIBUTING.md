@@ -96,6 +96,10 @@ Fill out the PR template. Include: what changed, why, how you tested. Screenshot
 
 Open a draft PR early if you want feedback mid-flight. Mark "Ready for review" when done.
 
+### Required checks
+
+Merging into `main` requires the `Test` workflow jobs to pass: the branch protection lists them as `Test / test-python` and `Test / test-ts`. If you rename, split, or add jobs in `test.yml`, update these required checks to match (`<workflow> / <job>` exactly), or every PR will silently fail to merge. GitHub blocks self-approval, so a PR needs one approving review from a collaborator other than the author.
+
 ## What gets merged faster
 
 - Clear problem statement
