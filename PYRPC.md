@@ -67,7 +67,7 @@ pyRPC is a Python-first RPC system with TypeScript reach. It gives you type safe
 │  pyrpc.json (written by the pyrpc dev wizard)             │
 │  module, framework, client | clients                      │
 ├──────────────────────────────────────────────────────────┤
-│  <client>/__pyrpc.d.ts (generated, committed to git)      │
+│  <client>/__pyrpc.ts (generated, committed to git)      │
 │  Resolved via tsconfig paths: "@pyrpc/types"              │
 ├──────────────────────────────────────────────────────────┤
 │  @pyrpc/client (@pyrpc/types)                              │
@@ -90,13 +90,13 @@ The wire format is part of the product identity. Changing the protocol shape mus
 `get_registry_schema()` is the single source of truth for both runtime introspection (used by debug tools) and TypeScript code generation. Codegen must not re-invent schema extraction. If introspection changes, codegen and the TypeScript client must be evaluated together.
 
 **Config is pyrpc.json, written by the `pyrpc dev` wizard on first run.**
-`pyrpc.json` holds `module` (entry point), `framework` (detected), and `client` (single project root) or `clients` (list of roots). All other configuration is derived from these. There are no distribution modes, no `client_root`, no `entrypoint`, and no `output` field — generated types always land at `<client>/__pyrpc.d.ts`. The wizard that writes pyrpc.json walks the directory tree to detect frontend projects, asks the module and client questions, and never runs again. Re-run it with `--reconfigure`; skip it entirely with `--yes`.
+`pyrpc.json` holds `module` (entry point), `framework` (detected), and `client` (single project root) or `clients` (list of roots). All other configuration is derived from these. There are no distribution modes, no `client_root`, no `entrypoint`, and no `output` field — generated types always land at `<client>/__pyrpc.ts`. The wizard that writes pyrpc.json walks the directory tree to detect frontend projects, asks the module and client questions, and never runs again. Re-run it with `--reconfigure`; skip it entirely with `--yes`.
 
 **Generated types live in the user's source tree.**
-`pyrpc dev`, `pyrpc watch`, and `pyrpc codegen` write TypeScript types to `<client>/__pyrpc.d.ts` for every configured client. This file is in source control — it is the user's file, committed to their repo, diffable in PRs. TypeScript resolves `import type { Types } from "@pyrpc/types"` to this file via a `tsconfig.json` paths alias.
+`pyrpc dev`, `pyrpc watch`, and `pyrpc codegen` write TypeScript types to `<client>/__pyrpc.ts` for every configured client. This file is in source control — it is the user's file, committed to their repo, diffable in PRs. TypeScript resolves `import type { Types } from "@pyrpc/types"` to this file via a `tsconfig.json` paths alias.
 
 **tsconfig paths are injected by pyrpc-core via jsonc-edit.**
-The alias `"@pyrpc/types": ["./__pyrpc.d.ts"]` is injected into each client's `tsconfig.json` by `pyrpc_core/tsconfig.py` on every dev, watch, and codegen run. It uses jsonc-edit so comments and trailing commas survive, it is idempotent on repeat runs, and it raises instead of silently overwriting an alias that already points elsewhere. The developer owns the entry.
+The alias `"@pyrpc/types": ["./__pyrpc.ts"]` is injected into each client's `tsconfig.json` by `pyrpc_core/tsconfig.py` on every dev, watch, and codegen run. It uses jsonc-edit so comments and trailing commas survive, it is idempotent on repeat runs, and it raises instead of silently overwriting an alias that already points elsewhere. The developer owns the entry.
 
 **pyrpc dev is the single dev command.**
 `pyrpc dev` reads `pyrpc.json`, probes `host:port` to see if a server is already running (if so it skips uvicorn and attaches watcher-only; otherwise it starts uvicorn with `--reload`), regenerates types for every client on every `.py` save — reloading edited modules so the types reflect the latest code — watches `pyrpc.json` itself and re-wires when module or clients change, and exposes an interactive console. `pyrpc watch` is the watcher-only variant for developers who manage their own server. Neither command requires flags after first run; `--yes` with optional `--module`/`--client` makes setup fully non-interactive for CI.

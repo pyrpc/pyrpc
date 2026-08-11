@@ -13,7 +13,7 @@ def test_missing_compiler_options(tmp_path):
     assert configure_tsconfig(str(client_dir)) is True
     
     content = cfg.read_text(encoding="utf-8")
-    assert '"@pyrpc/types":["./__pyrpc.d.ts"]' in re.sub(r'\s+', '', content)
+    assert '"@pyrpc/types":["./__pyrpc.ts"]' in re.sub(r'\s+', '', content)
     assert '// A comment' in content
     assert 'compilerOptions' in content
 
@@ -32,7 +32,7 @@ def test_missing_paths(tmp_path):
     assert configure_tsconfig(str(client_dir)) is True
     
     content = cfg.read_text(encoding="utf-8")
-    assert '"@pyrpc/types":["./__pyrpc.d.ts"]' in re.sub(r'\s+', '', content)
+    assert '"@pyrpc/types":["./__pyrpc.ts"]' in re.sub(r'\s+', '', content)
     assert '/* block comment */' in content
     assert '"strict": true' in content
     assert '"include": ["src"]' in content
@@ -56,7 +56,7 @@ def test_existing_paths_with_comments_and_trailing_commas(tmp_path):
     
     content = cfg.read_text(encoding="utf-8")
     # Should contain the new alias
-    assert '"@pyrpc/types":["./__pyrpc.d.ts"]' in re.sub(r'\s+', '', content)
+    assert '"@pyrpc/types":["./__pyrpc.ts"]' in re.sub(r'\s+', '', content)
     # Should preserve existing
     assert '"~/*":["./src/*"]' in re.sub(r'\s+', '', content)
     assert '// some comment' in content
@@ -71,7 +71,7 @@ def test_existing_correct_alias_is_idempotent(tmp_path):
     original = """{
   "compilerOptions": {
     "paths": {
-      "@pyrpc/types": ["./__pyrpc.d.ts"]
+      "@pyrpc/types": ["./__pyrpc.ts"]
     }
   }
 }"""
@@ -88,7 +88,7 @@ def test_conflicting_alias_raises_error(tmp_path):
     cfg.write_text("""{
   "compilerOptions": {
     "paths": {
-      "@pyrpc/types": ["./src/__pyrpc.d.ts"]
+      "@pyrpc/types": ["./src/__pyrpc.ts"]
     }
   }
 }""", encoding="utf-8")

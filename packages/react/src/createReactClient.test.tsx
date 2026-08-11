@@ -33,6 +33,7 @@ describe('createReactClient', () => {
 
     const api = createReactClient<TestTypes>({
       baseUrl: 'http://localhost:8000',
+      kinds: {},
     });
 
     const { result } = renderHook(
@@ -52,6 +53,7 @@ describe('createReactClient', () => {
 
     const api = createReactClient<TestTypes>({
       baseUrl: 'http://localhost:8000',
+      kinds: {},
     });
 
     const { result } = renderHook(() => api.add.useQuery([1, 2]), {
@@ -70,6 +72,7 @@ describe('createReactClient', () => {
 
     const api = createReactClient<TestTypes>({
       baseUrl: 'http://localhost:8000',
+      kinds: {},
     });
 
     const { result } = renderHook(() => api.greet.useMutation(), {
@@ -101,6 +104,7 @@ describe('createReactClient', () => {
 
     const api = createReactClient<TestTypes>({
       baseUrl: 'http://localhost:8000',
+      kinds: {},
     });
 
     const { result } = renderHook(

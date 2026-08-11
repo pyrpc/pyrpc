@@ -21,7 +21,7 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "@pyrpc/types": ["./__pyrpc.d.ts"]
+      "@pyrpc/types": ["./__pyrpc.ts"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]

@@ -20,7 +20,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@pyrpc/types": ["./__pyrpc.d.ts"]
+      "@pyrpc/types": ["./__pyrpc.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

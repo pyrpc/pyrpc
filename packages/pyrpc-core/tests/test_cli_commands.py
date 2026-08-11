@@ -98,7 +98,7 @@ def test_cli_codegen_custom_client(tmp_path):
         with mock.patch("pyrpc_codegen.save_typescript_client") as mock_save:
             result = runner.invoke(app, ["codegen", "main", "--client", out])
     assert result.exit_code == 0
-    expected_path = os.path.abspath(os.path.join(out, "__pyrpc.d.ts"))
+    expected_path = os.path.abspath(os.path.join(out, "__pyrpc.ts"))
     mock_save.assert_called_once_with(schemas, expected_path)
 
 
@@ -128,7 +128,7 @@ def test_codegen_cli_writes_to_default_client_path(tmp_path):
     try:
         result = runner.invoke(app, ["codegen", str(schema_file)])
         assert result.exit_code == 0
-        generated = tmp_path / "__pyrpc.d.ts"
+        generated = tmp_path / "__pyrpc.ts"
         assert generated.exists(), f"Expected {generated} to exist"
         assert "divide" in generated.read_text()
     finally:
@@ -405,7 +405,7 @@ def test_do_regen_reloads_module_and_picks_up_new_procedures(tmp_path):
     """
     The watcher's real regen callback must reload the module, not just re-import
     the cached one. Editing a .py file (adding a procedure) must be reflected in
-    the regenerated __pyrpc.d.ts. Also proves default_router is in scope in the
+    the regenerated __pyrpc.ts. Also proves default_router is in scope in the
     regen path.
     """
     module = "regen_demo"
@@ -419,7 +419,7 @@ def test_do_regen_reloads_module_and_picks_up_new_procedures(tmp_path):
     )
     client_dir = tmp_path / "client"
     client_dir.mkdir()
-    out = client_dir / "__pyrpc.d.ts"
+    out = client_dir / "__pyrpc.ts"
 
     sys.path.insert(0, str(tmp_path))
     try:
@@ -454,7 +454,7 @@ def test_do_regen_reloads_module_and_picks_up_new_procedures(tmp_path):
 
 
 def test_regenerate_clients_writes_all_clients(tmp_path):
-    """_regenerate_clients generates __pyrpc.d.ts for every configured client."""
+    """_regenerate_clients generates __pyrpc.ts for every configured client."""
     module = "regen_multi"
     (tmp_path / "regen_multi.py").write_text(
         "from pyrpc_core import rpc\n\n"
@@ -472,8 +472,8 @@ def test_regenerate_clients_writes_all_clients(tmp_path):
     try:
         n = cli_mod._regenerate_clients(module, [str(c1), str(c2)])
         assert n == 1
-        assert (c1 / "__pyrpc.d.ts").exists()
-        assert (c2 / "__pyrpc.d.ts").exists()
+        assert (c1 / "__pyrpc.ts").exists()
+        assert (c2 / "__pyrpc.ts").exists()
     finally:
         if module in sys.modules:
             sys.modules.pop(module, None)

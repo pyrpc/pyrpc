@@ -16,8 +16,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --external react --external @tanstack/react-query --external @pyrpc/client",
-    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --external react --external @tanstack/react-query --external @pyrpc/client",
+    "build": "tsup src/index.ts --format cjs,esm --dts --external react --external @tanstack/react-query --external @pyrpc/client --external @pyrpc/types",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --external react --external @tanstack/react-query --external @pyrpc/client --external @pyrpc/types",
     "test": "vitest run"
   },
   "keywords": [
@@ -28,9 +28,11 @@
     "react-query"
   ],
   "license": "MIT",
+  "dependencies": {
+    "@pyrpc/client": "^0.11.0",
+    "@pyrpc/types": "^0.11.0"
+  },
   "peerDependencies": {
-    "@pyrpc/client": "^0.10.0",
-    "@pyrpc/types": "^0.10.0",
     "@tanstack/react-query": "^5.0.0",
     "react": ">=18.0.0"
   },

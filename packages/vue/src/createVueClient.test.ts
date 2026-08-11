@@ -8,7 +8,7 @@ type TestTypes = {
 
 describe('createVueClient', () => {
   it('exposes both hooks by default when kinds are empty', () => {
-    const api = createVueClient<TestTypes>({ baseUrl: 'http://localhost:8000' });
+    const api = createVueClient<TestTypes>({ baseUrl: 'http://localhost:8000', kinds: {} });
     expect(typeof api.greet.useQuery).toBe('function');
     expect(typeof api.greet.useMutation).toBe('function');
   });

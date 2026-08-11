@@ -5,7 +5,7 @@ export default defineConfig({
 plugins: [sveltekit()],
 resolve: {
 alias: {
-"@pyrpc/types": "./__pyrpc.d.ts"
+"@pyrpc/types": "./__pyrpc.ts"
 }
 }
 });

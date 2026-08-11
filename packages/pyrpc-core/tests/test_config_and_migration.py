@@ -59,7 +59,7 @@ def test_cli_default_client_is_dot():
 
 
 def test_codegen_command_uses_default_client(tmp_path):
-    """Running `pyrpc codegen <schema>` with no --client flag writes to __pyrpc.d.ts."""
+    """Running `pyrpc codegen <schema>` with no --client flag writes to __pyrpc.ts."""
     from typer.testing import CliRunner
     from pyrpc_core.cli import app
 
@@ -82,7 +82,7 @@ def test_codegen_command_uses_default_client(tmp_path):
     try:
         result = CliRunner().invoke(app, ["codegen", str(schema_file)])
         assert result.exit_code == 0, result.output
-        expected = tmp_path / "__pyrpc.d.ts"
+        expected = tmp_path / "__pyrpc.ts"
         assert expected.exists(), f"Expected {expected}, got: {result.output}"
         assert "add" in expected.read_text()
     finally:
@@ -102,6 +102,6 @@ def test_codegen_command_respects_client_flag(tmp_path):
     result = CliRunner().invoke(app, ["codegen", str(schema_file), "--client", custom_client])
     assert result.exit_code == 0, result.output
     
-    expected_out = os.path.join(custom_client, "__pyrpc.d.ts")
+    expected_out = os.path.join(custom_client, "__pyrpc.ts")
     assert os.path.isfile(expected_out)
     assert "greet" in open(expected_out).read()
