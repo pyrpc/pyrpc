@@ -28,9 +28,6 @@ jobs:
 
   test-ts:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/client
     steps:
       - uses: actions/checkout@v4
       
@@ -42,5 +39,8 @@ jobs:
       - name: Install dependencies
         run: npm install
         
+      - name: Build workspace dependencies
+        run: npm run build --workspace=@pyrpc/client --workspace=@pyrpc/react
+        
       - name: Run tests
-        run: npm run test
+        run: npm run test --workspaces

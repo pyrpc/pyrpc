@@ -9,9 +9,14 @@
 - [ ] `pyrpc-core`
 - [ ] `pyrpc-fastapi`
 - [ ] `pyrpc-flask`
+- [ ] `pyrpc-django-adapter`
 - [ ] `pyrpc-codegen`
 - [ ] `@pyrpc/client`
 - [ ] `@pyrpc/types`
+- [ ] `@pyrpc/react`
+- [ ] `@pyrpc/next`
+- [ ] `@pyrpc/vue`
+- [ ] `@pyrpc/svelte`
 - [ ] docs / examples
 - [ ] release / tooling
 
