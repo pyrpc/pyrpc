@@ -13,6 +13,36 @@ export interface Release {
 
 export const releases: Release[] = [
     {
+        version: 'v0.12.0',
+        date: '2026-08-12',
+        tag: 'v0.12.0',
+        description: 'Generated types are now a real runtime module: codegen emits `<client>/__pyrpc.ts` with a runtime `procedureKinds` map, and pyrpc dev auto-configures bundler aliases so framework adapters only expose the hooks a procedure actually supports.',
+        sections: [
+            {
+                title: 'Breaking Changes',
+                items: [
+                    'Generated types now land at `<client>/__pyrpc.ts` instead of `<client>/__pyrpc.d.ts`; the tsconfig paths alias is updated automatically by `pyrpc dev`, `pyrpc watch`, and `pyrpc codegen`.',
+                    'The `@pyrpc/types` placeholder now throws on `procedureKinds` access until the generated module resolves, instead of silently exposing both query and mutation hooks on every procedure.',
+                ],
+            },
+            {
+                title: 'Features',
+                items: [
+                    'The generated module is a real runtime file: it carries the `Types` type, the `ProcedureKinds` type, and the runtime `procedureKinds` const that framework adapters read to expose only the matching hook per procedure.',
+                    'Framework adapters (`@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`) now depend on `@pyrpc/types` at runtime and keep `@pyrpc/types` external in their bundles.',
+                    'New `pyrpc_core.bundlers` module injects an explicit `"@pyrpc/types"` alias for bundlers that don\u2019t honor tsconfig paths for imports inside node_modules (Vite, SvelteKit, Next.js Turbopack), surfacing a clear warning when a config can\u2019t be auto-configured.',
+                ],
+            },
+            {
+                title: 'Tests',
+                items: [
+                    'New bundler-config injection suite covering Vite, SvelteKit, and Next.js config shapes, idempotency, and unknown-config fallbacks.',
+                    'Adapter client tests pass explicit `kinds` so they don\u2019t trip the throwing placeholder.',
+                ],
+            },
+        ],
+    },
+    {
         version: 'v0.11.1',
         date: '2026-08-11',
         tag: 'v0.11.1',

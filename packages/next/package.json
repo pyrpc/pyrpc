@@ -1,6 +1,6 @@
 {
   "name": "@pyrpc/next",
-  "version": "0.11.1",
+  "version": "0.12.0",
   "description": "Next.js App Router adapter for pyRPC",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -40,9 +40,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@pyrpc/client": "^0.11.0",
-    "@pyrpc/react": "^0.11.0",
-    "@pyrpc/types": "^0.11.0"
+    "@pyrpc/client": "^0.12.0",
+    "@pyrpc/react": "^0.12.0",
+    "@pyrpc/types": "^0.12.0"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.0.0",
