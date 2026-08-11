@@ -1,6 +1,6 @@
 {
   "name": "@pyrpc/next",
-  "version": "0.10.0",
+  "version": "0.11.1",
   "description": "Next.js App Router adapter for pyRPC",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

@@ -4,7 +4,9 @@ import os
 import subprocess
 import sys
 import threading
+import time
 from pathlib import Path
+from typing import Callable
 
 import questionary
 import typer
@@ -16,22 +18,21 @@ from watchfiles import watch
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 CONFIG_FILE = "pyrpc.json"
-_DEFAULT_OUTPUT = "src/__pyrpc.d.ts"
+_DEFAULT_CLIENT = "."
 _DEBOUNCE_SECONDS = 0.3
 
-# Framework detection: config file name → canonical label → default output path
-# Output path uses {src} as a placeholder replaced by _resolve_output_path()
-_FRAMEWORK_SIGNATURES: list[tuple[str, str, str]] = [
-    ("next.config.ts",    "Next.js",  "src/__pyrpc.d.ts"),
-    ("next.config.js",    "Next.js",  "src/__pyrpc.d.ts"),
-    ("next.config.mjs",   "Next.js",  "src/__pyrpc.d.ts"),
-    ("nuxt.config.ts",    "Nuxt",     "src/__pyrpc.d.ts"),
-    ("nuxt.config.js",    "Nuxt",     "src/__pyrpc.d.ts"),
-    ("svelte.config.js",  "Svelte",   "src/__pyrpc.d.ts"),
-    ("svelte.config.ts",  "Svelte",   "src/__pyrpc.d.ts"),
-    ("vite.config.ts",    "Vite",     "src/__pyrpc.d.ts"),
-    ("vite.config.js",    "Vite",     "src/__pyrpc.d.ts"),
-    ("astro.config.mjs",  "Astro",    "src/__pyrpc.d.ts"),
+# Framework detection: config file name → canonical label
+_FRAMEWORK_SIGNATURES: list[tuple[str, str]] = [
+    ("next.config.ts",    "Next.js"),
+    ("next.config.js",    "Next.js"),
+    ("next.config.mjs",   "Next.js"),
+    ("nuxt.config.ts",    "Nuxt"),
+    ("nuxt.config.js",    "Nuxt"),
+    ("svelte.config.js",  "Svelte"),
+    ("svelte.config.ts",  "Svelte"),
+    ("vite.config.ts",    "Vite"),
+    ("vite.config.js",    "Vite"),
+    ("astro.config.mjs",  "Astro"),
 ]
 _FRAMEWORK_LABELS = ["Next.js", "Nuxt", "Svelte", "Vite", "Astro", "Other"]
 
@@ -52,6 +53,14 @@ def _lazy_core():
     global default_router, get_registry_schema
     from pyrpc_core import default_router, get_registry_schema
     return default_router, get_registry_schema
+
+def _get_clients(cfg: dict) -> list[str]:
+    """Normalizes the configuration to a list of client paths."""
+    if "clients" in cfg:
+        return cfg["clients"]
+    elif "client" in cfg and cfg["client"]:
+        return [cfg["client"]]
+    return []
 
 def _lazy_codegen():
     from pyrpc_codegen import save_typescript_client
@@ -88,22 +97,27 @@ def _write_config(config: dict, path: Path | None = None) -> Path:
 
 # ── Framework detection ───────────────────────────────────────────────────────
 
-def _detect_framework(root: str) -> tuple[str, str] | None:
-    """Return (framework_label, default_output) if a known config file is found."""
-    for filename, label, output in _FRAMEWORK_SIGNATURES:
+def _detect_framework(root: str) -> str | None:
+    """Return framework_label if a known config file is found."""
+    for filename, label in _FRAMEWORK_SIGNATURES:
         if (Path(root) / filename).exists():
-            return label, output
+            return label
     return None
 
-def _resolve_output_path(root: str, framework: str, default_output: str) -> str:
-    """
-    Resolve final output path.
-    For Next.js/Vite/etc, check if src/ exists — if not, drop the src/ prefix.
-    """
-    src_dir = Path(root) / "src"
-    if not src_dir.is_dir() and default_output.startswith("src/"):
-        return default_output[4:]  # strip "src/"
-    return default_output
+def _find_frontend_projects(root: str) -> list[tuple[str, str]]:
+    """Walk the directory tree to find frontend projects."""
+    _skip = {"node_modules", "__pycache__", ".venv", "venv", "env", "dist", "build", ".git", ".next"}
+    projects = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in _skip and not d.startswith(".")]
+        fw = _detect_framework(dirpath)
+        if fw:
+            rel = os.path.relpath(dirpath, root)
+            if rel == ".":
+                projects.append((".", fw))
+            else:
+                projects.append((f"./{rel}", fw))
+    return projects
 
 
 # ── First-run wizard ──────────────────────────────────────────────────────────
@@ -111,13 +125,11 @@ def _resolve_output_path(root: str, framework: str, default_output: str) -> str:
 def _run_wizard(root: str) -> dict:
     """
     Interactive first-run wizard. Returns a config dict ready to write.
-    Asks only what it needs — 2-3 questions max.
     """
     console.print()
     console.print("[bold]pyRPC setup[/bold] [dim](runs once — saved to pyrpc.json)[/dim]")
     console.print()
 
-    # Question 1: entry module
     default_module = "main"
     for candidate in ["main.py", "server.py", "app.py", "app/main.py"]:
         if (Path(root) / candidate).exists():
@@ -129,52 +141,58 @@ def _run_wizard(root: str) -> dict:
         default=default_module,
         instruction="(e.g. main, app.server — the file that calls mount_fastapi/mount_flask)",
     ).ask()
-    if module is None:
-        raise typer.Exit(code=0)
+    if module is None: raise typer.Exit(code=0)
     module = module.strip()
 
-    # Question 2: frontend framework — auto-detect pre-fills the answer
-    # Detection scans cwd first, then common frontend subdirectories
-    detected = _detect_framework(root)
-    if not detected:
-        # Try common frontend subdirectory names before giving up
-        for subdir in ["frontend", "client", "web", "ui"]:
-            candidate = os.path.join(root, subdir)
-            if os.path.isdir(candidate):
-                detected = _detect_framework(candidate)
-                if detected:
-                    # Store the subdirectory so output path is relative to it
-                    detected = (detected[0], os.path.join(subdir, detected[1]))
-                    break
+    detected_projects = _find_frontend_projects(root)
 
-    default_fw = detected[0] if detected else "Next.js"
+    if not detected_projects:
+        client = questionary.text("Client project root", default=".").ask()
+        if client is None: raise typer.Exit(code=0)
+        framework = questionary.select("Frontend framework", choices=_FRAMEWORK_LABELS, default="Next.js").ask()
+        if framework is None: raise typer.Exit(code=0)
+        return {"module": module, "framework": framework, "client": client}
 
-    framework = questionary.select(
-        "Frontend framework",
-        choices=_FRAMEWORK_LABELS,
-        default=default_fw,
+    if len(detected_projects) == 1:
+        client_dir, fw = detected_projects[0]
+        client = questionary.text("Client project root", default=client_dir).ask()
+        if client is None: raise typer.Exit(code=0)
+        framework = questionary.select("Frontend framework", choices=_FRAMEWORK_LABELS, default=fw).ask()
+        if framework is None: raise typer.Exit(code=0)
+        return {"module": module, "framework": framework, "client": client}
+
+    console.print("\n[bold]Detected frontend projects:[/bold]")
+    for path, fw in detected_projects:
+        console.print(f"  • [cyan]{path}[/cyan]  [dim]({fw})[/dim]")
+
+    action = questionary.select(
+        "How would you like to configure clients?",
+        choices=["Select detected projects", "Enter a client path manually"],
     ).ask()
-    if framework is None:
-        raise typer.Exit(code=0)
+    if action is None: raise typer.Exit(code=0)
 
-    # Derive output path from framework detection
-    if detected and detected[0] == framework:
-        raw_output = detected[1]
-    else:
-        # No framework config detected anywhere — ask for the output path explicitly
-        # so the developer can point us at wherever their frontend lives
-        raw_output = questionary.text(
-            "Output path for generated types",
-            default="src/__pyrpc.d.ts",
-            instruction="(relative to this directory — e.g. src/__pyrpc.d.ts or frontend/src/__pyrpc.d.ts)",
-        ).ask()
-        if raw_output is None:
-            raise typer.Exit(code=0)
-        raw_output = raw_output.strip()
+    if action == "Enter a client path manually":
+        client = questionary.text("Client project root", default=".").ask()
+        if client is None: raise typer.Exit(code=0)
+        framework = questionary.select("Frontend framework", choices=_FRAMEWORK_LABELS, default="Next.js").ask()
+        if framework is None: raise typer.Exit(code=0)
+        return {"module": module, "framework": framework, "client": client}
 
-    output = _resolve_output_path(root, framework, raw_output)
+    choices = [f"{path} ({fw})" for path, fw in detected_projects]
+    while True:
+        selections = questionary.checkbox("Select detected projects", choices=choices).ask()
+        if selections is None: raise typer.Exit(code=0)
+        if selections:
+            break
+        console.print("[yellow]No projects selected — choose at least one or press Ctrl+C to cancel.[/yellow]")
 
-    return {"module": module, "framework": framework, "output": output}
+    clients = []
+    for sel in selections:
+        for p, f in detected_projects:
+            if sel == f"{p} ({f})":
+                clients.append(p)
+                break
+    return {"module": module, "framework": "Mixed", "clients": clients}
 
 
 # ── Core helpers ──────────────────────────────────────────────────────────────
@@ -188,7 +206,6 @@ def _import_module(module_path: str):
         raise typer.Exit(code=1) from e
 
 def _parse_entry(entry: str) -> tuple[str, str]:
-    """'main:app' → ('main', 'app'). Defaults app var to 'app'."""
     parts = entry.split(":", 1)
     return parts[0], parts[1] if len(parts) > 1 else "app"
 
@@ -211,13 +228,40 @@ def _server_is_running(host: str, port: int) -> bool:
     except Exception:
         return False
 
-def _run_codegen(module: str, output_path: str) -> int:
+def _run_codegen(module: str, output_path: str, *, reload: bool = False) -> int:
+    """
+    Generate TypeScript declarations for one output path.
+
+    ``reload=False`` imports the module (registering procedures in
+    ``default_router``). ``reload=True`` uses ``default_router.reload_module``
+    so the watcher picks up procedures after edits — a plain re-import would
+    return the cached module and regenerate stale types.
+    """
     _lazy_core()
-    _import_module(module)
+    from pyrpc_core import default_router, get_registry_schema
+    if reload:
+        if not default_router.reload_module(module):
+            console.print("  [yellow]⚠[/yellow]  no procedures after reload")
+            return 0
+    else:
+        _import_module(module)
     schemas = get_registry_schema(default_router)
     save = _lazy_codegen()
     save(schemas, output_path)
     return len(schemas)
+
+def _regenerate_clients(module: str, client_dirs: list[str], *, reload: bool = False) -> int:
+    """Generate types for every configured client and configure each tsconfig."""
+    from pyrpc_core.tsconfig import configure_tsconfig
+    n = 0
+    for client_dir in client_dirs:
+        output_path = os.path.abspath(os.path.join(client_dir, "__pyrpc.d.ts"))
+        n = _run_codegen(module, output_path, reload=reload)
+        try:
+            configure_tsconfig(client_dir)
+        except Exception as e:
+            console.print(f"[yellow]⚠ Could not configure tsconfig in {client_dir}: {e}[/yellow]")
+    return n
 
 def _fetch_schema(url: str) -> dict:
     import httpx
@@ -264,7 +308,7 @@ def _resolve_source(source: str) -> dict:
 
 # ── Regen callback (thread-safe, debounced) ───────────────────────────────────
 
-def _make_regen_callback(module: str, output_path: str):
+def _make_regen_callback(module: str, client_dirs: list[str]) -> tuple[Callable[[], None], Callable[[], None]]:
     _lock = threading.Lock()
     _timer: list[threading.Timer | None] = [None]
     _timer_lock = threading.Lock()
@@ -273,16 +317,10 @@ def _make_regen_callback(module: str, output_path: str):
         if not _lock.acquire(blocking=False):
             return
         try:
-            ok = default_router.reload_module(module)
-            if not ok:
-                console.print("  [yellow]⚠[/yellow]  no procedures after reload")
-                return
-            schemas = get_registry_schema(default_router)
-            save = _lazy_codegen()
-            save(schemas, output_path)
-            console.print(f"  [green]✓[/green]  types regenerated ({len(schemas)} procs)")
+            n = _regenerate_clients(module, client_dirs, reload=True)
+            console.print(f"[dim]{time.strftime('%H:%M:%S')} types regenerated ({n} procs) for {len(client_dirs)} clients[/dim]")
         except Exception as e:
-            console.print(f"  [red]✗[/red]  codegen error: {e}")
+            console.print(f"[red]Error regenerating types:[/red] {e}")
         finally:
             _lock.release()
 
@@ -300,10 +338,10 @@ def _make_regen_callback(module: str, output_path: str):
 # ── Dev console ───────────────────────────────────────────────────────────────
 
 class _DevConsole:
-    def __init__(self, *, module: str, output_path: str, host: str, port: int,
+    def __init__(self, *, module: str, client_dirs: list[str], host: str, port: int,
                  regenerate_cb, server_proc=None, server_managed: bool = False):
         self.module = module
-        self.output_path = output_path
+        self.client_dirs = client_dirs
         self.host = host
         self.port = port
         self.regenerate = regenerate_cb
@@ -313,6 +351,7 @@ class _DevConsole:
 
     def _schemas(self) -> dict:
         try:
+            from pyrpc_core import default_router, get_registry_schema
             return get_registry_schema(default_router)
         except Exception:
             return {}
@@ -370,7 +409,8 @@ class _DevConsole:
         self.regenerate()
 
     def _types(self, _=""):
-        console.print(f"  [bold]{self.output_path}[/bold]")
+        for c in self.client_dirs:
+            console.print(f"  [bold]{os.path.abspath(os.path.join(c, '__pyrpc.d.ts'))}[/bold]")
         console.print('  import type {{ Types }} from "@pyrpc/types"')
 
     def _restart(self, _=""):
@@ -453,14 +493,15 @@ def serve(
 @app.command()
 def codegen(
     source: str = typer.Argument(..., help="Schema file, URL, or module"),
-    output: str = typer.Option(_DEFAULT_OUTPUT, "--output", "-o"),
+    client: str = typer.Option(_DEFAULT_CLIENT, "--client", "-c", help="Client project root"),
 ):
     """Generate TypeScript types from a schema, URL, or module."""
     try:
         schemas = _resolve_source(source)
     except Exception as e:
         console.print(f"[red]Error:[/red] {e}"); raise typer.Exit(1) from e
-    p = os.path.abspath(output)
+    
+    p = os.path.abspath(os.path.join(client, "__pyrpc.d.ts"))
     _lazy_codegen()(schemas, p)
     console.print(f"  [green]✓[/green]  types generated ({len(schemas)} procs) → {p}")
     console.print('  import type {{ Types }} from "@pyrpc/types"')
@@ -469,25 +510,38 @@ def codegen(
 @app.command()
 def watch(
     module: str = typer.Argument(None, help="Module to watch (reads pyrpc.json if omitted)"),
-    output: str = typer.Option(None, "--output", "-o"),
+    client: str = typer.Option(None, "--client", "-c", help="Client project root"),
 ):
     """Watch for Python changes and regenerate TypeScript types. No server started."""
     cwd = os.getcwd()
     cfg = _read_config() or {}
     module = module or cfg.get("module")
-    output = output or cfg.get("output", _DEFAULT_OUTPUT)
+    
+    if client:
+        client_dirs = [client]
+    else:
+        client_dirs = _get_clients(cfg)
+        
     if not module:
         console.print("[red]No module specified. Run pyrpc dev first to create pyrpc.json.[/red]")
         raise typer.Exit(1)
-    _lazy_core(); _import_module(module)
-    out = os.path.abspath(output)
+    if not client_dirs:
+        console.print("[red]No clients configured. Specify --client or configure in pyrpc.json.[/red]")
+        raise typer.Exit(1)
+        
+    _lazy_core()
+    
     try:
-        n = _run_codegen(module, out)
-        console.print(f"  [green]✓[/green]  types generated ({n} procs) → {out}")
+        n = _regenerate_clients(module, client_dirs)
+        if len(client_dirs) == 1:
+            console.print(f"  [green]✓[/green]  types generated ({n} procs) → {client_dirs[0]}")
+        else:
+            console.print(f"  [green]✓[/green]  types generated ({n} procs) for {len(client_dirs)} clients")
         console.print("  watching... [dim](Ctrl+C to stop)[/dim]")
     except Exception as e:
         console.print(f"  [red]✗[/red]  {e}"); raise typer.Exit(1) from e
-    _do, schedule = _make_regen_callback(module, out)
+        
+    _do, schedule = _make_regen_callback(module, client_dirs)
     stop = threading.Event()
     def _w():
         for changes in watch(*_find_python_dirs(cwd), stop_event=stop, yield_on_timeout=True, debounce=200):
@@ -503,9 +557,9 @@ def dev(
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Server host"),
     port: int = typer.Option(8000, "--port", "-p", help="Server port"),
     reload: bool = typer.Option(True, "--reload/--no-reload", help="Uvicorn auto-reload"),
-    yes: bool = typer.Option(False, "--yes", "-y", help="Skip the setup wizard; auto-detect module and output."),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Skip the setup wizard; auto-detect module and client."),
     module: str = typer.Option(None, "--module", "-m", help="Entry module (skips wizard prompt). Requires --yes."),
-    output: str = typer.Option(None, "--output", "-o", help="Output path for generated types (skips wizard prompt). Requires --yes."),
+    client: str = typer.Option(None, "--client", "-c", help="Client project root (skips wizard prompt). Requires --yes."),
     reconfigure: bool = typer.Option(False, "--reconfigure", help="Re-run the setup wizard even if pyrpc.json exists."),
 ):
     """Start the dev server and keep TypeScript types in sync.
@@ -514,16 +568,16 @@ def dev(
     Every run after: reads pyrpc.json, no questions asked.
 
     Pass --yes to skip the wizard entirely. pyRPC will auto-detect your
-    entry module and output path, or you can provide them explicitly:
+    entry module and client root, or you can provide them explicitly:
 
       pyrpc dev --yes
-      pyrpc dev --yes --module main --output src/__pyrpc.d.ts
+      pyrpc dev --yes --module main --client ../frontend
 
     Detects if a server is already running on host:port — if so, skips
     starting uvicorn and just runs the type watcher. Otherwise starts
     uvicorn with --reload and watches .py files for type regeneration.
 
-    Also watches pyrpc.json itself — if module or output changes, the
+    Also watches pyrpc.json itself — if module or client changes, the
     watcher re-wires automatically and uvicorn restarts if needed.
     """
     cwd = os.getcwd()
@@ -531,9 +585,9 @@ def dev(
     # ── Config: read or run wizard ────────────────────────────────────────────
     cfg_path = _find_config()
 
-    if yes and module and output:
+    if yes and module and client:
         # Fully non-interactive: all values supplied on the command line.
-        cfg = {"module": module, "framework": "Other", "output": output}
+        cfg = {"module": module, "framework": "Other", "client": client}
         if cfg_path is None:
             cfg_path = _write_config(cfg)
             console.print(f"  [green]✓[/green]  pyrpc.json created")
@@ -551,26 +605,38 @@ def dev(
                     break
             resolved_module = module or default_module
 
-            # Auto-detect framework and output
-            detected = _detect_framework(cwd)
-            if not detected:
-                for subdir in ["frontend", "client", "web", "ui"]:
-                    candidate_dir = os.path.join(cwd, subdir)
-                    if os.path.isdir(candidate_dir):
-                        detected = _detect_framework(candidate_dir)
-                        if detected:
-                            detected = (detected[0], os.path.join(subdir, detected[1]))
-                            break
-            resolved_output = output or (
-                _resolve_output_path(cwd, detected[0], detected[1]) if detected else _DEFAULT_OUTPUT
-            )
-            resolved_framework = detected[0] if detected else "Other"
+            # Auto-detect framework and client
+            if client:
+                resolved_client = client
+                resolved_framework = _detect_framework(client) or "Other"
+            else:
+                detected_projects = _find_frontend_projects(cwd)
+                if len(detected_projects) == 1:
+                    resolved_client = detected_projects[0][0]
+                    resolved_framework = detected_projects[0][1]
+                elif len(detected_projects) > 1:
+                    console.print("[red]✗ Multiple TypeScript projects found.[/red]\n")
+                    for p, _ in detected_projects:
+                        console.print(f"  • {p}")
+                    console.print("\n[dim]Specify which client to use:[/dim]\n")
+                    console.print("  [cyan]pyrpc dev --client <path>[/cyan]\n")
+                    console.print("[dim]Or configure clients explicitly in pyrpc.json.[/dim]")
+                    raise typer.Exit(1)
+                else:
+                    resolved_client = None
+                    resolved_framework = "Other"
 
-            cfg = {"module": resolved_module, "framework": resolved_framework, "output": resolved_output}
+            cfg = {"module": resolved_module, "framework": resolved_framework}
+            if resolved_client is not None:
+                cfg["client"] = resolved_client
             if cfg_path is None:
                 cfg_path = _write_config(cfg)
                 console.print(f"  [green]✓[/green]  pyrpc.json created (auto-configured)")
-            console.print(f"  [dim]module={cfg['module']}  output={cfg['output']}[/dim]")
+            
+            if resolved_client is not None:
+                console.print(f"  [dim]module={cfg['module']}  client={cfg['client']}[/dim]")
+            else:
+                console.print(f"  [dim]module={cfg['module']}  (no client configured)[/dim]")
     elif cfg_path is None or reconfigure:
         cfg = _run_wizard(cwd)
         cfg_path = _write_config(cfg)
@@ -580,18 +646,23 @@ def dev(
             cfg = json.load(f)
 
     module: str = cfg["module"]
-    output: str = cfg.get("output", "src/__pyrpc.d.ts")
-    output_path = os.path.abspath(output)
+    client_dirs = _get_clients(cfg)
 
     # ── Import module + initial codegen ───────────────────────────────────────
     _lazy_core()
     _import_module(module)
-    try:
-        n = _run_codegen(module, output_path)
-        console.print(f"  [green]✓[/green]  types generated ({n} procs) → {output_path}")
-    except Exception as e:
-        console.print(f"  [red]✗[/red]  initial codegen failed: {e}")
-        raise typer.Exit(1) from e
+    if client_dirs:
+        try:
+            n = _regenerate_clients(module, client_dirs)
+            if len(client_dirs) == 1:
+                console.print(f"  [green]✓[/green]  types generated ({n} procs) → {client_dirs[0]}")
+            else:
+                console.print(f"  [green]✓[/green]  types generated ({n} procs) for {len(client_dirs)} clients")
+        except Exception as e:
+            console.print(f"  [red]✗[/red]  initial codegen failed: {e}")
+            raise typer.Exit(1) from e
+    else:
+        console.print(f"  [dim]○[/dim]  no clients configured — skipping type generation")
 
     # ── Server: attach or start ───────────────────────────────────────────────
     server_proc: subprocess.Popen | None = None
@@ -627,7 +698,11 @@ def dev(
         console.print(f"  [bold]pyRPC dev[/bold]  http://{host}:{port}/rpc")
 
     # ── Regen callback wired to current module/output ─────────────────────────
-    _do_regen, schedule = _make_regen_callback(module, output_path)
+    if client_dirs:
+        _do_regen, schedule = _make_regen_callback(module, client_dirs)
+    else:
+        def _do_regen(): pass
+        def schedule(): pass
 
     # ── Watchers ──────────────────────────────────────────────────────────────
     stop = threading.Event()
@@ -651,7 +726,7 @@ def dev(
         If module changed → restart uvicorn (if we own it).
         If output changed → point regen callback at new path.
         """
-        nonlocal _do_regen, schedule, server_proc, module, output_path
+        nonlocal _do_regen, schedule, server_proc, module, client_dirs
 
         for changes in watch(
             str(cfg_path.parent),
@@ -673,10 +748,10 @@ def dev(
                 continue
 
             new_module = new_cfg.get("module", module)
-            new_output = os.path.abspath(new_cfg.get("output", output))
+            new_client_dirs = _get_clients(new_cfg)
 
             module_changed = new_module != module
-            output_changed = new_output != output_path
+            output_changed = new_client_dirs != client_dirs
 
             if not module_changed and not output_changed:
                 continue
@@ -684,8 +759,8 @@ def dev(
             console.print("  [blue]pyrpc.json changed — reloading...[/blue]")
 
             if output_changed:
-                output_path = new_output
-                console.print(f"  [dim]output → {output_path}[/dim]")
+                client_dirs = new_client_dirs
+                console.print(f"  [dim]clients → {client_dirs}[/dim]")
 
             if module_changed:
                 module = new_module
@@ -693,7 +768,7 @@ def dev(
                 _import_module(module)
 
             # Re-wire regen callback to new module/output
-            _do_regen, schedule = _make_regen_callback(module, output_path)
+            _do_regen, schedule = _make_regen_callback(module, client_dirs)
 
             # Restart uvicorn if we own it and module changed
             if module_changed and server_managed and server_proc:
@@ -713,7 +788,7 @@ def dev(
     # ── Interactive console ───────────────────────────────────────────────────
     dev_console = _DevConsole(
         module=module,
-        output_path=output_path,
+        client_dirs=client_dirs,
         host=host,
         port=port,
         regenerate_cb=_do_regen,

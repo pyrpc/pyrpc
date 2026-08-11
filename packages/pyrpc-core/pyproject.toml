@@ -1,6 +1,6 @@
 [project]
 name = "pyrpc-core"
-version = "0.10.1"
+version = "0.11.1"
 description = "pyRPC Core - tRPC-style RPC protocol and runtime for Python"
 requires-python = ">=3.11"
 dependencies = [
@@ -13,6 +13,7 @@ dependencies = [
     "uvicorn>=0.23.0",
     "watchfiles>=1.0.0",
     "questionary>=2.0.0",
+    "jsonc-edit>=0.1.0",
 ]
 
 [project.optional-dependencies]

@@ -2,8 +2,8 @@
 Tests for the new codegen output path behaviour.
 
 The old pyrpc.json / distribution / client_root / migration machinery has been
-removed. This file tests the replacement: pyrpc codegen --output writes to a
-caller-specified path, the default is src/__pyrpc.d.ts (relative to cwd), and
+removed. This file tests the replacement: pyrpc codegen --client writes to a
+caller-specified path, the default is . (relative to cwd), and
 save_typescript_client still requires an absolute path.
 """
 import json
@@ -51,15 +51,15 @@ def test_default_output_not_exported_from_pyrpc_codegen():
     )
 
 
-# ── CLI default output path is src/__pyrpc.d.ts ──────────────────────────────
+# ── CLI default client root is . ──────────────────────────────
 
-def test_cli_default_output_is_src_pyrpc_dts():
-    from pyrpc_core.cli import _DEFAULT_OUTPUT
-    assert _DEFAULT_OUTPUT == "src/__pyrpc.d.ts"
+def test_cli_default_client_is_dot():
+    from pyrpc_core.cli import _DEFAULT_CLIENT
+    assert _DEFAULT_CLIENT == "."
 
 
-def test_codegen_command_uses_default_output(tmp_path):
-    """Running `pyrpc codegen <schema>` with no --output flag writes to src/__pyrpc.d.ts."""
+def test_codegen_command_uses_default_client(tmp_path):
+    """Running `pyrpc codegen <schema>` with no --client flag writes to __pyrpc.d.ts."""
     from typer.testing import CliRunner
     from pyrpc_core.cli import app
 
@@ -82,15 +82,15 @@ def test_codegen_command_uses_default_output(tmp_path):
     try:
         result = CliRunner().invoke(app, ["codegen", str(schema_file)])
         assert result.exit_code == 0, result.output
-        expected = tmp_path / "src" / "__pyrpc.d.ts"
+        expected = tmp_path / "__pyrpc.d.ts"
         assert expected.exists(), f"Expected {expected}, got: {result.output}"
         assert "add" in expected.read_text()
     finally:
         os.chdir(cwd)
 
 
-def test_codegen_command_respects_output_flag(tmp_path):
-    """--output flag overrides the default path."""
+def test_codegen_command_respects_client_flag(tmp_path):
+    """--client flag overrides the default path."""
     from typer.testing import CliRunner
     from pyrpc_core.cli import app
 
@@ -98,8 +98,10 @@ def test_codegen_command_respects_output_flag(tmp_path):
     schema_file = tmp_path / "schema.json"
     schema_file.write_text(json.dumps(schemas))
 
-    custom_out = str(tmp_path / "custom" / "my-types.d.ts")
-    result = CliRunner().invoke(app, ["codegen", str(schema_file), "--output", custom_out])
+    custom_client = str(tmp_path / "custom")
+    result = CliRunner().invoke(app, ["codegen", str(schema_file), "--client", custom_client])
     assert result.exit_code == 0, result.output
-    assert os.path.isfile(custom_out)
-    assert "greet" in open(custom_out).read()
+    
+    expected_out = os.path.join(custom_client, "__pyrpc.d.ts")
+    assert os.path.isfile(expected_out)
+    assert "greet" in open(expected_out).read()
