@@ -92,7 +92,7 @@ First run: answers 2 quick questions (entry module + frontend project; the frame
 import type { Types } from "@pyrpc/types"
 import { createClient } from "@pyrpc/client"
 
-// @pyrpc/types resolves to <client>/__pyrpc.d.ts via tsconfig paths
+// @pyrpc/types resolves to <client>/__pyrpc.ts via tsconfig paths
 // (wired automatically by pyrpc dev using jsonc-edit)
 const client = createClient<Types>({ baseUrl: "http://localhost:8000" })
 const result = await client.add(10, 5)
@@ -127,8 +127,8 @@ with RPCClient("http://localhost:8000") as client:
 ```
 Python @rpc decorator
   → pyrpc dev watches .py files
-  → regenerates <client>/__pyrpc.d.ts
-  → tsconfig paths: "@pyrpc/types" → "./__pyrpc.d.ts"
+  → regenerates <client>/__pyrpc.ts
+  → tsconfig paths: "@pyrpc/types" → "./__pyrpc.ts"
   → import type { Types } from "@pyrpc/types"  ✓
 ```
 

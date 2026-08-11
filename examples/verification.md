@@ -24,7 +24,7 @@ npm install @pyrpc/client @pyrpc/svelte
 
 After `npm install` completes you should see:
 ```
-  ✓ @pyrpc/types → src/__pyrpc.d.ts (tsconfig.json)
+  ✓ @pyrpc/types → src/__pyrpc.ts (tsconfig.json)
   Run 'pyrpc dev' to start generating types.
 ```
 
@@ -32,7 +32,7 @@ Check your `tsconfig.json` — it should now contain:
 ```json
 "paths": {
   "@/*": ["./*"],
-  "@pyrpc/types": ["./src/__pyrpc.d.ts"]
+  "@pyrpc/types": ["./src/__pyrpc.ts"]
 }
 ```
 
@@ -94,23 +94,23 @@ pyRPC setup (runs once — saved to pyrpc.json)
 ? Frontend framework  › Next.js ← auto-detected from next.config.ts
 
   ✓ pyrpc.json created
-  ✓ types generated (2 procs) → src/__pyrpc.d.ts
+  ✓ types generated (2 procs) → src/__pyrpc.ts
   pyRPC dev  http://127.0.0.1:8000/rpc
   pyrpc>
 ```
 
 If the frontend config isn't detected (server-first setup), the wizard asks:
 ```
-? Output path for generated types  › src/__pyrpc.d.ts
+? Output path for generated types  › src/__pyrpc.ts
 ```
 
-Check `src/__pyrpc.d.ts` exists and contains `greet` and `set_name`.
+Check `src/__pyrpc.ts` exists and contains `greet` and `set_name`.
 Check `pyrpc.json`:
 ```json
 {
   "module": "main",
   "framework": "Next.js",
-  "output": "src/__pyrpc.d.ts"
+  "output": "src/__pyrpc.ts"
 }
 ```
 
@@ -168,7 +168,7 @@ uvicorn main:app --reload
 Now run `pyrpc dev` in another terminal:
 ```
   ○ server already running at http://127.0.0.1:8000/rpc — skipping uvicorn
-  ✓ types generated (3 procs) → src/__pyrpc.d.ts
+  ✓ types generated (3 procs) → src/__pyrpc.ts
   pyrpc>
 ```
 
@@ -180,7 +180,7 @@ pyrpc watch                 # terminal 2 — reads pyrpc.json
 ```
 
 ```
-  ✓ types generated (3 procs) → src/__pyrpc.d.ts
+  ✓ types generated (3 procs) → src/__pyrpc.ts
   watching... (Ctrl+C to stop)
 ```
 
