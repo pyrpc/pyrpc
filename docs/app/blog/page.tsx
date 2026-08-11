@@ -66,7 +66,7 @@ const posts: Post[] = [
     {
         slug: 'v0-2-0-type-safety-and-await',
         title: 'v0.2.0 - Type safety, proper async, and @pyrpc/types',
-        description: 'The three critical fixes that ship pyRPC v0.2.0: real type generation, working async, and a postinstall-based @pyrpc/types setup.',
+        description: 'The three critical fixes that ship v0.2.0: real type generation, working async, and a postinstall-based @pyrpc/types setup.',
         date: 'May 29, 2026 at 2:00pm',
         readTime: '6 min',
         category: 'release',
