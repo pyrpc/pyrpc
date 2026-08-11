@@ -22,8 +22,7 @@
   "scripts": {
     "test": "npm run test --workspaces",
     "test:python": "cd packages/pyrpc-core && python3 -m pytest",
-    "test:client": "npm test --workspace=@pyrpc/client",
-    "test:postinstall": "cd packages/client && node postinstall.test.js"
+    "test:client": "npm test --workspace=@pyrpc/client"
   },
   "devDependencies": {
     "likec4": "^1.58.0"
