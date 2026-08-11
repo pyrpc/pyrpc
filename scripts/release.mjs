@@ -30,6 +30,18 @@ for (const pkg of packages) {
   if (fs.existsSync(packageJsonPath)) {
     const pkgJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     pkgJson.version = cleanVersion;
+
+    // Keep every internal @pyrpc/* dependency/peer range in sync.
+    for (const section of ['dependencies', 'peerDependencies']) {
+      const ranges = pkgJson[section];
+      if (!ranges) continue;
+      for (const name of Object.keys(ranges)) {
+        if (name.startsWith('@pyrpc/')) {
+          ranges[name] = `^${cleanVersion}`;
+        }
+      }
+    }
+
     fs.writeFileSync(packageJsonPath, JSON.stringify(pkgJson, null, 2) + '\n');
     console.log(`Updated ${pkg}/package.json`);
   }

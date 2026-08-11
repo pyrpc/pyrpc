@@ -16,8 +16,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --external svelte --external @tanstack/svelte-query --external @pyrpc/client",
-    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --external svelte --external @tanstack/svelte-query --external @pyrpc/client",
+    "build": "tsup src/index.ts --format cjs,esm --dts --external svelte --external @tanstack/svelte-query --external @pyrpc/client --external @pyrpc/types",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --external svelte --external @tanstack/svelte-query --external @pyrpc/client --external @pyrpc/types",
     "test": "vitest run"
   },
   "keywords": [
@@ -27,9 +27,11 @@
     "tanstack-query"
   ],
   "license": "MIT",
+  "dependencies": {
+    "@pyrpc/client": "^0.11.0",
+    "@pyrpc/types": "^0.11.0"
+  },
   "peerDependencies": {
-    "@pyrpc/client": "^0.10.0",
-    "@pyrpc/types": "^0.10.0",
     "@tanstack/svelte-query": "^5.0.0",
     "svelte": "^4.0.0 || ^5.0.0"
   },

@@ -14,5 +14,6 @@ export default defineConfig({
     '@tanstack/react-query',
     '@pyrpc/client',
     '@pyrpc/react',
+    '@pyrpc/types',
   ],
 });
