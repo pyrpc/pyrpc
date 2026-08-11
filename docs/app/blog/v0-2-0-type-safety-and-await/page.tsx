@@ -19,7 +19,7 @@ export default function V020Post() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    pyRPC v0.2.0 fixes three ship-blocking issues that eroded the &ldquo;tRPC for Python&rdquo; promise. Here&rsquo;s what changed and why.
+                    v0.2.0 fixes three ship-blocking issues that eroded the &ldquo;tRPC for Python&rdquo; promise. Here&rsquo;s what changed and why.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">1. RPCCallable now actually awaits</h2>
