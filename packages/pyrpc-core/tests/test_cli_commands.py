@@ -1,11 +1,14 @@
 import json
 import os
 import re
+import sys
 import tempfile
 import unittest.mock as mock
 
 import pytest
+import typer
 from pyrpc_core import default_router, rpc
+import pyrpc_core.cli as cli_mod
 from pyrpc_core.cli import app, _parse_entry
 from typer.testing import CliRunner
 from pathlib import Path
@@ -292,6 +295,190 @@ def test_cli_watch_help():
     assert result.exit_code == 0
     output = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', result.output)
     assert "--client" in output
+
+
+# ── wizard (multi-client) ─────────────────────────────────────────────────────
+
+def _fake_questionary(select_answers, text_answers, checkbox_answers):
+    q = mock.MagicMock()
+    q.select.return_value.ask.side_effect = select_answers
+    q.text.return_value.ask.side_effect = text_answers
+    q.checkbox.return_value.ask.side_effect = checkbox_answers
+    return q
+
+
+def test_wizard_manual_entry_is_a_separate_action_not_a_checkbox_item():
+    """'Enter a client path manually' must be an action, never a checkbox option."""
+    detected = [("./client", "Vite"), ("./web", "Next.js"), ("./admin", "Next.js")]
+    q = _fake_questionary(
+        select_answers=["Enter a client path manually", "React"],
+        text_answers=["main", "./custom"],
+        checkbox_answers=[],
+    )
+    with mock.patch("pyrpc_core.cli.questionary", q):
+        with mock.patch.object(
+            cli_mod, "_find_frontend_projects", return_value=detected
+        ):
+            cfg = cli_mod._run_wizard(".")
+    assert cfg == {"module": "main", "framework": "React", "client": "./custom"}
+    assert q.checkbox.called is False
+    action_choices = q.select.call_args_list[0].kwargs["choices"]
+    assert action_choices == [
+        "Select detected projects",
+        "Enter a client path manually",
+    ]
+
+
+def test_wizard_detected_projects_never_include_manual_entry():
+    """The detected-projects checkbox must not mix a manual-entry option in."""
+    detected = [("./client", "Vite"), ("./web", "Next.js")]
+    q = _fake_questionary(
+        select_answers=["Select detected projects"],
+        text_answers=["main"],
+        checkbox_answers=[["./client (Vite)", "./web (Next.js)"]],
+    )
+    with mock.patch("pyrpc_core.cli.questionary", q):
+        with mock.patch.object(
+            cli_mod, "_find_frontend_projects", return_value=detected
+        ):
+            cfg = cli_mod._run_wizard(".")
+    assert cfg == {
+        "module": "main", "framework": "Mixed", "clients": ["./client", "./web"],
+    }
+    assert q.checkbox.called is True
+    checkbox_choices = q.checkbox.call_args.kwargs["choices"]
+    assert "Manual entry" not in checkbox_choices
+    assert checkbox_choices == ["./client (Vite)", "./web (Next.js)"]
+
+
+def test_wizard_selection_is_never_silently_discarded():
+    """Selecting detected projects and picking manual entry keeps BOTH — but manual
+    entry is no longer a checkbox item, so the mixed case can't happen. Picking
+    projects must preserve every checked project."""
+    detected = [("./client", "Vite"), ("./web", "Next.js")]
+    q = _fake_questionary(
+        select_answers=["Select detected projects"],
+        text_answers=["main"],
+        checkbox_answers=[["./client (Vite)", "./web (Next.js)"]],
+    )
+    with mock.patch("pyrpc_core.cli.questionary", q):
+        with mock.patch.object(
+            cli_mod, "_find_frontend_projects", return_value=detected
+        ):
+            cfg = cli_mod._run_wizard(".")
+    assert cfg["clients"] == ["./client", "./web"]
+
+
+def test_wizard_empty_checkbox_selection_reprompts():
+    """An empty checkbox selection re-prompts instead of silently falling back."""
+    detected = [("./client", "Vite"), ("./web", "Next.js")]
+    q = _fake_questionary(
+        select_answers=["Select detected projects"],
+        text_answers=["main"],
+        checkbox_answers=[[], ["./web (Next.js)"]],
+    )
+    with mock.patch("pyrpc_core.cli.questionary", q):
+        with mock.patch.object(
+            cli_mod, "_find_frontend_projects", return_value=detected
+        ):
+            cfg = cli_mod._run_wizard(".")
+    assert q.checkbox.call_count == 2
+    assert cfg == {"module": "main", "framework": "Mixed", "clients": ["./web"]}
+
+
+def test_wizard_cancel_at_action_exits():
+    detected = [("./client", "Vite"), ("./web", "Next.js")]
+    q = _fake_questionary(
+        select_answers=[None], text_answers=["main"], checkbox_answers=[]
+    )
+    with mock.patch("pyrpc_core.cli.questionary", q):
+        with mock.patch.object(
+            cli_mod, "_find_frontend_projects", return_value=detected
+        ):
+            with pytest.raises(typer.Exit):
+                cli_mod._run_wizard(".")
+
+
+# ── regen path (watcher reload) ───────────────────────────────────────────────
+
+def test_do_regen_reloads_module_and_picks_up_new_procedures(tmp_path):
+    """
+    The watcher's real regen callback must reload the module, not just re-import
+    the cached one. Editing a .py file (adding a procedure) must be reflected in
+    the regenerated __pyrpc.d.ts. Also proves default_router is in scope in the
+    regen path.
+    """
+    module = "regen_demo"
+    src = tmp_path / "regen_demo.py"
+    src.write_text(
+        "from pyrpc_core import rpc\n\n"
+        "@rpc\n"
+        "def ping() -> str:\n"
+        "    return 'old'\n",
+        encoding="utf-8",
+    )
+    client_dir = tmp_path / "client"
+    client_dir.mkdir()
+    out = client_dir / "__pyrpc.d.ts"
+
+    sys.path.insert(0, str(tmp_path))
+    try:
+        _do, _ = cli_mod._make_regen_callback(module, [str(client_dir)])
+
+        _do()
+        assert out.exists(), "types should be generated on first regen"
+        assert "ping" in out.read_text(encoding="utf-8")
+        assert "pong" not in out.read_text(encoding="utf-8")
+
+        src.write_text(
+            "from pyrpc_core import rpc\n\n"
+            "@rpc\n"
+            "def ping() -> str:\n"
+            "    return 'old'\n\n"
+            "@rpc\n"
+            "def pong() -> str:\n"
+            "    return 'new'\n",
+            encoding="utf-8",
+        )
+
+        _do()
+        content = out.read_text(encoding="utf-8")
+        assert "ping" in content, "existing procedure must survive reload"
+        assert "pong" in content, "new procedure must be picked up after reload"
+        assert "pong" in default_router.list()
+    finally:
+        if module in sys.modules:
+            sys.modules.pop(module, None)
+        if str(tmp_path) in sys.path:
+            sys.path.remove(str(tmp_path))
+
+
+def test_regenerate_clients_writes_all_clients(tmp_path):
+    """_regenerate_clients generates __pyrpc.d.ts for every configured client."""
+    module = "regen_multi"
+    (tmp_path / "regen_multi.py").write_text(
+        "from pyrpc_core import rpc\n\n"
+        "@rpc\n"
+        "def ping() -> str:\n"
+        "    return 'p'\n",
+        encoding="utf-8",
+    )
+    c1 = tmp_path / "c1"
+    c2 = tmp_path / "c2"
+    c1.mkdir()
+    c2.mkdir()
+
+    sys.path.insert(0, str(tmp_path))
+    try:
+        n = cli_mod._regenerate_clients(module, [str(c1), str(c2)])
+        assert n == 1
+        assert (c1 / "__pyrpc.d.ts").exists()
+        assert (c2 / "__pyrpc.d.ts").exists()
+    finally:
+        if module in sys.modules:
+            sys.modules.pop(module, None)
+        if str(tmp_path) in sys.path:
+            sys.path.remove(str(tmp_path))
 
 
 # ── _parse_entry ──────────────────────────────────────────────────────────────

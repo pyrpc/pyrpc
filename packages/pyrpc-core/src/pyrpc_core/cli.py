@@ -160,18 +160,32 @@ def _run_wizard(root: str) -> dict:
         framework = questionary.select("Frontend framework", choices=_FRAMEWORK_LABELS, default=fw).ask()
         if framework is None: raise typer.Exit(code=0)
         return {"module": module, "framework": framework, "client": client}
-    
-    choices = [f"{path} ({fw})" for path, fw in detected_projects] + ["Manual entry"]
-    selections = questionary.checkbox("Select client project roots", choices=choices).ask()
-    if selections is None: raise typer.Exit(code=0)
 
-    if not selections or "Manual entry" in selections:
+    console.print("\n[bold]Detected frontend projects:[/bold]")
+    for path, fw in detected_projects:
+        console.print(f"  • [cyan]{path}[/cyan]  [dim]({fw})[/dim]")
+
+    action = questionary.select(
+        "How would you like to configure clients?",
+        choices=["Select detected projects", "Enter a client path manually"],
+    ).ask()
+    if action is None: raise typer.Exit(code=0)
+
+    if action == "Enter a client path manually":
         client = questionary.text("Client project root", default=".").ask()
         if client is None: raise typer.Exit(code=0)
         framework = questionary.select("Frontend framework", choices=_FRAMEWORK_LABELS, default="Next.js").ask()
         if framework is None: raise typer.Exit(code=0)
         return {"module": module, "framework": framework, "client": client}
-    
+
+    choices = [f"{path} ({fw})" for path, fw in detected_projects]
+    while True:
+        selections = questionary.checkbox("Select detected projects", choices=choices).ask()
+        if selections is None: raise typer.Exit(code=0)
+        if selections:
+            break
+        console.print("[yellow]No projects selected — choose at least one or press Ctrl+C to cancel.[/yellow]")
+
     clients = []
     for sel in selections:
         for p, f in detected_projects:
@@ -214,14 +228,40 @@ def _server_is_running(host: str, port: int) -> bool:
     except Exception:
         return False
 
-def _run_codegen(module: str, output_path: str) -> int:
+def _run_codegen(module: str, output_path: str, *, reload: bool = False) -> int:
+    """
+    Generate TypeScript declarations for one output path.
+
+    ``reload=False`` imports the module (registering procedures in
+    ``default_router``). ``reload=True`` uses ``default_router.reload_module``
+    so the watcher picks up procedures after edits — a plain re-import would
+    return the cached module and regenerate stale types.
+    """
     _lazy_core()
-    _import_module(module)
     from pyrpc_core import default_router, get_registry_schema
+    if reload:
+        if not default_router.reload_module(module):
+            console.print("  [yellow]⚠[/yellow]  no procedures after reload")
+            return 0
+    else:
+        _import_module(module)
     schemas = get_registry_schema(default_router)
     save = _lazy_codegen()
     save(schemas, output_path)
     return len(schemas)
+
+def _regenerate_clients(module: str, client_dirs: list[str], *, reload: bool = False) -> int:
+    """Generate types for every configured client and configure each tsconfig."""
+    from pyrpc_core.tsconfig import configure_tsconfig
+    n = 0
+    for client_dir in client_dirs:
+        output_path = os.path.abspath(os.path.join(client_dir, "__pyrpc.d.ts"))
+        n = _run_codegen(module, output_path, reload=reload)
+        try:
+            configure_tsconfig(client_dir)
+        except Exception as e:
+            console.print(f"[yellow]⚠ Could not configure tsconfig in {client_dir}: {e}[/yellow]")
+    return n
 
 def _fetch_schema(url: str) -> dict:
     import httpx
@@ -277,18 +317,7 @@ def _make_regen_callback(module: str, client_dirs: list[str]) -> tuple[Callable[
         if not _lock.acquire(blocking=False):
             return
         try:
-            from pyrpc_core.tsconfig import configure_tsconfig
-            _import_module(module)
-            _lazy_core()
-            n = 0
-            for client_dir in client_dirs:
-                output_path = os.path.abspath(os.path.join(client_dir, "__pyrpc.d.ts"))
-                n = _run_codegen(module, output_path)
-                try:
-                    configure_tsconfig(client_dir)
-                except Exception as e:
-                    console.print(f"[yellow]⚠ Could not configure tsconfig in {client_dir}: {e}[/yellow]")
-            
+            n = _regenerate_clients(module, client_dirs, reload=True)
             console.print(f"[dim]{time.strftime('%H:%M:%S')} types regenerated ({n} procs) for {len(client_dirs)} clients[/dim]")
         except Exception as e:
             console.print(f"[red]Error regenerating types:[/red] {e}")
@@ -322,6 +351,7 @@ class _DevConsole:
 
     def _schemas(self) -> dict:
         try:
+            from pyrpc_core import default_router, get_registry_schema
             return get_registry_schema(default_router)
         except Exception:
             return {}
@@ -500,18 +530,9 @@ def watch(
         raise typer.Exit(1)
         
     _lazy_core()
-    from pyrpc_core.tsconfig import configure_tsconfig
     
     try:
-        n = 0
-        for client_dir in client_dirs:
-            out = os.path.abspath(os.path.join(client_dir, "__pyrpc.d.ts"))
-            n = _run_codegen(module, out)
-            try:
-                configure_tsconfig(client_dir)
-            except Exception as e:
-                console.print(f"  [yellow]⚠[/yellow]  Could not configure tsconfig in {client_dir}: {e}")
-        
+        n = _regenerate_clients(module, client_dirs)
         if len(client_dirs) == 1:
             console.print(f"  [green]✓[/green]  types generated ({n} procs) → {client_dirs[0]}")
         else:
@@ -629,18 +650,10 @@ def dev(
 
     # ── Import module + initial codegen ───────────────────────────────────────
     _lazy_core()
-    from pyrpc_core.tsconfig import configure_tsconfig
     _import_module(module)
     if client_dirs:
         try:
-            n = 0
-            for client_dir in client_dirs:
-                output_path = os.path.abspath(os.path.join(client_dir, "__pyrpc.d.ts"))
-                n = _run_codegen(module, output_path)
-                try:
-                    configure_tsconfig(client_dir)
-                except Exception as e:
-                    console.print(f"  [yellow]⚠[/yellow]  Could not configure tsconfig in {client_dir}: {e}")
+            n = _regenerate_clients(module, client_dirs)
             if len(client_dirs) == 1:
                 console.print(f"  [green]✓[/green]  types generated ({n} procs) → {client_dirs[0]}")
             else:
