@@ -251,16 +251,26 @@ def _run_codegen(module: str, output_path: str, *, reload: bool = False) -> int:
     return len(schemas)
 
 def _regenerate_clients(module: str, client_dirs: list[str], *, reload: bool = False) -> int:
-    """Generate types for every configured client and configure each tsconfig."""
+    """Generate types for every configured client and configure each tsconfig + bundler."""
     from pyrpc_core.tsconfig import configure_tsconfig
+    from pyrpc_core.bundlers import configure_bundler
     n = 0
     for client_dir in client_dirs:
-        output_path = os.path.abspath(os.path.join(client_dir, "__pyrpc.d.ts"))
+        output_path = os.path.abspath(os.path.join(client_dir, "__pyrpc.ts"))
         n = _run_codegen(module, output_path, reload=reload)
         try:
             configure_tsconfig(client_dir)
         except Exception as e:
             console.print(f"[yellow]⚠ Could not configure tsconfig in {client_dir}: {e}[/yellow]")
+        try:
+            if not configure_bundler(client_dir):
+                console.print(
+                    f"[yellow]⚠ Could not auto-configure bundler in {client_dir} — "
+                    "add a bundler alias '@pyrpc/types' → './__pyrpc.ts' "
+                    "(Vite/SvelteKit/Next.js Turbopack).[/yellow]"
+                )
+        except Exception as e:
+            console.print(f"[yellow]⚠ Could not configure bundler in {client_dir}: {e}[/yellow]")
     return n
 
 def _fetch_schema(url: str) -> dict:
@@ -410,7 +420,7 @@ class _DevConsole:
 
     def _types(self, _=""):
         for c in self.client_dirs:
-            console.print(f"  [bold]{os.path.abspath(os.path.join(c, '__pyrpc.d.ts'))}[/bold]")
+            console.print(f"  [bold]{os.path.abspath(os.path.join(c, '__pyrpc.ts'))}[/bold]")
         console.print('  import type {{ Types }} from "@pyrpc/types"')
 
     def _restart(self, _=""):
@@ -501,7 +511,7 @@ def codegen(
     except Exception as e:
         console.print(f"[red]Error:[/red] {e}"); raise typer.Exit(1) from e
     
-    p = os.path.abspath(os.path.join(client, "__pyrpc.d.ts"))
+    p = os.path.abspath(os.path.join(client, "__pyrpc.ts"))
     _lazy_codegen()(schemas, p)
     console.print(f"  [green]✓[/green]  types generated ({len(schemas)} procs) → {p}")
     console.print('  import type {{ Types }} from "@pyrpc/types"')

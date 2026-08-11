@@ -11,7 +11,7 @@
 "strict": true,
 "moduleResolution": "bundler",
 "paths": {
-"@pyrpc/types": ["./__pyrpc.d.ts"]
+"@pyrpc/types": ["./__pyrpc.ts"]
 }
 }
 }

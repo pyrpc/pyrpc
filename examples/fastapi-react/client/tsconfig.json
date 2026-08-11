@@ -20,7 +20,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@pyrpc/types": ["./__pyrpc.d.ts"]
+      "@pyrpc/types": ["./__pyrpc.ts"]
     }
   },
   "include": [

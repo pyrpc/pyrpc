@@ -25,7 +25,7 @@ def configure_tsconfig(client_dir: str) -> bool:
     if existing is not None:
         no_comments = re.sub(r"//.*?\n|/\*.*?\*/", "", existing, flags=re.DOTALL)
         clean_val = re.sub(r"\s+", "", no_comments)
-        if clean_val == '["./__pyrpc.d.ts"]':
+        if clean_val == '["./__pyrpc.ts"]':
             return True
         raise RuntimeError(
             f"@pyrpc/types is already configured to point elsewhere in {path}"
@@ -34,7 +34,7 @@ def configure_tsconfig(client_dir: str) -> bool:
     edits = modify(
         content,
         ["compilerOptions", "paths", "@pyrpc/types"],
-        ["./__pyrpc.d.ts"],
+        ["./__pyrpc.ts"],
     )
     if not edits:
         return True
