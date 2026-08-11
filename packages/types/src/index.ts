@@ -1,10 +1,11 @@
 // @pyrpc/types
 //
 // This stub is active until `pyrpc dev` runs for the first time and generates
-// your real types into src/__pyrpc.d.ts.
+// your real types into <client>/__pyrpc.d.ts.
 //
-// Your tsconfig.json should contain (added automatically by @pyrpc/client postinstall):
-//   "paths": { "@pyrpc/types": ["./src/__pyrpc.d.ts"] }
+// Your tsconfig.json should contain (injected automatically by pyrpc dev
+// via jsonc-edit):
+//   "paths": { "@pyrpc/types": ["./__pyrpc.d.ts"] }
 //
 // Once that alias is in place and pyrpc dev has run, this stub is bypassed
 // entirely — TypeScript resolves the import to your generated file instead.
