@@ -13,6 +13,61 @@ export interface Release {
 
 export const releases: Release[] = [
     {
+        version: 'v0.11.1',
+        date: '2026-08-11',
+        tag: 'v0.11.1',
+        description: 'Watcher regen now reloads edited modules so regenerated types reflect your latest code, and the setup wizard treats manual client entry as a first-class action.',
+        sections: [
+            {
+                title: 'Bug Fixes',
+                items: [
+                    '`_do_regen` now reloads the entry module via `default_router.reload_module` (imported in scope) instead of re-importing the cached module — edited procedures are now reflected in regenerated types.',
+                    '`_run_codegen` gains a `reload` flag; `_regenerate_clients` consolidates the per-client loop shared by `dev`, `watch`, and the debounced regen callback.',
+                    'Setup wizard: "Enter a client path manually" is now a separate action, never a checkbox item, so detected-project selection is never silently discarded.',
+                    '`_DevConsole._schemas` imports `default_router` locally.',
+                ],
+            },
+            {
+                title: 'Tests',
+                items: [
+                    'Regression tests for the wizard flow (manual entry path) and the real regen path (edited procedures reflected in output).',
+                ],
+            },
+        ],
+    },
+    {
+        version: 'v0.11.0',
+        date: '2026-08-11',
+        tag: 'v0.11.0',
+        description: 'Multi-client support: pyrpc.json now stores one or more client project roots, and generated types always land at `<client>/__pyrpc.d.ts` with surgical tsconfig path injection via jsonc-edit.',
+        sections: [
+            {
+                title: 'Features',
+                items: [
+                    'pyrpc.json now stores `client` (single root) or `clients` (list) instead of a single output path; generated types always land at `<client>/__pyrpc.d.ts`.',
+                    'tsconfig path management via `jsonc-edit`: injects `"@pyrpc/types": ["./__pyrpc.d.ts"]` with surgical edits that preserve comments and trailing commas, is idempotent on repeat runs, and raises if the alias already points elsewhere.',
+                    'Setup wizard walks the directory tree to detect frontend projects, multi-selects several clients, and configures each tsconfig.',
+                    '`dev` and the watcher regenerate types for every client and re-wire automatically when pyrpc.json changes; `--module`/`--client` flags replace `--module`/`--output`.',
+                    '`codegen` and `watch` take `--client` and normalize to the same `<client>/__pyrpc.d.ts` path.',
+                    'Fixed missing import time in the debounced regen callback.',
+                ],
+            },
+            {
+                title: 'Bug Fixes',
+                items: [
+                    'Codegen header comment now references `./__pyrpc.d.ts` (the tsconfig alias) instead of `./src/__pyrpc.d.ts`, matching where types actually land.',
+                ],
+            },
+            {
+                title: 'Tests',
+                items: [
+                    'tsconfig editing suite: missing compilerOptions, missing paths, existing aliases with comments/trailing commas, idempotency, conflicting-alias errors, and no-tsconfig case.',
+                    'CLI tests updated to the client-root model.',
+                ],
+            },
+        ],
+    },
+    {
         version: 'v0.10.1',
         date: '2026-08-08',
         tag: 'v0.10.1',
