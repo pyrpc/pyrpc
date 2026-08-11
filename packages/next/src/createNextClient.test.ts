@@ -30,6 +30,7 @@ describe('createNextClient', () => {
   it('exposes hooks on the top-level api object', () => {
     const api = createNextClient<TestTypes>({
       baseUrl: 'http://localhost:8000',
+      kinds: {},
     });
     expect(typeof api.greet.useQuery).toBe('function');
     expect(typeof api.greet.useMutation).toBe('function');

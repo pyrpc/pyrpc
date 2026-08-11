@@ -20,6 +20,7 @@ describe('createSvelteClient', () => {
   it('exposes both createQuery and createMutation by default', () => {
     const api = createSvelteClient<TestTypes>({
       baseUrl: 'http://localhost:8000',
+      kinds: {},
     });
     expect(typeof api.greet.createQuery).toBe('function');
     expect(typeof api.greet.createMutation).toBe('function');
