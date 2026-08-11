@@ -84,7 +84,7 @@ mount_fastapi(app)
 pyrpc dev
 ```
 
-First run: answers 2 quick questions (entry module + frontend framework) and writes `pyrpc.json`. Every run after: reads `pyrpc.json`, no questions asked. Starts the server, watches `.py` files, and regenerates TypeScript types automatically.
+First run: answers 2 quick questions (entry module + frontend project; the framework is auto-detected) and writes `pyrpc.json`. Every run after: reads `pyrpc.json`, no questions asked. Starts the server, watches `.py` files, and regenerates TypeScript types automatically.
 
 ### 3. Call from TypeScript
 
@@ -92,8 +92,8 @@ First run: answers 2 quick questions (entry module + frontend framework) and wri
 import type { Types } from "@pyrpc/types"
 import { createClient } from "@pyrpc/client"
 
-// @pyrpc/types resolves to src/__pyrpc.d.ts via tsconfig paths
-// (wired automatically by @pyrpc/client postinstall)
+// @pyrpc/types resolves to <client>/__pyrpc.d.ts via tsconfig paths
+// (wired automatically by pyrpc dev using jsonc-edit)
 const client = createClient<Types>({ baseUrl: "http://localhost:8000" })
 const result = await client.add(10, 5)
 console.log(result)  // 15
@@ -127,12 +127,12 @@ with RPCClient("http://localhost:8000") as client:
 ```
 Python @rpc decorator
   → pyrpc dev watches .py files
-  → regenerates src/__pyrpc.d.ts
-  → tsconfig paths: "@pyrpc/types" → "./src/__pyrpc.d.ts"
+  → regenerates <client>/__pyrpc.d.ts
+  → tsconfig paths: "@pyrpc/types" → "./__pyrpc.d.ts"
   → import type { Types } from "@pyrpc/types"  ✓
 ```
 
-`@pyrpc/client` postinstall adds the tsconfig paths entry automatically on `npm install`. `pyrpc.json` (written on first `pyrpc dev` run) stores the module and output path — no further config needed.
+`pyrpc dev` injects the tsconfig paths entry (via jsonc-edit, preserving comments and trailing commas) on every dev, watch, and codegen run. `pyrpc.json` (written on first `pyrpc dev` run) stores the module, framework, and client project root — no further config needed.
 
 ---
 

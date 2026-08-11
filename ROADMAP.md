@@ -2,9 +2,7 @@
 
 High-level direction and explicit non-goals for the project.
 
-## Shipped (v0.1.0-alpha.1 → v0.9.0)
-
-> **v0.10.0 note:** Distribution modes (workspace/server), `pyrpc.json` entrypoint/client_root/distribution fields, `pyrpc-client.json`, and the postinstall wizard have been simplified. See below.
+## Shipped (v0.1.0-alpha.1 → v0.11.1)
 
 ### Core & protocol
 
@@ -32,7 +30,7 @@ High-level direction and explicit non-goals for the project.
 ### TypeScript client
 
 - `createClient<Types>()` — proxy-based with full type inference
-- `@pyrpc/types` with postinstall codegen
+- `@pyrpc/types` — `import type { Types } from "@pyrpc/types"` resolves to the generated source-tree file via tsconfig paths
 - `@pyrpc/client` with `PyRPCError` (code, message, data)
 
 ### Client framework adapters (v0.9.0)
@@ -46,29 +44,38 @@ High-level direction and explicit non-goals for the project.
 
 ### CLI & dev tools
 
-- `pyrpc dev` — integrated setup wizard, file watcher, type regeneration, dev server
+- `pyrpc dev` — setup wizard, file watcher, type regeneration, dev server
+- `pyrpc dev` server detection — probes `host:port`; skips uvicorn and attaches watcher-only when a server is already running
+- `pyrpc dev` starts uvicorn with `--reload` by default (`--no-reload` to disable)
+- `pyrpc dev --yes` / `--module` / `--client` — fully non-interactive setup for CI and scripts
+- `pyrpc dev --reconfigure` — re-run the setup wizard, pre-filling current values
+- `pyrpc watch` — type-watcher only, no server started
+- Watcher reloads edited modules (`importlib.reload`) so regenerated types reflect the latest code
 - `pyrpc serve` — standalone server
-- `pyrpc version`, `pyrpc inspect`
+- `pyrpc version`, `pyrpc inspect`, `pyrpc pull`
 - Daemon-first design: JSON pipe (stdio) for Python ↔ TypeScript communication
 - 715× speedup via persistent npx daemon
 - Auto adapter installation (`npm install @pyrpc/<adapter>` on first run)
 
-### Distribution & config
+### Config (v0.10.0 → v0.11.x)
 
 - `pyrpc.json` — dedicated config (replaces `[tool.pyrpc]` in pyproject.toml)
-- Workspace mode — types written directly to client root
-- Server mode — schema exposed at `GET /rpc`, clients fetch via `npx pyrpc sync`
-- SHA256 migration strategy for client root changes
+- Zero-config setup: the `pyrpc dev` wizard writes `pyrpc.json` on first run, then never runs again
+- Fields: `module`, `framework` (auto-detected), and `client` (single root) or `clients` (list) — no `output`, `entrypoint`, or `client_root`
+- Multi-client support (v0.11.0): one schema, many TypeScript frontends; types generated per client
+- Generated types live at `<client>/__pyrpc.d.ts` in the user's source tree — committed, diffable, never in `node_modules`
+- tsconfig paths injected surgically by `pyrpc_core/tsconfig.py` via jsonc-edit (idempotent, preserves comments, raises on conflicting aliases)
+- The dev loop watches `pyrpc.json` itself and re-wires when module or clients change
 
 ### Docs & publishing
 
 - Fumadocs documentation site with guides, API reference, and blog
 - npm: `@pyrpc/types`, `@pyrpc/client`, `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`
 - PyPI: `pyrpc-core`, `pyrpc-codegen`, `pyrpc-fastapi`, `pyrpc-flask`, `pyrpc-django-adapter`
-- GitHub Actions CI: OIDC-based PyPI publish, npm publish on tag push
+- GitHub Actions CI: API-token PyPI publish, npm publish on tag push
 - Architecture diagrams via LikeC4
 
-## Near-term (v0.10.x)
+## Near-term
 
 - **Middleware hooks** — request/response middleware at the core level (auth, logging, rate limiting as user-space patterns)
 - **Typed errors** — user-defined error codes and data shapes that flow from Python procedures through codegen into `PyRPCError` on the TypeScript side

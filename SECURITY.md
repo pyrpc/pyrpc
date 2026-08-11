@@ -20,7 +20,7 @@ Please do not open a public GitHub issue for security reports.
 
 ## Supported Versions
 
-Until 1.0.0, only the latest minor release receives security fixes. Right now that is 0.1.x.
+Until 1.0.0, only the latest minor release receives security fixes. Right now that is 0.11.x.
 
 Pre-release versions (alpha, beta, rc) get best-effort evaluation with no SLA.
 

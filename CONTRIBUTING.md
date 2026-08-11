@@ -57,7 +57,7 @@ PRs should be scoped to one subsystem. A single PR touching core, adapters, and 
 |-----------|------|-------------|
 | Core | `packages/pyrpc-core/` | Protocol behavior, validation invariants, router semantics |
 | Adapter | `packages/pyrpc-fastapi/`, `packages/pyrpc-flask/`, `packages/pyrpc-django-adapter/` | Correct HTTP translation, error mapping, framework integration |
-| Client | `packages/client/`, `packages/types/` | TypeScript ergonomics, type inference, postinstall flow, API surface |
+| Client | `packages/client/`, `packages/types/` | TypeScript ergonomics, type inference, API surface |
 | Codegen | `packages/pyrpc-codegen/` | Type mapping accuracy, output correctness, introspection alignment |
 | Docs | `docs/` | Accuracy, build output |
 | Release | `scripts/`, root config | Version consistency, tag discipline |
