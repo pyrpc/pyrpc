@@ -12,11 +12,17 @@ changelog:
     - title: TypeScript Client
       labels:
         - client
+        - types
     - title: Adapters
       labels:
         - adapter
         - fastapi
         - flask
+        - django
+        - react
+        - next
+        - vue
+        - svelte
     - title: Codegen
       labels:
         - codegen

@@ -28,9 +28,6 @@ jobs:
 
   test-ts:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/client
     steps:
       - uses: actions/checkout@v4
       
@@ -43,4 +40,4 @@ jobs:
         run: npm install
         
       - name: Run tests
-        run: npm run test
+        run: npm run test --workspaces

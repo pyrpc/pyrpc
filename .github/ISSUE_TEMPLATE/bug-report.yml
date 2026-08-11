@@ -15,8 +15,14 @@ body:
         - pyrpc-core (protocol, router, interpreter, validation)
         - pyrpc-fastapi (FastAPI adapter)
         - pyrpc-flask (Flask adapter)
+        - pyrpc-django-adapter (Django adapter)
         - pyrpc-codegen (TypeScript code generation)
-        - @pyrpc/client (TypeScript client)
+        - "@pyrpc/client (TypeScript client)"
+        - "@pyrpc/types (TypeScript types)"
+        - "@pyrpc/react (React adapter)"
+        - "@pyrpc/next (Next.js adapter)"
+        - "@pyrpc/vue (Vue adapter)"
+        - "@pyrpc/svelte (Svelte adapter)"
         - docs / examples
     validations:
       required: true
