@@ -39,8 +39,8 @@ jobs:
       - name: Install dependencies
         run: npm install
         
-      - name: Build @pyrpc/client
-        run: npm run build --workspace=@pyrpc/client
+      - name: Build workspace dependencies
+        run: npm run build --workspace=@pyrpc/client --workspace=@pyrpc/react
         
       - name: Run tests
         run: npm run test --workspaces
