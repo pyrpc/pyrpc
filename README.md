@@ -43,10 +43,10 @@
 
 ```bash
 # Using uv
-uv add pyrpc-core[fastapi]
+uv add pyrpc-core
 
 # Using pip
-pip install pyrpc-core[fastapi]
+pip install pyrpc-core
 ```
 
 Framework adapters are available as extras — the adapter is included in the same install:
