@@ -16,7 +16,12 @@
     "outDir": "dist",
     "types": [
       "node"
-    ]
+    ],
+    "paths": {
+      "@pyrpc/types": [
+        "./__pyrpc.ts"
+      ]
+    }
   },
   "include": [
     "src"
