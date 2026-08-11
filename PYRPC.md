@@ -22,9 +22,14 @@ pyRPC  -  type-safe RPC for Python and TypeScript.
 | `pyrpc-core` | PyPI | Protocol, router, execution, validation, CLI |
 | `pyrpc-fastapi` | PyPI | FastAPI adapter |
 | `pyrpc-flask` | PyPI | Flask adapter |
+| `pyrpc-django-adapter` | PyPI | Django adapter (async views) |
 | `pyrpc-codegen` | PyPI | TypeScript code generation library |
 | `@pyrpc/client` | npm | TypeScript client |
 | `@pyrpc/types` | npm | Generated type definitions |
+| `@pyrpc/react` | npm | React adapter (TanStack Query) |
+| `@pyrpc/next` | npm | Next.js adapter (App Router, RSC) |
+| `@pyrpc/vue` | npm | Vue 3 adapter (TanStack Vue Query) |
+| `@pyrpc/svelte` | npm | Svelte adapter (TanStack Svelte Query) |
 
 ## Product Thesis
 
@@ -32,7 +37,7 @@ pyRPC is a Python-first RPC system with TypeScript reach. It gives you type safe
 
 - **Type safety across the boundary**  -  one `@rpc` decorator generates both the runtime endpoint and the TypeScript type.
 - **Low ceremony**  -  no schema files, no SDK generation. One `pyrpc dev` command sets up everything.
-- **Framework adapters, not framework lock-in**  -  the core knows nothing about FastAPI or Flask. Adapters translate HTTP into core calls.
+- **Framework adapters, not framework lock-in**  -  the core knows nothing about FastAPI, Flask, or Django. Adapters translate HTTP into core calls.
 - **Standards-based transport**  -  JSON-RPC 2.0 is not incidental. It is the protocol contract.
 - **Validation at runtime**  -  Pydantic v2 validates every parameter and return value. The type definitions in TypeScript are derived from the same introspection that powers runtime validation.
 
@@ -50,7 +55,7 @@ pyRPC is a Python-first RPC system with TypeScript reach. It gives you type safe
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  Adapters (pyrpc-fastapi, pyrpc-flask)                    │
+│  Adapters (pyrpc-fastapi, pyrpc-flask, pyrpc-django-adapter) │
 │  Translate framework HTTP → core Interpreter              │
 ├──────────────────────────────────────────────────────────┤
 │  pyrpc-core                                               │
@@ -59,10 +64,10 @@ pyRPC is a Python-first RPC system with TypeScript reach. It gives you type safe
 │  pyrpc-codegen                                            │
 │  Introspection → TypeScript type generation (library)     │
 ├──────────────────────────────────────────────────────────┤
-│  pyrpc.json (written by pyrpc dev on first run)           │
-│  Minimal config: module, framework, output path           │
+│  pyrpc.json (written by the pyrpc dev wizard)             │
+│  module, framework, client | clients                      │
 ├──────────────────────────────────────────────────────────┤
-│  src/__pyrpc.d.ts (generated, committed to git)           │
+│  <client>/__pyrpc.d.ts (generated, committed to git)      │
 │  Resolved via tsconfig paths: "@pyrpc/types"              │
 ├──────────────────────────────────────────────────────────┤
 │  @pyrpc/client (@pyrpc/types)                              │
@@ -84,17 +89,17 @@ The wire format is part of the product identity. Changing the protocol shape mus
 **Introspection and codegen share the same truth.**
 `get_registry_schema()` is the single source of truth for both runtime introspection (used by debug tools) and TypeScript code generation. Codegen must not re-invent schema extraction. If introspection changes, codegen and the TypeScript client must be evaluated together.
 
-**Config is pyrpc.json, written by `pyrpc dev` on first run.**
-`pyrpc.json` holds three fields: `module` (entry point), `framework` (detected), and `output` (generated types path). All other configuration is derived from these. There are no distribution modes, no client_root, no entrypoint field. The wizard that writes pyrpc.json asks exactly two questions and never runs again.
+**Config is pyrpc.json, written by the `pyrpc dev` wizard on first run.**
+`pyrpc.json` holds `module` (entry point), `framework` (detected), and `client` (single project root) or `clients` (list of roots). All other configuration is derived from these. There are no distribution modes, no `client_root`, no `entrypoint`, and no `output` field — generated types always land at `<client>/__pyrpc.d.ts`. The wizard that writes pyrpc.json walks the directory tree to detect frontend projects, asks the module and client questions, and never runs again. Re-run it with `--reconfigure`; skip it entirely with `--yes`.
 
 **Generated types live in the user's source tree.**
-`pyrpc dev` writes TypeScript types to the `output` path in `pyrpc.json` (default: `src/__pyrpc.d.ts`). This file is in source control — it is the user's file, committed to their repo, diffable in PRs. TypeScript resolves `import type { Types } from "@pyrpc/types"` to this file via a `tsconfig.json` paths alias injected by `@pyrpc/client` postinstall.
+`pyrpc dev`, `pyrpc watch`, and `pyrpc codegen` write TypeScript types to `<client>/__pyrpc.d.ts` for every configured client. This file is in source control — it is the user's file, committed to their repo, diffable in PRs. TypeScript resolves `import type { Types } from "@pyrpc/types"` to this file via a `tsconfig.json` paths alias.
 
-**`@pyrpc/client` postinstall wires tsconfig paths once.**
-Installing `@pyrpc/client` adds `"@pyrpc/types": ["./src/__pyrpc.d.ts"]` to `tsconfig.json` automatically. This runs once and is never modified again by pyrpc. The developer owns the entry.
+**tsconfig paths are injected by pyrpc-core via jsonc-edit.**
+The alias `"@pyrpc/types": ["./__pyrpc.d.ts"]` is injected into each client's `tsconfig.json` by `pyrpc_core/tsconfig.py` on every dev, watch, and codegen run. It uses jsonc-edit so comments and trailing commas survive, it is idempotent on repeat runs, and it raises instead of silently overwriting an alias that already points elsewhere. The developer owns the entry.
 
 **pyrpc dev is the single dev command.**
-`pyrpc dev` reads `pyrpc.json`, starts uvicorn if the port is free (skips if server already running), runs the type watcher, and exposes an interactive console. `pyrpc watch` is the watcher-only variant for developers who manage their own server. Neither command requires flags after first run.
+`pyrpc dev` reads `pyrpc.json`, probes `host:port` to see if a server is already running (if so it skips uvicorn and attaches watcher-only; otherwise it starts uvicorn with `--reload`), regenerates types for every client on every `.py` save — reloading edited modules so the types reflect the latest code — watches `pyrpc.json` itself and re-wires when module or clients change, and exposes an interactive console. `pyrpc watch` is the watcher-only variant for developers who manage their own server. Neither command requires flags after first run; `--yes` with optional `--module`/`--client` makes setup fully non-interactive for CI.
 
 **Versioning is lockstep.**
 All PyPI packages and all npm packages release together at the same version. Drift between Python and npm package versions is a release bug, not an inconvenience. The `scripts/release.mjs` script enforces this.
@@ -149,7 +154,7 @@ PRs should be scoped to one subsystem. A single PR that touches core, adapters, 
 | Subsystem | Path | Review focus |
 |-----------|------|-------------|
 | Core | `packages/pyrpc-core/` | Protocol behavior, validation invariants, router semantics |
-| Adapter | `packages/pyrpc-fastapi/`, `packages/pyrpc-flask/` | Correct HTTP translation, error mapping, framework integration |
+| Adapter | `packages/pyrpc-fastapi/`, `packages/pyrpc-flask/`, `packages/pyrpc-django-adapter/` | Correct HTTP translation, error mapping, framework integration |
 | Client | `packages/client/`, `packages/types/` | TypeScript ergonomics, type inference, API surface |
 | Codegen | `packages/pyrpc-codegen/` | Type mapping accuracy, output correctness, introspection alignment |
 | Docs | `docs/` | Accuracy, completeness, build output |
