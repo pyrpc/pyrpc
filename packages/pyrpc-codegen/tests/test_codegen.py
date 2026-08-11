@@ -41,7 +41,7 @@ def test_generate_typescript_client():
     schemas = get_registry_schema(default_router)
     content = generate_typescript_client(schemas)
 
-    assert "export interface Types" in content
+    assert "export type Types = {" in content
     assert "add:" in content
     assert "(a: number, b: number) => Promise<number>" in content
     assert '_pyrpcKind: "query"' in content
@@ -64,7 +64,7 @@ def test_generate_typescript_client_mutation_kind():
 def test_generate_typescript_client_empty():
     schemas = get_registry_schema(default_router)
     content = generate_typescript_client(schemas)
-    assert "export interface Types {" in content
+    assert "export type Types = {" in content
 
 
 def test_save_typescript_client_from_file():
@@ -94,7 +94,7 @@ def test_save_typescript_client_from_file():
         with open(output_file) as f:
             content = f.read()
 
-        assert "export interface Types" in content
+        assert "export type Types = {" in content
         assert "greet:" in content
         assert "(name: string) => Promise<string>" in content
 
@@ -125,7 +125,7 @@ def test_save_typescript_client_serialized_schema():
         with open(output_file) as f:
             content = f.read()
 
-        assert "export interface Types" in content
+        assert "export type Types = {" in content
         assert "add:" in content
         assert "(a: number) => Promise<number>" in content
 
@@ -252,7 +252,7 @@ def test_generate_typescript_client_with_base_model():
 
     schemas = get_registry_schema(default_router)
     content = generate_typescript_client(schemas)
-    assert "export interface Types" in content
+    assert "export type Types = {" in content
     assert "UserModel" in content
 
 
@@ -269,5 +269,5 @@ def test_generate_typescript_client_with_at_model():
 
     schemas = get_registry_schema(default_router)
     content = generate_typescript_client(schemas)
-    assert "export interface Types" in content
+    assert "export type Types = {" in content
     assert "Item" in content
