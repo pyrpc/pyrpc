@@ -98,7 +98,7 @@ Open a draft PR early if you want feedback mid-flight. Mark "Ready for review" w
 
 ### Required checks
 
-Merging into `main` requires the `Test` workflow jobs to pass: the branch protection lists them as `Test / test-python` and `Test / test-ts`. If you rename, split, or add jobs in `test.yml`, update these required checks to match (`<workflow> / <job>` exactly), or every PR will silently fail to merge.
+Merging into `main` requires the `Test` workflow jobs to pass: branch protection requires the `test-python` and `test-ts` checks (matched by check-run job name, not `Test / <job>`). If you rename, split, or add jobs in `test.yml`, update these required checks to match the job names exactly, or every PR will silently fail to merge.
 
 Approvals are not enforced by branch protection, but maintainers review contributor PRs and may ask for changes before merging.
 
