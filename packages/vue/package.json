@@ -1,6 +1,6 @@
 {
   "name": "@pyrpc/vue",
-  "version": "0.10.0",
+  "version": "0.11.1",
   "description": "Vue + TanStack Query adapter for pyRPC",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
