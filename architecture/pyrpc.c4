@@ -92,7 +92,7 @@ model {
         technology 'transport/asgi.py'
       }
       core_cli = component 'CLI' {
-        description 'Typer-based CLI with commands: dev (file-watching dev server with interactive console), serve (production ASGI server), inspect (list procedures), pull (extract schema to JSON), codegen (generate TypeScript), version.'
+        description 'Typer-based CLI with commands: dev (file-watching dev server with interactive console), watch (type regeneration watcher), serve (production ASGI server), inspect (list procedures), pull (extract schema to JSON), codegen (generate TypeScript), version.'
         technology 'cli.py'
       }
       core_pyclient = component 'Python RPCClient' {
@@ -158,7 +158,7 @@ model {
     }
 
     pyrpc_client = container '@pyrpc/client' {
-      description 'Universal TypeScript client for pyRPC. Uses a JavaScript Proxy to forward any method call to POST /rpc. Published on npm. Also ships a CLI for syncing types in server mode.'
+      description 'Universal TypeScript client for pyRPC. Uses a JavaScript Proxy to forward any method call to POST /rpc. Published on npm; type generation is handled by server-side pyrpc commands.'
       technology 'TypeScript / npm'
 
       client_proxy = component 'createClient<Types>()' {
@@ -173,23 +173,15 @@ model {
         description 'TypeScript interfaces for the JSON-RPC 2.0 envelope and client configuration. RpcRequest: id, method, params. RpcResponse: id, result, error. ClientOptions: baseUrl, headers.'
         technology 'src/types.ts'
       }
-      client_cli_sync = component 'npx pyrpc sync (CLI)' {
-        description 'Standalone Node.js CLI (CommonJS, no build step). Reads pyrpc-client.json, fetches schema from server_url/GET /rpc, generates TypeScript types with its own built-in type conversion logic, writes to @pyrpc/types/src/index.ts. Self-contained in a single JS file.'
-        technology 'cli.js / 322 lines'
-      }
-      client_postinstall = component 'postinstall.js' {
-        description 'Post-install wizard that creates pyrpc-client.json. In TTY mode: prompts for distribution mode (workspace/server) and server URL. In CI/non-TTY: defaults to workspace with localhost. Also contains duplicate type conversion logic for immediate type generation in server mode.'
-        technology 'postinstall.js / 305 lines'
-      }
     }
 
     pyrpc_types = container '@pyrpc/types' {
-      description 'Placeholder npm package for generated TypeScript type definitions. The src/index.ts file starts empty and is replaced by pyrpc codegen with procedure signatures, model interfaces, ProcedureKinds, and procedureKinds.'
+      description 'Placeholder npm package for the generated type boundary. Its src/index.ts exports fallback types and a procedureKinds proxy that throws until pyrpc dev/codegen wires @pyrpc/types to the generated <client>/__pyrpc.ts via tsconfig paths and bundler aliases.'
       technology 'TypeScript / npm'
 
-      types_index = component 'src/index.ts' {
-        description 'Generated file. Contains model interfaces, export interface Types { ... }, export type ProcedureKinds, and export const procedureKinds. Imported by consumers as import type { Types } from "@pyrpc/types" and import { procedureKinds } from "@pyrpc/types".'
-        technology 'src/index.ts (output)'
+      types_index = component '<client>/__pyrpc.ts' {
+        description 'Generated runtime module. Contains model interfaces, export interface Types { ... }, export type ProcedureKinds, and export const procedureKinds. Framework adapters import @pyrpc/types, which resolves here during development.'
+        technology 'generated TypeScript output'
       }
     }
 
@@ -254,12 +246,12 @@ model {
   // CONFIG FILES
   // ═══════════════════════════════════════════
   cfg_pyrpc_json = storage 'pyrpc.json' {
-    description 'Project configuration file. Fields: version (config schema version), framework (fastapi/flask/django/asgi), entrypoint (Python module path), client_root (relative path to TS client), distribution (workspace/server). Created by pyrpc dev setup wizard.'
+    description 'Project configuration file. Fields: module (Python entry module to scan for @rpc), framework (detected frontend framework), client or clients (one or more TypeScript client project roots). Created by pyrpc dev setup wizard.'
     technology 'JSON'
   }
-  cfg_client_json = storage 'pyrpc-client.json' {
-    description 'Client-side configuration file. Fields: distribution (workspace/server), server_url (where to fetch schema in server mode). Created by postinstall.js during npm install. Read by cli.js for npx pyrpc sync.'
-    technology 'JSON'
+  cfg_tsconfig = storage 'tsconfig.json + bundler config' {
+    description 'The TypeScript project wiring that makes the @pyrpc/types import resolve to the generated __pyrpc.ts. pyrpc dev injects a compilerOptions.paths alias ("@pyrpc/types": ["./__pyrpc.ts"]) via jsonc-edit, plus an explicit bundler alias for Vite, SvelteKit, and Next.js Turbopack (which ignore tsconfig paths for imports inside node_modules).'
+    technology 'JSON / JS'
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -330,8 +322,11 @@ model {
   }
 
   // ── CLI -> Everything ──
-  core_cli -> cfg_pyrpc_json 'reads/writes pyrpc.json via _read/_write_pyrpc_config()' {
+  core_cli -> cfg_pyrpc_json 'reads/writes pyrpc.json via _read_config() / _write_config()' {
     description 'The CLI reads pyrpc.json for startup configuration and writes it during setup wizard.'
+  }
+  core_cli -> cfg_tsconfig 'injects @pyrpc/types resolution wiring' {
+    description 'dev, watch, and codegen run configure_tsconfig() and configure_bundler() so @pyrpc/types resolves to ./__pyrpc.ts in TypeScript and supported bundlers.'
   }
   core_cli -> core_introspection 'pyrpc inspect reads schema; pyrpc codegen triggers generation' {
     description 'The CLI reads the registry schema for inspection, and passes it to codegen for TypeScript generation.'
@@ -354,10 +349,13 @@ model {
     description 'jsonschema_ts takes the JSON Schema $defs and generates export interface declarations for each model.'
   }
   codegen_generate -> codegen_save 'writes assembled TypeScript output to absolute path' {
-    description 'The assembled output (model interfaces + Types interface) is written to @pyrpc/types/src/index.ts.'
+    description 'The assembled output (model interfaces + Types interface + ProcedureKinds + procedureKinds) is written to <client>/__pyrpc.ts.'
   }
-  codegen_save -> types_index 'generates/overwrites node_modules/@pyrpc/types/src/index.ts' {
-    description 'The output file contains all model interfaces and the Types interface with every procedure signature.'
+  codegen_save -> types_index 'generates/overwrites <client>/__pyrpc.ts' {
+    description 'The output file contains all model interfaces, the Types interface with every procedure signature, and the runtime procedureKinds map.'
+  }
+  cfg_tsconfig -> types_index 'resolves @pyrpc/types imports to ./__pyrpc.ts' {
+    description 'TypeScript paths and framework bundler aliases point @pyrpc/types at the generated runtime module in the client source tree.'
   }
 
   // ── Client Relationships ──
@@ -392,20 +390,6 @@ model {
   client_proxy -> flask_mount 'HTTP POST /rpc'
   client_proxy -> django_mount 'HTTP POST /rpc'
   client_proxy -> core_asgi 'HTTP POST /rpc'
-
-  client_cli_sync -> cfg_client_json 'reads pyrpc-client.json for distribution mode and server_url' {
-    description 'The CLI reads the client config to determine if it should sync types from a server endpoint.'
-  }
-  client_cli_sync -> fastapi_mount 'HTTP GET /rpc to fetch schema in server mode' {
-    description 'In server distribution mode, npx pyrpc sync fetches the schema via HTTP GET and regenerates types locally.'
-  }
-  client_cli_sync -> types_index 'regenerates @pyrpc/types/src/index.ts in server mode' {
-    description 'The CLI has its own built-in type generation logic (duplicated from pyrpc-codegen) to produce types client-side.'
-  }
-
-  client_postinstall -> cfg_client_json 'creates pyrpc-client.json during npm install' {
-    description 'The postinstall script sets up distribution mode and server URL, creating the client config file.'
-  }
 
   // ── Cross-boundary type safety ──
   types_index -> client_proxy 'Types generic parameter provides full type safety and autocompletion' {
@@ -491,12 +475,9 @@ views {
   view of pyrpc_client {
     title '@pyrpc/client - Internal Components'
 
-    description 'The TypeScript client internals: Proxy-based dispatch, error handling, CLI sync tool, and post-install setup wizard.'
+    description 'The TypeScript client internals: Proxy-based dispatch, error handling, and shared JSON-RPC envelope types.'
 
     include *
-    style cfg_client_json {
-      color muted
-    }
     style jsonrpc_protocol {
       color muted
     }
@@ -515,7 +496,6 @@ views {
     include flask_mount
     include django_mount
     include client_proxy
-    include client_cli_sync
     include python_dev
     include cfg_pyrpc_json
 
@@ -523,9 +503,6 @@ views {
       color muted
     }
     style client_proxy {
-      color muted
-    }
-    style client_cli_sync {
       color muted
     }
     style cfg_pyrpc_json {
@@ -591,6 +568,7 @@ views {
     include codegen_jschema
     include codegen_save
     include types_index
+    include cfg_tsconfig
     include python_dev
     include core_cli
 
@@ -621,8 +599,14 @@ views {
     codegen_generate -> codegen_save 'assembles and writes output' {
       description 'Combines model interfaces + Types interface, writes to file'
     }
-    codegen_save -> types_index 'writes index.ts' {
-      description 'Final TypeScript file at node_modules/@pyrpc/types/src/index.ts'
+    codegen_save -> types_index 'writes <client>/__pyrpc.ts' {
+      description 'Final TypeScript runtime module in the client source tree'
+    }
+    core_cli -> cfg_tsconfig 'configures @pyrpc/types alias' {
+      description 'configure_tsconfig() and configure_bundler() keep imports pointed at the generated module'
+    }
+    cfg_tsconfig -> types_index 'resolves @pyrpc/types imports' {
+      description 'Framework adapters consume @pyrpc/types, which resolves to ./__pyrpc.ts'
     }
   }
 
@@ -634,6 +618,7 @@ views {
 
     include core_cli
     include cfg_pyrpc_json
+    include cfg_tsconfig
     include python_dev
     include core_router
     include core_introspection
@@ -645,10 +630,13 @@ views {
       description 'Developer starts the dev server'
     }
     core_cli -> cfg_pyrpc_json 'reads config' {
-      description 'Loads framework, entrypoint, client_root, distribution'
+      description 'Loads module, framework, and client or clients'
     }
     core_cli -> python_dev 'prompts if no config' {
-      description 'First-run wizard asks for framework, entrypoint, client_root'
+      description 'First-run wizard asks for module, framework, and client roots'
+    }
+    core_cli -> cfg_tsconfig 'configures type resolution' {
+      description 'Injects @pyrpc/types paths alias and supported framework bundler alias'
     }
     core_cli -> python_dev 'imports user module' {
       description 'Imports the entry point to trigger @rpc registration'
@@ -671,8 +659,8 @@ views {
     core_introspection -> codegen_save 'save_typescript_client()' {
       description 'Regenerates TypeScript types from updated schema'
     }
-    codegen_save -> types_index 'overwrites index.ts' {
-      description 'Types file updated on disk'
+    codegen_save -> types_index 'overwrites <client>/__pyrpc.ts' {
+      description 'Generated type/runtime module updated on disk'
     }
     core_cli -> python_dev 'console output: regenerated N procs' {
       description 'Console confirms regeneration and shows procedure count'
