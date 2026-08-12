@@ -1,11 +1,11 @@
 ---
 title: Django Adapter
-description: Mount pyRPC on a Django application using pyrpc_django_adapter.
+description: Mount pyRPC on a Django application using pyrpc_django.mount_django.
 ---
 
 # Django Adapter
 
-The Django adapter uses Django's native `async def` views (Django 4.2+). Register procedures with `@rpc.query` / `@rpc.mutation`, wire the URL include into your URLconf, and import the views module to trigger registration.
+The Django adapter wires pyRPC into your URLconf with `mount_django(urlpatterns)`. It uses Django's native `async def` views (Django 4.2+), so there is no bridge or wrapper needed.
 
 ## Requirements
 
@@ -88,7 +88,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 ## 4. Write procedures
 
-Procedures are `async def` functions decorated with `@rpc.query` or `@rpc.mutation`. Django 4.2+ runs them as native async views with no bridge needed.
+Procedures are functions decorated with `@rpc.query` or `@rpc.mutation`. Django 4.2+ runs `async def` procedures as native async views with no bridge needed; plain `def` procedures work too.
 
 ```python
 # myproject/views.py
@@ -117,45 +117,44 @@ async def create_item(name: str, description: str = None) -> dict:
 
 ## 5. Wire the URLs
 
-Include `pyrpc_django_adapter.urls` in your URLconf. The import of `views` at the top is required -- it executes the `@rpc` decorators. Without it the procedures are never registered and `/rpc/` returns an empty schema.
+Call `mount_django(urlpatterns)` in your URLconf. The import of `views` at the top is required -- it executes the `@rpc` decorators. Without it the procedures are never registered and `/rpc` returns an empty schema.
 
 ```python
 # myproject/urls.py
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from pyrpc_django import mount_django
 from . import views   # required: triggers @rpc decorator execution
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.index, name="index"),
-    path("rpc/", include("pyrpc_django_adapter.urls")),
 ]
+mount_django(urlpatterns)
 ```
 
-The include adds two URL patterns:
+`mount_django` appends two URL patterns to the list:
 
-- `POST /rpc/` -- procedure dispatch (native async view)
-- `GET /rpc/` -- schema introspection (used by `pyrpc dev`)
+- `POST /rpc` -- procedure dispatch (native async view)
+- `GET /rpc` -- schema introspection (used by `pyrpc dev` and the Python client)
 
 ## 6. Start the dev server
 
-From the directory containing `manage.py`:
+Run `pyrpc dev` from the directory containing `manage.py` to generate and keep TypeScript types in sync:
 
 ```bash
-pyrpc dev
+pyrpc dev --yes --module myproject.views --client ../client
 ```
 
-First run: 2-question wizard, writes `pyrpc.json`. Every run after reads it automatically. To skip the wizard:
+First run: 2-question wizard, writes `pyrpc.json`. Every run after reads it automatically. `pyrpc dev` imports your views module, generates `__pyrpc.ts` in the client project, and regenerates it on every `.py` save.
+
+Serve the Django app itself with Django's own development server:
 
 ```bash
-# auto-detect
-pyrpc dev --yes
-
-# explicit -- point at the views module
-pyrpc dev --yes --module myproject.views --output ../client/src/__pyrpc.d.ts
+python manage.py runserver
 ```
 
-`pyrpc dev` starts Django via uvicorn, generates `src/__pyrpc.d.ts` in your frontend, and regenerates it on every `.py` save.
+Django runs the async RPC views natively -- no separate WSGI/ASGI bridge required.
 
 ## 7. Connect the frontend
 
@@ -171,10 +170,10 @@ See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/cli
 
 ## How it works
 
-- `@rpc.query` / `@rpc.mutation` register the async function in the global procedure registry and tag it with a kind.
-- `include("pyrpc_django_adapter.urls")` wires the two RPC routes into Django's URL dispatcher.
+- `@rpc.query` / `@rpc.mutation` register the function in the global procedure registry and tag it with a kind.
+- `mount_django(urlpatterns)` appends the two RPC routes to your URLconf. The views are `csrf_exempt` and return JSON directly.
 - The `from . import views` line in `urls.py` is what causes Python to execute the module and run the `@rpc` decorators. This is the same mechanism Django uses for signals and `AppConfig.ready()`.
-- Procedures use `async def` because Django 4.2+ dispatches async views natively. There is no `anyio.run` wrapper.
+- `async def` procedures use Django 4.2+'s native async view dispatch. There is no `anyio.run` wrapper.
 
 ## Custom router
 
@@ -198,11 +197,10 @@ async def create_item(name: str) -> dict:
 ```python
 # myproject/urls.py
 from myapp.procedures import router
-from pyrpc_django_adapter import get_urlpatterns
+from pyrpc_django import mount_django
 
-urlpatterns = [
-    path("rpc/", include(get_urlpatterns(router=router))),
-]
+urlpatterns = []
+mount_django(urlpatterns, router=router)
 ```
 
 ## Full working examples

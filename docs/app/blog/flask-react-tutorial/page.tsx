@@ -61,7 +61,7 @@ uv add pyrpc-core[flask]
 pyrpc dev   # wizard → writes pyrpc.json, starts Flask on :5000
 
 # or skip the wizard
-pyrpc dev --yes --module main --output ../client/src/__pyrpc.d.ts`}
+pyrpc dev --yes --module main --client ../client`}
                 </pre>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Client — identical pattern, different port</h2>

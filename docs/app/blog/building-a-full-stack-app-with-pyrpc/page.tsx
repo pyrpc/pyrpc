@@ -94,8 +94,7 @@ mount_fastapi(app)`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 2: Generate the TypeScript types</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
-{`pip install pyrpc-codegen
-pyrpc codegen http://localhost:8000 --output ./src/types`}
+{`pyrpc codegen http://localhost:8000 --client ../client`}
                 </pre>
                 <p>
                     This generates the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> module with inferred types for <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Task</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">list_tasks</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">create_task</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">toggle_task</code>, and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">delete_task</code>.

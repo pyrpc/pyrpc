@@ -64,10 +64,10 @@ First run launches a short wizard (2 questions) and writes `pyrpc.json`. Every s
 pyrpc dev --yes
 
 # fully explicit — good for CI
-pyrpc dev --yes --module main --output ../client/src/__pyrpc.d.ts
+pyrpc dev --yes --module main --client ../client
 ```
 
-`pyrpc dev` starts uvicorn, generates `src/__pyrpc.d.ts` in your frontend, and re-generates it on every `.py` save. If a server is already running on that port, it skips starting uvicorn and only runs the type watcher.
+`pyrpc dev` starts uvicorn, generates `__pyrpc.ts` at the client project root, and re-generates it on every `.py` save. If a server is already running on that port, it skips starting uvicorn and only runs the type watcher.
 
 ## 4. Connect the frontend
 
@@ -87,7 +87,7 @@ npm install @pyrpc/vue @pyrpc/client @pyrpc/types @tanstack/vue-query
 npm install @pyrpc/svelte @pyrpc/client @pyrpc/types @tanstack/svelte-query
 ```
 
-Then create the typed client — the import from `@pyrpc/types` is what `pyrpc dev` writes:
+Then create the typed client — the import from `@pyrpc/types` resolves to the generated `__pyrpc.ts` in your client project:
 
 ```ts
 // React — lib/pyrpc.ts
@@ -105,7 +105,7 @@ See the [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs
 - `mount_fastapi(app)` adds two routes:
   - `POST /rpc` — procedure dispatch
   - `GET /rpc` — schema introspection (used by `pyrpc dev` to generate types)
-- The kind tag (`query` vs `mutation`) flows through codegen into the generated `.d.ts` file, which is how the frontend adapter knows which TanStack hook to expose on each procedure.
+- The kind tag (`query` vs `mutation`) flows through codegen into the generated `__pyrpc.ts` file, which is how the frontend adapter knows which TanStack hook to expose on each procedure.
 
 ## CORS origins by frontend
 

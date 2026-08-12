@@ -14,13 +14,16 @@ This section covers everything you need to build a pyRPC server.
 - **[Procedures](/docs/server/procedures)**  -  Defining procedures, types, sync vs async
 - **[Context](/docs/server/context)**  -  Accessing request and adapter context
 - **[Middleware](/docs/server/middleware)**  -  Framework middleware around your RPC endpoint
-- **[Adapters](/docs/server/adapters)**  -  FastAPI, Flask, and ASGI integration
+- **[Adapters](/docs/server/adapters)**  -  FastAPI, Flask, Django, and ASGI integration
 
 ## Quick Reference
 
 ```python
+from fastapi import FastAPI
 from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
+
+app = FastAPI()
 
 @rpc
 def add(a: int, b: int) -> int:

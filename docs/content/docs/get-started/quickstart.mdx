@@ -42,37 +42,32 @@ mount_fastapi(app)
 
 ## 3. Start the dev server
 
-Run `pyrpc dev` - on first run it will prompt for your framework, Python module, TypeScript client location, and distribution mode, then generate types automatically.
+Run `pyrpc dev` - on first run it will prompt for your entry module, client project root, and frontend framework, then generate types automatically.
 
 ```bash
 pyrpc dev
 ```
 
-**Expected output (workspace mode - monorepo):**
+**First run output:**
 
 ```
-pyRPC Setup
-Let's configure pyRPC for your project.
+pyRPC setup (runs once — saved to pyrpc.json)
 
-? Which web framework are you using?  fastapi
-? How are types delivered to the client?  workspace
-? Entry point to your application (e.g. main, app.main):  server
-? Where is your TypeScript client project?:  ../frontend
+? Entry module  (main, app.server — the file that calls mount_fastapi/mount_flask):  server
+? Client project root:  ../frontend
+? Frontend framework:  Next.js
 
-  ✓ Types regenerated (2 procs)
-  pyRPC dev server  http://127.0.0.1:8000/rpc
-  Types: ../frontend/node_modules/@pyrpc/types/src/index.ts
+  ✓ types generated (2 procs) → ../frontend
+  pyRPC dev  http://127.0.0.1:8000/rpc
 ```
 
-This creates a `pyrpc.json` config file and starts the dev server with auto-type regeneration on file changes. The `distribution` field determines how types are synced:
+This creates a `pyrpc.json` config file and starts the dev server with auto-type regeneration on file changes. `pyrpc dev` writes `__pyrpc.ts` to your client project root and wires `@pyrpc/types` to it automatically.
 
-- **workspace** (default) - for monorepos: types written directly to your client project
-- **server** - for separate repos: clients fetch types via `npx pyrpc sync`
-
-For server mode, start with:
+To skip the wizard in CI or on repeat setups:
 
 ```bash
-pyrpc dev --distribution server
+pyrpc dev --yes                       # auto-detect module and client
+pyrpc dev --yes --module server --client ../frontend
 ```
 
 ## 4. Client (TypeScript)
@@ -81,7 +76,7 @@ pyrpc dev --distribution server
 import { createClient } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
-const client = createClient<Types>()
+const client = createClient<Types>({ baseUrl: "http://localhost:8000" })
 
 // Fully typed result and parameters!
 const result = await client.add(10, 5)

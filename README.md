@@ -84,7 +84,7 @@ mount_fastapi(app)
 pyrpc dev
 ```
 
-First run: answers 2 quick questions (entry module + frontend project; the framework is auto-detected) and writes `pyrpc.json`. Every run after: reads `pyrpc.json`, no questions asked. Starts the server, watches `.py` files, and regenerates TypeScript types automatically.
+First run: answers a couple of quick questions (entry module + client project root; the frontend framework is auto-detected) and writes `pyrpc.json`. Every run after: reads `pyrpc.json`, no questions asked. Starts the server, watches `.py` files, and regenerates TypeScript types automatically.
 
 ### 3. Call from TypeScript
 
@@ -132,7 +132,7 @@ Python @rpc decorator
   → import type { Types } from "@pyrpc/types"  ✓
 ```
 
-`pyrpc dev` injects the tsconfig paths entry (via jsonc-edit, preserving comments and trailing commas) on every dev, watch, and codegen run. `pyrpc.json` (written on first `pyrpc dev` run) stores the module, framework, and client project root — no further config needed.
+`pyrpc dev` configures the `@pyrpc/types` resolution automatically on every dev and watch run: it injects the tsconfig paths entry via `jsonc-edit` (preserving comments and trailing commas) and adds a bundler alias for Vite, SvelteKit, and Next.js Turbopack, which don't honor tsconfig `paths` for imports inside `node_modules`. `pyrpc.json` (written on first `pyrpc dev` run) stores the module and client project root — no further config needed.
 
 ---
 
