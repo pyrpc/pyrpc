@@ -983,6 +983,30 @@ const posts: Post[] = [
         readTime: '7 min',
         category: 'deep-dive',
     },
+    {
+        slug: 'the-bundler-verification-matrix',
+        title: 'How we checked every bundler: the verification matrix',
+        description: 'The claim that tsconfig paths work for webpack but not Vite, SvelteKit, or Turbopack — proven by unit tests, example apps, and a matrix that shows why.',
+        date: 'August 12, 2026 at 8:00pm',
+        readTime: '8 min',
+        category: 'deep-dive',
+    },
+    {
+        slug: 'baseurl-compile-time-and-runtime',
+        title: 'baseUrl: compile-time and runtime',
+        description: 'A string in an options type at compile time, a normalization pipeline at runtime — and why the browser fallback fails loudly on the server.',
+        date: 'August 12, 2026 at 8:20pm',
+        readTime: '7 min',
+        category: 'deep-dive',
+    },
+    {
+        slug: 'what-pyrpc-owns-and-what-it-doesnt',
+        title: 'What pyRPC owns, and what it doesn\u2019t',
+        description: 'The dependency contract: what ships in dependencies, what stays a peer, why TanStack Query is internal but not owned, and how the Python extras mirror it.',
+        date: 'August 12, 2026 at 8:40pm',
+        readTime: '9 min',
+        category: 'deep-dive',
+    },
 ]
 
 export default function BlogPage() {
