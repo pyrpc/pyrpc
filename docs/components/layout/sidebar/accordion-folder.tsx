@@ -90,16 +90,25 @@ export function AccordionFolder({
   const Icon = fallbackIcon ? (fallbackIcon as React.ElementType) : CustomIcon;
   const iconProps = fallbackIcon ? { className: 'size-4' } : { icon: item.icon, className: 'size-4' };
 
+  const open = ctx !== null && ctx.openId === folderId;
+  const setOpen = useCallback(
+    (next: boolean | ((prev: boolean) => boolean)) => {
+      if (!ctx) return;
+      const currentOpen = ctx.openId === folderId;
+      const value = typeof next === 'function' ? next(currentOpen) : next;
+      ctx.setOpenId(value ? folderId : null);
+    },
+    [ctx, folderId],
+  );
+  const folderContextValue = useMemo(
+    () =>
+      isSectionLevel && ctx
+        ? { open, setOpen, depth, collapsible: item.collapsible ?? true }
+        : null,
+    [open, setOpen, depth, item.collapsible, isSectionLevel, ctx],
+  );
+
   if (isSectionLevel && ctx) {
-    const open = ctx.openId === folderId;
-    const setOpen = useCallback(
-      (next: boolean | ((prev: boolean) => boolean)) => {
-        const currentOpen = ctx.openId === folderId;
-        const value = typeof next === 'function' ? next(currentOpen) : next;
-        ctx.setOpenId(value ? folderId : null);
-      },
-      [ctx, folderId],
-    );
     return (
       <Collapsible
         open={open}
@@ -107,12 +116,7 @@ export function AccordionFolder({
         disabled={item.collapsible === false}
         className="group/collapsible"
       >
-        <Base.FolderContext
-          value={useMemo(
-            () => ({ open, setOpen, depth, collapsible: item.collapsible ?? true }),
-            [open, setOpen, depth, item.collapsible],
-          )}
-        >
+        <Base.FolderContext value={folderContextValue}>
 
           {item.index ? (
             <Base.SidebarFolderLink href={item.index.url} external={item.index.external}>
