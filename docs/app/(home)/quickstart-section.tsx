@@ -164,7 +164,6 @@ export default function QuickstartSection({
               <div><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="text-neutral-800 dark:text-neutral-200">npm install @pyrpc/client</span></div>
               <div className="text-neutral-600 dark:text-neutral-500">Resolved 12 packages in 1.4s</div>
               <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/client@0.3.0</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/types@0.3.0</div>
               <div className="mt-2"><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
             </div>
           }

@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@pyrpc/client": "*",
-    "@pyrpc/react": "*",
-    "@pyrpc/types": "*",
+    "@pyrpc/react": "^0.12.0",
+    "@pyrpc/client": "^0.12.0",
+    "@pyrpc/types": "^0.12.0",
     "@tanstack/react-query": "^5.83.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",

@@ -16,7 +16,8 @@ eggs/
 .eggs/
 lib/
 !docs/lib/
-!examples/fastapi-nextjs/lib/
+!examples/*/client/lib/
+!examples/*/client/src/lib/
 lib64/
 parts/
 sdist/

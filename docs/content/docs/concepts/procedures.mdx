@@ -1,0 +1,83 @@
+---
+title: Procedures
+description: The fundamental unit of pyRPC — typed functions registered as queries or mutations.
+---
+
+# Procedures
+
+A **procedure** is the fundamental unit of pyRPC. It is a plain Python function that you register with a decorator, and it becomes a single, fully-typed, callable endpoint on the client. There is no separate route definition, schema file, or controller — the function *is* the contract.
+
+```python
+from pyrpc_core import rpc
+
+@rpc.query
+def get_user(user_id: int) -> dict:
+    return {"id": user_id, "name": "Ada"}
+
+@rpc.mutation
+def create_user(name: str) -> dict:
+    return {"id": 1, "name": name}
+```
+
+On the client, both are called like local async functions:
+
+```ts
+const user = await api.get_user({ user_id: 1 });
+const created = await api.create_user.mutate({ name: "Ada" });
+```
+
+## Two kinds: query and mutation
+
+Every procedure is tagged with exactly one **kind**. The kind tells pyRPC (and your frontend adapter) how the procedure should be treated:
+
+| Kind | Decorator | Meaning | Client shape |
+|---|---|---|---|
+| **query** | `@rpc.query` | Read-only, safe to retry, cacheable | `useQuery` / `createQuery` |
+| **mutation** | `@rpc.mutation` | Has side effects, not cached | `useMutation` / `createMutation` |
+
+This mirrors the REST/GraphQL distinction between reads and writes, but without any extra configuration. The kind is carried through codegen into the generated `__pyrpc.ts` file, which is how each adapter knows which hook to expose for each procedure.
+
+### Choosing a kind
+
+- Use **`@rpc.query`** for anything that reads data: `get_user`, `list_items`, `search`. Queries can be prefetched on the server and are safe for TanStack Query's caching, retries, and refetch-on-focus behavior.
+- Use **`@rpc.mutation`** for anything that changes state: `create_user`, `update_item`, `delete_order`. Mutations never run during prefetch and are the right place for side effects.
+
+Tagging a procedure with the wrong kind still works at runtime, but you lose the caching and prefetch semantics that make the client ergonomic.
+
+## The registry
+
+Decorating a function records it in a global **procedure registry** keyed by its name. `mount_fastapi` (or the Flask/Django equivalent) reads that registry to wire up dispatch at `POST /rpc` and schema introspection at `GET /rpc`.
+
+For larger apps, group procedures into `Router` objects and merge them into the default router with a prefix:
+
+```python
+from pyrpc_core import Router
+from pyrpc_core import default_router
+
+users = Router()
+
+@users.query
+def get_user(user_id: int) -> dict: ...
+
+default_router.include(users, prefix="users")
+# → api.users.get_user on the client
+```
+
+The prefix becomes part of the client path, so nested routers stay organized without nested URL plumbing.
+
+## How the client sees procedures
+
+The generated `Types` interface describes every procedure's input and output. Each adapter turns that description into typed methods:
+
+- **React / Next.js** — `api.<proc>.useQuery()` and `api.<proc>.useMutation()` (TanStack Query hooks). Next.js adds `api.prefetch.<proc>()` for server-side warming.
+- **Vue** — `pyrpc.<proc>.createQuery()` / `createMutation()` composables.
+- **Svelte** — `api.<proc>.createQuery()` / `createMutation()` stores.
+- **Vanilla TypeScript / Python** — `client.<proc>(...)` direct calls.
+
+Because the procedure kind drives the client shape, the same Python decorator decides whether your frontend gets a cacheable query hook or a write mutation.
+
+## Next
+
+- [Mental Model](/docs/concepts/mental-model) — how pyRPC thinks about your API
+- [Error Handling](/docs/concepts/error-handling) — structured errors that flow back from procedures
+- [Client: React](/docs/client/react) — turning procedures into hooks in practice
