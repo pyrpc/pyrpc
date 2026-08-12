@@ -41,10 +41,11 @@ async def create_item(name: str, description: str = None) -> dict:
 
 # myproject/urls.py
 from . import views  # required to register @rpc decorators
+from pyrpc_django import mount_django
 urlpatterns = [
     path("", views.index),
-    path("rpc/", include("pyrpc_django_adapter.urls")),
 ]
+mount_django(urlpatterns)
 
 # myproject/settings.py
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]`}
@@ -54,7 +55,7 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]`}
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`cd server
 uv add pyrpc-core[django]
-pyrpc dev --yes --module myproject.views --output ../client/src/__pyrpc.d.ts`}
+pyrpc dev --yes --module myproject.views --client ../client`}
                 </pre>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Client</h2>

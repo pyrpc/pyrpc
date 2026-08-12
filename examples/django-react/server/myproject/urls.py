@@ -1,9 +1,10 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from pyrpc_django import mount_django
 from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.index, name="index"),
-    path("rpc/", include("pyrpc_django_adapter.urls")),
 ]
+mount_django(urlpatterns)
