@@ -60,8 +60,10 @@ First run: 2-question wizard writes `pyrpc.json`. Every run after: reads `pyrpc.
 pyrpc dev --yes
 
 # fully explicit
-pyrpc dev --yes --module main --output ../client/src/__pyrpc.d.ts
+pyrpc dev --yes --module main --client ../client
 ```
+
+`pyrpc dev` serves the app with uvicorn (default `http://127.0.0.1:8000/rpc`), generates `__pyrpc.ts` at the client project root, and re-generates it on every `.py` save.
 
 ## 4. Connect the frontend
 
@@ -70,10 +72,10 @@ pyrpc dev --yes --module main --output ../client/src/__pyrpc.d.ts
 import { createReactClient } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
-export const api = createReactClient<Types>({ baseUrl: "http://localhost:5000" })
+export const api = createReactClient<Types>({ baseUrl: "http://localhost:8000" })
 ```
 
-Note: Flask's default port is `5000`, not `8000`. Adjust `baseUrl` accordingly.
+Note: the `baseUrl` must match the port your Flask app is served on. `pyrpc dev` uses port `8000` by default; if you run the app directly with `app.run(port=5000)` instead, use `5000`.
 
 See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) for full frontend setup.
 

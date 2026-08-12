@@ -51,17 +51,18 @@ async def create_item(name: str, description: str = None) -> dict:
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`# myproject/urls.py
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from pyrpc_django import mount_django
 from . import views  # ← this import registers the @rpc decorators
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.index, name="index"),
-    path("rpc/", include("pyrpc_django_adapter.urls")),
-]`}
+]
+mount_django(urlpatterns)`}
                 </pre>
                 <p>
-                    <strong>The import is required.</strong> Without <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">from . import views</code>, the procedures never run their decorators and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/rpc/</code> returns an empty schema.
+                    <strong>The import is required.</strong> Without <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">from . import views</code>, the procedures never run their decorators and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">/rpc</code> returns an empty schema.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">CORS — settings.py</h2>
@@ -75,7 +76,7 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]`}
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`cd server
 uv add pyrpc-core[django]
-pyrpc dev --yes --module myproject.views --output ../client/src/__pyrpc.d.ts`}
+pyrpc dev --yes --module myproject.views --client ../client`}
                 </pre>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Client — identical to fastapi-react</h2>

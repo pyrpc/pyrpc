@@ -71,7 +71,7 @@ mount_fastapi(app)
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 2 — Generate types</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`# with the API running
-pyrpc codegen  # or: npx pyrpc sync in server distribution mode`}
+pyrpc codegen http://localhost:8000 --client ../client`}
                 </pre>
                 <p>
                     You should get <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Types</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">ProcedureKinds</code>, and a runtime <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">procedureKinds</code> object in <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code>.

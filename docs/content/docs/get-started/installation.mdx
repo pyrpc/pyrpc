@@ -52,7 +52,7 @@ npm install typescript --save-dev
 npx tsc --init
 ```
 
-The `@pyrpc/client` package will be installed later when you generate types.
+The `@pyrpc/client` package and your framework adapter are installed later via `npm` when you set up the frontend.
 
 ## Core Package
 
@@ -112,13 +112,13 @@ The fastest way to get started:
 pyrpc dev
 ```
 
-On first run, `pyrpc dev` walks you through setup interactively - framework, Python module, distribution mode, and TypeScript client path. It creates a `pyrpc.json` config file, generates types, and starts the development server with auto-regeneration on file changes.
+On first run, `pyrpc dev` walks you through setup interactively - entry module, client project root, and frontend framework. It creates a `pyrpc.json` config file, generates types, and starts the development server with auto-regeneration on file changes.
 
 You can also pass flags to skip the wizard:
 
 ```bash
-pyrpc dev --framework fastapi --entry server --client-root ../frontend
-pyrpc dev --framework fastapi --entry server --distribution server
+pyrpc dev --yes                          # auto-detect everything
+pyrpc dev --yes --module main --client ../frontend
 ```
 
 ### Configuration (`pyrpc.json`)
@@ -127,11 +127,19 @@ pyRPC stores its project configuration in a dedicated `pyrpc.json` file (not in 
 
 ```json
 {
-  "version": 1,
-  "framework": "fastapi",
-  "entrypoint": "server",
-  "client_root": "../frontend",
-  "distribution": "workspace"
+  "module": "main",
+  "framework": "Next.js",
+  "client": "../frontend"
+}
+```
+
+For multiple frontend projects, use `clients`:
+
+```json
+{
+  "module": "main",
+  "framework": "Mixed",
+  "clients": ["../web", "../admin"]
 }
 ```
 
@@ -142,66 +150,10 @@ The file is created automatically by `pyrpc dev`. Paths in `pyrpc.json` are reso
 For CI/CD or one-off generation:
 
 ```bash
-pyrpc codegen http://localhost:8000
+pyrpc codegen http://localhost:8000 --client ../frontend
 ```
 
-## Distribution Modes
-
-pyRPC supports two distribution modes for syncing TypeScript types from your Python server, configured via the `distribution` field in `pyrpc.json`.
-
-### Workspace Mode (default)
-
-Ideal for monorepos where the Python backend and TypeScript frontend live in the same repository. The server writes generated types **directly** into your client's `node_modules/@pyrpc/types`:
-
-```bash
-# pyrpc.json
-{
-  "version": 1,
-  "framework": "fastapi",
-  "entrypoint": "server",
-  "client_root": "../frontend",
-  "distribution": "workspace"
-}
-```
-
-- Types are regenerated automatically on every file change.
-- No network calls needed - the frontend sees updates instantly.
-- Works great for monorepos, side projects, and co-located teams.
-
-### Server Mode
-
-Best for separate repositories or when the frontend team cannot access the backend filesystem. The server exposes the schema at `GET /rpc`, and the client fetches it via `npx pyrpc sync`:
-
-```bash
-# Start the dev server in server mode
-pyrpc dev --distribution server
-```
-
-On the client side:
-
-```bash
-npm install @pyrpc/client
-npx pyrpc sync
-```
-
-The `npm install @pyrpc/client` creates a `pyrpc-client.json` config file in your client project. The postinstall script then prompts for the distribution mode:
-
-```
-? How are types distributed?
-  1) workspace (default) - server writes types directly to your project
-  2) server - client fetches types via HTTP
-```
-
-- No filesystem access to the server is required.
-- Teams can work independently on backend and frontend.
-- The schema is fetched over HTTP on demand.
-
-### Quick Reference
-
-| Mode | Use Case | How Types Sync |
-|------|----------|---------------|
-| `workspace` | Monorepo, co-located projects | Server writes to `node_modules` directly |
-| `server` | Separate repos, remote teams | Client fetches via `npx pyrpc sync` |
+`pyrpc codegen` accepts a running server URL, a saved schema file, or a Python module, and writes `__pyrpc.ts` to the client project root.
 
 ## Quick Start Example (FastAPI)
 

@@ -88,10 +88,10 @@ pyrpc dev`}
 pyrpc dev --yes
 
 # fully explicit — CI-safe
-pyrpc dev --yes --module main --output ../client/src/__pyrpc.d.ts`}
+pyrpc dev --yes --module main --client ../client`}
                 </pre>
                 <p>
-                    pyRPC starts uvicorn on <strong>:8000</strong>, writes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">src/__pyrpc.d.ts</code> in the client, and re-generates it on every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">.py</code> save.
+                    pyRPC starts uvicorn on <strong>:8000</strong>, writes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__pyrpc.ts</code> in the client, and re-generates it on every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">.py</code> save.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 3 — client setup</h2>

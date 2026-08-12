@@ -36,11 +36,11 @@ Install `pyrpc-core` for the runtime, CLI, and codegen. Add framework adapters v
 
 ## How do I generate TypeScript types?
 
-Run `pyrpc dev`. On first run it walks you through setup, creates a `pyrpc.json` config, and generates types automatically. For CI, use `pyrpc codegen`.
+Run `pyrpc dev`. On first run it walks you through setup, creates a `pyrpc.json` config, and generates `__pyrpc.ts` in your client project automatically. For CI, use `pyrpc codegen`.
 
-## What is the distribution mode?
+## How do TypeScript types reach my client?
 
-Workspace mode (default) writes types directly to your client project for monorepos. Server mode exposes types via `GET /rpc` for separate repositories.
+`pyrpc dev` writes `__pyrpc.ts` to your client project root and wires `@pyrpc/types` to it: a tsconfig `paths` alias plus a bundler alias for Vite, SvelteKit, and Next.js Turbopack. The types regenerate automatically whenever you save a `.py` file.
 
 ## Is pyRPC production-ready?
 

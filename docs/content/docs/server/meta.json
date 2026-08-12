@@ -12,6 +12,7 @@
         "./adapters/index",
         "./adapters/fastapi",
         "./adapters/flask",
+        "./adapters/django",
         "./adapters/standalone",
         "---Others---",
         "./adapters/community-adapters"

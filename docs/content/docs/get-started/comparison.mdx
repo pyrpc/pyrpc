@@ -15,8 +15,8 @@ pyRPC brings tRPC-level type safety to Python + TypeScript stacks. It syncs your
 | Schema / IDL required | None (Python types) | None (TypeScript types) | `.proto` files |
 | Framework-agnostic | Yes (ASGI) | Node.js only | Yes (polyglot) |
 | Transport | HTTP/JSON | HTTP/JSON | HTTP/2 (binary) |
-| Works in monorepo | Yes (workspace mode) | Yes | Yes |
-| Cross-repo types | Yes (server mode) | No (same repo) | Yes (shared proto) |
+| Works in monorepo | Yes | Yes | Yes |
+| Type sync | Auto-generated `__pyrpc.ts` | Built-in types | Generated stubs |
 | Setup time | One command | One command | Proto compilation |
 
 ## Key Differences

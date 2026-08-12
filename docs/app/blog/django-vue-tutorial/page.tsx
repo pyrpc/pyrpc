@@ -19,7 +19,7 @@ export default function DjangoVueTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Django + Vue combines Django's batteries-included backend with Vue 3's Composition API. The server setup follows the same pattern as Django + React — register procedures with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc.query</code> / <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc.mutation</code>, import <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">views</code> in <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">urls.py</code>. The client uses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createPyrpcVue</code> and Vue's plugin system.
+                    This stack combines Django's backend maturity with Vue 3's Composition API and reactivity system. The server integration is a standard Django view — import <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">views</code>, and call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">mount_django(urlpatterns)</code>. The Vue side uses TanStack Vue Query wrapped by <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/vue</code> to expose fully typed composables like <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code>.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Server (same as django-react)</h2>
@@ -39,7 +39,9 @@ async def create_item(name: str, description: str = None) -> dict:
 
 # urls.py — must import views to trigger registration
 from . import views
-urlpatterns = [path("rpc/", include("pyrpc_django_adapter.urls")), ...]
+from pyrpc_django import mount_django
+urlpatterns = [...]
+mount_django(urlpatterns)
 
 # settings.py — CORS
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]`}

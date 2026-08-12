@@ -44,7 +44,8 @@ def get_profile(user_id: int):
 You can merge multiple routers into a single "root" router. This supports **prefixes**, which is a powerful way to namespace your API.
 
 ```python
-from pyrpc_core import Router, mount_fastapi
+from pyrpc_core import Router
+from pyrpc_fastapi import mount_fastapi
 
 # Sub-routers
 auth_router = Router()
@@ -81,5 +82,5 @@ def fetch_user_by_id(user_id: int):
 ## Next Steps
 
 - [Procedures](/docs/server/procedures)  -  Automatic Pydantic validation and types
-- [Adapters](/docs/server/adapters)  -  FastAPI, Flask, and ASGI
-- [Introspection](/docs/reference/introspection)  -  Generating API schemas
+- [Adapters](/docs/server/adapters)  -  FastAPI, Flask, Django, and ASGI
+- [Core Reference](/docs/reference/prpc-core)  -  Router, procedure, and introspection APIs

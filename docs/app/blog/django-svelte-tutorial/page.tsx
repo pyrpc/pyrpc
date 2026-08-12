@@ -19,7 +19,7 @@ export default function DjangoSvelteTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Django + Svelte pairs Django's mature ecosystem with Svelte's reactive store model. The wiring is the same as every other Django example — import <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">views</code> in <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">urls.py</code>, mount <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc_django_adapter.urls</code>. The Svelte side uses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createSvelteClient</code> and the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">$store</code> subscription pattern.
+                    Django + Svelte pairs Django's mature ecosystem with Svelte's reactive store model. The wiring is the same as every other Django example — import <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">views</code> in <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">urls.py</code>, and call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">mount_django(urlpatterns)</code>. The Svelte side uses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createSvelteClient</code> and the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">$store</code> subscription pattern.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Server</h2>
@@ -39,7 +39,9 @@ async def create_item(name: str, description: str = None) -> dict:
 
 # urls.py
 from . import views  # triggers registration
-urlpatterns = [path("rpc/", include("pyrpc_django_adapter.urls")), ...]
+from pyrpc_django import mount_django
+urlpatterns = [...]
+mount_django(urlpatterns)
 
 # settings.py
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]`}
