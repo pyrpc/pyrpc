@@ -119,9 +119,29 @@ def _match_braces(content: str, open_idx: int) -> int:
     return -1
 
 
+def _inner_has_content(content: str, open_idx: int, close_idx: int) -> bool:
+    """True if the object body contains real tokens (ignoring whitespace, strings, comments)."""
+    i = open_idx + 1
+    while i < close_idx:
+        nxt = _skip_strings_and_comments(content, i)
+        if nxt != i:
+            i = nxt
+            continue
+        if not content[i].isspace():
+            return True
+        i += 1
+    return False
+
+
 def _insert_before_close(content: str, open_idx: int, close_idx: int, alias: str) -> str:
-    inner = content[open_idx + 1 : close_idx]
-    sep = "" if inner.strip() == "" else ", "
+    """Insert ``alias`` before the closing brace of the object at ``open_idx``.
+
+    A separator comma is only emitted when the body already contains real
+    properties — comment-only bodies (e.g. Next.js's default
+    ``/* config options here */``) must not produce a leading comma, which is
+    invalid TypeScript.
+    """
+    sep = ", " if _inner_has_content(content, open_idx, close_idx) else ""
     return content[:close_idx] + sep + alias + content[close_idx:]
 
 
