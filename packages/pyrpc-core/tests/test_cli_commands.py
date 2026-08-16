@@ -606,6 +606,84 @@ def test_parse_entry_complex():
     assert app_var == "create_app"
 
 
+# ── entry-module import errors (#127) ────────────────────────────────────────
+
+def _purge_app_modules():
+    """Drop cached ``app.*`` modules so each test imports a fresh project."""
+    for m in [m for m in sys.modules if m == "app" or m.startswith("app.")]:
+        del sys.modules[m]
+
+
+def _write_broken_project(root: Path, source: str) -> None:
+    (root / "app").mkdir()
+    (root / "app" / "__init__.py").write_text("", encoding="utf-8")
+    (root / "app" / "main.py").write_text(source, encoding="utf-8")
+
+
+def test_import_module_user_error_points_at_file_and_line(tmp_path, monkeypatch, capfd):
+    """A NameError in user code must surface the file/line, not importlib frames."""
+    _purge_app_modules()
+    _write_broken_project(tmp_path, "class Foo:\n    value: MissingType\n")
+    monkeypatch.chdir(tmp_path)
+
+    with pytest.raises(typer.Exit) as exc_info:
+        cli_mod._import_module("app.main")
+    assert exc_info.value.exit_code == 1
+
+    out = capfd.readouterr().out
+    assert 'Failed to load entry module "app.main"' in out
+    assert "NameError: name 'MissingType' is not defined" in out
+    assert "Fix the error in app/main.py:2" in out
+    assert "importlib" not in out
+    assert "_gcd_import" not in out
+
+
+def test_import_module_missing_module_is_clean(tmp_path, monkeypatch, capfd):
+    """A missing entry module must not dump importlib machinery."""
+    _purge_app_modules()
+    monkeypatch.chdir(tmp_path)
+
+    with pytest.raises(typer.Exit) as exc_info:
+        cli_mod._import_module("does.not.exist")
+    assert exc_info.value.exit_code == 1
+
+    out = capfd.readouterr().out
+    assert "Could not import" in out
+    assert "No module named" in out
+    assert "_gcd_import" not in out
+
+
+def test_report_internal_error_keeps_full_traceback(tmp_path, capfd):
+    """Failures inside pyRPC keep the full traceback so bugs aren't hidden."""
+    def boom():
+        return 1 / 0
+
+    exc = None
+    try:
+        boom()
+    except ZeroDivisionError as e:
+        exc = e
+
+    cli_mod._report_import_error("some.module", exc, str(tmp_path))
+    captured = capfd.readouterr()
+    assert "internal error" in captured.out
+    assert "ZeroDivisionError" in captured.err
+
+
+def test_cli_inspect_broken_module_shows_clean_error(tmp_path, monkeypatch):
+    """The inspect command exits 1 with a concise error for a broken module."""
+    _purge_app_modules()
+    _write_broken_project(tmp_path, "value: MissingType\n")
+    monkeypatch.chdir(tmp_path)
+
+    result = runner.invoke(app, ["inspect", "app.main"])
+    assert result.exit_code == 1
+    assert 'Failed to load entry module "app.main"' in result.output
+    assert "NameError: name 'MissingType' is not defined" in result.output
+    assert "app/main.py:1" in result.output
+    assert "_gcd_import" not in result.output
+
+
 # ── _DEFAULT_CLIENT constant ──────────────────────────────────────────────────
 
 def test_default_client_constant():
