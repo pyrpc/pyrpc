@@ -345,11 +345,32 @@ def _make_regen_callback(module: str, client_dirs: list[str]) -> tuple[Callable[
 
     return _do_regen, schedule
 
+# ── Watcher runner (crash-safe) ───────────────────────────────────────────────
+
+def _run_watcher(name: str, fn: Callable[[], None], stop: threading.Event,
+                 errors: list[tuple[str, BaseException]]) -> None:
+    """Run a watcher loop, surfacing crashes instead of dying silently.
+
+    Watcher threads must never die silently: ``pyrpc dev`` would keep running
+    while file watching is broken, making the session look healthy when it is
+    not. On failure, record the error, print a clear message, and signal
+    ``stop`` so the whole session winds down and exits nonzero.
+    """
+    try:
+        fn()
+    except Exception as e:
+        errors.append((name, e))
+        console.print(f"[bold red]✗[/bold red] {name} failed: {type(e).__name__}: {e}")
+        console.print("  [yellow]→ File watching stopped — fix the error above and run the command again.[/yellow]")
+        stop.set()
+
+
 # ── Dev console ───────────────────────────────────────────────────────────────
 
 class _DevConsole:
     def __init__(self, *, module: str, client_dirs: list[str], host: str, port: int,
-                 regenerate_cb, server_proc=None, server_managed: bool = False):
+                 regenerate_cb, server_proc=None, server_managed: bool = False,
+                 stop_event: threading.Event | None = None):
         self.module = module
         self.client_dirs = client_dirs
         self.host = host
@@ -357,6 +378,7 @@ class _DevConsole:
         self.regenerate = regenerate_cb
         self.server_proc = server_proc
         self.server_managed = server_managed
+        self._stop_event = stop_event
         self._running = True
 
     def _schemas(self) -> dict:
@@ -369,6 +391,8 @@ class _DevConsole:
     def run(self):
         console.print("[dim]type help for commands[/dim]")
         while self._running:
+            if self._stop_event is not None and self._stop_event.is_set():
+                break
             try:
                 line = console.input("[bold cyan]pyrpc>[/bold cyan] ").strip()
             except (EOFError, KeyboardInterrupt):
@@ -553,13 +577,24 @@ def watch(
         
     _do, schedule = _make_regen_callback(module, client_dirs)
     stop = threading.Event()
+    errors: list[tuple[str, BaseException]] = []
+
     def _w():
-        for changes in watch(*_find_python_dirs(cwd), stop_event=stop, yield_on_timeout=True, debounce=200):
+        # ``stop_event`` is not supported by every watchfiles release, so
+        # shutdown is signalled via ``stop`` + ``yield_on_timeout`` instead.
+        for changes in watch(*_find_python_dirs(cwd), yield_on_timeout=True, debounce=200, rust_timeout=200):
             if stop.is_set(): break
             if any(f.endswith(".py") for _, f in changes): schedule()
-    t = threading.Thread(target=_w, daemon=True); t.start()
-    try: t.join()
-    except KeyboardInterrupt: stop.set(); console.print("\n  [dim]stopped[/dim]")
+
+    t = threading.Thread(target=_run_watcher, args=("watcher", _w, stop, errors), daemon=True)
+    t.start()
+    try:
+        t.join()
+    except KeyboardInterrupt:
+        stop.set()
+        console.print("\n  [dim]stopped[/dim]")
+    if errors:
+        raise typer.Exit(code=1) from errors[0][1]
 
 
 @app.command()
@@ -719,11 +754,13 @@ def dev(
 
     def _py_watcher():
         """Watch .py files → debounced regen."""
+        # ``stop_event`` is not supported by every watchfiles release, so
+        # shutdown is signalled via ``stop`` + ``yield_on_timeout`` instead.
         for changes in watch(
             *_find_python_dirs(cwd),
-            stop_event=stop,
             yield_on_timeout=True,
             debounce=200,
+            rust_timeout=200,
         ):
             if stop.is_set():
                 break
@@ -740,9 +777,9 @@ def dev(
 
         for changes in watch(
             str(cfg_path.parent),
-            stop_event=stop,
             yield_on_timeout=True,
             debounce=300,
+            rust_timeout=300,
         ):
             if stop.is_set():
                 break
@@ -790,10 +827,27 @@ def dev(
             # Regenerate immediately with new config
             _do_regen()
 
-    py_thread = threading.Thread(target=_py_watcher, daemon=True)
-    cfg_thread = threading.Thread(target=_cfg_watcher, daemon=True)
+    watcher_errors: list[tuple[str, BaseException]] = []
+    py_thread = threading.Thread(
+        target=_run_watcher, args=("Python file watcher", _py_watcher, stop, watcher_errors), daemon=True
+    )
+    cfg_thread = threading.Thread(
+        target=_run_watcher, args=("config watcher", _cfg_watcher, stop, watcher_errors), daemon=True
+    )
     py_thread.start()
     cfg_thread.start()
+
+    # Give watchers a moment to fail loudly before dropping into the console, so
+    # a crashed watcher never leaves the session looking healthy.
+    py_thread.join(timeout=0.25)
+    cfg_thread.join(timeout=0.25)
+    if watcher_errors:
+        stop.set()
+        if server_proc and server_managed:
+            server_proc.terminate()
+            server_proc.wait()
+        console.print("  [dim]stopped[/dim]")
+        raise typer.Exit(code=1)
 
     # ── Interactive console ───────────────────────────────────────────────────
     dev_console = _DevConsole(
@@ -804,6 +858,7 @@ def dev(
         regenerate_cb=_do_regen,
         server_proc=server_proc,
         server_managed=server_managed,
+        stop_event=stop,
     )
     try:
         dev_console.run()
@@ -811,10 +866,15 @@ def dev(
         pass
     finally:
         stop.set()
+        py_thread.join(timeout=1.0)
+        cfg_thread.join(timeout=1.0)
         if server_proc and server_managed:
             server_proc.terminate()
             server_proc.wait()
         console.print("  [dim]stopped[/dim]")
+    if watcher_errors:
+        console.print("[bold red]✗ session ended with a watcher failure (see above).[/bold red]")
+        raise typer.Exit(code=1)
 
 
 if __name__ == "__main__":
