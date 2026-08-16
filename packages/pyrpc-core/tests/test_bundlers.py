@@ -143,6 +143,89 @@ def test_next_already_aliased_is_idempotent(tmp_path):
     assert cfg.read_text(encoding="utf-8") == original
 
 
+def test_next_comment_only_object_gets_alias_without_leading_comma(tmp_path):
+    """Issue #129: a comment-only body must not produce a leading comma."""
+    client_dir = tmp_path / "client"
+    client_dir.mkdir()
+    cfg = client_dir / "next.config.ts"
+    cfg.write_text(
+        "import type { NextConfig } from 'next'\n"
+        "const nextConfig: NextConfig = {\n"
+        "  /* config options here */\n"
+        "}\n"
+        "export default nextConfig\n",
+        encoding="utf-8",
+    )
+
+    assert configure_bundler(str(client_dir)) is True
+
+    content = cfg.read_text(encoding="utf-8")
+    assert _NEXT_ALIAS in content
+    assert content == (
+        "import type { NextConfig } from 'next'\n"
+        "const nextConfig: NextConfig = {\n"
+        "  /* config options here */\n"
+        'turbopack: { resolveAlias: { "@pyrpc/types": "./__pyrpc.ts" } }}\n'
+        "export default nextConfig\n"
+    )
+
+
+def test_next_same_line_comment_only_object_gets_alias(tmp_path):
+    client_dir = tmp_path / "client"
+    client_dir.mkdir()
+    cfg = client_dir / "next.config.ts"
+    cfg.write_text(
+        "const nextConfig: NextConfig = { /* config options here */ }\n"
+        "export default nextConfig\n",
+        encoding="utf-8",
+    )
+
+    assert configure_bundler(str(client_dir)) is True
+
+    content = cfg.read_text(encoding="utf-8")
+    assert _NEXT_ALIAS in content
+    assert ", turbopack:" not in content
+
+
+def test_next_comment_and_props_still_get_comma_separated_alias(tmp_path):
+    client_dir = tmp_path / "client"
+    client_dir.mkdir()
+    cfg = client_dir / "next.config.ts"
+    cfg.write_text(
+        "const nextConfig: NextConfig = {\n"
+        "  reactStrictMode: true, /* keep me */\n"
+        "}\n"
+        "export default nextConfig\n",
+        encoding="utf-8",
+    )
+
+    assert configure_bundler(str(client_dir)) is True
+
+    content = cfg.read_text(encoding="utf-8")
+    assert _NEXT_ALIAS in content
+    assert "reactStrictMode: true" in content
+    assert ", turbopack:" in content
+
+
+def test_vite_comment_only_object_gets_alias_without_leading_comma(tmp_path):
+    client_dir = tmp_path / "client"
+    client_dir.mkdir()
+    cfg = client_dir / "vite.config.ts"
+    cfg.write_text(
+        "import { defineConfig } from 'vite'\n"
+        "export default defineConfig({\n"
+        "  /* config options here */\n"
+        "})\n",
+        encoding="utf-8",
+    )
+
+    assert configure_bundler(str(client_dir)) is True
+
+    content = cfg.read_text(encoding="utf-8")
+    assert _VITE_ALIAS in content
+    assert ", resolve:" not in content
+
+
 def test_ts_config_takes_precedence_over_js(tmp_path):
     client_dir = tmp_path / "client"
     client_dir.mkdir()
