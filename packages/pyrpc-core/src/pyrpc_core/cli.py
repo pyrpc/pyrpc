@@ -5,6 +5,7 @@ import subprocess
 import sys
 import threading
 import time
+import traceback
 from pathlib import Path
 from typing import Callable
 
@@ -197,12 +198,67 @@ def _run_wizard(root: str) -> dict:
 
 # ── Core helpers ──────────────────────────────────────────────────────────────
 
+_IMPORT_SKIP_DIRS = {
+    ".venv", "venv", "env", "site-packages", "node_modules", "dist", "build", ".git"
+}
+
+
+def _user_frame(exc: BaseException, cwd: str) -> tuple[str, int] | None:
+    """Return ``(filename, lineno)`` of the deepest frame in the user's project.
+
+    The traceback chain walks from the outermost frame (where the exception
+    surfaced) toward the raise site, so the last frame whose file lives under
+    ``cwd`` and outside vendored/venv directories is the actual error site.
+    Returns ``None`` when the failure happened entirely inside pyRPC or the
+    standard library, so internal bugs are never misattributed to user code.
+    """
+    cwd_abs = os.path.abspath(cwd)
+    tb = exc.__traceback__
+    best: tuple[str, int] | None = None
+    while tb is not None:
+        raw = tb.tb_frame.f_code.co_filename
+        if not raw.startswith("<"):
+            filename = os.path.abspath(raw)
+            if filename == cwd_abs or filename.startswith(cwd_abs + os.sep):
+                dirs = filename[len(cwd_abs):].split(os.sep)[:-1]
+                if not any(d in _IMPORT_SKIP_DIRS for d in dirs):
+                    best = (filename, tb.tb_lineno)
+        tb = tb.tb_next
+    return best
+
+
+def _report_import_error(module_path: str, exc: BaseException, cwd: str) -> None:
+    """Print a concise, actionable error for an entry-module import failure.
+
+    When the failure is in the user's own code, point at the exact file and
+    line. When it happened entirely inside pyRPC machinery, keep the full
+    internal traceback so pyRPC bugs are not hidden.
+    """
+    frame = _user_frame(exc, cwd)
+    if frame is not None:
+        filename, lineno = frame
+        rel = os.path.relpath(filename, cwd)
+        console.print(f'[bold red]✗[/bold red] Failed to load entry module "{module_path}"')
+        console.print()
+        console.print(f"  [bold]{type(exc).__name__}[/bold]: {exc}")
+        console.print()
+        console.print(
+            f"  [yellow]→ Fix the error in {rel}:{lineno} and run `pyrpc dev` again.[/yellow]"
+        )
+        return
+    if isinstance(exc, ImportError):
+        console.print(f'[bold red]✗[/bold red] Could not import "{module_path}": {exc}')
+        return
+    console.print(f'[bold red]✗[/bold red] Failed to load entry module "{module_path}" (internal error):')
+    traceback.print_exception(type(exc), exc, exc.__traceback__)
+
+
 def _import_module(module_path: str):
     sys.path.insert(0, os.getcwd())
     try:
         return importlib.import_module(module_path)
-    except ImportError as e:
-        console.print(f"[bold red]Error:[/bold red] Could not import '{module_path}': {e}")
+    except Exception as e:
+        _report_import_error(module_path, e, os.getcwd())
         raise typer.Exit(code=1) from e
 
 def _parse_entry(entry: str) -> tuple[str, str]:
