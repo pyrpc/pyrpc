@@ -13,6 +13,28 @@ export interface Release {
 
 export const releases: Release[] = [
     {
+        version: 'v0.12.1',
+        date: '2026-08-16',
+        tag: 'v0.12.1',
+        description: 'Bug-fix release: bundler alias injection produces valid configs even for comment-only bodies, broken entry modules get a concise file:line error instead of an importlib traceback, and the dev/watch file watchers can no longer crash silently while the session looks healthy.',
+        sections: [
+            {
+                title: 'Bug Fixes',
+                items: [
+                    'Bundler alias injection (Next.js Turbopack, Vite, SvelteKit) now picks its separator by scanning the config body for real tokens instead of checking if it is blank, so comment-only bodies (e.g. Next.js default `/* config options here */`) no longer produce a leading comma that made next.config.ts invalid TypeScript.',
+                    'Entry-module import failures now show a concise, actionable error pointing at the exact file and line in the user\u2019s project (e.g. `\u2192 Fix the error in app/main.py:21`) instead of the full importlib traceback; failures inside pyRPC itself still keep the full traceback so internal bugs stay visible.',
+                    '`pyrpc dev` and `pyrpc watch` no longer pass `stop_event` to `watch()` (unsupported by every watchfiles release), so the watcher threads can\u2019t crash at startup. Watcher failures are now printed, recorded, and exit nonzero — terminating uvicorn if pyRPC owns it — instead of leaving the session apparently healthy with dead watchers.',
+                ],
+            },
+            {
+                title: 'Tests',
+                items: [
+                    'Regression tests for comment-only Next.js/Vite alias injection, entry-module error reporting, watcher crash exit codes, and a guard asserting `watch()` never receives `stop_event`.',
+                ],
+            },
+        ],
+    },
+    {
         version: 'v0.12.0',
         date: '2026-08-12',
         tag: 'v0.12.0',
