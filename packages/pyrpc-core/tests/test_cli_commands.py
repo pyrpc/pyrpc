@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import tempfile
+import threading
 import unittest.mock as mock
 
 import pytest
@@ -207,7 +208,7 @@ def test_cli_dev_yes_one_client():
         with mock.patch("pyrpc_core.cli._find_frontend_projects", return_value=[("./apps/web", "Next.js")]):
             with mock.patch("pyrpc_core.cli._write_config") as mock_write:
                 with mock.patch("pyrpc_core.cli._import_module"):
-                    with mock.patch("pyrpc_core.cli._run_codegen", return_value=1):
+                    with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=1):
                         with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
                             with mock.patch("pyrpc_core.cli.subprocess.Popen"):
                                 with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
@@ -239,7 +240,9 @@ def test_cli_dev_attaches_when_server_running(tmp_path):
 
     with mock.patch("pyrpc_core.cli._find_config", return_value=cfg_file):
         with mock.patch("pyrpc_core.cli._import_module"):
-            with mock.patch("pyrpc_core.cli._run_codegen", return_value=3):
+            # Mock the whole regen path: the real one writes tsconfig/bundler
+            # config into the client dir, which must never leak into the repo.
+            with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=3):
                 with mock.patch("pyrpc_core.cli._server_is_running", return_value=True):
                     with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
                         with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
@@ -257,7 +260,7 @@ def test_cli_dev_starts_server_when_not_running(tmp_path):
 
     with mock.patch("pyrpc_core.cli._find_config", return_value=cfg_file):
         with mock.patch("pyrpc_core.cli._import_module"):
-            with mock.patch("pyrpc_core.cli._run_codegen", return_value=2):
+            with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=2):
                 with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
                     with mock.patch("pyrpc_core.cli.subprocess") as mock_sub:
                         mock_proc = mock.MagicMock()
@@ -282,7 +285,7 @@ def test_dev_flags_in_help():
 
 def test_cli_watch_runs_initial_codegen():
     with mock.patch("pyrpc_core.cli._import_module"):
-        with mock.patch("pyrpc_core.cli._run_codegen", return_value=3) as mock_cg:
+        with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=3) as mock_cg:
             with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
                 result = runner.invoke(app, ["watch", "my_module", "--client", "my_client"])
     assert result.exit_code == 0
@@ -295,6 +298,118 @@ def test_cli_watch_help():
     assert result.exit_code == 0
     output = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', result.output)
     assert "--client" in output
+
+
+def test_watch_command_does_not_shadow_watchfiles():
+    """Regression for #134: the `watch` CLI command must not shadow the
+    watchfiles.watch import used by the internal watcher loops."""
+    import watchfiles
+    assert cli_mod.watch is watchfiles.watch
+    # The typer command lives under a distinct function name and is
+    # registered explicitly so the CLI surface stays `pyrpc watch`.
+    assert cli_mod.watch_command is not watchfiles.watch
+
+
+def test_cli_watch_exits_nonzero_when_watcher_crashes():
+    """A crashed watcher must exit nonzero — never a silent, healthy-looking failure."""
+    with mock.patch("pyrpc_core.cli._import_module"):
+        with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=1):
+            with mock.patch("pyrpc_core.cli.watch", side_effect=TypeError("boom")):
+                result = runner.invoke(app, ["watch", "my_module", "--client", "my_client"])
+    assert result.exit_code == 1
+    assert "watcher failed" in result.output
+    assert "TypeError: boom" in result.output
+
+
+def test_cli_dev_exits_nonzero_when_watcher_crashes(tmp_path):
+    """dev must not keep running (and must terminate the server) when a watcher crashes."""
+    config = {"module": "my_module", "framework": "Next.js", "client": "../client"}
+    cfg_file = tmp_path / "pyrpc.json"
+    cfg_file.write_text(json.dumps(config))
+
+    with mock.patch("pyrpc_core.cli._find_config", return_value=cfg_file):
+        with mock.patch("pyrpc_core.cli._import_module"):
+            with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=2):
+                with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
+                    with mock.patch("pyrpc_core.cli.subprocess") as mock_sub:
+                        mock_proc = mock.MagicMock()
+                        mock_sub.Popen.return_value = mock_proc
+                        with mock.patch("pyrpc_core.cli.watch", side_effect=TypeError("boom")):
+                            with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
+                                mock_console.return_value.run = mock.MagicMock()
+                                result = runner.invoke(app, ["dev"])
+    assert result.exit_code == 1
+    assert "Python file watcher failed" in result.output
+    assert "TypeError: boom" in result.output
+    # The interactive console must never be entered after a watcher crash.
+    mock_console.return_value.run.assert_not_called()
+    # The uvicorn process we started must be cleaned up.
+    mock_proc.terminate.assert_called()
+
+
+def test_dev_watch_calls_never_use_stop_event(tmp_path):
+    """Regression guard for #128: watch() must never receive stop_event, which is
+    not supported by every watchfiles release."""
+    def strict_watch(*args, **kwargs):
+        assert "stop_event" not in kwargs, "watch() got stop_event — not portable"
+        return iter([])
+
+    config = {"module": "my_module", "framework": "Next.js", "client": "../client"}
+    cfg_file = tmp_path / "pyrpc.json"
+    cfg_file.write_text(json.dumps(config))
+
+    with mock.patch("pyrpc_core.cli._find_config", return_value=cfg_file):
+        with mock.patch("pyrpc_core.cli._import_module"):
+            with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=2):
+                with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
+                    with mock.patch("pyrpc_core.cli.subprocess.Popen"):
+                        with mock.patch("pyrpc_core.cli.watch", side_effect=strict_watch):
+                            with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
+                                mock_console.return_value.run = mock.MagicMock()
+                                result = runner.invoke(app, ["dev"])
+    assert result.exit_code == 0
+
+
+def test_dev_console_exits_when_stop_event_set(capfd):
+    """The dev console must stop (not block on input) once a watcher has failed."""
+    stop = threading.Event()
+    stop.set()
+    console = cli_mod._DevConsole(
+        module="m", client_dirs=[], host="127.0.0.1", port=8000,
+        regenerate_cb=lambda: None, stop_event=stop,
+    )
+    console.run()  # must return without blocking on stdin
+    assert "type help" in capfd.readouterr().out
+
+
+# ── _run_watcher ──────────────────────────────────────────────────────────────
+
+def test_run_watcher_records_crash_and_signals_stop():
+    """_run_watcher converts a watcher crash into a recorded error + stop signal."""
+    stop = threading.Event()
+    errors: list = []
+
+    def boom():
+        raise RuntimeError("watcher exploded")
+
+    cli_mod._run_watcher("test watcher", boom, stop, errors)
+    assert len(errors) == 1
+    assert errors[0][0] == "test watcher"
+    assert isinstance(errors[0][1], RuntimeError)
+    assert stop.is_set()
+
+
+def test_run_watcher_clean_exit_records_nothing():
+    """A watcher that exits cleanly must not look like a failure."""
+    stop = threading.Event()
+    errors: list = []
+
+    def clean():
+        return None
+
+    cli_mod._run_watcher("test watcher", clean, stop, errors)
+    assert errors == []
+    assert not stop.is_set()
 
 
 # ── wizard (multi-client) ─────────────────────────────────────────────────────
@@ -499,6 +614,84 @@ def test_parse_entry_complex():
     module, app_var = _parse_entry("my_package.submodule:create_app")
     assert module == "my_package.submodule"
     assert app_var == "create_app"
+
+
+# ── entry-module import errors (#127) ────────────────────────────────────────
+
+def _purge_app_modules():
+    """Drop cached ``app.*`` modules so each test imports a fresh project."""
+    for m in [m for m in sys.modules if m == "app" or m.startswith("app.")]:
+        del sys.modules[m]
+
+
+def _write_broken_project(root: Path, source: str) -> None:
+    (root / "app").mkdir()
+    (root / "app" / "__init__.py").write_text("", encoding="utf-8")
+    (root / "app" / "main.py").write_text(source, encoding="utf-8")
+
+
+def test_import_module_user_error_points_at_file_and_line(tmp_path, monkeypatch, capfd):
+    """A NameError in user code must surface the file/line, not importlib frames."""
+    _purge_app_modules()
+    _write_broken_project(tmp_path, "class Foo:\n    value: MissingType\n")
+    monkeypatch.chdir(tmp_path)
+
+    with pytest.raises(typer.Exit) as exc_info:
+        cli_mod._import_module("app.main")
+    assert exc_info.value.exit_code == 1
+
+    out = capfd.readouterr().out
+    assert 'Failed to load entry module "app.main"' in out
+    assert "NameError: name 'MissingType' is not defined" in out
+    assert "Fix the error in app/main.py:2" in out
+    assert "importlib" not in out
+    assert "_gcd_import" not in out
+
+
+def test_import_module_missing_module_is_clean(tmp_path, monkeypatch, capfd):
+    """A missing entry module must not dump importlib machinery."""
+    _purge_app_modules()
+    monkeypatch.chdir(tmp_path)
+
+    with pytest.raises(typer.Exit) as exc_info:
+        cli_mod._import_module("does.not.exist")
+    assert exc_info.value.exit_code == 1
+
+    out = capfd.readouterr().out
+    assert "Could not import" in out
+    assert "No module named" in out
+    assert "_gcd_import" not in out
+
+
+def test_report_internal_error_keeps_full_traceback(tmp_path, capfd):
+    """Failures inside pyRPC keep the full traceback so bugs aren't hidden."""
+    def boom():
+        return 1 / 0
+
+    exc = None
+    try:
+        boom()
+    except ZeroDivisionError as e:
+        exc = e
+
+    cli_mod._report_import_error("some.module", exc, str(tmp_path))
+    captured = capfd.readouterr()
+    assert "internal error" in captured.out
+    assert "ZeroDivisionError" in captured.err
+
+
+def test_cli_inspect_broken_module_shows_clean_error(tmp_path, monkeypatch):
+    """The inspect command exits 1 with a concise error for a broken module."""
+    _purge_app_modules()
+    _write_broken_project(tmp_path, "value: MissingType\n")
+    monkeypatch.chdir(tmp_path)
+
+    result = runner.invoke(app, ["inspect", "app.main"])
+    assert result.exit_code == 1
+    assert 'Failed to load entry module "app.main"' in result.output
+    assert "NameError: name 'MissingType' is not defined" in result.output
+    assert "app/main.py:1" in result.output
+    assert "_gcd_import" not in result.output
 
 
 # ── _DEFAULT_CLIENT constant ──────────────────────────────────────────────────
