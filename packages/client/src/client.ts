@@ -1,73 +1,48 @@
 import { PyRPCError } from './error';
-import type { ClientOptions, RpcRequest, RpcResponse } from './types';
+import type { ClientOptions, Operation, OperationResult, TerminatingLink } from './types';
 
-const NO_BASE_URL_ERROR = `
-No server URL configured.
+const LINKS_ERROR = `
+No terminating link configured.
 
-Provide a baseUrl when creating the client:
+Provide exactly one terminating transport link when creating the client:
 
-  const api = createClient({ baseUrl: "http://localhost:8000" })
+  const api = createClient({
+    links: [httpLink({ url: "http://localhost:8000/rpc" })],
+  })
 
-In a browser the client defaults to the current origin (same-domain Next.js
-apps work without an explicit baseUrl).
+or:
+
+  const api = createClient({
+    links: [httpBatchLink({ url: "http://localhost:8000/rpc" })],
+  })
+`;
+
+const MULTIPLE_LINKS_ERROR = `
+Multiple terminating links are not supported yet.
+
+Supply exactly one terminating link (httpLink or httpBatchLink):
+
+  const api = createClient({ links: [httpLink({ url: "..." })] })
 `;
 
 class PyRPCClient {
-  private url: string;
-  private options: ClientOptions;
+  private link: TerminatingLink;
 
-  constructor(options: ClientOptions = {}) {
-    this.options = options;
-
-    let baseUrl = options.baseUrl;
-
-    if (!baseUrl) {
-      // Browser-only fallback: same-origin requests work without an explicit baseUrl
-      if (typeof window !== 'undefined' && window.location) {
-        baseUrl = window.location.origin;
-      }
+  constructor(options: ClientOptions) {
+    if (!options.links || options.links.length === 0) {
+      throw new Error(LINKS_ERROR);
     }
-
-    if (baseUrl) {
-      const clean = baseUrl.replace(/\/+$/, '');
-      this.url = clean.replace(/\/rpc$/i, '') + '/rpc';
-    } else {
-      this.url = '';
+    if (options.links.length > 1) {
+      throw new Error(MULTIPLE_LINKS_ERROR);
     }
+    this.link = options.links[0];
   }
 
   private async request<T>(method: string, params: any): Promise<T> {
-    if (!this.url) {
-      throw new Error(NO_BASE_URL_ERROR);
-    }
-
     const id = Math.random().toString(36).substring(7);
-    const body: RpcRequest = { id, method, params };
+    const operation: Operation = { id, method, params };
 
-    const baseHeaders: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    let userHeaders: HeadersInit = {};
-    if (this.options.headers) {
-      userHeaders = typeof this.options.headers === 'function' 
-        ? await this.options.headers() 
-        : this.options.headers;
-    }
-
-    const headers = { ...baseHeaders, ...Object.fromEntries(new Headers(userHeaders).entries()) };
-
-    const response = await fetch(this.url, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data: RpcResponse<T> = await response.json();
+    const data: OperationResult<T> = await this.link.request(operation);
 
     if (data.error) {
       throw new PyRPCError(data.error.code, data.error.message, data.error.data);
@@ -89,17 +64,21 @@ function normalizeArgs(args: any[]): any {
  * Pass your generated `Types` interface as the generic parameter
  * to get full type safety and auto-complete for all RPC procedures.
  *
+ * The transport is configured with a single terminating link:
+ *
  * @example
  * ```typescript
- * import { createClient } from "@pyrpc/client"
+ * import { createClient, httpLink } from "@pyrpc/client"
  * import type { Types } from "@pyrpc/types"
  *
- * const api = createClient<Types>({ baseUrl: "http://localhost:8000" })
+ * const api = createClient<Types>({
+ *   links: [httpLink({ url: "http://localhost:8000/rpc" })],
+ * })
  * const user = await api.get_user("John")
  * ```
  */
 export function createClient<T = any>(
-  options: ClientOptions = {}
+  options: ClientOptions = { links: [] }
 ): T {
   const client = new PyRPCClient(options);
 
