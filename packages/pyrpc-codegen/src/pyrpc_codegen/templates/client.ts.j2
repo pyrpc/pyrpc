@@ -17,7 +17,9 @@
  * import type { Types } from "@pyrpc/types"
  * import { createNextClient } from "@pyrpc/next"
  *
- * export const api = createNextClient<Types>({ baseUrl: process.env.NEXT_PUBLIC_API_URL! })
+ * export const api = createNextClient<Types>({
+ *   links: [httpLink({ url: process.env.NEXT_PUBLIC_API_URL! })],
+ * })
  * ```
  */
 /* eslint-disable */
