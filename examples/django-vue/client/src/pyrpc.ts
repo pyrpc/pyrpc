@@ -1,6 +1,8 @@
 import type { Types } from "@pyrpc/types";
-import { createPyrpcVue } from "@pyrpc/vue";
+import { createPyrpcVue, httpLink } from "@pyrpc/vue";
 
 export const pyrpc = createPyrpcVue<Types>({
-  baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:8000",
+  links: [
+    httpLink({ url: import.meta.env.VITE_API_URL ?? "http://localhost:8000" }),
+  ],
 });
