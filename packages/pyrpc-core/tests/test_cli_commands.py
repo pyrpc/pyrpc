@@ -300,6 +300,16 @@ def test_cli_watch_help():
     assert "--client" in output
 
 
+def test_watch_command_does_not_shadow_watchfiles():
+    """Regression for #134: the `watch` CLI command must not shadow the
+    watchfiles.watch import used by the internal watcher loops."""
+    import watchfiles
+    assert cli_mod.watch is watchfiles.watch
+    # The typer command lives under a distinct function name and is
+    # registered explicitly so the CLI surface stays `pyrpc watch`.
+    assert cli_mod.watch_command is not watchfiles.watch
+
+
 def test_cli_watch_exits_nonzero_when_watcher_crashes():
     """A crashed watcher must exit nonzero — never a silent, healthy-looking failure."""
     with mock.patch("pyrpc_core.cli._import_module"):

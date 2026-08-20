@@ -597,8 +597,8 @@ def codegen(
     console.print('  import type {{ Types }} from "@pyrpc/types"')
 
 
-@app.command()
-def watch(
+@app.command("watch")
+def watch_command(
     module: str = typer.Argument(None, help="Module to watch (reads pyrpc.json if omitted)"),
     client: str = typer.Option(None, "--client", "-c", help="Client project root"),
 ):
