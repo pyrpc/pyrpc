@@ -40,11 +40,11 @@ my-app/
 
 ```ts
 // src/lib/pyrpc.ts
-import { createReactClient } from "@pyrpc/react"
+import { createReactClient, httpLink } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
 export const api = createReactClient<Types>({
-  baseUrl: process.env.REACT_APP_API_URL ?? "http://localhost:8000",
+  links: [httpLink({ url: process.env.REACT_APP_API_URL ?? "http://localhost:8000" })],
 })
 ```
 
@@ -133,8 +133,8 @@ api.greet.useQuery({ nme: "Ada" })   // type error -- typo caught at compile tim
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `baseUrl` | `string` | `""` | Root URL of the pyRPC server |
-| `headers` | `Record<string, string>` | `{}` | Static headers sent on every request |
+| `links` | `Link[]` | — | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
+| `kinds` | `ProcedureKindMap` | generated | Override generated procedure kinds |
 
 ## Full working examples
 

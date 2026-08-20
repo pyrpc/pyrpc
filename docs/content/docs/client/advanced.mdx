@@ -53,7 +53,7 @@ client._sync_client = httpx.Client(
 )
 ```
 
-For TypeScript, you can wrap `createClient` to inject custom headers or use a different `fetch` implementation.
+For TypeScript, configure transport via a link. `httpLink` sends one operation per HTTP request; `httpBatchLink` combines concurrent operations into one request. See the [TypeScript client](/docs/client/typescript) for details.
 
 ## Codegen Tips
 

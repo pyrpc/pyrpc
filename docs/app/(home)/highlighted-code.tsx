@@ -58,10 +58,12 @@ interface Types {
   get_team(id: number): Promise<Team>;
 }`;
 
-const clientCode = `import { createClient } from "@pyrpc/client";
+const clientCode = `import { createClient, httpLink } from "@pyrpc/client";
 import type { Types } from "@pyrpc/types";
 
-const client = createClient<Types>();
+const client = createClient<Types>({
+  links: [httpLink({ url: "https://api.example.com" })],
+});
 
 // Autocomplete works across your stack
 const team = await client.get_team(1);

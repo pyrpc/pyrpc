@@ -12,15 +12,15 @@ import type { ValidationError } from '@/lib/parsePythonTypes'
 const TEMPLATES: any = {
     Core: {
         server: `from pyrpc_core import rpc, model\n\n@model\nclass User:\n    id: int\n    name: str\n\n@rpc\ndef get_user(id: int) -> User:\n    return User(id=id, name="Core User")`,
-        client: `import { createClient } from "@pyrpc/client"\nimport type { Types } from "@pyrpc/types"\n\nconst client = createClient<Types>({ baseUrl: "/rpc" })\n\nconst user = await client.get_user(1);\n\nconsole.log(user.name);`
+        client: `import { createClient, httpLink } from "@pyrpc/client"\nimport type { Types } from "@pyrpc/types"\n\nconst client = createClient<Types>({ links: [httpLink({ url: "/rpc" })] })\n\nconst user = await client.get_user(1);\n\nconsole.log(user.name);`
     },
     FastAPI: {
         server: `from fastapi import FastAPI\nfrom pyrpc_fastapi import mount_fastapi, rpc, model\n\napp = FastAPI()\n\n@model\nclass User:\n    id: int\n    name: str\n\n@rpc\ndef get_user(id: int) -> User:\n    return User(id=id, name="FastAPI User")\n\nmount_fastapi(app)`,
-        client: `import { createClient } from "@pyrpc/client"\nimport type { Types } from "@pyrpc/types"\n\nconst client = createClient<Types>({ baseUrl: "/rpc" })\n\nconst user = await client.get_user(1);\n\nconsole.log(user.name);`
+        client: `import { createClient, httpLink } from "@pyrpc/client"\nimport type { Types } from "@pyrpc/types"\n\nconst client = createClient<Types>({ links: [httpLink({ url: "/rpc" })] })\n\nconst user = await client.get_user(1);\n\nconsole.log(user.name);`
     },
     Flask: {
         server: `from flask import Flask\nfrom pyrpc_flask import mount_flask, rpc, model\n\napp = Flask(__name__)\n\n@model\nclass User:\n    id: int\n    name: str\n\n@rpc\ndef get_user(id: int) -> User:\n    return User(id=id, name="Flask User")\n\nmount_flask(app)`,
-        client: `import { createClient } from "@pyrpc/client"\nimport type { Types } from "@pyrpc/types"\n\nconst client = createClient<Types>({ baseUrl: "/rpc" })\n\nconst user = await client.get_user(1);\n\nconsole.log(user.name);`
+        client: `import { createClient, httpLink } from "@pyrpc/client"\nimport type { Types } from "@pyrpc/types"\n\nconst client = createClient<Types>({ links: [httpLink({ url: "/rpc" })] })\n\nconst user = await client.get_user(1);\n\nconsole.log(user.name);`
     }
 }
 

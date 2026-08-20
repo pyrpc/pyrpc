@@ -151,10 +151,12 @@ export type Types = {
 Use it with `@pyrpc/client`:
 
 ```typescript
-import { createClient } from "@pyrpc/client"
+import { createClient, httpLink } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
-const client = createClient<Types>({ baseUrl: "http://localhost:8000" })
+const client = createClient<Types>({
+  links: [httpLink({ url: "http://localhost:8000" })],
+})
 const result = await client.add(10, 5) // Fully typed, with autocompletion!
 ```
 

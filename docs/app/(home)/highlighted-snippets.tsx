@@ -18,10 +18,12 @@ export interface Types {
   greet(name: string): Promise<string>;
 }`;
 
-const snippet3Code = `import { createClient } from "@pyrpc/client";
+const snippet3Code = `import { createClient, httpLink } from "@pyrpc/client";
 import type { Types } from "@pyrpc/types";
 
-const client = createClient<Types>();
+const client = createClient<Types>({
+  links: [httpLink({ url: "https://api.example.com" })],
+});
 
 const result = await client.greet("World");
 console.log(result); // "Hello World!"`;

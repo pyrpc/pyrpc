@@ -15,9 +15,18 @@ interface PlaygroundEditorProps {
 }
 
 const PYRPC_CLIENT_STUBS = `
+export interface HttpLinkOptions {
+    url: string;
+}
+
+export function httpLink(options: HttpLinkOptions): Link;
+
+export interface Link {
+    readonly kind: 'terminating';
+}
+
 export interface ClientOptions {
-    baseUrl?: string;
-    headers?: Record<string, string> | (() => Promise<Record<string, string>>);
+    links: Link[];
 }
 
 export interface RpcError {
@@ -26,7 +35,7 @@ export interface RpcError {
     data?: unknown;
 }
 
-export function createClient<T = any>(options?: ClientOptions): T;
+export function createClient<T = any>(options: ClientOptions): T;
 `;
 
 export function PlaygroundEditor({ code, language, onChange, serverTypes, serverErrors }: PlaygroundEditorProps) {

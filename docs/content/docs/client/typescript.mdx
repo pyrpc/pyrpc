@@ -24,25 +24,81 @@ pyrpc codegen http://localhost:8000 --client .
 
 ## 2. Create the Client
 
-Use the `createClient<Types>()` factory to initialize your typed client.
+Use the `createClient<Types>()` factory to initialize your typed client. Transport is configured with a **link** — the URL belongs to the link, not the client.
 
 ```ts
-import { createClient } from "@pyrpc/client"
+import { createClient, httpLink } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
-// Option 1: Automatic (defaults to current host in browser)
-export const client = createClient<Types>();
-
-// Option 2: Explicit (required for Node.js / SSR)
+// One HTTP request per RPC call
 export const client = createClient<Types>({
-  baseUrl: "https://api.example.com"
+  links: [httpLink({ url: "https://api.example.com" })]
 });
 ```
 
-> [!TIP]
-> If `baseUrl` is omitted, pyRPC will automatically use `window.location.origin`. In Server-Side environments (like Next.js Server Components), you must provide an explicit URL.
+## 3. Links
 
-## 3. Call Procedures
+A link transports an RPC operation to the server. The URL, HTTP transport, request serialization, response deserialization, and HTTP-level error handling live in the link.
+
+### `httpLink`
+
+`httpLink` sends **one RPC operation per HTTP request**.
+
+```
+one RPC operation
+        ↓
+one HTTP request
+```
+
+```ts
+const client = createClient<Types>({
+  links: [httpLink({ url: "https://api.example.com" })]
+});
+
+const user = await client.get_user({ id: 1 });
+```
+
+### `httpBatchLink`
+
+`httpBatchLink` automatically combines **multiple independent RPC operations that occur close together into a single HTTP request**.
+
+```
+multiple RPC operations
+        ↓
+one HTTP request
+```
+
+You still write normal, independent RPC calls. The link collects eligible operations from the same scheduling window and sends them as one batch. Batching is a transport optimization — it is not a new procedure, and the server dispatches each operation through the normal RPC router.
+
+```ts
+import { createClient, httpBatchLink } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+export const client = createClient<Types>({
+  links: [httpBatchLink({ url: "https://api.example.com", maxItems: 10 })]
+});
+
+// The three concurrent calls are combined into one HTTP request.
+const [alice, bob, carol] = await Promise.all([
+  client.get_user({ id: 1 }),
+  client.get_user({ id: 2 }),
+  client.get_user({ id: 3 }),
+]);
+```
+
+Options:
+
+- `url` — server URL (required). Give the root (`https://api.example.com`) or the full endpoint (`https://api.example.com/rpc`); the link normalizes to `/rpc`.
+- `maxItems` — maximum operations per batch; when more operations are queued, they flush immediately. Defaults to `Infinity` (the server enforces a hard limit).
+
+**Batching semantics:**
+
+- Both queries and mutations can be batched. pyRPC uses `POST` for both, so they can share one batch.
+- Operations inside a batch execute **sequentially on the server**, in request order.
+- A batch is **not a transaction**: if one operation fails, the others still execute, and successful operations are not rolled back.
+- Each operation keeps its own result or error. A single failed procedure does not fail the others; only a failed HTTP request fails the whole batch.
+
+## 4. Call Procedures
 
 Procedures are available as async methods with full autocompletion and type validation.
 
@@ -72,4 +128,3 @@ try {
 
 - [Vanilla Python Client](/docs/client/vanilla)
 - [Advanced Usage](/docs/client/advanced)
-
