@@ -5,6 +5,7 @@ export type { PyRPCProviderProps } from './provider';
 export { createUtils } from './utils';
 export { getProcedureQueryKey } from './queryKey';
 export { callProcedure } from './call';
+export { httpLink, httpBatchLink } from '@pyrpc/client';
 export type {
   AnyProc,
   ProceduresRecord,

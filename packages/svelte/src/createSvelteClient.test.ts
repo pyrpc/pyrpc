@@ -6,6 +6,7 @@ vi.mock('@tanstack/svelte-query', () => ({
 }));
 
 import { createSvelteClient } from './createSvelteClient';
+import { httpLink } from '@pyrpc/client';
 
 type TestTypes = {
   greet: (input: { name: string }) => Promise<string>;
@@ -19,7 +20,7 @@ describe('createSvelteClient', () => {
 
   it('exposes both createQuery and createMutation by default', () => {
     const api = createSvelteClient<TestTypes>({
-      baseUrl: 'http://localhost:8000',
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
       kinds: {},
     });
     expect(typeof api.greet.createQuery).toBe('function');
@@ -28,7 +29,7 @@ describe('createSvelteClient', () => {
 
   it('respects kinds override', () => {
     const api = createSvelteClient<TestTypes>({
-      baseUrl: 'http://localhost:8000',
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
       kinds: { greet: 'query', add: 'mutation' },
     });
     expect(typeof api.greet.createQuery).toBe('function');

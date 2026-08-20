@@ -1,10 +1,12 @@
 # @pyrpc/next
 
 ```ts
-import { createNextClient } from "@pyrpc/next"
+import { createNextClient, httpLink } from "@pyrpc/next"
 import type { Types } from "@pyrpc/types"
 
-export const api = createNextClient<Types>({ baseUrl: process.env.PYRPC_URL! })
+export const api = createNextClient<Types>({
+  links: [httpLink({ url: process.env.PYRPC_URL ?? "http://localhost:8000" })],
+})
 ```
 
 ```tsx

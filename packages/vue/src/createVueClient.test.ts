@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createVueClient } from './createVueClient';
+import { httpLink } from '@pyrpc/client';
 
 type TestTypes = {
   greet: (input: { name: string }) => Promise<string>;
@@ -8,14 +9,14 @@ type TestTypes = {
 
 describe('createVueClient', () => {
   it('exposes both hooks by default when kinds are empty', () => {
-    const api = createVueClient<TestTypes>({ baseUrl: 'http://localhost:8000', kinds: {} });
+    const api = createVueClient<TestTypes>({ links: [httpLink({ url: 'http://localhost:8000/rpc' })], kinds: {} });
     expect(typeof api.greet.useQuery).toBe('function');
     expect(typeof api.greet.useMutation).toBe('function');
   });
 
   it('respects kinds override', () => {
     const api = createVueClient<TestTypes>({
-      baseUrl: 'http://localhost:8000',
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
       kinds: { greet: 'query', add: 'mutation' },
     });
     expect(typeof api.greet.useQuery).toBe('function');

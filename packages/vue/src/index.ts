@@ -1,5 +1,6 @@
 export { createVueClient, createPyrpcVue } from './createVueClient';
 export type { VueClientOptions, VueAppClient } from './createVueClient';
+export { httpLink, httpBatchLink } from '@pyrpc/client';
 
 export type {
   VueClient,

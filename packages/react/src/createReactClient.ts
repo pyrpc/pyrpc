@@ -69,13 +69,15 @@ export type ReactClientOptions = ClientOptions & {
  *
  * @example
  * ```ts
- * export const api = createReactClient<Types>({ baseUrl: "..." })
+ * export const api = createReactClient<Types>({
+ *   links: [httpLink({ url: "http://localhost:8000/rpc" })],
+ * })
  * // <api.Provider>{children}</api.Provider>
  * // api.greet.useQuery({ name: "Ada" })
  * ```
  */
 export function createReactClient<TProcedures extends ProceduresRecord>(
-  options: ReactClientOptions = {},
+  options: ReactClientOptions = { links: [] },
 ): ReactClient<TProcedures, InferProcedureKinds<TProcedures>> {
   const { kinds: kindsOverride, ...clientOptions } = options;
   const kinds = (kindsOverride ??

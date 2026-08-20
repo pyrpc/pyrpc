@@ -30,7 +30,7 @@ function getProcedureQueryKey(
  * Kinds load automatically from `@pyrpc/types`.
  */
 export function createVueClient<TProcedures extends ProceduresRecord>(
-  options: VueClientOptions = {},
+  options: VueClientOptions = { links: [] },
 ): VueClient<TProcedures> {
   const { kinds: kindsOverride, ...clientOptions } = options;
   const kinds = (kindsOverride ??
@@ -84,13 +84,15 @@ export type VueAppClient<TProcedures extends ProceduresRecord> =
  *
  * @example
  * ```ts
- * export const api = createPyrpcVue<Types>({ baseUrl: "..." })
+ * export const api = createPyrpcVue<Types>({
+ *   links: [httpLink({ url: "http://localhost:8000/rpc" })],
+ * })
  * createApp(App).use(api.plugin).mount("#app")
  * api.greet.useQuery({ name: "Ada" })
  * ```
  */
 export function createPyrpcVue<TProcedures extends ProceduresRecord>(
-  options: VueClientOptions = {},
+  options: VueClientOptions = { links: [] },
 ): VueAppClient<TProcedures> {
   const api = createVueClient<TProcedures>(options);
   const plugin: Plugin = {
