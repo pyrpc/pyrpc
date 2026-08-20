@@ -90,11 +90,13 @@ First run: answers a couple of quick questions (entry module + client project ro
 
 ```ts
 import type { Types } from "@pyrpc/types"
-import { createClient } from "@pyrpc/client"
+import { createClient, httpLink } from "@pyrpc/client"
 
 // @pyrpc/types resolves to <client>/__pyrpc.ts via tsconfig paths
 // (wired automatically by pyrpc dev using jsonc-edit)
-const client = createClient<Types>({ baseUrl: "http://localhost:8000" })
+const client = createClient<Types>({
+  links: [httpLink({ url: "http://localhost:8000" })],
+})
 const result = await client.add(10, 5)
 console.log(result)  // 15
 ```

@@ -1,6 +1,8 @@
 import type { Types } from "@pyrpc/types";
-import { createNextClient } from "@pyrpc/next";
+import { createNextClient, httpLink } from "@pyrpc/next";
 
 export const api = createNextClient<Types>({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000",
+  links: [
+    httpLink({ url: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000" }),
+  ],
 });

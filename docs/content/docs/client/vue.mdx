@@ -27,11 +27,11 @@ my-app/
 
 ```ts
 // src/pyrpc.ts
-import { createPyrpcVue } from "@pyrpc/vue"
+import { createPyrpcVue, httpLink } from "@pyrpc/vue"
 import type { Types } from "@pyrpc/types"
 
 export const pyrpc = createPyrpcVue<Types>({
-  baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:8000",
+  links: [httpLink({ url: import.meta.env.VITE_API_URL ?? "http://localhost:8000" })],
 })
 ```
 
@@ -122,8 +122,8 @@ pyrpc.read_item.createQuery(() => ({
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `baseUrl` | `string` | `""` | Root URL of the pyRPC server |
-| `headers` | `Record<string, string>` | `{}` | Static headers on every request |
+| `links` | `Link[]` | — | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
+| `kinds` | `ProcedureKindMap` | generated | Override generated procedure kinds |
 
 ## Full working examples
 

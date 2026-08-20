@@ -55,7 +55,9 @@ type NextHelpers<TProcedures extends ProceduresRecord> = {
  *
  * @example
  * ```ts
- * export const api = createNextClient<Types>({ baseUrl: process.env.PYRPC_URL! })
+ * export const api = createNextClient<Types>({
+ *   links: [httpLink({ url: process.env.PYRPC_URL! })],
+ * })
  *
  * // layout:  <api.Provider>{children}</api.Provider>
  * // server:  await api.prefetch.greet("Ada")
@@ -70,11 +72,11 @@ export type NextClient<TProcedures extends ProceduresRecord> = ReactClient<
   NextHelpers<TProcedures>;
 
 export function createNextClient<TProcedures extends ProceduresRecord>(
-  options: CreateNextClientOptions = {},
+  options: CreateNextClientOptions = { links: [] },
 ): NextClient<TProcedures> {
   const api = createReactClient<TProcedures>(options);
 
-  const createCaller = (overrides: ClientOptions = {}) =>
+  const createCaller = (overrides: Partial<ClientOptions> = {}) =>
     createClient<TProcedures>({ ...options, ...overrides });
 
   const prefetch = new Proxy({} as PrefetchHelpers<TProcedures>, {

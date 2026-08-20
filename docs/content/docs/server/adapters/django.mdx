@@ -160,10 +160,12 @@ Django runs the async RPC views natively -- no separate WSGI/ASGI bridge require
 
 ```ts
 // lib/pyrpc.ts (React example)
-import { createReactClient } from "@pyrpc/react"
+import { createReactClient, httpLink } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
-export const api = createReactClient<Types>({ baseUrl: "http://localhost:8000" })
+export const api = createReactClient<Types>({
+  links: [httpLink({ url: "http://localhost:8000" })],
+})
 ```
 
 See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) for full frontend setup per framework.

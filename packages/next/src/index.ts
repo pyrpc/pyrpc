@@ -27,6 +27,7 @@ export type {
   HydrateClientProps,
 } from './HydrateClient';
 export { createReactClient, createUtils } from '@pyrpc/react';
+export { httpLink, httpBatchLink } from '@pyrpc/client';
 export type {
   ReactClient,
   ReactClientOptions,

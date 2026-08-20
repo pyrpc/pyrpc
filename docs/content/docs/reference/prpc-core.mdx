@@ -78,9 +78,11 @@ await handle_request(payload, router=None)
 
 Parse and dispatch an incoming JSON-RPC request. Returns a JSON-RPC response dict.
 
+A **batch** payload (a JSON list of operation objects) is dispatched operation-by-operation through the same router, sequentially, and returns one response per operation in the same order. Batches are not transactions — each operation keeps its own result or error.
+
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `payload` | `Dict[str, Any]` | The parsed JSON-RPC request body |
+| `payload` | `Dict[str, Any] \| List[Dict[str, Any]]` | The parsed JSON-RPC request body (single or batch) |
 | `router` | `Router \| None` | Router to dispatch against; defaults to `default_router` |
 
 Error codes: `-32600` (invalid request), `-32601` (method not found), `-32602` (invalid params), `-32603` (internal error).

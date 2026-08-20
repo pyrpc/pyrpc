@@ -29,7 +29,7 @@ function getProcedureQueryKey(
  * Kinds load automatically from `@pyrpc/types`.
  */
 export function createSvelteClient<TProcedures extends ProceduresRecord>(
-  options: SvelteClientOptions = {},
+  options: SvelteClientOptions = { links: [] },
 ): SvelteClient<TProcedures> {
   const { kinds: kindsOverride, ...clientOptions } = options;
   const kinds = (kindsOverride ??

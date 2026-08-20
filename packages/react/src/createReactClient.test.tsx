@@ -4,6 +4,7 @@ import React, { type ReactNode } from 'react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { createReactClient } from './createReactClient';
 import { getProcedureQueryKey } from './queryKey';
+import { httpLink } from '@pyrpc/client';
 
 type TestTypes = {
   add: (a: number, b: number) => Promise<number>;
@@ -32,7 +33,7 @@ describe('createReactClient', () => {
     }) as any;
 
     const api = createReactClient<TestTypes>({
-      baseUrl: 'http://localhost:8000',
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
       kinds: {},
     });
 
@@ -52,7 +53,7 @@ describe('createReactClient', () => {
     }) as any;
 
     const api = createReactClient<TestTypes>({
-      baseUrl: 'http://localhost:8000',
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
       kinds: {},
     });
 
@@ -71,7 +72,7 @@ describe('createReactClient', () => {
     }) as any;
 
     const api = createReactClient<TestTypes>({
-      baseUrl: 'http://localhost:8000',
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
       kinds: {},
     });
 
@@ -86,7 +87,7 @@ describe('createReactClient', () => {
 
   it('respects kinds override (query-only)', () => {
     const api = createReactClient<TestTypes>({
-      baseUrl: 'http://localhost:8000',
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
       kinds: { greet: 'query', add: 'mutation' },
     });
 
@@ -103,7 +104,7 @@ describe('createReactClient', () => {
     }) as any;
 
     const api = createReactClient<TestTypes>({
-      baseUrl: 'http://localhost:8000',
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
       kinds: {},
     });
 

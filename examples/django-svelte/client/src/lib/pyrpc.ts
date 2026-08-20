@@ -1,6 +1,6 @@
 import type { Types } from "@pyrpc/types";
-import { createSvelteClient } from "@pyrpc/svelte";
+import { createSvelteClient, httpLink } from "@pyrpc/svelte";
 
 export const api = createSvelteClient<Types>({
-  baseUrl: "http://localhost:8000",
+  links: [httpLink({ url: "http://localhost:8000" })],
 });

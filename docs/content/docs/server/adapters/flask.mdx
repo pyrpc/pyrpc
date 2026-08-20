@@ -69,13 +69,15 @@ pyrpc dev --yes --module main --client ../client
 
 ```ts
 // lib/pyrpc.ts (React)
-import { createReactClient } from "@pyrpc/react"
+import { createReactClient, httpLink } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
-export const api = createReactClient<Types>({ baseUrl: "http://localhost:8000" })
+export const api = createReactClient<Types>({
+  links: [httpLink({ url: "http://localhost:8000" })],
+})
 ```
 
-Note: the `baseUrl` must match the port your Flask app is served on. `pyrpc dev` uses port `8000` by default; if you run the app directly with `app.run(port=5000)` instead, use `5000`.
+Note: the URL must match the port your Flask app is served on. `pyrpc dev` uses port `8000` by default; if you run the app directly with `app.run(port=5000)` instead, use `5000`.
 
 See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) for full frontend setup.
 

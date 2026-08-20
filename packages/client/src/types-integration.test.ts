@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createClient } from './index';
+import { createClient, httpLink } from './index';
 
 describe('@pyrpc/types integration', () => {
   it('should provide autocompletion via Types generic', async () => {
@@ -11,11 +11,13 @@ describe('@pyrpc/types integration', () => {
 
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ result: 42 }),
+      json: () => Promise.resolve({ id: 'x', result: 42, error: null }),
     });
     globalThis.fetch = mockFetch as any;
 
-    const client = createClient<Types>({ baseUrl: 'http://localhost:8000' });
+    const client = createClient<Types>({
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
+    });
 
     const result = await client.add(1, 2);
     expect(result).toBe(42);
@@ -35,11 +37,13 @@ describe('@pyrpc/types integration', () => {
 
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ result: { name: 'test' } }),
+      json: () => Promise.resolve({ id: 'x', result: { name: 'test' }, error: null }),
     });
     globalThis.fetch = mockFetch as any;
 
-    const client = createClient<Types>({ baseUrl: 'http://localhost:8000' });
+    const client = createClient<Types>({
+      links: [httpLink({ url: 'http://localhost:8000/rpc' })],
+    });
     const result = await client.customMethod({ id: 1 });
 
     expect(result).toEqual({ name: 'test' });
@@ -48,14 +52,52 @@ describe('@pyrpc/types integration', () => {
     expect(body.params).toEqual({ id: 1 });
   });
 
-  it('should normalise baseUrl and strip duplicate /rpc', () => {
+  it('should normalise url and strip trailing slash', () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ result: null }),
+      json: () => Promise.resolve({ id: 'x', result: null, error: null }),
     });
     globalThis.fetch = mockFetch as any;
 
-    const client = createClient({ baseUrl: 'http://localhost:8000/rpc' });
+    const client = createClient({
+      links: [httpLink({ url: 'http://localhost:8000/rpc/' })],
+    });
+    void client.foo();
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://localhost:8000/rpc',
+      expect.objectContaining({ body: expect.stringContaining('"method":"foo"') }),
+    );
+  });
+
+  it('should append /rpc when given a bare server url', () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ id: 'x', result: null, error: null }),
+    });
+    globalThis.fetch = mockFetch as any;
+
+    const client = createClient({
+      links: [httpLink({ url: 'http://localhost:8000' })],
+    });
+    void client.foo();
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://localhost:8000/rpc',
+      expect.objectContaining({ body: expect.stringContaining('"method":"foo"') }),
+    );
+  });
+
+  it('should append /rpc to a bare url ending in a slash', () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ id: 'x', result: null, error: null }),
+    });
+    globalThis.fetch = mockFetch as any;
+
+    const client = createClient({
+      links: [httpLink({ url: 'http://localhost:8000/' })],
+    });
     void client.foo();
 
     expect(mockFetch).toHaveBeenCalledWith(

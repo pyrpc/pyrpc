@@ -9,10 +9,12 @@ description: API reference for the TypeScript client.
 ## createClient
 
 ```typescript
-import { createClient } from "@pyrpc/client"
+import { createClient, httpLink } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
-const client = createClient<Types>()
+const client = createClient<Types>({
+  links: [httpLink({ url: "https://api.example.com" })],
+})
 ```
 
 Creates a typed proxy that maps each procedure name to an async function. All procedure calls return `Promise<T>`.
@@ -21,40 +23,47 @@ Creates a typed proxy that maps each procedure name to an async function. All pr
 
 ```typescript
 interface ClientOptions {
-  baseUrl?: string
-  headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>)
+  links: Link[]
 }
 ```
 
 | Option | Description |
 |--------|-------------|
-| `baseUrl` | Server base URL. Defaults to current origin + `/rpc` in browser environments. |
-| `headers` | Optional headers, can be static or async factory function. |
+| `links` | Link pipeline. Exactly one terminating link (`httpLink` or `httpBatchLink`); zero or multiple is a configuration error. |
+
+## httpLink
+
+`httpLink` sends one RPC operation per HTTP request.
+
+```typescript
+httpLink({ url: "https://api.example.com" })
+```
+
+| Option | Description |
+|--------|-------------|
+| `url` | Server URL. The link normalizes to `/rpc`. |
+
+## httpBatchLink
+
+`httpBatchLink` combines multiple independent RPC operations that occur close together into one HTTP request.
+
+```typescript
+httpBatchLink({ url: "https://api.example.com", maxItems: 10 })
+```
+
+| Option | Description |
+|--------|-------------|
+| `url` | Server URL. The link normalizes to `/rpc`. |
+| `maxItems` | Max operations per batch; flushed early when reached. Defaults to `Infinity`. |
+
+Batched operations execute sequentially on the server and each keeps its own result or error. A batch is not a transaction.
 
 ### Usage
 
 ```typescript
-const client = createClient<Types>()
+const client = createClient<Types>({
+  links: [httpLink({ url: "https://api.example.com" })],
+})
 
 // Fully typed — parameters and return type inferred from the server
 const result = await client.add(10, 5)
-const message = await client.greet("World")
-```
-
-## PyRPCError
-
-```typescript
-import { PyRPCError } from "@pyrpc/client"
-```
-
-Thrown when the server returns a JSON-RPC error response.
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `code` | `number` | JSON-RPC error code |
-| `message` | `string` | Error message |
-| `data` | `any` | Optional error data payload |
-
-## Further Reading
-
-See the [Building a full-stack app with pyRPC](/blog/building-a-full-stack-app-with-pyrpc) tutorial for a complete TypeScript client example.

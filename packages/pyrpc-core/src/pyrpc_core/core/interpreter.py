@@ -1,6 +1,6 @@
 import asyncio
 import inspect
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from .decorators import default_router
 from .registry import Router
@@ -10,17 +10,56 @@ from .models import RpcErrorModel, RpcRequest, RpcResponse
 
 from .procedure import Procedure, ProcedureError, _format_validation_error
 
+# Maximum number of operations allowed in a single batch request. Guards
+# against arbitrarily large payloads; the client-side httpBatchLink default
+# (Infinity) is capped by this server limit.
+MAX_BATCH_SIZE = 100
+
+
 async def handle_request(
-    payload: Dict[str, Any], 
+    payload: Union[Dict[str, Any], List[Dict[str, Any]]],
     router: Optional[Router] = None
-) -> Dict[str, Any]:
+) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
     """
     Handle an incoming RPC request using pre-compiled Procedures.
+
+    A single-operation payload (a dict) dispatches exactly one procedure.
+    A batch payload (a list) dispatches each operation sequentially through
+    the same path and returns one response per operation, in the same order.
+
+    Batches are a transport optimization, not a transaction: each operation
+    is independent and keeps its own result or error.
     """
     if router is None:
         router = default_router
 
-    request_id = payload.get("id")
+    if isinstance(payload, list):
+        if len(payload) > MAX_BATCH_SIZE:
+            error = RpcErrorModel(
+                code=-32600,
+                message=f"Batch too large: {len(payload)} operations (max {MAX_BATCH_SIZE})",
+            )
+            return [
+                {"id": op.get("id") if isinstance(op, dict) else None, "result": None, "error": error.model_dump()}
+                for op in payload
+            ]
+        return [await _handle_single(op, router) for op in payload]
+
+    return await _handle_single(payload, router)
+
+
+async def _handle_single(payload: Any, router: Router) -> Dict[str, Any]:
+    request_id = None
+    if isinstance(payload, dict):
+        request_id = payload.get("id")
+    if not isinstance(payload, dict):
+        return RpcResponse(
+            id=request_id,
+            error=RpcErrorModel(
+                code=-32600,
+                message="Invalid request: expected an object",
+            ),
+        ).model_dump()
     try:
         # 1. Parse Envelope
         try:
@@ -29,7 +68,7 @@ async def handle_request(
             return RpcResponse(
                 id=request_id,
                 error=RpcErrorModel(
-                    code=-32600, 
+                    code=-32600,
                     message="Invalid request",
                     data=_format_validation_error(e)
                 ),
@@ -52,7 +91,7 @@ async def handle_request(
             return RpcResponse(
                 id=request_id,
                 error=RpcErrorModel(
-                    code=pe.code, 
+                    code=pe.code,
                     message=pe.message,
                     data=pe.data
                 ),

@@ -1,5 +1,6 @@
 export { createSvelteClient } from './createSvelteClient';
 export type { SvelteClientOptions } from './createSvelteClient';
+export { httpLink, httpBatchLink } from '@pyrpc/client';
 export type {
   SvelteClient,
   ProcedureKindMap,
