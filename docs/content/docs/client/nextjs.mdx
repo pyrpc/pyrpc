@@ -23,22 +23,26 @@ my-app/
     counter.tsx       ← Client component: useQuery/useMutation
     providers.tsx     ← "use client" QueryClient + api.Provider
   lib/
-    pyrpc.ts          ← createNextClient — import this everywhere
+    pyrpc.ts          ← createNextClient, import this everywhere
 ```
 
 ## 1. Create the client
 
 ```ts
 // lib/pyrpc.ts
-import { createNextClient, httpLink } from "@pyrpc/next"
+import { createNextClient, httpBatchLink } from "@pyrpc/next"
 import type { Types } from "@pyrpc/types"
 
 export const api = createNextClient<Types>({
-  links: [httpLink({ url: process.env.PYRPC_URL ?? "http://localhost:8000" })],
+  links: [
+    httpBatchLink({
+      url: process.env.PYRPC_URL ?? "http://localhost:8000",
+    }),
+  ],
 })
 ```
 
-One file, one import everywhere — same variable on the server and in client components.
+One file, one import everywhere, same variable on the server and in client components.
 
 ## 2. Set up Providers
 
@@ -74,7 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-## 3. Server component — prefetch
+## 3. Server component: prefetch
 
 Prefetch in a Server Component so the client gets data on first render with no loading state:
 
@@ -96,7 +100,7 @@ export default async function Page() {
 }
 ```
 
-## 4. Client component — hooks
+## 4. Client component: hooks
 
 ```tsx
 // app/counter.tsx
@@ -107,7 +111,7 @@ import { useState } from "react"
 export function Counter() {
   const [name, setName] = useState("")
 
-  // data is already in cache — no loading flicker
+  // data is already in cache, no loading flicker
   const { data: greeting } = api.read_root.useQuery()
   const { data: item } = api.read_item.useQuery({ item_id: 42, q: "test" })
   const createItem = api.create_item.useMutation()
@@ -148,7 +152,7 @@ export function Counter() {
 Prefetch is optional. If you skip it, the client component fetches on mount exactly like plain `@pyrpc/react`:
 
 ```tsx
-// app/page.tsx — no prefetch
+// app/page.tsx, no prefetch
 export default function Page() {
   return <Counter />
 }

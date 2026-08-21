@@ -50,7 +50,7 @@ def update_user(user_id: int, name: str) -> dict:
 }`}
                 </pre>
                 <p>
-                    The default is <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">"query"</code>. Bare <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> works exactly like before — no breaking change.
+                    The default is <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">"query"</code>. Bare <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc</code> works exactly like before, no breaking change.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 3: codegen emits two things</h2>
@@ -78,7 +78,7 @@ export const procedureKinds = {
 } as const satisfies ProcedureKinds`}
                 </pre>
                 <p>
-                    The type is for TypeScript. The const is for runtime — adapters need an actual value to compare against.
+                    The type is for TypeScript. The const is for runtime, adapters need an actual value to compare against.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 4: the adapter reads kinds</h2>

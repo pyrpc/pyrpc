@@ -136,7 +136,7 @@ output_changed = new_client_dirs != client_dirs
 if not module_changed and not output_changed:
     continue
 
-console.print("  [blue]pyrpc.json changed — reloading...[/blue]")
+console.print("  [blue]pyrpc.json changed, reloading...[/blue]")
 
 if output_changed:
     client_dirs = new_client_dirs

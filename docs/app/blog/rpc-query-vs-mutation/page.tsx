@@ -19,7 +19,7 @@ export default function RpcQueryVsMutationPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    TanStack Query has two verbs: read (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code>) and write (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code>). JSON-RPC does not. So pyRPC adds an optional <strong>kind</strong> on each procedure — declared on the server, shipped through codegen, enforced on the typed hooks.
+                    TanStack Query has two verbs: read (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code>) and write (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code>). JSON-RPC does not. So pyRPC adds an optional <strong>kind</strong> on each procedure, declared on the server, shipped through codegen, enforced on the typed hooks.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Server</h2>

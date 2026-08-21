@@ -18,7 +18,7 @@ npm install @pyrpc/vue @tanstack/vue-query
 ```
 my-app/
   src/
-    pyrpc.ts          ← createPyrpcVue — import this everywhere
+    pyrpc.ts          ← createPyrpcVue, import this everywhere
     main.ts           ← createApp().use(pyrpc.plugin).mount()
     App.vue           ← pyrpc.greet.createQuery() etc.
 ```
@@ -27,17 +27,21 @@ my-app/
 
 ```ts
 // src/pyrpc.ts
-import { createPyrpcVue, httpLink } from "@pyrpc/vue"
+import { createPyrpcVue, httpBatchLink } from "@pyrpc/vue"
 import type { Types } from "@pyrpc/types"
 
 export const pyrpc = createPyrpcVue<Types>({
-  links: [httpLink({ url: import.meta.env.VITE_API_URL ?? "http://localhost:8000" })],
+  links: [
+    httpBatchLink({
+      url: import.meta.env.VITE_API_URL ?? "http://localhost:8000",
+    }),
+  ],
 })
 ```
 
 ## 2. Install the plugin
 
-Vue uses a plugin instead of a Provider component. Install it once on the root app — this sets up the TanStack Vue Query cache:
+Vue uses a plugin instead of a Provider component. Install it once on the root app, this sets up the TanStack Vue Query cache:
 
 ```ts
 // src/main.ts
@@ -112,7 +116,7 @@ pyrpc.read_item.createQuery(() => ({      // ✓
   q: "test",
 }))
 pyrpc.read_item.createQuery(() => ({
-  item_id: "not-a-number",               // ✗ — type error
+  item_id: "not-a-number",               // ✗, type error
 }))
 ```
 
@@ -122,7 +126,7 @@ pyrpc.read_item.createQuery(() => ({
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `links` | `Link[]` | — | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
+| `links` | `Link[]` |, | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
 | `kinds` | `ProcedureKindMap` | generated | Override generated procedure kinds |
 
 ## Full working examples

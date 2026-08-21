@@ -44,13 +44,13 @@ export default function VisualTourPost() {
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`pyrpc
-  pyrpc-core         — Router, Interpreter, CLI, ASGI, Python client (10 components)
-  pyrpc-fastapi      — mount_fastapi() adapter (26 lines)
-  pyrpc-flask        — mount_flask() adapter with anyio.run() sync bridge (33 lines)
-  pyrpc-django       — mount_django() adapter with native async views (38 lines)
-  pyrpc-codegen      — Python→TypeScript code generation pipeline (5 components)
-  @pyrpc/client      — TypeScript Proxy client, CLI sync, postinstall wizard
-  @pyrpc/types       — Generated TS type definitions (src/index.ts)`}
+  pyrpc-core, Router, Interpreter, CLI, ASGI, Python client (10 components)
+  pyrpc-fastapi, mount_fastapi() adapter (26 lines)
+  pyrpc-flask, mount_flask() adapter with anyio.run() sync bridge (33 lines)
+  pyrpc-django, mount_django() adapter with native async views (38 lines)
+  pyrpc-codegen, Python→TypeScript code generation pipeline (5 components)
+  @pyrpc/client, TypeScript Proxy client, CLI sync, postinstall wizard
+  @pyrpc/types, Generated TS type definitions (src/index.ts)`}
                 </pre>
                 <p>
                     The key insight: <strong>pyrpc-core is the center of the universe</strong>. Every adapter, the codegen, and the CLI all talk to core. No container talks to another container directly without going through core. Two config files support the system: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc.json</code> (Python-side config) and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc-client.json</code> (TypeScript-side config).
@@ -131,7 +131,7 @@ export default function VisualTourPost() {
                     <strong>Dev Loop Flow (12 steps):</strong> <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc dev</code> &rarr; read config &rarr; import module &rarr; start watcher + server &rarr; file change detected &rarr; debounce 300ms &rarr; <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">reload_module()</code> &rarr; schema extraction &rarr; type regeneration &rarr; console update.
                 </p>
                 <p>
-                    The next post in this series traces a single RPC call end-to-end — from the TypeScript Proxy through to the Python function and back.
+                    The next post in this series traces a single RPC call end-to-end, from the TypeScript Proxy through to the Python function and back.
                 </p>
             </section>
         </article>

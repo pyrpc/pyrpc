@@ -19,7 +19,7 @@ export default function FlaskReactTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Flask is the minimal Python web framework — no ORM, no admin, just routes. pyRPC's Flask adapter adds a single <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">POST /rpc</code> endpoint to your Flask app, and the React client stays completely identical to the FastAPI version. The only differences are the import paths and the default port (5000 vs 8000).
+                    Flask is the minimal Python web framework, no ORM, no admin, just routes. pyRPC's Flask adapter adds a single <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">POST /rpc</code> endpoint to your Flask app, and the React client stays completely identical to the FastAPI version. The only differences are the import paths and the default port (5000 vs 8000).
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The server</h2>
@@ -64,7 +64,7 @@ pyrpc dev   # wizard → writes pyrpc.json, starts Flask on :5000
 pyrpc dev --yes --module main --client ../client`}
                 </pre>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Client — identical pattern, different port</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Client, identical pattern, different port</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`// src/pyrpc.ts
 import { createReactClient } from "@pyrpc/react"

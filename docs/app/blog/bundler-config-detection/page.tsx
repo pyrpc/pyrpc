@@ -34,7 +34,7 @@ export default function BundlerConfigDetectionPage() {
 }`}
                 </pre>
                 <p>
-                    Six filenames, two frameworks, three extensions each. The detection is deliberately crude: a config file on disk is treated as proof the framework is in use. SvelteKit is covered because SvelteKit is Vite under the hood — a SvelteKit project has a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">vite.config.*</code>, so the Vite path handles it with no extra entry.
+                    Six filenames, two frameworks, three extensions each. The detection is deliberately crude: a config file on disk is treated as proof the framework is in use. SvelteKit is covered because SvelteKit is Vite under the hood, a SvelteKit project has a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">vite.config.*</code>, so the Vite path handles it with no extra entry.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The walk</h2>
@@ -42,7 +42,7 @@ export default function BundlerConfigDetectionPage() {
                     <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">_detect_bundler</code> iterates the map in insertion order and returns the first existing file. Ordering encodes a deliberate preference: TypeScript configs (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">.ts</code>) beat JavaScript ones, and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">vite.config.ts</code> would be found before <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">vite.config.js</code>. If you keep both files around, the TypeScript one wins.
                 </p>
                 <p>
-                    If no signature matches, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">None</code> is returned and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">configure_bundler</code> reports success without touching anything — an unknown bundler is not an error, it is an unknown that the throwing placeholder will safely police.
+                    If no signature matches, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">None</code> is returned and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">configure_bundler</code> reports success without touching anything, an unknown bundler is not an error, it is an unknown that the throwing placeholder will safely police.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why filename detection is the right tool</h2>
@@ -54,7 +54,7 @@ export default function BundlerConfigDetectionPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What it cannot see</h2>
                 <p>
-                    Filename detection has blind spots: a custom config name, a bundler configured inside a monorepo root config, or a future framework that uses a different file. When that happens the code takes the "no known config" path and leaves your setup alone, with the placeholder standing by as the loud failure mode. Detection is best-effort by design — correctness comes from the alias contract, not from perfect tooling coverage.
+                    Filename detection has blind spots: a custom config name, a bundler configured inside a monorepo root config, or a future framework that uses a different file. When that happens the code takes the "no known config" path and leaves your setup alone, with the placeholder standing by as the loud failure mode. Detection is best-effort by design, correctness comes from the alias contract, not from perfect tooling coverage.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The takeaway</h2>

@@ -1,11 +1,11 @@
 ---
 title: Procedures
-description: The fundamental unit of pyRPC — typed functions registered as queries or mutations.
+description: The fundamental unit of pyRPC, typed functions registered as queries or mutations.
 ---
 
 # Procedures
 
-A **procedure** is the fundamental unit of pyRPC. It is a plain Python function that you register with a decorator, and it becomes a single, fully-typed, callable endpoint on the client. There is no separate route definition, schema file, or controller — the function *is* the contract.
+A **procedure** is the fundamental unit of pyRPC. It is a plain Python function that you register with a decorator, and it becomes a single, fully-typed, callable endpoint on the client. There is no separate route definition, schema file, or controller, the function *is* the contract.
 
 ```python
 from pyrpc_core import rpc
@@ -69,15 +69,15 @@ The prefix becomes part of the client path, so nested routers stay organized wit
 
 The generated `Types` interface describes every procedure's input and output. Each adapter turns that description into typed methods:
 
-- **React / Next.js** — `api.<proc>.useQuery()` and `api.<proc>.useMutation()` (TanStack Query hooks). Next.js adds `api.prefetch.<proc>()` for server-side warming.
-- **Vue** — `pyrpc.<proc>.createQuery()` / `createMutation()` composables.
-- **Svelte** — `api.<proc>.createQuery()` / `createMutation()` stores.
-- **Vanilla TypeScript / Python** — `client.<proc>(...)` direct calls.
+- **React / Next.js**: `api.<proc>.useQuery()` and `api.<proc>.useMutation()` (TanStack Query hooks). Next.js adds `api.prefetch.<proc>()` for server-side warming.
+- **Vue**: `pyrpc.<proc>.createQuery()` / `createMutation()` composables.
+- **Svelte**: `api.<proc>.createQuery()` / `createMutation()` stores.
+- **Vanilla TypeScript / Python**: `client.<proc>(...)` direct calls.
 
 Because the procedure kind drives the client shape, the same Python decorator decides whether your frontend gets a cacheable query hook or a write mutation.
 
 ## Next
 
-- [Mental Model](/docs/concepts/mental-model) — how pyRPC thinks about your API
-- [Error Handling](/docs/concepts/error-handling) — structured errors that flow back from procedures
-- [Client: React](/docs/client/react) — turning procedures into hooks in practice
+- [Mental Model](/docs/concepts/mental-model), how pyRPC thinks about your API
+- [Error Handling](/docs/concepts/error-handling), structured errors that flow back from procedures
+- [Client: React](/docs/client/react), turning procedures into hooks in practice

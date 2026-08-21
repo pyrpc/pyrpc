@@ -42,17 +42,17 @@ export default function ExternalizingTheTypeBoundaryPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The same logic for react and react-query</h2>
                 <p>
-                    React and TanStack Query are externals too, but for a different reason: peer-dependency hygiene. Bundling a second copy of React guarantees hook identity bugs and double-instance errors. The app already provides these — the adapter must share the app's single instance. So the build treats them as external for deduplication, and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> as external for <em>substitution</em>. Same mechanism, two distinct goals.
+                    React and TanStack Query are externals too, but for a different reason: peer-dependency hygiene. Bundling a second copy of React guarantees hook identity bugs and double-instance errors. The app already provides these, the adapter must share the app's single instance. So the build treats them as external for deduplication, and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> as external for <em>substitution</em>. Same mechanism, two distinct goals.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What "external" does not mean</h2>
                 <p>
-                    External does not mean "not a dependency". <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> sits in the adapter's <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">dependencies</code> (a change v0.12.0 made explicitly) — the package manager must install it so the specifier resolves in the default case. External is about <em>where resolution happens at build time</em>; dependencies is about <em>what gets installed at runtime</em>. The adapter needs both: install the placeholder so imports are satisfiable, keep it external so the app's alias can override it.
+                    External does not mean "not a dependency". <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> sits in the adapter's <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">dependencies</code> (a change v0.12.0 made explicitly), the package manager must install it so the specifier resolves in the default case. External is about <em>where resolution happens at build time</em>; dependencies is about <em>what gets installed at runtime</em>. The adapter needs both: install the placeholder so imports are satisfiable, keep it external so the app's alias can override it.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The chain stays intact</h2>
                 <p>
-                    The adapter's dist is also external to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client</code> — the hook layer re-exports the plain client rather than duplicating it. So the resolution chain is a straight line: <em>your app → @pyrpc/react → @pyrpc/types (aliased to your __pyrpc.ts) and @pyrpc/client</em>. Every hop is external, every specifier survives to the app bundler, and every alias has a chance to redirect. The boundary you define in your config reaches the deepest layer of the adapter.
+                    The adapter's dist is also external to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client</code>, the hook layer re-exports the plain client rather than duplicating it. So the resolution chain is a straight line: <em>your app → @pyrpc/react → @pyrpc/types (aliased to your __pyrpc.ts) and @pyrpc/client</em>. Every hop is external, every specifier survives to the app bundler, and every alias has a chance to redirect. The boundary you define in your config reaches the deepest layer of the adapter.
                 </p>
             </section>
         </article>

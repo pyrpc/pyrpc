@@ -24,14 +24,14 @@ export default function VersionInThreePlacesPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The three homes</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
-{`# 1. pyproject.toml — the build metadata
+{`# 1. pyproject.toml, the build metadata
 [project]
 version = "0.12.0"
 
-# 2. src/pyrpc_core/__init__.py — the runtime value
+# 2. src/pyrpc_core/__init__.py: the runtime value
 __version__ = "0.12.0"
 
-# 3. uv.lock — the workspace resolution
+# 3. uv.lock: the workspace resolution
 name = "pyrpc-core"
 version = "0.12.0"`}
                 </pre>
@@ -41,27 +41,27 @@ version = "0.12.0"`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">pyproject.toml: the build identity</h2>
                 <p>
-                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">python -m build</code> reads <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">version</code> from <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">[project]</code> to name the wheel and sdist. PyPI keys its releases on this string. If it is wrong, you publish the wrong version — or, worse, collide with an existing one.
+                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">python -m build</code> reads <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">version</code> from <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">[project]</code> to name the wheel and sdist. PyPI keys its releases on this string. If it is wrong, you publish the wrong version, or, worse, collide with an existing one.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">__init__.py: the runtime truth</h2>
                 <p>
-                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__version__</code> is the value a running Python process sees. The CLI prints it in <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc version</code>, and the test for that command asserts the output contains <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">"pyRPC version"</code> — deliberately not a specific number, because the test would otherwise break on every release. The two copies of the version are expected to stay equal but are consumed by entirely different systems.
+                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__version__</code> is the value a running Python process sees. The CLI prints it in <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc version</code>, and the test for that command asserts the output contains <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">"pyRPC version"</code>, deliberately not a specific number, because the test would otherwise break on every release. The two copies of the version are expected to stay equal but are consumed by entirely different systems.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The lockfile: the resolved truth</h2>
                 <p>
-                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">uv.lock</code> records every workspace member's version. When pyproject.toml changes but the lockfile does not, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">uv sync</code> reports the project as out of date — not an error, but a perpetually dirty working tree and confusing CI diffs. So the release process runs <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">uv lock</code> right after the bump, folding the version into the lockfile.
+                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">uv.lock</code> records every workspace member's version. When pyproject.toml changes but the lockfile does not, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">uv sync</code> reports the project as out of date, not an error, but a perpetually dirty working tree and confusing CI diffs. So the release process runs <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">uv lock</code> right after the bump, folding the version into the lockfile.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Could there be one source?</h2>
                 <p>
-                    Modern tooling offers a single-source option: read the version dynamically from <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__init__.py</code> via a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">dynamic = ["version"]</code> PEP 621 declaration. pyRPC does not do that — the release script's job is to make the three copies agree, and it prefers the plainest, most buildable shape. The tradeoff is accepted consciously: a script guarantees the invariant instead of a build-time indirection that can surprise packaging tools.
+                    Modern tooling offers a single-source option: read the version dynamically from <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__init__.py</code> via a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">dynamic = ["version"]</code> PEP 621 declaration. pyRPC does not do that, the release script's job is to make the three copies agree, and it prefers the plainest, most buildable shape. The tradeoff is accepted consciously: a script guarantees the invariant instead of a build-time indirection that can surprise packaging tools.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The invariant</h2>
                 <p>
-                    The rule the release process enforces: <em>after a bump, pyproject.toml, __init__.py, and uv.lock all read the same version.</em> The release script handles the first two; the lockfile sync handles the third. Three files, one truth, zero drift — that is the whole discipline.
+                    The rule the release process enforces: <em>after a bump, pyproject.toml, __init__.py, and uv.lock all read the same version.</em> The release script handles the first two; the lockfile sync handles the third. Three files, one truth, zero drift, that is the whole discipline.
                 </p>
             </section>
         </article>

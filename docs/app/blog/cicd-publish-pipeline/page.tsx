@@ -39,12 +39,12 @@ export default function CICDPublishPipelinePage() {
                     The six jobs run in dependency order:
                 </p>
                 <ol className="list-decimal pl-6 space-y-1">
-                    <li><strong>publish-pypi</strong> — builds all Python wheels, uploads via OIDC</li>
-                    <li><strong>publish-npm-types</strong> — publishes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code></li>
-                    <li><strong>publish-npm-client</strong> — needs types, publishes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client</code></li>
-                    <li><strong>publish-npm-react</strong> — needs client, publishes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/react</code></li>
-                    <li><strong>publish-npm-adapters</strong> — needs react, publishes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/next</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">vue</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">svelte</code></li>
-                    <li><strong>create-release</strong> — waits for all publish jobs, creates GitHub Release</li>
+                    <li><strong>publish-pypi</strong>, builds all Python wheels, uploads via OIDC</li>
+                    <li><strong>publish-npm-types</strong>, publishes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code></li>
+                    <li><strong>publish-npm-client</strong>, needs types, publishes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client</code></li>
+                    <li><strong>publish-npm-react</strong>, needs client, publishes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/react</code></li>
+                    <li><strong>publish-npm-adapters</strong>, needs react, publishes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/next</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">vue</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">svelte</code></li>
+                    <li><strong>create-release</strong>, waits for all publish jobs, creates GitHub Release</li>
                 </ol>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">PyPI via OIDC</h2>

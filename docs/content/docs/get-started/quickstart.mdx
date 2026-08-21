@@ -51,9 +51,9 @@ pyrpc dev
 **First run output:**
 
 ```
-pyRPC setup (runs once — saved to pyrpc.json)
+pyRPC setup (runs once, saved to pyrpc.json)
 
-? Entry module  (main, app.server — the file that calls mount_fastapi/mount_flask):  server
+? Entry module  (main, app.server, the file that calls mount_fastapi/mount_flask):  server
 ? Client project root:  ../frontend
 ? Frontend framework:  Next.js
 
@@ -73,11 +73,15 @@ pyrpc dev --yes --module server --client ../frontend
 ## 4. Client (TypeScript)
 
 ```ts
-import { createClient, httpLink } from "@pyrpc/client"
+import { createClient, httpBatchLink } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
 const client = createClient<Types>({
-  links: [httpLink({ url: "http://localhost:8000" })],
+  links: [
+    httpBatchLink({
+      url: "http://localhost:8000",
+    }),
+  ],
 })
 
 // Fully typed result and parameters!

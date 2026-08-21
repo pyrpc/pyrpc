@@ -62,9 +62,9 @@ Reload a Python module and atomically replace this router's procedures. Returns 
 from pyrpc_core import rpc, model, default_router
 ```
 
-- `rpc` — Alias for `default_router.rpc`. Registers in the global default router.
-- `model` — Alias for `pydantic.dataclasses.dataclass`. Use to define structured parameter types.
-- `default_router` — A module-level `Router()` singleton used by the `rpc` decorator.
+- `rpc`: Alias for `default_router.rpc`. Registers in the global default router.
+- `model`: Alias for `pydantic.dataclasses.dataclass`. Use to define structured parameter types.
+- `default_router`: A module-level `Router()` singleton used by the `rpc` decorator.
 
 ---
 
@@ -78,7 +78,7 @@ await handle_request(payload, router=None)
 
 Parse and dispatch an incoming JSON-RPC request. Returns a JSON-RPC response dict.
 
-A **batch** payload (a JSON list of operation objects) is dispatched operation-by-operation through the same router, sequentially, and returns one response per operation in the same order. Batches are not transactions — each operation keeps its own result or error.
+A **batch** payload (a JSON list of operation objects) is dispatched operation-by-operation through the same router, sequentially, and returns one response per operation in the same order. Batches are not transactions, each operation keeps its own result or error.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|

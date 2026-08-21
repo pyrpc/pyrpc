@@ -5,7 +5,7 @@ description: Mount pyRPC on a Flask application using mount_flask.
 
 # Flask Adapter
 
-The Flask adapter mounts pyRPC onto a Flask app. Flask is sync-only, so the adapter handles async procedure execution internally — your procedure code stays the same.
+The Flask adapter mounts pyRPC onto a Flask app. Flask is sync-only, so the adapter handles async procedure execution internally, your procedure code stays the same.
 
 ## 1. Install
 
@@ -69,11 +69,15 @@ pyrpc dev --yes --module main --client ../client
 
 ```ts
 // lib/pyrpc.ts (React)
-import { createReactClient, httpLink } from "@pyrpc/react"
+import { createReactClient, httpBatchLink } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
 export const api = createReactClient<Types>({
-  links: [httpLink({ url: "http://localhost:8000" })],
+  links: [
+    httpBatchLink({
+      url: "http://localhost:8000",
+    }),
+  ],
 })
 ```
 
@@ -85,9 +89,9 @@ See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/cli
 
 - `@rpc.query` / `@rpc.mutation` register the function in the global registry with its kind.
 - `mount_flask(app)` adds two routes to the Flask app:
-  - `POST /rpc` — procedure dispatch (async execution via `anyio.run`)
-  - `GET /rpc` — schema introspection
-- Flask is sync-only — `mount_flask` runs async procedure execution with `anyio.run` internally. You don't need to change anything.
+  - `POST /rpc`: procedure dispatch (async execution via `anyio.run`)
+  - `GET /rpc`: schema introspection
+- Flask is sync-only, `mount_flask` runs async procedure execution with `anyio.run` internally. You don't need to change anything.
 
 ## CORS origins by frontend
 

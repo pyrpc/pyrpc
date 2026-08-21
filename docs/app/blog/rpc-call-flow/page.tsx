@@ -65,7 +65,7 @@ async def rpc_handler(request: Request):
     return JSONResponse(response)`}
                 </pre>
                 <p>
-                    26 lines for the entire adapter. The Flask adapter is more interesting — it must bridge sync to async:
+                    26 lines for the entire adapter. The Flask adapter is more interesting, it must bridge sync to async:
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`@flask.route("/rpc", methods=["POST"])
@@ -86,7 +86,7 @@ def rpc_handler():
     params: list[object] | dict[str, object] | None = None`}
                 </pre>
                 <p>
-                    If validation fails, a JSON-RPC error response is returned immediately with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">-32600</code> (Invalid Request) or <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">-32700</code> (Parse Error). This is a critical security boundary — no unvalidated data reaches user code.
+                    If validation fails, a JSON-RPC error response is returned immediately with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">-32600</code> (Invalid Request) or <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">-32700</code> (Parse Error). This is a critical security boundary, no unvalidated data reaches user code.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 4: Router lookup</h2>
@@ -94,7 +94,7 @@ def rpc_handler():
                     The interpreter extracts the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">method</code> field and calls <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">router.get("greet")</code>. The Router is a thread-safe dictionary. If <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">"greet"</code> isn't registered, the interpreter returns <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">-32601</code> (Method Not Found).
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 5: Procedure.execute() — the hot path</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 5: Procedure.execute(), the hot path</h2>
                 <p>
                     Each <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Procedure</code> is compiled at registration time with pre-built Pydantic TypeAdapters:
                 </p>
@@ -112,7 +112,7 @@ def rpc_handler():
         return validated_result`}
                 </pre>
                 <p>
-                    <strong>Why this matters:</strong> The TypeAdapters are built <em>once</em> at registration time (import), not on every request. The hot path has zero type-resolution overhead — just fast C-level Pydantic validation.
+                    <strong>Why this matters:</strong> The TypeAdapters are built <em>once</em> at registration time (import), not on every request. The hot path has zero type-resolution overhead, just fast C-level Pydantic validation.
                 </p>
                 <p>
                     For our <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">greet</code> call: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">request_adapter</code> validates <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{`{ name: "World" }`}</code> (name must be str), the function runs returning <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">"Hello, World!"</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">response_adapter</code> validates the return type (must be str).
@@ -154,7 +154,7 @@ def rpc_handler():
                     <li><strong>The Proxy pattern is brilliant for DX.</strong> No code generation needed on the client for method dispatch. Just use it.</li>
                     <li><strong>Validation happens at the right boundaries.</strong> The JSON-RPC envelope is validated at the interpreter boundary. Function parameters are validated by pre-built TypeAdapters. User code never sees invalid data.</li>
                     <li><strong>The adapters are pure plumbing.</strong> They add zero overhead to the hot path. The entire adapter layer could be replaced (WebSocket, anyone?) without changing a line of core code.</li>
-                    <li><strong>The hot path is optimized.</strong> TypeAdapters built at init time mean the critical <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">execute()</code> path is pure C-level Pydantic — no Python-level type introspection on the hot path.</li>
+                    <li><strong>The hot path is optimized.</strong> TypeAdapters built at init time mean the critical <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">execute()</code> path is pure C-level Pydantic, no Python-level type introspection on the hot path.</li>
                 </ol>
                 <p>
                     Read the <Link href="/blog/visual-tour" className="text-fd-foreground underline">visual tour post</Link> for the full diagram walkthrough, or run <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">npx likec4 start architecture</code> to explore the RPC Call Flow dynamic diagram interactively.

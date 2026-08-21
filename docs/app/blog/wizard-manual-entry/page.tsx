@@ -56,7 +56,7 @@ export default function WizardManualEntryPost() {
                     one v0.11.1 fixes &mdash; is when <em>multiple</em> projects are
                     detected. First the wizard prints what it found:
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`# _run_wizard — multi-project branch (v0.11.1)
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`# _run_wizard, multi-project branch (v0.11.1)
 console.print("\n[bold]Detected frontend projects:[/bold]")
 for path, fw in detected_projects:
     console.print(f"  • [cyan]{path}[/cyan]  [dim]({fw})[/dim]")
@@ -90,7 +90,7 @@ while True:
         raise typer.Exit(code=0)
     if selections:
         break
-    console.print("[yellow]No projects selected — choose at least one or press Ctrl+C to cancel.[/yellow]")`}</pre>
+    console.print("[yellow]No projects selected, choose at least one or press Ctrl+C to cancel.[/yellow]")`}</pre>
                 <p>
                     Note the two config shapes. Manual entry returns a
                     <code>"client"</code> key (a single path); project selection

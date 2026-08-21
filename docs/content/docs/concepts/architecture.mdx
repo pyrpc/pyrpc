@@ -49,7 +49,7 @@ The config file is created by `pyrpc dev` on first run and can be updated with `
 
 The final tier is the **Contract**. This is the bridge to TypeScript.
 
-Instead of generating a bulky SDK with custom classes and logic, `pyrpc codegen` (or `pyrpc dev`) fetches the introspection schema and translates it into a TypeScript runtime module — `__pyrpc.ts` — written into your client project. It carries both the procedure types and a runtime kind map (`procedureKinds`) that the framework adapters use to expose `useQuery` vs `useMutation`.
+Instead of generating a bulky SDK with custom classes and logic, `pyrpc codegen` (or `pyrpc dev`) fetches the introspection schema and translates it into a TypeScript runtime module (`__pyrpc.ts`) written into your client project. It carries both the procedure types and a runtime kind map (`procedureKinds`) that the framework adapters use to expose `useQuery` vs `useMutation`.
 
 `pyrpc dev` also wires `@pyrpc/types` to that generated file: a `tsconfig.json` `paths` entry (`"@pyrpc/types": ["./__pyrpc.ts"]`) via `jsonc-edit`, plus an explicit bundler alias for Vite, SvelteKit, and Next.js Turbopack, which don't honor tsconfig `paths` for imports inside `node_modules`.
 

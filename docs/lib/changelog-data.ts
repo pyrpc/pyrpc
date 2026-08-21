@@ -23,7 +23,7 @@ export const releases: Release[] = [
                 items: [
                     'Bundler alias injection (Next.js Turbopack, Vite, SvelteKit) now picks its separator by scanning the config body for real tokens instead of checking if it is blank, so comment-only bodies (e.g. Next.js default `/* config options here */`) no longer produce a leading comma that made next.config.ts invalid TypeScript.',
                     'Entry-module import failures now show a concise, actionable error pointing at the exact file and line in the user\u2019s project (e.g. `\u2192 Fix the error in app/main.py:21`) instead of the full importlib traceback; failures inside pyRPC itself still keep the full traceback so internal bugs stay visible.',
-                    '`pyrpc dev` and `pyrpc watch` no longer pass `stop_event` to `watch()` (unsupported by every watchfiles release), so the watcher threads can\u2019t crash at startup. Watcher failures are now printed, recorded, and exit nonzero — terminating uvicorn if pyRPC owns it — instead of leaving the session apparently healthy with dead watchers.',
+                    '`pyrpc dev` and `pyrpc watch` no longer pass `stop_event` to `watch()` (unsupported by every watchfiles release), so the watcher threads can\u2019t crash at startup. Watcher failures are now printed, recorded, and exit nonzero (terminating uvicorn if pyRPC owns it) instead of leaving the session apparently healthy with dead watchers.',
                 ],
             },
             {
@@ -73,7 +73,7 @@ export const releases: Release[] = [
             {
                 title: 'Bug Fixes',
                 items: [
-                    '`_do_regen` now reloads the entry module via `default_router.reload_module` (imported in scope) instead of re-importing the cached module — edited procedures are now reflected in regenerated types.',
+                    '`_do_regen` now reloads the entry module via `default_router.reload_module` (imported in scope) instead of re-importing the cached module, edited procedures are now reflected in regenerated types.',
                     '`_run_codegen` gains a `reload` flag; `_regenerate_clients` consolidates the per-client loop shared by `dev`, `watch`, and the debounced regen callback.',
                     'Setup wizard: "Enter a client path manually" is now a separate action, never a checkbox item, so detected-project selection is never silently discarded.',
                     '`_DevConsole._schemas` imports `default_router` locally.',
@@ -229,7 +229,7 @@ export const releases: Release[] = [
             {
                 title: 'Features',
                 items: [
-                    'New npm packages: `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte` — thin TanStack Query adapters over `@pyrpc/client`.',
+                    'New npm packages: `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`, thin TanStack Query adapters over `@pyrpc/client`.',
                     'One `api` object DX: `api.Provider`, `api.greet.useQuery`, and (Next) `api.prefetch` / `api.dehydrate` / `api.HydrationBoundary` on the same export.',
                     'Server procedure kinds: `@rpc.query` and `@rpc.mutation` (bare `@rpc` defaults to query). Codegen brands `Types` with `_pyrpcKind`; adapters apply kinds automatically.',
                     'Next.js App Router: `createNextClient` with RSC prefetch, hydration, and `createCaller` for server Promise calls.',
@@ -272,7 +272,7 @@ export const releases: Release[] = [
             {
                 title: 'Chores',
                 items: [
-                    'Bump `@pyrpc/client` to v0.8.1 (npm only — no Python package changes).',
+                    'Bump `@pyrpc/client` to v0.8.1 (npm only, no Python package changes).',
                 ]
             },
         ]
@@ -286,7 +286,7 @@ export const releases: Release[] = [
             {
                 title: 'Features',
                 items: [
-                    'Adopt `jsonschema-ts` v0.3.0 npx daemon for sub-10ms type generation. Instead of spawning `npx json-schema-to-typescript` as a subprocess on every conversion (3.3s/call), a persistent Node.js process runs in the background, keeping `json-schema-to-typescript` loaded in V8\'s code cache. Subsequent conversions drop to ~4.6ms — a ~715× speedup.',
+                    'Adopt `jsonschema-ts` v0.3.0 npx daemon for sub-10ms type generation. Instead of spawning `npx json-schema-to-typescript` as a subprocess on every conversion (3.3s/call), a persistent Node.js process runs in the background, keeping `json-schema-to-typescript` loaded in V8\'s code cache. Subsequent conversions drop to ~4.6ms, a ~715× speedup.',
                     'Reduce file watcher debounce from 1.6s to 200ms for faster type regeneration on save.',
                 ]
             },
@@ -309,7 +309,7 @@ export const releases: Release[] = [
             {
                 title: 'Bug Fixes',
                 items: [
-                    'Pin `jsonschema-ts>=0.2.1` to pull in the Windows `npx.cmd` fix. `jsonschema-ts` v0.2.0 called `subprocess.run(["npx", ...])` without `shell=True`. On Windows, `npx` is a script file (not `.exe`/`.com`) so `CreateProcess` cannot run it directly — `[WinError 2]` is raised. v0.2.1 uses `"npx.cmd"` on `os.name == "nt"`, resolving the error.',
+                    'Pin `jsonschema-ts>=0.2.1` to pull in the Windows `npx.cmd` fix. `jsonschema-ts` v0.2.0 called `subprocess.run(["npx", ...])` without `shell=True`. On Windows, `npx` is a script file (not `.exe`/`.com`) so `CreateProcess` cannot run it directly, `[WinError 2]` is raised. v0.2.1 uses `"npx.cmd"` on `os.name == "nt"`, resolving the error.',
                 ]
             },
             {
@@ -331,7 +331,7 @@ export const releases: Release[] = [
                 title: 'Bug Fixes',
                 items: [
                     'Pin `pyrpc-codegen>=0.7.6` dependency to ensure `jsonschema-ts>=0.2.0` is pulled in correctly on fresh installs. Previously `pyrpc-core` had no version constraint on `pyrpc-codegen`, so older versions (0.6.x) that required only `jsonschema-ts>=0.1.0` could be installed, causing `ensure_inline_models` import errors.',
-                    'Make `__version__` dynamic — `cli.py` now imports it from `pyrpc_core.__init__` instead of a hardcoded `"0.3.3"` string that was never updated.',
+                    'Make `__version__` dynamic, `cli.py` now imports it from `pyrpc_core.__init__` instead of a hardcoded `"0.3.3"` string that was never updated.',
                 ]
             },
             {

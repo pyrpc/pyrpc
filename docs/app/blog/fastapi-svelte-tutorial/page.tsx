@@ -19,7 +19,7 @@ export default function FastApiSvelteTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Svelte's store contract fits TanStack Svelte Query naturally — every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createQuery</code> call returns a store you subscribe to with the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">$</code> prefix. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/svelte</code> puts typed procedure wrappers on top of that, so you get full inference from Python to Svelte template with no glue code.
+                    Svelte's store contract fits TanStack Svelte Query naturally, every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createQuery</code> call returns a store you subscribe to with the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">$</code> prefix. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/svelte</code> puts typed procedure wrappers on top of that, so you get full inference from Python to Svelte template with no glue code.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Client setup</h2>
@@ -84,7 +84,7 @@ export const api = createSvelteClient<Types>({
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Key Svelte patterns</h2>
                 <p>
-                    <strong>Store subscription.</strong> Prefix stores with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">$</code> to read their current value — both in the template and in <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{'<script>'}</code>.
+                    <strong>Store subscription.</strong> Prefix stores with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">$</code> to read their current value, both in the template and in <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{'<script>'}</code>.
                 </p>
                 <p>
                     <strong>Reactive args.</strong> Pass a getter function to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createQuery</code> when args depend on reactive state. The query re-fetches whenever the getter returns a new value.

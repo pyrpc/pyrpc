@@ -113,7 +113,7 @@ output_changed = new_client_dirs != client_dirs
 if not module_changed and not output_changed:
     continue
 
-console.print("  [blue]pyrpc.json changed — reloading...[/blue]")
+console.print("  [blue]pyrpc.json changed, reloading...[/blue]")
 # re-wire regen callback, restart uvicorn if module changed and owned, regen now`}</pre>
                 <p>
                     Add a client, switch modules, and the running session adapts &mdash; no Ctrl+C, no restart.

@@ -14,7 +14,7 @@ The `@pyrpc/client` package provides a lightweight, framework-agnostic runtime f
 npm install @pyrpc/client
 ```
 
-`@pyrpc/client` is a thin fetch-based runtime with no codegen or postinstall step. The TypeScript types come from the `__pyrpc.ts` file that `pyrpc dev` generates in your client project root — `import type { Types } from "@pyrpc/types"` resolves to it via a tsconfig path alias that `pyrpc dev` configures automatically (and via a bundler alias for Vite, SvelteKit, and Next.js Turbopack).
+`@pyrpc/client` is a thin fetch-based runtime with no codegen or postinstall step. The TypeScript types come from the `__pyrpc.ts` file that `pyrpc dev` generates in your client project root, `import type { Types } from "@pyrpc/types"` resolves to it via a tsconfig path alias that `pyrpc dev` configures automatically (and via a bundler alias for Vite, SvelteKit, and Next.js Turbopack).
 
 If you need to regenerate types later (e.g. after adding procedures), just save your `.py` file while `pyrpc dev` is running, or run the CLI directly:
 
@@ -24,15 +24,19 @@ pyrpc codegen http://localhost:8000 --client .
 
 ## 2. Create the Client
 
-Use the `createClient<Types>()` factory to initialize your typed client. Transport is configured with a **link** — the URL belongs to the link, not the client.
+Use the `createClient<Types>()` factory to initialize your typed client. Transport is configured with a **link**, the URL belongs to the link, not the client.
 
 ```ts
-import { createClient, httpLink } from "@pyrpc/client"
+import { createClient, httpBatchLink } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
-// One HTTP request per RPC call
+// Multiple operations share one HTTP request
 export const client = createClient<Types>({
-  links: [httpLink({ url: "https://api.example.com" })]
+  links: [
+    httpBatchLink({
+      url: "https://api.example.com",
+    }),
+  ],
 });
 ```
 
@@ -51,11 +55,10 @@ one HTTP request
 ```
 
 ```ts
-const client = createClient<Types>({
-  links: [httpLink({ url: "https://api.example.com" })]
-});
+httpLink({ url: "https://api.example.com" })
+```
 
-const user = await client.get_user({ id: 1 });
+For day-to-day use, reach for `httpBatchLink` instead; it sends the same calls with fewer round trips.
 ```
 
 ### `httpBatchLink`
@@ -68,14 +71,19 @@ multiple RPC operations
 one HTTP request
 ```
 
-You still write normal, independent RPC calls. The link collects eligible operations from the same scheduling window and sends them as one batch. Batching is a transport optimization — it is not a new procedure, and the server dispatches each operation through the normal RPC router.
+You still write normal, independent RPC calls. The link collects eligible operations from the same scheduling window and sends them as one batch. Batching is a transport optimization, it is not a new procedure, and the server dispatches each operation through the normal RPC router.
 
 ```ts
 import { createClient, httpBatchLink } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
 export const client = createClient<Types>({
-  links: [httpBatchLink({ url: "https://api.example.com", maxItems: 10 })]
+  links: [
+    httpBatchLink({
+      url: "https://api.example.com",
+      maxItems: 10,
+    }),
+  ],
 });
 
 // The three concurrent calls are combined into one HTTP request.
@@ -88,8 +96,8 @@ const [alice, bob, carol] = await Promise.all([
 
 Options:
 
-- `url` — server URL (required). Give the root (`https://api.example.com`) or the full endpoint (`https://api.example.com/rpc`); the link normalizes to `/rpc`.
-- `maxItems` — maximum operations per batch; when more operations are queued, they flush immediately. Defaults to `Infinity` (the server enforces a hard limit).
+- `url`: server URL (required). Give the root (`https://api.example.com`) or the full endpoint (`https://api.example.com/rpc`); the link normalizes to `/rpc`.
+- `maxItems`: maximum operations per batch; when more operations are queued, they flush immediately. Defaults to `Infinity` (the server enforces a hard limit).
 
 **Batching semantics:**
 

@@ -19,7 +19,7 @@ export default function FastApiNextJsTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Next.js App Router adds one capability that plain React doesn't have: Server Components can prefetch data before the page is sent to the browser. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/next</code> plugs directly into that pattern — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.prefetch</code> warms the TanStack cache on the server, and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.HydrationBoundary</code> hands it to the browser. Client components call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> and see instant data with no loading state.
+                    Next.js App Router adds one capability that plain React doesn't have: Server Components can prefetch data before the page is sent to the browser. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/next</code> plugs directly into that pattern, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.prefetch</code> warms the TanStack cache on the server, and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.HydrationBoundary</code> hands it to the browser. Client components call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> and see instant data with no loading state.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Project layout</h2>
@@ -38,7 +38,7 @@ export default function FastApiNextJsTutorialPage() {
                 </pre>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The server (unchanged)</h2>
-                <p>The FastAPI server is identical to the React example — the backend doesn't know or care which frontend framework you use.</p>
+                <p>The FastAPI server is identical to the React example, the backend doesn't know or care which frontend framework you use.</p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -89,7 +89,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 }`}
                 </pre>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Server component — prefetch</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Server component, prefetch</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`// app/page.tsx
 import { api } from "@/lib/pyrpc"
@@ -108,7 +108,7 @@ export default async function Page() {
 }`}
                 </pre>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Client component — hooks</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Client component, hooks</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`// app/counter.tsx
 "use client"
@@ -118,7 +118,7 @@ import { useState } from "react"
 export function Counter() {
   const [name, setName] = useState("")
 
-  // already in cache — renders without a loading state
+  // already in cache, renders without a loading state
   const { data: greeting, isLoading } = api.read_root.useQuery()
   const { data: item } = api.read_item.useQuery({ item_id: 42, q: "test" })
   const createItem = api.create_item.useMutation()
@@ -147,12 +147,12 @@ cd server && uv add pyrpc-core[fastapi] && pyrpc dev
 cd client && npm install && npm run dev`}
                 </pre>
                 <p>
-                    Open <strong>http://localhost:3000</strong>. The greeting and item data render instantly — no loading spinner — because the server prefetched them before shipping the HTML. The create form works client-side as a normal mutation.
+                    Open <strong>http://localhost:3000</strong>. The greeting and item data render instantly (no loading spinner) because the server prefetched them before shipping the HTML. The create form works client-side as a normal mutation.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">When to skip prefetch</h2>
                 <p>
-                    Prefetch is optional. If you don't call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.prefetch</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> fetches on mount exactly like plain React — still fully typed, just no server warm-up.
+                    Prefetch is optional. If you don't call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.prefetch</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> fetches on mount exactly like plain React, still fully typed, just no server warm-up.
                 </p>
             </section>
         </article>

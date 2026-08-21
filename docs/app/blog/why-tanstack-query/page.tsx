@@ -8,7 +8,7 @@ export default function WhyTanStackQueryPage() {
                     &larr; Back to Blog
                 </Link>
                 <h1 className="text-2xl font-bold tracking-tight mt-6 mb-3">
-                    Why we chose TanStack Query — and what it gives you for free
+                    Why we chose TanStack Query, and what it gives you for free
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
                     <time>July 27, 2026 at 9:00am</time>
@@ -24,7 +24,7 @@ export default function WhyTanStackQueryPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What TanStack Query is</h2>
                 <p>
-                    TanStack Query is a server-state management library. It handles caching, background refetching, stale-while-revalidate, optimistic updates, and request deduplication. It works with React, Vue, Svelte, and Angular. It is not an RPC library — it is the layer that makes RPC calls feel instant.
+                    TanStack Query is a server-state management library. It handles caching, background refetching, stale-while-revalidate, optimistic updates, and request deduplication. It works with React, Vue, Svelte, and Angular. It is not an RPC library, it is the layer that makes RPC calls feel instant.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The five problems it solves</h2>
@@ -41,12 +41,12 @@ export default function WhyTanStackQueryPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why not build our own</h2>
                 <p>
-                    tRPC bundles its own query layer on top of React Query. We considered doing the same but decided against it. TanStack Query is already the standard. It has 45k+ GitHub stars, a massive ecosystem, and framework adapters for React, Vue, Svelte, and Solid. Building our own would mean maintaining cache logic, devtools integration, and persistence adapters — none of which are pyRPC's core value.
+                    tRPC bundles its own query layer on top of React Query. We considered doing the same but decided against it. TanStack Query is already the standard. It has 45k+ GitHub stars, a massive ecosystem, and framework adapters for React, Vue, Svelte, and Solid. Building our own would mean maintaining cache logic, devtools integration, and persistence adapters, none of which are pyRPC's core value.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What pyRPC adds on top</h2>
                 <p>
-                    TanStack Query does not know about RPC. It needs a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">queryFn</code> — a function that returns a Promise. pyRPC's adapters generate that function from your procedure definitions:
+                    TanStack Query does not know about RPC. It needs a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">queryFn</code>, a function that returns a Promise. pyRPC's adapters generate that function from your procedure definitions:
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`// TanStack Query needs this:
@@ -73,7 +73,7 @@ await utils.invalidate("pyrpc", "get_user")`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Framework coverage</h2>
                 <p>
-                    TanStack Query has official adapters for React, Vue, Svelte, Angular, and Solid. pyRPC ships adapters for the four most common choices. If you use a framework we do not cover, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client</code> works directly with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">fetch</code> — no adapter needed.
+                    TanStack Query has official adapters for React, Vue, Svelte, Angular, and Solid. pyRPC ships adapters for the four most common choices. If you use a framework we do not cover, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client</code> works directly with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">fetch</code>, no adapter needed.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The cost</h2>

@@ -19,7 +19,7 @@ export default function TheThrowingPlaceholderPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Until <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc dev</code> runs for the first time, there is no generated module. Yet <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> must still exist on disk so imports resolve. The tension between "nothing is generated yet" and "imports must not crash" is solved by a placeholder — and since v0.12.0, that placeholder is a Proxy that throws.
+                    Until <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc dev</code> runs for the first time, there is no generated module. Yet <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> must still exist on disk so imports resolve. The tension between "nothing is generated yet" and "imports must not crash" is solved by a placeholder, and since v0.12.0, that placeholder is a Proxy that throws.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The placeholder, complete</h2>
@@ -33,7 +33,7 @@ export const procedureKinds: ProcedureKinds = new Proxy(
   {
     get() {
       throw new Error(
-        "pyRPC: '@pyrpc/types' is still the placeholder — the generated " +
+        "pyRPC: '@pyrpc/types' is still the placeholder, the generated " +
           "__pyrpc.ts is not being resolved. Run \`pyrpc dev\` and make sure " +
           '"@pyrpc/types" resolves to your generated "./__pyrpc.ts" ...',
       );
@@ -47,12 +47,12 @@ export const procedureKinds: ProcedureKinds = new Proxy(
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Types = Record&lt;string, never&gt;</h2>
                 <p>
-                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Record&lt;string, never&gt;</code> is an empty map: any key is <em>allowed</em> at the type level but has no usable value. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.get_user</code> typechecks as existing, but its type is effectively unusable — a deliberate mid-state between "the API does not exist" and "the API exists but is wrong". It keeps the import graph typeable before codegen while refusing to pretend the procedures are real.
+                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Record&lt;string, never&gt;</code> is an empty map: any key is <em>allowed</em> at the type level but has no usable value. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.get_user</code> typechecks as existing, but its type is effectively unusable, a deliberate mid-state between "the API does not exist" and "the API exists but is wrong". It keeps the import graph typeable before codegen while refusing to pretend the procedures are real.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The Proxy and its get trap</h2>
                 <p>
-                    The interesting part is the const. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">procedureKinds</code> is not an empty object — it is a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Proxy</code> whose <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">get</code> handler unconditionally throws. Any property access — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds.get_user</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds["greet"]</code> — detonates with the error message.
+                    The interesting part is the const. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">procedureKinds</code> is not an empty object (it is a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Proxy</code> whose <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">get</code> handler unconditionally throws. Any property access) <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds.get_user</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds["greet"]</code> (detonates with the error message.
                 </p>
                 <p>
                     Why a Proxy instead of a plain object? Because a plain empty object would look innocent. The whole point is that reading kinds from a placeholder is always a bug, and the Proxy converts that bug from a silent <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> into a loud, actionable failure.

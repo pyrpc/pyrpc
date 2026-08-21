@@ -19,7 +19,7 @@ export default function BrandingTypesWithPyrpcKindPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The runtime map <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">procedureKinds</code> tells the running adapter which hooks to expose. But your editor needs the same information <em>before</em> anything runs — it has to know that <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">update_user</code> has no <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code>. That is the job of a type-level brand.
+                    The runtime map <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">procedureKinds</code> tells the running adapter which hooks to expose. But your editor needs the same information <em>before</em> anything runs, it has to know that <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">update_user</code> has no <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code>. That is the job of a type-level brand.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The brand, planted by codegen</h2>
@@ -51,12 +51,12 @@ export default function BrandingTypesWithPyrpcKindPage() {
 };`}
                 </pre>
                 <p>
-                    For each procedure key it does a conditional-type match: does the procedure type have a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">_pyrpcKind</code>? If so, is the inferred <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Kind</code> a valid <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">"query" | "mutation"</code>? The result is a map like <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&#123; greet: "query"; update_user: "mutation" &#125;</code> — the compile-time twin of the runtime const.
+                    For each procedure key it does a conditional-type match: does the procedure type have a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">_pyrpcKind</code>? If so, is the inferred <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Kind</code> a valid <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">"query" | "mutation"</code>? The result is a map like <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&#123; greet: "query"; update_user: "mutation" &#125;</code>, the compile-time twin of the runtime const.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The undefined branch is the safety net</h2>
                 <p>
-                    The fallback branches yield <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code>. Why not "query"? Because a procedure whose kind cannot be proven should not be silently assumed safe — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> flows into <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">ProcedureHooksForKind</code> and resolves to "both hooks" rather than the wrong one. It mirrors the runtime philosophy: when in doubt, expose more rather than guess.
+                    The fallback branches yield <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code>. Why not "query"? Because a procedure whose kind cannot be proven should not be silently assumed safe, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> flows into <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">ProcedureHooksForKind</code> and resolves to "both hooks" rather than the wrong one. It mirrors the runtime philosophy: when in doubt, expose more rather than guess.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Where inference plugs in</h2>
@@ -69,7 +69,7 @@ export default function BrandingTypesWithPyrpcKindPage() {
                     <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> → both</li>
                 </ul>
                 <p>
-                    So <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.greet.useMutation</code> is a compile error while <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.update_user.useMutation</code> typechecks — the type system has already read the server's decorators.
+                    So <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.greet.useMutation</code> is a compile error while <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.update_user.useMutation</code> typechecks, the type system has already read the server's decorators.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why branding beats a separate kind union</h2>

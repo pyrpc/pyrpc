@@ -19,7 +19,7 @@ export default function DjangoVueTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    This stack combines Django's backend maturity with Vue 3's Composition API and reactivity system. The server integration is a standard Django view — import <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">views</code>, and call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">mount_django(urlpatterns)</code>. The Vue side uses TanStack Vue Query wrapped by <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/vue</code> to expose fully typed composables like <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code>.
+                    This stack combines Django's backend maturity with Vue 3's Composition API and reactivity system. The server integration is a standard Django view, import <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">views</code>, and call <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">mount_django(urlpatterns)</code>. The Vue side uses TanStack Vue Query wrapped by <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/vue</code> to expose fully typed composables like <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code>.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Server (same as django-react)</h2>
@@ -37,13 +37,13 @@ async def read_item(item_id: int, q: str = None) -> dict:
 async def create_item(name: str, description: str = None) -> dict:
     return {"name": name, "description": description, "created": True}
 
-# urls.py — must import views to trigger registration
+# urls.py: must import views to trigger registration
 from . import views
 from pyrpc_django import mount_django
 urlpatterns = [...]
 mount_django(urlpatterns)
 
-# settings.py — CORS
+# settings.py: CORS
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]`}
                 </pre>
 

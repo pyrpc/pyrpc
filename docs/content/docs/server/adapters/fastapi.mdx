@@ -5,7 +5,7 @@ description: Mount pyRPC on a FastAPI application using mount_fastapi.
 
 # FastAPI Adapter
 
-The FastAPI adapter mounts pyRPC onto a FastAPI app. Every registered procedure becomes callable at `POST /rpc`. Queries map to `useQuery` and mutations to `useMutation` on the frontend — no extra config needed.
+The FastAPI adapter mounts pyRPC onto a FastAPI app. Every registered procedure becomes callable at `POST /rpc`. Queries map to `useQuery` and mutations to `useMutation` on the frontend, no extra config needed.
 
 ## 1. Install
 
@@ -57,13 +57,13 @@ From the directory containing `main.py`:
 pyrpc dev
 ```
 
-First run launches a short wizard (2 questions) and writes `pyrpc.json`. Every subsequent run reads that file — no prompts. To skip the wizard entirely:
+First run launches a short wizard (2 questions) and writes `pyrpc.json`. Every subsequent run reads that file, no prompts. To skip the wizard entirely:
 
 ```bash
 # auto-detect everything
 pyrpc dev --yes
 
-# fully explicit — good for CI
+# fully explicit: good for CI
 pyrpc dev --yes --module main --client ../client
 ```
 
@@ -87,15 +87,19 @@ npm install @pyrpc/vue @tanstack/vue-query
 npm install @pyrpc/svelte @tanstack/svelte-query
 ```
 
-Then create the typed client — the import from `@pyrpc/types` resolves to the generated `__pyrpc.ts` in your client project:
+Then create the typed client, the import from `@pyrpc/types` resolves to the generated `__pyrpc.ts` in your client project:
 
 ```ts
-// React — lib/pyrpc.ts
-import { createReactClient, httpLink } from "@pyrpc/react"
+// React, lib/pyrpc.ts
+import { createReactClient, httpBatchLink } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
 export const api = createReactClient<Types>({
-  links: [httpLink({ url: "http://localhost:8000" })],
+  links: [
+    httpBatchLink({
+      url: "http://localhost:8000",
+    }),
+  ],
 })
 ```
 
@@ -105,8 +109,8 @@ See the [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs
 
 - `@rpc.query` / `@rpc.mutation` register the function in a global procedure registry and tag it with a kind.
 - `mount_fastapi(app)` adds two routes:
-  - `POST /rpc` — procedure dispatch
-  - `GET /rpc` — schema introspection (used by `pyrpc dev` to generate types)
+  - `POST /rpc`: procedure dispatch
+  - `GET /rpc`: schema introspection (used by `pyrpc dev` to generate types)
 - The kind tag (`query` vs `mutation`) flows through codegen into the generated `__pyrpc.ts` file, which is how the frontend adapter knows which TanStack hook to expose on each procedure.
 
 ## CORS origins by frontend

@@ -2,22 +2,17 @@ import Link from 'next/link';
 
 export default function TermsPage() {
   return (
-    <div className="px-6 md:px-12 lg:px-20 pt-24 pb-40">
-      <div className="max-w-[680px] mx-auto">
+    <div className="relative min-h-[calc(100svh-6.5rem)] pt-14 md:pt-24 pb-20 overflow-hidden">
+      <div className="relative max-w-2xl mx-auto px-6">
         <div className="mb-16">
-          <div className="flex items-center gap-3 mb-4">
-            <Link href="/" className="text-fd-foreground/30 text-[11px] font-mono hover:text-fd-foreground/60 transition-all">pyRPC</Link>
-            <span className="text-fd-foreground/20">/</span>
-            <span className="text-fd-foreground/50 text-[11px] font-mono">Terms</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-4">
+          <h1 className="text-2xl font-semibold tracking-tight leading-tight text-fd-foreground">
             Terms of Use
           </h1>
-          <p className="text-fd-foreground/50 text-sm leading-relaxed max-w-xl font-sans">
+          <p className="mt-4 text-sm text-fd-muted-foreground leading-relaxed max-w-xl">
             Plain-language terms for using pyRPC. The software is governed by the MIT license; this page covers the website and the project overall.
           </p>
-          <div className="mt-6 text-[11px] font-mono text-fd-foreground/30 tracking-wide">
-            Last updated · May 2026
+          <div className="mt-4 text-[10px] font-mono text-fd-foreground/30 tracking-wide">
+            Last updated · August 2026
           </div>
         </div>
 
@@ -66,9 +61,9 @@ export default function TermsPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="mb-12">
-      <h2 className="text-lg font-bold tracking-tight text-fd-foreground mb-4">{title}</h2>
-      <div className="text-fd-foreground/50 text-[14px] leading-relaxed font-sans">
+    <div className="mb-8">
+      <h2 className="text-[14px] font-semibold text-fd-foreground mb-3">{title}</h2>
+      <div className="text-fd-muted-foreground/80 text-[13px] leading-relaxed font-sans">
         {children}
       </div>
     </div>

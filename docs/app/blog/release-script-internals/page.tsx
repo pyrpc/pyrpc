@@ -19,7 +19,7 @@ export default function ReleaseScriptInternalsPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Releasing pyRPC means bumping the version in eleven packages across two ecosystems at once. Doing that by hand is an invitation to drift — one package at 0.12.0 and another at 0.11.1, with a broken publish chain as the reward. The fix is a 85-line Node script that walks the packages directory and rewrites every version marker.
+                    Releasing pyRPC means bumping the version in eleven packages across two ecosystems at once. Doing that by hand is an invitation to drift, one package at 0.12.0 and another at 0.11.1, with a broken publish chain as the reward. The fix is a 85-line Node script that walks the packages directory and rewrites every version marker.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The entry point</h2>
@@ -38,9 +38,9 @@ const cleanVersion = newVersion.replace(/^v/, '');`}
                     The script reads the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">packages/</code> directory and, for every directory, applies up to three independent edits:
                 </p>
                 <ul className="list-disc pl-6 space-y-1">
-                    <li><strong>package.json</strong> — if present, set <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">version</code>.</li>
-                    <li><strong>pyproject.toml</strong> — if present, regex-replace the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">version = "..."</code> line.</li>
-                    <li><strong>src/&lt;pkg&gt;/__init__.py</strong> — if present and contains <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__version__</code>, rewrite it.</li>
+                    <li><strong>package.json</strong>, if present, set <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">version</code>.</li>
+                    <li><strong>pyproject.toml</strong>, if present, regex-replace the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">version = "..."</code> line.</li>
+                    <li><strong>src/&lt;pkg&gt;/__init__.py</strong>, if present and contains <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__version__</code>, rewrite it.</li>
                 </ul>
                 <p>
                     Existence checks make the walk safe for heterogeneous packages: an npm-only package gets one edit, a Python-only package gets two, and nothing breaks because a file is missing.
@@ -48,7 +48,7 @@ const cleanVersion = newVersion.replace(/^v/, '');`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The dependency sweep</h2>
                 <p>
-                    The most subtle part is not the version itself — it is every <em>reference</em> to the version from inside the other packages:
+                    The most subtle part is not the version itself, it is every <em>reference</em> to the version from inside the other packages:
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`for (const section of ['dependencies', 'peerDependencies']) {
@@ -60,7 +60,7 @@ const cleanVersion = newVersion.replace(/^v/, '');`}
 }`}
                 </pre>
                 <p>
-                    Every internal <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/*</code> range is swept to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">^0.12.0</code>. If this step were skipped, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/react</code> could be published at 0.12.0 while still depending on <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client@^0.11.0</code> — a broken version pair on the registry. The prefix check means third-party dependencies are never touched.
+                    Every internal <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/*</code> range is swept to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">^0.12.0</code>. If this step were skipped, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/react</code> could be published at 0.12.0 while still depending on <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client@^0.11.0</code>, a broken version pair on the registry. The prefix check means third-party dependencies are never touched.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The root pyproject</h2>
@@ -75,7 +75,7 @@ const cleanVersion = newVersion.replace(/^v/, '');`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The lesson</h2>
                 <p>
-                    Version synchronization is a mechanical problem, so it gets a mechanical solution. The script's value is not cleverness — it is completeness: eleven packages, both ecosystems, dependency ranges included, root workspace included. A checklist you can run is a checklist that cannot be half-executed.
+                    Version synchronization is a mechanical problem, so it gets a mechanical solution. The script's value is not cleverness, it is completeness: eleven packages, both ecosystems, dependency ranges included, root workspace included. A checklist you can run is a checklist that cannot be half-executed.
                 </p>
             </section>
         </article>

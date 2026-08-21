@@ -19,7 +19,7 @@ pip install pyrpc-core[django]    # Django`}</code></pre>
       <p>
         The adapter packages (<code>pyrpc-fastapi</code>, <code>pyrpc-flask</code>,{' '}
         <code>pyrpc-django-adapter</code>) are still published to PyPI as standalone packages, but the extras
-        approach is cleaner — one command, one version to track.
+        approach is cleaner, one command, one version to track.
       </p>
 
       <h2>TypeScript: one command per framework</h2>
@@ -33,9 +33,9 @@ npm install @pyrpc/client @pyrpc/react   # React (Vite, CRA, etc.)
 npm install @pyrpc/client @pyrpc/vue     # Vue 3
 npm install @pyrpc/client @pyrpc/svelte  # Svelte / SvelteKit`}</code></pre>
       <p>
-        <code>@pyrpc/client</code> is always installed — it's the core transport. The framework package adds
+        <code>@pyrpc/client</code> is always installed, it's the core transport. The framework package adds
         TanStack Query hooks on top. <code>@pyrpc/types</code> arrives automatically as a dependency of{' '}
-        <code>@pyrpc/client</code> — you don't install it manually.
+        <code>@pyrpc/client</code>, you don't install it manually.
       </p>
 
       <h2>What happens on npm install</h2>

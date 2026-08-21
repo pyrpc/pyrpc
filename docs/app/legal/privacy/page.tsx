@@ -2,22 +2,17 @@ import Link from 'next/link';
 
 export default function PrivacyPage() {
   return (
-    <div className="px-6 md:px-12 lg:px-20 pt-24 pb-40">
-      <div className="max-w-[680px] mx-auto">
+    <div className="relative min-h-[calc(100svh-6.5rem)] pt-14 md:pt-24 pb-20 overflow-hidden">
+      <div className="relative max-w-2xl mx-auto px-6">
         <div className="mb-16">
-          <div className="flex items-center gap-3 mb-4">
-            <Link href="/" className="text-fd-foreground/30 text-[11px] font-mono hover:text-fd-foreground/60 transition-all">pyRPC</Link>
-            <span className="text-fd-foreground/20">/</span>
-            <span className="text-fd-foreground/50 text-[11px] font-mono">Privacy</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-fd-foreground mb-4">
-            Privacy
+          <h1 className="text-2xl font-semibold tracking-tight leading-tight text-fd-foreground">
+            Privacy Policy
           </h1>
-          <p className="text-fd-foreground/50 text-sm leading-relaxed max-w-xl font-sans">
+          <p className="mt-4 text-sm text-fd-muted-foreground leading-relaxed max-w-xl">
             pyRPC is an open-source library, not a service. No accounts, no analytics, no backend.
           </p>
-          <div className="mt-6 text-[11px] font-mono text-fd-foreground/30 tracking-wide">
-            Last updated · May 2026
+          <div className="mt-4 text-[10px] font-mono text-fd-foreground/30 tracking-wide">
+            Last updated · August 2026
           </div>
         </div>
 
@@ -30,17 +25,22 @@ export default function PrivacyPage() {
 
         <Section title="Network requests">
           <p className="mb-4">
-            pyRPC itself makes no network requests. The CLI only reaches out when you run specific commands:
+            pyRPC makes no network requests on its own. The CLI only reaches out when a command needs it, and always to destinations you configure:
           </p>
           <ul className="space-y-2">
-            <li><Bullet /> <Code>pyrpc pull</Code> introspects your local Python module - no network.</li>
+            <li><Bullet /> <Code>pyrpc pull</Code> and local codegen introspect your Python module and write files locally. No network.</li>
+            <li><Bullet /> <Code>pyrpc dev</Code> and <Code>pyrpc serve</Code> start a server on localhost (127.0.0.1 by default) and probe only that address to detect a running instance.</li>
+            <li><Bullet /> Codegen can fetch an introspection schema from a server URL you explicitly pass (typically your own dev server).</li>
             <li><Bullet /> <Code>npm install @pyrpc/client</Code> and <Code>uv add pyrpc-core</Code> use standard package managers (npm, uv) which fetch from their respective registries.</li>
           </ul>
         </Section>
 
         <Section title="What we collect">
+          <p className="mb-4">
+            Nothing. pyRPC has no telemetry, no analytics, and no backend server. We don&rsquo;t run analytics on this site, don&rsquo;t set tracking cookies, and don&rsquo;t embed third-party trackers. The only data we see is what you voluntarily send: GitHub issues, PRs, or emails to the addresses below.
+          </p>
           <p>
-            Nothing. pyRPC has no telemetry, no analytics, and no backend server. We don't run analytics on this site, don't set tracking cookies, and don't embed third-party trackers. The only data we see is what you voluntarily send - GitHub issues, PRs, or emails to the addresses below.
+            The site loads static assets such as fonts and icons from public CDNs. Those providers see standard request metadata (IP address, user agent) for asset delivery; nothing identifying you is sent to us or stored by us.
           </p>
         </Section>
 
@@ -64,9 +64,9 @@ export default function PrivacyPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="mb-12">
-      <h2 className="text-lg font-bold tracking-tight text-fd-foreground mb-4">{title}</h2>
-      <div className="text-fd-foreground/50 text-[14px] leading-relaxed font-sans">
+    <div className="mb-8">
+      <h2 className="text-[14px] font-semibold text-fd-foreground mb-3">{title}</h2>
+      <div className="text-fd-muted-foreground/80 text-[13px] leading-relaxed font-sans">
         {children}
       </div>
     </div>

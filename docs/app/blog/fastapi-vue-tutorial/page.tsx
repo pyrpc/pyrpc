@@ -19,7 +19,7 @@ export default function FastApiVueTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The Vue adapter works differently from React in one key way: instead of a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{'<api.Provider>'}</code> component, you register <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc.plugin</code> on your Vue app. Everything else — typed queries, mutations, reactive args — follows Vue 3 Composition API conventions.
+                    The Vue adapter works differently from React in one key way: instead of a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{'<api.Provider>'}</code> component, you register <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc.plugin</code> on your Vue app. Everything else (typed queries, mutations, reactive args) follows Vue 3 Composition API conventions.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Project layout</h2>

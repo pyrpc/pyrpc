@@ -75,7 +75,7 @@ const userQuery = createQuery(
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why Svelte is different from React/Vue</h2>
                 <p>
-                    React re-renders on state change. Vue uses reactivity proxies. Svelte compiles to imperative DOM updates. TanStack Svelte Query bridges this with stores (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">$query</code> prefix). The adapter respects this — no React hooks, no Vue composition, just Svelte stores.
+                    React re-renders on state change. Vue uses reactivity proxies. Svelte compiles to imperative DOM updates. TanStack Svelte Query bridges this with stores (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">$query</code> prefix). The adapter respects this, no React hooks, no Vue composition, just Svelte stores.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The invariant holds</h2>

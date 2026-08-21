@@ -282,7 +282,7 @@ const posts: Post[] = [
     {
         slug: 'architecture-as-code',
         title: 'Architecture as Code: Mapping pyrpc with LikeC4',
-        description: 'How we turned pyrpc\'s architecture into version-controlled, interactive diagrams using LikeC4 — and why every framework should do the same.',
+        description: 'How we turned pyrpc\'s architecture into version-controlled, interactive diagrams using LikeC4, and why every framework should do the same.',
         date: 'June 15, 2026 at 12:00pm',
         readTime: '8 min',
         category: 'deep-dive',
@@ -306,7 +306,7 @@ const posts: Post[] = [
     {
         slug: 'framework-adapters-deep-dive',
         title: 'Deep dive: framework adapters, TanStack Query, and procedure kinds',
-        description: 'Architecture of @pyrpc/react, next, vue, and svelte — one transport, flat DX, query/mutation kinds, and Next.js hydration.',
+        description: 'Architecture of @pyrpc/react, next, vue, and svelte, one transport, flat DX, query/mutation kinds, and Next.js hydration.',
         date: 'July 27, 2026 at 2:00am',
         readTime: '18 min',
         category: 'deep-dive',
@@ -330,7 +330,7 @@ const posts: Post[] = [
     {
         slug: 'one-api-object',
         title: 'One api object: Provider, prefetch, and hooks in the same place',
-        description: 'Why createNextClient / createReactClient return a single value with procedures, Provider, and server helpers — and why the variable can be named api or client.',
+        description: 'Why createNextClient / createReactClient return a single value with procedures, Provider, and server helpers, and why the variable can be named api or client.',
         date: 'July 27, 2026 at 4:00am',
         readTime: '9 min',
         category: 'deep-dive',
@@ -370,14 +370,14 @@ const posts: Post[] = [
     {
         slug: 'from-createClient-to-hooks',
         title: 'Migrating from createClient to TanStack hooks',
-        description: 'Keep Promise calls via api.client / createCaller while adopting useQuery — and annotate mutations on the server.',
+        description: 'Keep Promise calls via api.client / createCaller while adopting useQuery, and annotate mutations on the server.',
         date: 'July 27, 2026 at 5:15am',
         readTime: '7 min',
         category: 'tutorial',
     },
     {
         slug: 'v0-9-0-framework-adapters',
-        title: 'v0.9.0 — Framework adapters, procedure kinds, one api object',
+        title: 'v0.9.0, Framework adapters, procedure kinds, one api object',
         description: 'Release notes for @pyrpc/react, next, vue, svelte, server kinds, and the unified api DX.',
         date: 'July 27, 2026 at 5:30am',
         readTime: '8 min',
@@ -489,7 +489,7 @@ const posts: Post[] = [
     },
     {
         slug: 'why-tanstack-query',
-        title: 'Why we chose TanStack Query — and what it gives you for free',
+        title: 'Why we chose TanStack Query, and what it gives you for free',
         description: 'Caching, stale-while-revalidate, deduplication, and mutation invalidation without reinventing the wheel.',
         date: 'July 27, 2026 at 9:00am',
         readTime: '12 min',
@@ -522,7 +522,7 @@ const posts: Post[] = [
     {
         slug: 'fastapi-react-tutorial',
         title: 'FastAPI + React: full-stack type safety from zero',
-        description: 'Step-by-step: FastAPI server with @rpc.query/@rpc.mutation, createReactClient, api.Provider, and useQuery/useMutation — the complete fastapi-react example explained.',
+        description: 'Step-by-step: FastAPI server with @rpc.query/@rpc.mutation, createReactClient, api.Provider, and useQuery/useMutation, the complete fastapi-react example explained.',
         date: 'August 8, 2026 at 9:00am',
         readTime: '10 min',
         category: 'tutorial',
@@ -538,7 +538,7 @@ const posts: Post[] = [
     {
         slug: 'fastapi-nextjs-tutorial',
         title: 'FastAPI + Next.js: RSC prefetch with a Python backend',
-        description: 'How api.prefetch, api.dehydrate(), and api.HydrationBoundary work together to give you instant data in Server Components — with a FastAPI backend.',
+        description: 'How api.prefetch, api.dehydrate(), and api.HydrationBoundary work together to give you instant data in Server Components, with a FastAPI backend.',
         date: 'August 8, 2026 at 9:30am',
         readTime: '12 min',
         category: 'tutorial',
@@ -546,7 +546,7 @@ const posts: Post[] = [
     {
         slug: 'fastapi-vue-tutorial',
         title: 'FastAPI + Vue: TanStack Vue Query with a Python backend',
-        description: 'createPyrpcVue, pyrpc.plugin, createQuery with reactive args, and createMutation — the complete fastapi-vue example explained.',
+        description: 'createPyrpcVue, pyrpc.plugin, createQuery with reactive args, and createMutation, the complete fastapi-vue example explained.',
         date: 'August 8, 2026 at 10:00am',
         readTime: '9 min',
         category: 'tutorial',
@@ -562,7 +562,7 @@ const posts: Post[] = [
     {
         slug: 'fastapi-svelte-tutorial',
         title: 'FastAPI + Svelte: typed Python procedures as Svelte stores',
-        description: 'createSvelteClient, QueryClientProvider in +layout.svelte, createQuery/createMutation stores, and the $ subscription pattern — the fastapi-svelte example explained.',
+        description: 'createSvelteClient, QueryClientProvider in +layout.svelte, createQuery/createMutation stores, and the $ subscription pattern, the fastapi-svelte example explained.',
         date: 'August 8, 2026 at 10:30am',
         readTime: '9 min',
         category: 'tutorial',
@@ -586,7 +586,7 @@ const posts: Post[] = [
     {
         slug: 'flask-svelte-tutorial',
         title: 'Flask + Svelte: minimal server, typed Svelte stores',
-        description: 'The flask-svelte example: a two-file Flask server, createSvelteClient, and reactive stores — the smallest possible pyRPC stack.',
+        description: 'The flask-svelte example: a two-file Flask server, createSvelteClient, and reactive stores, the smallest possible pyRPC stack.',
         date: 'August 8, 2026 at 12:00pm',
         readTime: '8 min',
         category: 'tutorial',
@@ -706,7 +706,7 @@ const posts: Post[] = [
     {
         slug: 'pyrpc-dev-console',
         title: 'The dev console: a control panel, not a shell',
-        description: 'Six commands — procedures, inspect, generate, restart, exit — and why the console deliberately stops at the dev loop instead of becoming a REPL.',
+        description: 'Six commands (procedures, inspect, generate, restart, exit) and why the console deliberately stops at the dev loop instead of becoming a REPL.',
         date: 'August 11, 2026 at 4:00pm',
         readTime: '7 min',
         category: 'deep-dive',
@@ -746,7 +746,7 @@ const posts: Post[] = [
     {
         slug: 'pytype-to-ts-grammar',
         title: 'Parsing Python type strings into TypeScript',
-        description: 'The string-grammar parser behind _pytype_to_ts: how Optional, Union, List, Dict, Tuple, and Set annotations become nullable unions, arrays, and records — and where it falls back to any.',
+        description: 'The string-grammar parser behind _pytype_to_ts: how Optional, Union, List, Dict, Tuple, and Set annotations become nullable unions, arrays, and records, and where it falls back to any.',
         date: 'August 12, 2026 at 10:00am',
         readTime: '10 min',
         category: 'deep-dive',
@@ -762,7 +762,7 @@ const posts: Post[] = [
     {
         slug: 'the-throwing-placeholder',
         title: 'The placeholder that throws',
-        description: 'Before pyrpc dev runs, @pyrpc/types ships a Proxy placeholder whose procedureKinds throws on access — so a misconfigured resolution fails loud instead of silently showing every hook.',
+        description: 'Before pyrpc dev runs, @pyrpc/types ships a Proxy placeholder whose procedureKinds throws on access, so a misconfigured resolution fails loud instead of silently showing every hook.',
         date: 'August 12, 2026 at 10:40am',
         readTime: '8 min',
         category: 'deep-dive',
@@ -786,7 +786,7 @@ const posts: Post[] = [
     {
         slug: 'the-node-modules-resolution-gap',
         title: 'The node_modules resolution gap',
-        description: 'Why tsconfig paths work for TypeScript and webpack but not for imports originating inside node_modules — and the bundler alias that closes the gap.',
+        description: 'Why tsconfig paths work for TypeScript and webpack but not for imports originating inside node_modules, and the bundler alias that closes the gap.',
         date: 'August 12, 2026 at 11:40am',
         readTime: '9 min',
         category: 'deep-dive',
@@ -826,7 +826,7 @@ const posts: Post[] = [
     {
         slug: 'fail-loud-when-unconfigurable',
         title: 'When the config is too weird: failing loud',
-        description: 'A two-state return value, a yellow warning, and the exact remediation hint — the calibrated failure ladder when a config cannot be safely edited.',
+        description: 'A two-state return value, a yellow warning, and the exact remediation hint, the calibrated failure ladder when a config cannot be safely edited.',
         date: 'August 12, 2026 at 1:20pm',
         readTime: '7 min',
         category: 'deep-dive',
@@ -834,7 +834,7 @@ const posts: Post[] = [
     {
         slug: 'relative-alias-default',
         title: 'Why the alias is relative',
-        description: 'The leading dot in "./__pyrpc.ts" is not style — it is the difference between a sibling file and a package that was never published.',
+        description: 'The leading dot in "./__pyrpc.ts" is not style, it is the difference between a sibling file and a package that was never published.',
         date: 'August 12, 2026 at 1:40pm',
         readTime: '5 min',
         category: 'deep-dive',
@@ -858,7 +858,7 @@ const posts: Post[] = [
     {
         slug: 'type-level-mirror-of-hooks',
         title: 'ProcedureHooksForKind: the type-level mirror',
-        description: 'The conditional types that make TypeScript agree with the runtime Proxy — one decision, two languages, no drift.',
+        description: 'The conditional types that make TypeScript agree with the runtime Proxy, one decision, two languages, no drift.',
         date: 'August 12, 2026 at 2:40pm',
         readTime: '7 min',
         category: 'deep-dive',
@@ -882,7 +882,7 @@ const posts: Post[] = [
     {
         slug: 'types-from-dev-dep-to-runtime-dep',
         title: '@pyrpc/types: from type-only to runtime dependency',
-        description: 'A one-line package.json move that announces the whole v0.12.0 thesis — the type boundary became a runtime contract.',
+        description: 'A one-line package.json move that announces the whole v0.12.0 thesis, the type boundary became a runtime contract.',
         date: 'August 12, 2026 at 3:40pm',
         readTime: '6 min',
         category: 'deep-dive',
@@ -898,7 +898,7 @@ const posts: Post[] = [
     {
         slug: 'version-in-three-places',
         title: 'A version in three places',
-        description: 'pyproject.toml, __init__.py, and uv.lock each hold the version for a different consumer — and the release process keeps them agreeing.',
+        description: 'pyproject.toml, __init__.py, and uv.lock each hold the version for a different consumer, and the release process keeps them agreeing.',
         date: 'August 12, 2026 at 4:20pm',
         readTime: '6 min',
         category: 'deep-dive',
@@ -914,7 +914,7 @@ const posts: Post[] = [
     {
         slug: 'release-matrix-two-ecosystems',
         title: 'Eleven packages, two ecosystems',
-        description: 'Six npm workspaces and five Python packages shipped in lockstep from one tag — the dependency DAGs and the version contract that binds them.',
+        description: 'Six npm workspaces and five Python packages shipped in lockstep from one tag, the dependency DAGs and the version contract that binds them.',
         date: 'August 12, 2026 at 5:00pm',
         readTime: '7 min',
         category: 'deep-dive',
@@ -930,7 +930,7 @@ const posts: Post[] = [
     {
         slug: 'idempotent-publishing',
         title: 'skip-existing and the npm guard: idempotent publishing',
-        description: 'Two registries, two idempotency strategies — and why a release pipeline that can be re-run must reconcile instead of demand.',
+        description: 'Two registries, two idempotency strategies, and why a release pipeline that can be re-run must reconcile instead of demand.',
         date: 'August 12, 2026 at 5:40pm',
         readTime: '6 min',
         category: 'deep-dive',
@@ -938,7 +938,7 @@ const posts: Post[] = [
     {
         slug: 'tag-driven-releases',
         title: 'A tag is a release trigger',
-        description: 'How a git tag matching v*.*.* fires PyPI, npm, and the GitHub Release — and how the prerelease signal flows through all three.',
+        description: 'How a git tag matching v*.*.* fires PyPI, npm, and the GitHub Release, and how the prerelease signal flows through all three.',
         date: 'August 12, 2026 at 6:00pm',
         readTime: '7 min',
         category: 'deep-dive',
@@ -970,7 +970,7 @@ const posts: Post[] = [
     {
         slug: 'zero-config-promise-revisited',
         title: 'Reconciling zero-config with a runtime module',
-        description: 'A release that demands more configuration while moving toward less — and the safety mechanisms that make a tool-owned config trustworthy.',
+        description: 'A release that demands more configuration while moving toward less, and the safety mechanisms that make a tool-owned config trustworthy.',
         date: 'August 12, 2026 at 7:20pm',
         readTime: '8 min',
         category: 'deep-dive',
@@ -978,7 +978,7 @@ const posts: Post[] = [
     {
         slug: 'release-pr-review-flow',
         title: 'The release PR: how a version bump goes to review',
-        description: 'Why the release is a reviewed merge followed by a tag — and how decoupling the two makes an irreversible step reversible.',
+        description: 'Why the release is a reviewed merge followed by a tag, and how decoupling the two makes an irreversible step reversible.',
         date: 'August 12, 2026 at 7:40pm',
         readTime: '7 min',
         category: 'deep-dive',
@@ -986,7 +986,7 @@ const posts: Post[] = [
     {
         slug: 'the-bundler-verification-matrix',
         title: 'How we checked every bundler: the verification matrix',
-        description: 'The claim that tsconfig paths work for webpack but not Vite, SvelteKit, or Turbopack — proven by unit tests, example apps, and a matrix that shows why.',
+        description: 'The claim that tsconfig paths work for webpack but not Vite, SvelteKit, or Turbopack, proven by unit tests, example apps, and a matrix that shows why.',
         date: 'August 12, 2026 at 8:00pm',
         readTime: '8 min',
         category: 'deep-dive',
@@ -994,7 +994,7 @@ const posts: Post[] = [
     {
         slug: 'baseurl-compile-time-and-runtime',
         title: 'baseUrl: compile-time and runtime',
-        description: 'A string in an options type at compile time, a normalization pipeline at runtime — and why the browser fallback fails loudly on the server.',
+        description: 'A string in an options type at compile time, a normalization pipeline at runtime, and why the browser fallback fails loudly on the server.',
         date: 'August 12, 2026 at 8:20pm',
         readTime: '7 min',
         category: 'deep-dive',
@@ -1022,11 +1022,16 @@ export default function BlogPage() {
     }
 
     return (
-        <div className="max-w-3xl mx-auto px-6 py-20">
-            <h1 className="text-2xl font-bold tracking-tight uppercase font-mono mb-2">Blog</h1>
-            <p className="text-sm text-fd-muted-foreground mb-8">
-                Design notes, deep dives, and updates from the pyrpc team.
-            </p>
+        <div className="relative min-h-[calc(100svh-6.5rem)] pt-14 md:pt-24 pb-20">
+            <div className="relative max-w-[1200px] mx-auto px-6">
+                <div className="mb-16">
+                    <h1 className="text-2xl font-semibold tracking-tight leading-tight text-fd-foreground">
+                        Blog
+                    </h1>
+                    <p className="mt-4 text-sm text-fd-muted-foreground leading-relaxed max-w-xl">
+                        Thoughts, tutorials, and deep dives from the pyRPC team.
+                    </p>
+                </div>
 
             <div className="flex items-center gap-2 mb-12 pb-6 border-b border-fd-border">
                 {categories.map((cat) => (
@@ -1068,6 +1073,7 @@ export default function BlogPage() {
                         </p>
                     </Link>
                 ))}
+            </div>
             </div>
         </div>
     )
