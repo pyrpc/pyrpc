@@ -26,8 +26,8 @@ export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
       themes: {
-        light: 'github-light',
-        dark: 'one-dark-pro', // Zed-inspired dark theme
+        light: 'vitesse-light',
+        dark: 'vesper', // Brand syntax identity, monochrome-first, single green accent
       },
     },
   },
