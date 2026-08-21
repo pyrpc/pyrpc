@@ -2,7 +2,6 @@ import { RootProvider } from 'fumadocs-ui/provider/next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { SiteHeader } from '@/components/site-header';
-import { BackgroundWaves } from '@/components/background-waves';
 import { NonDocsLayout } from '@/components/non-docs-layout';
 import './global.css';
 import type { ReactNode } from 'react';
@@ -10,12 +9,12 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    default: 'pyRPC - Type-Safe Python RPC for TypeScript Frontends',
+    default: 'pyRPC - Type-Safe APIs for Python',
     template: '%s | pyRPC',
   },
   description: 'Define procedures in Python. Consume them in TypeScript with full type safety. No schema drift, no codegen pipelines.',
   openGraph: {
-    title: 'pyRPC - Type-Safe Python RPC for TypeScript Frontends',
+    title: 'pyRPC - Type-Safe APIs for Python',
     description: 'Define procedures in Python. Consume them in TypeScript with full type safety. No schema drift, no codegen pipelines.',
   },
 };
@@ -25,7 +24,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-fd-background text-fd-foreground" suppressHydrationWarning>
         <RootProvider>
-          <BackgroundWaves />
           <SiteHeader />
           <main className="relative z-10">
             <NonDocsLayout>

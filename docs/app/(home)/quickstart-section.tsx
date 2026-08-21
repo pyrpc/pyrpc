@@ -2,174 +2,162 @@
 
 import { useState } from 'react';
 import { Check, Copy } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { ReactNode } from 'react';
 
-function QuickstartStep({ step, title, description, filename, children, terminal, lines }: {
-  step: number;
-  title: string;
-  description: string;
-  filename?: string;
-  children: ReactNode;
-  terminal?: ReactNode;
-  lines?: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full"
-    >
-      <div className="flex items-center gap-3 mb-6">
-        <span className="font-mono text-[11px] text-fd-foreground/30 tracking-wider">
-          0{step}
-        </span>
-        <div className="h-px w-6 bg-fd-border" />
-        <h3 className="relative text-2xl md:text-3xl font-medium tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] heading-display">
-          {title}
-        </h3>
-      </div>
-      <p className="text-[13px] md:text-[14px] leading-relaxed text-neutral-600 dark:text-white/80 mb-8 max-w-xl font-sans">
-        {description}
-      </p>
-
-      <div className="relative w-full code-block-hero">
-        <div className="relative w-full border border-neutral-200 dark:border-[#1a1a1a] bg-neutral-50 dark:bg-black overflow-hidden">
-          {filename && (
-            <div className="border-b border-neutral-200 dark:border-[#1a1a1a] px-4 py-2">
-              <span className="text-[11px] font-mono text-neutral-500 tracking-tight">{filename}</span>
-            </div>
-          )}
-          <div className="flex flex-col md:flex-row">
-            <div className="flex-1 min-w-0 overflow-x-auto">
-              {lines ? (
-                <div className="grid grid-cols-[40px_1fr] font-mono text-sm leading-relaxed">
-                  <div className="whitespace-pre text-center hl-ln border-r border-neutral-200 dark:border-[#1a1a1a] select-none leading-relaxed pb-6 pt-5">
-                    {Array.from({ length: lines }, (_, i) => `${i + 1}\n`).join('')}
-                  </div>
-                  <div className="overflow-x-auto whitespace-pre-wrap leading-relaxed pb-6 pt-5 pl-4 pr-8">
-                    {children}
-                  </div>
-                </div>
-              ) : (
-                <div className="p-5 text-sm leading-relaxed whitespace-pre-wrap">
-                  {children}
-                </div>
-              )}
-            </div>
-            {terminal && (
-              <div className="hidden md:block flex-1 min-w-0 border-l border-neutral-200 dark:border-[#1a1a1a] p-4 font-mono text-[12px] leading-relaxed bg-neutral-100/60 dark:bg-[#0f0f0f]/60 overflow-x-auto">
-                {terminal}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+/**
+ * Quickstart, steps in a left column; clicking one swaps the code window
+ * on the right. The window matches the hero IDE: always dark, Vesper theme.
+ */
+const PYTHON_ICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg';
+const TS_ICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg';
 
 export default function QuickstartSection({
   snippet1,
   snippet2,
   snippet3,
+  text1,
+  text2,
+  text3,
 }: {
   snippet1: ReactNode;
   snippet2: ReactNode;
   snippet3: ReactNode;
+  text1: string;
+  text2: string;
+  text3: string;
 }) {
-  const [copiedStep, setCopiedStep] = useState<number | null>(null);
+  const [active, setActive] = useState(0);
+  const [copied, setCopied] = useState(false);
 
-  const copyQuickstart = (text: string, step: number) => {
-    navigator.clipboard.writeText(text);
-    setCopiedStep(step);
-    setTimeout(() => setCopiedStep(null), 2000);
+  const STEPS = [
+    {
+      label: 'Install pyRPC',
+      filename: 'server.py',
+      icon: PYTHON_ICON,
+      description:
+        'uv add pyrpc-core installs the core runtime with Pydantic-powered validation and async support.',
+      code: snippet1,
+      text: text1,
+    },
+    {
+      label: 'Generate types',
+      filename: '__pyrpc.ts',
+      icon: TS_ICON,
+      description:
+        'pyrpc dev serves your procedures and regenerates the TypeScript types on every save.',
+      code: snippet2,
+      text: text2,
+    },
+    {
+      label: 'Call it from TypeScript',
+      filename: 'client.ts',
+      icon: TS_ICON,
+      description:
+        'Install @pyrpc/client in your frontend. Full inference, no manual codegen, no schema drift.',
+      code: snippet3,
+      text: text3,
+    },
+  ];
+
+  const step = STEPS[active];
+
+  const copy = () => {
+    navigator.clipboard.writeText(step.text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="mt-32 mb-20 relative w-full">
-      <div className="mb-20 flex flex-col items-center text-center max-w-5xl mx-auto px-6 md:px-0">
+    <div className="relative mt-16 w-full border-t border-neutral-200 pt-8 dark:border-white/[0.1] md:mt-20 md:pt-10">
+      <div className="mx-auto max-w-[1200px] px-6 md:px-10">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.4 }}
-          className="relative text-[28px] md:text-[40px] font-normal leading-[34px] md:leading-[48px] tracking-tight text-neutral-900 dark:text-[var(--heading-dark)] mb-6 heading-display"
+          className="text-xl font-semibold tracking-tight leading-snug text-neutral-900 dark:text-[var(--heading-dark)]"
         >
-          Ship in Three commands.
+          Ship in three commands.
         </motion.h2>
-        <p className="text-[15px] md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/80 max-w-[280px] md:max-w-2xl mx-auto font-sans md:whitespace-nowrap">
-            <span className="hidden md:inline">From zero to a running pyRPC server with a type-safe TypeScript client in under two minutes.</span>
-            <span className="inline md:hidden">From zero to a type-safe pyRPC server in under two minutes.</span>
+        <p className="font-sans text-sm leading-relaxed text-neutral-600 dark:text-white/80">
+          From zero to a type-safe API in under two minutes.
         </p>
       </div>
 
-      <div className="flex flex-col gap-20 max-w-5xl mx-auto px-6 md:px-0">
-        <QuickstartStep
-          step={1}
-          title="Add pyRPC to your Python project."
-          description="One command installs the core runtime with Pydantic-powered validation, async support, and framework adapters."
-          filename="server.py"
-          lines={5}
-          terminal={
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-neutral-500 dark:text-neutral-600">$</span>{' '}<span className="text-neutral-800 dark:text-neutral-200">uv add pyrpc-core</span>
+      <div className="mx-auto flex flex-col md:flex-row max-w-[1200px] gap-8 px-6 pt-10 md:gap-0 md:px-10">
+        {/* Step list and description */}
+        <div className="w-full flex-shrink-0 flex flex-col md:w-[320px] lg:w-[360px] md:border-l md:border-r md:border-neutral-200 dark:md:border-[#262626]">
+          {STEPS.map((s, i) => (
+            <button
+              key={s.label}
+              onClick={() => {
+                setActive(i);
+                setCopied(false);
+              }}
+              className={`relative cursor-pointer border-t border-neutral-200 dark:border-[#262626] px-4 py-4 md:px-6 md:py-5 text-left transition-colors ${
+                active === i
+                  ? 'bg-neutral-50 dark:bg-white/[0.03]'
+                  : 'hover:bg-neutral-50/50 dark:hover:bg-white/[0.015]'
+              }`}
+            >
+              {active === i && (
+                <div className="absolute top-0 bottom-0 left-0 w-[2px] bg-neutral-900 dark:bg-white" />
+              )}
+              <span
+                className={`font-mono text-[11px] uppercase tracking-wider ${
+                  active === i ? 'text-neutral-900 dark:text-white' : 'text-neutral-400 dark:text-white/50'
+                }`}
+              >
+                {s.label}
+              </span>
+            </button>
+          ))}
+          <div className="border-t border-neutral-200 dark:border-[#262626]"></div>
+
+          {/* Active Description */}
+          <div className="mt-auto px-4 pt-6 pb-1 md:px-6 md:pt-8 text-sm leading-relaxed text-neutral-600 dark:text-white/70">
+            {step.description}
+          </div>
+        </div>
+
+        {/* Code window */}
+        <div className="w-full min-w-0 flex-1 md:pl-10 lg:pl-12">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.22 }}
+              className="w-full"
+            >
+              <div className="w-full overflow-hidden border border-[#262626] bg-[#101010]">
+                <div className="flex items-center justify-between border-b border-[#262626] px-4 py-2">
+                  <span className="flex items-center gap-1.5">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={step.icon} alt="" className="h-3.5 w-3.5" />
+                    <span className="font-mono text-[11px] text-[#8a8a8a]">{step.filename}</span>
+                  </span>
+                  <button
+                    onClick={copy}
+                    aria-label="Copy code"
+                    className="cursor-pointer text-[#8a8a8a] transition-colors hover:text-[#dcdcdc]"
+                  >
+                    {copied ? (
+                      <Check className="h-3.5 w-3.5 text-white" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" />
+                    )}
+                  </button>
                 </div>
-                <button onClick={() => copyQuickstart('uv add pyrpc-core', 1)} className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-600 dark:hover:text-neutral-300 transition-colors cursor-pointer">
-                  {copiedStep === 1 ? <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-500" /> : <Copy className="w-3 h-3" />}
-                </button>
+                <div className="h-[460px] overflow-x-auto whitespace-pre p-5 font-mono text-sm leading-[1.75]">
+                  {step.code}
+                </div>
               </div>
-              <div className="text-neutral-600 dark:text-neutral-500">Resolved 8 packages in 320ms</div>
-              <div className="text-neutral-600 dark:text-neutral-500">Installed 4 packages in 45ms</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ pyrpc-core==0.3.0</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ pydantic==2.7.1</div>
-              <div className="mt-2"><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
-            </div>
-          }
-        >
-          {snippet1}
-        </QuickstartStep>
-
-        <QuickstartStep
-          step={2}
-          title="Start the pyRPC dev server."
-          description="Types are generated automatically as your server runs."
-          filename="@pyrpc/types"
-          lines={7}
-          terminal={
-            <div className="space-y-1">
-              <div><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="text-neutral-800 dark:text-neutral-200">pyrpc dev</span></div>
-              <div className="text-neutral-600 dark:text-neutral-500">Starting pyRPC dev server...</div>
-              <div className="text-neutral-600 dark:text-neutral-500">Found 1 procedure</div>
-              <div><span className="text-emerald-600 dark:text-emerald-500">✓</span> <span className="text-neutral-800 dark:text-neutral-200">Serving at http://localhost:8000</span></div>
-              <div className="mt-2"><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
-            </div>
-          }
-        >
-          {snippet2}
-        </QuickstartStep>
-
-        <QuickstartStep
-          step={3}
-          title="Ship type-safe TypeScript clients."
-          description="Install the client package in your frontend project. Types flow from Python to TypeScript - no manual codegen, no schema drift."
-          filename="client.ts"
-          lines={8}
-          terminal={
-            <div className="space-y-1">
-              <div><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="text-neutral-800 dark:text-neutral-200">npm install @pyrpc/client</span></div>
-              <div className="text-neutral-600 dark:text-neutral-500">Resolved 12 packages in 1.4s</div>
-              <div className="text-neutral-600 dark:text-neutral-500">+ @pyrpc/client@0.3.0</div>
-              <div className="mt-2"><span className="text-neutral-500 dark:text-neutral-600">$</span> <span className="inline-block w-[7px] h-[14px] bg-neutral-500 animate-pulse" /></div>
-            </div>
-          }
-        >
-          {snippet3}
-        </QuickstartStep>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
