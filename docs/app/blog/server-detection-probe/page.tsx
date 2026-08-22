@@ -74,7 +74,7 @@ export default function ServerDetectionProbePost() {
                 <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`if _server_is_running(host, port):
     console.print(
         f"  [dim]○[/dim]  server already running at "
-        f"http://{host}:{port}/rpc — skipping uvicorn"
+        f"http://{host}:{port}/rpc, skipping uvicorn"
     )
 else:
     server_proc = _start_uvicorn(module)

@@ -19,7 +19,7 @@ export interface HttpLinkOptions {
     url: string;
 }
 
-export function httpLink(options: HttpLinkOptions): Link;
+export function httpBatchLink(options: HttpLinkOptions): Link;
 
 export interface Link {
     readonly kind: 'terminating';
@@ -38,24 +38,85 @@ export interface RpcError {
 export function createClient<T = any>(options: ClientOptions): T;
 `;
 
+const PYRPC_REACT_STUBS = `
+export interface Link {
+    readonly kind: 'terminating';
+}
+
+export interface ClientOptions {
+    links: Link[];
+}
+
+export declare function httpLink(options: { url: string }): Link;
+
+export declare function httpBatchLink(options: { url: string }): Link;
+
+export declare function createReactClient<T = any>(options?: ClientOptions): any;
+
+export declare function PyRPCProvider(props?: any): any;
+`;
+
+const PYRPC_VUE_STUBS = `
+export interface Link {
+    readonly kind: 'terminating';
+}
+
+export interface ClientOptions {
+    links: Link[];
+}
+
+export declare function httpLink(options: { url: string }): Link;
+
+export declare function httpBatchLink(options: { url: string }): Link;
+
+export declare function createVueClient<T = any>(options?: ClientOptions): any;
+
+export declare function createPyrpcVue<T = any>(options?: ClientOptions): any;
+`;
+
+const PYRPC_SVELTE_STUBS = `
+export interface Link {
+    readonly kind: 'terminating';
+}
+
+export interface ClientOptions {
+    links: Link[];
+}
+
+export declare function httpLink(options: { url: string }): Link;
+
+export declare function httpBatchLink(options: { url: string }): Link;
+
+export declare function createSvelteClient<T = any>(options?: ClientOptions): any;
+`;
+
+const PYRPC_NEXT_STUBS = `
+export interface Link {
+    readonly kind: 'terminating';
+}
+
+export interface ClientOptions {
+    links: Link[];
+}
+
+export declare function httpLink(options: { url: string }): Link;
+
+export declare function httpBatchLink(options: { url: string }): Link;
+
+export declare function createNextClient<T = any>(options?: ClientOptions): any;
+
+export declare function HydrateClient(props?: any): any;
+`;
+
 export function PlaygroundEditor({ code, language, onChange, serverTypes, serverErrors }: PlaygroundEditorProps) {
     const { theme } = useTheme()
     const monacoRef = useRef<Monaco | null>(null)
     const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
 
     function ensureTypesModel(monaco: Monaco, types: string | undefined) {
-        const typesUri = monaco.Uri.parse('/node_modules/@pyrpc/types/index.d.ts')
-        const existing = monaco.editor.getModel(typesUri)
-        if (existing) {
-            if (types) {
-                existing.setValue(types)
-            } else {
-                existing.dispose()
-            }
-            return
-        }
+        const typesPath = 'file:///node_modules/@pyrpc/types/index.d.ts'
         if (types) {
-            monaco.editor.createModel(types, 'typescript', typesUri)
+            monaco.languages.typescript.typescriptDefaults.addExtraLib(types, typesPath)
         }
     }
 
@@ -66,11 +127,12 @@ export function PlaygroundEditor({ code, language, onChange, serverTypes, server
             target: monaco.languages.typescript.ScriptTarget.ESNext,
             moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
             module: monaco.languages.typescript.ModuleKind.ESNext,
+            jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
             allowSyntheticDefaultImports: true,
             esModuleInterop: true,
             strict: true,
-            noImplicitAny: true,
-            strictNullChecks: true,
+            noImplicitAny: false,
+            strictNullChecks: false,
         })
 
         monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
@@ -78,10 +140,19 @@ export function PlaygroundEditor({ code, language, onChange, serverTypes, server
             noSyntaxValidation: false,
         })
 
-        // Create @pyrpc/client stubs model
-        const clientUri = monaco.Uri.parse('/node_modules/@pyrpc/client/index.d.ts')
-        if (!monaco.editor.getModel(clientUri)) {
-            monaco.editor.createModel(PYRPC_CLIENT_STUBS, 'typescript', clientUri)
+        // Register @pyrpc package stubs as resolvable modules
+        const stubs: [string, string][] = [
+            ['@pyrpc/client', PYRPC_CLIENT_STUBS],
+            ['@pyrpc/react', PYRPC_REACT_STUBS],
+            ['@pyrpc/vue', PYRPC_VUE_STUBS],
+            ['@pyrpc/svelte', PYRPC_SVELTE_STUBS],
+            ['@pyrpc/next', PYRPC_NEXT_STUBS],
+        ]
+        for (const [pkg, source] of stubs) {
+            monaco.languages.typescript.typescriptDefaults.addExtraLib(
+                source,
+                `file:///node_modules/${pkg}/index.d.ts`,
+            )
         }
 
         // Create @pyrpc/types model if types provided
@@ -124,19 +195,20 @@ export function PlaygroundEditor({ code, language, onChange, serverTypes, server
             base: 'vs-dark',
             inherit: true,
             rules: [
-                { token: 'comment', foreground: '5a6478', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'c792ea' },
-                { token: 'string', foreground: 'c3e88d' },
-                { token: 'number', foreground: 'f78c6c' },
-                { token: 'type', foreground: '89ddff' },
+                { token: 'comment', foreground: '5a5a5a', fontStyle: 'italic' },
+                { token: 'keyword', foreground: 'c8c8c8' },
+                { token: 'string', foreground: '97c983' },
+                { token: 'number', foreground: 'd0d0d0' },
+                { token: 'type', foreground: 'e0e0e0' },
+                { token: 'identifier', foreground: 'a0a0a0' },
             ],
             colors: {
-                'editor.background': '#090909',
-                'editor.lineHighlightBackground': '#111111',
-                'editor.selectionBackground': '#1e3a5f',
-                'editorCursor.foreground': '#82aaff',
-                'editorLineNumber.foreground': '#2d3347',
-                'editorLineNumber.activeForeground': '#4a5578',
+                'editor.background': '#101010',
+                'editor.lineHighlightBackground': '#161616',
+                'editor.selectionBackground': '#262626',
+                'editorCursor.foreground': '#ffffff',
+                'editorLineNumber.foreground': '#404040',
+                'editorLineNumber.activeForeground': '#a0a0a0',
             }
         })
 

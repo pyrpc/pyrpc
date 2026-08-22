@@ -165,10 +165,10 @@ except KeyboardInterrupt: stop.set(); console.print("\\n  [dim]stopped[/dim]")`}
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
                     A realistic transcript
                 </h2>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`# Terminal 1 — your server, your flags
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`# Terminal 1, your server, your flags
 $ uvicorn main:app --reload --host 0.0.0.0 --port 8080 --log-level debug
 
-# Terminal 2 — types, and nothing else
+# Terminal 2: types, and nothing else
 $ pyrpc watch
   ✓  types generated (3 procs) → ./frontend
   watching... (Ctrl+C to stop)

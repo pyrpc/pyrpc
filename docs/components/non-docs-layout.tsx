@@ -21,18 +21,14 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
   const aiQuery = "What+is+pyRPC%3F+It+is+a+Python+library+that+provides+tRPC-level+type+safety+for+teams+shipping+Python+backends+with+TypeScript+frontends.+Procedures+are+defined+in+Python+and+called+from+TypeScript+with+full+type+safety+-+no+schemas,+no+drift,+no+boilerplate.+Compare+it+to+alternatives+like+OpenAPI,+gRPC,+and+JSON-RPC+and+explain+when+to+use+it."
 
   return (
-    <div className="relative max-w-[1400px] mx-auto min-h-screen">
-      {/* Vertical architectural grid lines - pinned to container edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-neutral-200 dark:bg-white/[0.08]" />
-      <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-neutral-200 dark:bg-white/[0.08]" />
-
+    <div className="relative min-h-screen">
       {children}
       
       {/* Global Footer for non-docs pages */}
-      <footer className="relative mt-0 pb-8 px-6">
-        {/* Ask AI about pyRPC - centered above footer nav */}
-        <div className="border-t border-neutral-200 dark:border-white/[0.08]">
-          <div className="flex flex-col items-center pt-12 pb-8">
+      <footer className="relative mt-0 pb-8">
+        <div className="mx-auto max-w-[1400px] px-6">
+          {/* Ask AI about pyRPC - centered above footer nav */}
+          <div className="border-t border-neutral-200 dark:border-white/[0.08] pt-10 pb-6 flex flex-col items-center">
             <span
               className="text-fd-foreground/40 font-mono text-[12px] tracking-wide mb-3"
             >
@@ -61,10 +57,9 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Bottom footer - 2 column layout */}
-        <div className="max-w-[1240px] mx-auto pt-6 pb-4 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-fd-foreground/40 font-mono">
+          {/* Bottom footer - 2 column layout */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 pb-2 text-[11px] text-fd-foreground/40 font-mono">
           {/* Left: navigation links */}
           <nav className="flex items-center gap-2">
             <Link href="/docs" className="hover:text-fd-foreground transition-colors">Docs</Link>
@@ -98,6 +93,11 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
                 <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.127.087.497.04.82-.076.534-.599 2.86-.634 3.054a.737.737 0 0 0 .002.312c.044.17.16.305.288.386.002 0 .587.426.587.426s.162.096.264.18c.112.093.227.27.151.444-.074.168-.344.266-.344.266s-.56.182-1.975.693c-.748.27-1.663.6-2.232.496a3.3 3.3 0 0 1-.326-.059c-.595-.148-.998-.388-1.387-.626-.605-.374-1.116-.835-1.62-1.291-.24-.218-.472-.44-.685-.677-.618-.687-.005-1.695.004-1.706.003-.004.563-.896 1.775-2.053.64-.613 1.476-1.29 1.86-1.536.143-.09.278-.118.318-.116zm-4.019 2.645a.558.558 0 0 0-.433.3 217 217 0 0 0-1.46 2.833c-.063.121-.074.273-.013.394.087.153.268.213.433.172.124-.022.157-.028.157-.028s.004.002.004.004c.004 0 .02.002.04.034.021.032.028.077.028.106v.002c.053.1.138.163.196.215.014.012.015.013.002.015z"/>
               </svg>
             </a>
+            <a href="https://linkedin.com/company/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-colors text-fd-foreground/30">
+              <svg role="img" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
             <a href="https://www.npmjs.com/org/pyrpc" target="_blank" rel="noreferrer" className="hover:text-fd-foreground transition-colors text-fd-foreground/30">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0h-2.666V8.667h2.666v5.331zm12 0H13.332V8.667h2.666v4h1.336v-4h1.332v4h1.332v-4h1.334v5.331z"/></svg>
             </a>
@@ -106,6 +106,7 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
             </a>
             <span className="text-fd-foreground/15">·</span>
             <span>© 2026 pyRPC</span>
+          </div>
           </div>
         </div>
       </footer>

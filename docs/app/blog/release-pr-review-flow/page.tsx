@@ -19,17 +19,17 @@ export default function ReleasePrReviewFlowPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Releasing pyRPC is a pull request. The version bump, the lockfile sync, and the changelog entry ride a branch through the same review pipeline as any feature — because main rejects direct pushes. The release is a merge, and only then does a tag turn it into a publication.
+                    Releasing pyRPC is a pull request. The version bump, the lockfile sync, and the changelog entry ride a branch through the same review pipeline as any feature, because main rejects direct pushes. The release is a merge, and only then does a tag turn it into a publication.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why a PR for a version bump</h2>
                 <p>
-                    The protection on main is the load-bearing wall of the release process. It forces every change — including release machinery itself — through review and through CI. For a release, that means:
+                    The protection on main is the load-bearing wall of the release process. It forces every change (including release machinery itself) through review and through CI. For a release, that means:
                 </p>
                 <ul className="list-disc pl-6 space-y-1">
                     <li>The bump is inspected: eleven versions, every internal range, two lockfiles, the changelog.</li>
                     <li>CI runs the <em>test</em> workflow on the bumped tree, proving the release candidate passes before it can be tagged.</li>
-                    <li>The merge history records the release as a first-class event — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Merge pull request #118 from pyrpc/release/v0.12.0</code> — searchable and attributable.</li>
+                    <li>The merge history records the release as a first-class event (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Merge pull request #118 from pyrpc/release/v0.12.0</code>) searchable and attributable.</li>
                 </ul>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The branch name is the plan</h2>
@@ -61,17 +61,17 @@ gh pr create ...`}
 git push origin v0.12.0   # fires the publish workflow`}
                 </pre>
                 <p>
-                    The tag is pinned to the merged commit, so the pipeline builds exactly what was reviewed. The review gate and the publish trigger are separated in time and mechanism — you can merge without publishing, but you cannot publish without merging. That asymmetry is the safety property.
+                    The tag is pinned to the merged commit, so the pipeline builds exactly what was reviewed. The review gate and the publish trigger are separated in time and mechanism, you can merge without publishing, but you cannot publish without merging. That asymmetry is the safety property.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why this scales beyond releases</h2>
                 <p>
-                    Treating publication as "the tail of a reviewed merge" works because it needs no special permissions, no manual deploy step, and no human-in-the-loop at publish time — only at review time, where humans belong. Any project that publishes from tags inherits the same property: the review gate is where thought happens, and the trigger is where trust happens.
+                    Treating publication as "the tail of a reviewed merge" works because it needs no special permissions, no manual deploy step, and no human-in-the-loop at publish time, only at review time, where humans belong. Any project that publishes from tags inherits the same property: the review gate is where thought happens, and the trigger is where trust happens.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The takeaway</h2>
                 <p>
-                    A release is two events, deliberately decoupled: a merge that changes the repository state, and a tag that announces it. The PR review sits on the first; the pipeline runs on the second. Version bumps deserve review not because they are complex, but because they are irreversible — and a reviewable release is a reversible mistake.
+                    A release is two events, deliberately decoupled: a merge that changes the repository state, and a tag that announces it. The PR review sits on the first; the pipeline runs on the second. Version bumps deserve review not because they are complex, but because they are irreversible, and a reviewable release is a reversible mistake.
                 </p>
             </section>
         </article>

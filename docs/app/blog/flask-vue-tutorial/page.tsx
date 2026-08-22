@@ -19,7 +19,7 @@ export default function FlaskVueTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Flask + Vue is one of the leanest stacks in the examples — a minimal Python server, a Vite-powered Vue 3 frontend, and pyRPC bridging them with full type safety. The setup is nearly identical to the FastAPI + Vue example; only the import paths and default port differ.
+                    Flask + Vue is one of the leanest stacks in the examples, a minimal Python server, a Vite-powered Vue 3 frontend, and pyRPC bridging them with full type safety. The setup is nearly identical to the FastAPI + Vue example; only the import paths and default port differ.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The server</h2>

@@ -19,7 +19,7 @@ export default function ProcedureKindsInTypesPackagePage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> package used to export one thing: a placeholder <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Types</code> interface. Codegen overwrote it. In v0.9.0, we added two more exports — and they are the glue between codegen and the adapters.
+                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> package used to export one thing: a placeholder <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Types</code> interface. Codegen overwrote it. In v0.9.0, we added two more exports, and they are the glue between codegen and the adapters.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Before v0.9.0</h2>
@@ -35,10 +35,10 @@ export type Types = Record<string, never>`}
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`export type Types = Record<string, never>
 
-/** @internal Runtime kind map — loaded automatically by framework adapters. */
+/** @internal Runtime kind map, loaded automatically by framework adapters. */
 export type ProcedureKinds = Record<string, never>
 
-/** @internal Runtime kind map — loaded automatically by framework adapters. */
+/** @internal Runtime kind map, loaded automatically by framework adapters. */
 export const procedureKinds = {} as const satisfies ProcedureKinds`}
                 </pre>
                 <p>

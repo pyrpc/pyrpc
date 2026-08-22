@@ -33,27 +33,27 @@ export default function TypesFromDevDepToRuntimeDepPage() {
   "@pyrpc/types": "*"          // ← was here (dev-only)}`}
                 </pre>
                 <p>
-                    Moving <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> from devDependencies to dependencies is a one-line diff with a heavy meaning: the package is no longer consumed only by the compiler. The adapter does <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">import &#123; procedureKinds &#125; from '@pyrpc/types'</code> — a value import. Consumers need it installed as a real, runtime-visible dependency.
+                    Moving <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> from devDependencies to dependencies is a one-line diff with a heavy meaning: the package is no longer consumed only by the compiler. The adapter does <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">import &#123; procedureKinds &#125; from '@pyrpc/types'</code>, a value import. Consumers need it installed as a real, runtime-visible dependency.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why npm cares</h2>
                 <p>
-                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">devDependencies</code> are not installed when a package is installed <em>as a dependency</em> of something else — they are for the package's own development. If <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> stayed a devDependency of the adapter, an app that installed <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/react</code> would not get <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> at all. Type-only imports could get away with that (types resolve during the app's own compile). A runtime value import cannot — the specifier must resolve in the app's bundle, so the dependency must be declared where consumers can see it.
+                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">devDependencies</code> are not installed when a package is installed <em>as a dependency</em> of something else (they are for the package's own development. If <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> stayed a devDependency of the adapter, an app that installed <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/react</code> would not get <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> at all. Type-only imports could get away with that (types resolve during the app's own compile). A runtime value import cannot) the specifier must resolve in the app's bundle, so the dependency must be declared where consumers can see it.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The version coupling</h2>
                 <p>
-                    The dependency is range-pinned: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">^0.12.0</code>. pyRPC releases all packages in lockstep, and the release script sweeps every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/*</code> dependency range on every bump. The range means the adapter's hooks and the types package can never drift to incompatible majors within a release train — a guarantee that matters more now that the relationship is a runtime contract rather than a compile-time suggestion.
+                    The dependency is range-pinned: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">^0.12.0</code>. pyRPC releases all packages in lockstep, and the release script sweeps every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/*</code> dependency range on every bump. The range means the adapter's hooks and the types package can never drift to incompatible majors within a release train, a guarantee that matters more now that the relationship is a runtime contract rather than a compile-time suggestion.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The devDependency stays</h2>
                 <p>
-                    The adapter keeps <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types: "*"</code> in devDependencies for local development and testing — the workspace-local package. Both declarations coexist deliberately: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">dependencies</code> states what consumers get; <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">devDependencies</code> states what the adapter's own build and test environment uses. The release script keeps both in sync.
+                    The adapter keeps <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types: "*"</code> in devDependencies for local development and testing, the workspace-local package. Both declarations coexist deliberately: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">dependencies</code> states what consumers get; <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">devDependencies</code> states what the adapter's own build and test environment uses. The release script keeps both in sync.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The signal</h2>
                 <p>
-                    Dependency placement is architecture documentation. When a package moves from devDependencies to dependencies, it is announcing: <em>this is no longer erased at compile time — my runtime depends on it.</em> For pyRPC, that single move captures the whole v0.12.0 thesis in the most boring file in the repo.
+                    Dependency placement is architecture documentation. When a package moves from devDependencies to dependencies, it is announcing: <em>this is no longer erased at compile time, my runtime depends on it.</em> For pyRPC, that single move captures the whole v0.12.0 thesis in the most boring file in the repo.
                 </p>
             </section>
         </article>

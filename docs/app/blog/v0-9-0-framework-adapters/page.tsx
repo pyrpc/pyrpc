@@ -8,7 +8,7 @@ export default function V090ReleasePage() {
                     &larr; Back to Blog
                 </Link>
                 <h1 className="text-2xl font-bold tracking-tight mt-6 mb-3">
-                    v0.9.0 — Framework adapters, procedure kinds, one api object
+                    v0.9.0, Framework adapters, procedure kinds, one api object
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
                     <time>July 27, 2026 at 5:30am</time>
@@ -33,8 +33,8 @@ export default function V090ReleasePage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">PyPI</h2>
                 <ul className="list-disc pl-6 space-y-1">
-                    <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc-core</code> — procedure kinds on the decorator / schema</li>
-                    <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc-codegen</code> — branded Types + procedureKinds</li>
+                    <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc-core</code>, procedure kinds on the decorator / schema</li>
+                    <li><code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc-codegen</code>, branded Types + procedureKinds</li>
                     <li>Adapters unchanged in API; republished in lockstep</li>
                 </ul>
 

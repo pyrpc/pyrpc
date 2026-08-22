@@ -19,7 +19,7 @@ export default function ReleaseNotesAndNamingPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The last job in the publish workflow creates the GitHub Release. It uses a third-party action, auto-generates the notes from the commit history, and — after a brief naming saga — titles the release with nothing but the tag name.
+                    The last job in the publish workflow creates the GitHub Release. It uses a third-party action, auto-generates the notes from the commit history, and (after a brief naming saga) titles the release with nothing but the tag name.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The action</h2>
@@ -33,7 +33,7 @@ export default function ReleaseNotesAndNamingPage() {
     name: $\{\{ github.ref_name \}\}`}
                 </pre>
                 <p>
-                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">generate_release_notes: true</code> delegates the notes to GitHub's own release-notes generator, which groups merged PRs by conventional-commit categories — Features, Bug Fixes, Documentation. That is why the repo's PR titles follow the convention: they are the release notes, written at merge time instead of release time.
+                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">generate_release_notes: true</code> delegates the notes to GitHub's own release-notes generator, which groups merged PRs by conventional-commit categories, Features, Bug Fixes, Documentation. That is why the repo's PR titles follow the convention: they are the release notes, written at merge time instead of release time.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The naming saga</h2>
@@ -43,17 +43,17 @@ export default function ReleaseNotesAndNamingPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The tiny diff with a review path</h2>
                 <p>
-                    The fix itself was a one-line workflow change. But main is protected — no direct pushes — so even this diff went through a PR, passed the test workflow, and merged like any other change. This is a small-scale example of the repo's rule: <em>everything lands through review, including CI and release machinery.</em> The release pipeline is itself released.
+                    The fix itself was a one-line workflow change. But main is protected (no direct pushes) so even this diff went through a PR, passed the test workflow, and merged like any other change. This is a small-scale example of the repo's rule: <em>everything lands through review, including CI and release machinery.</em> The release pipeline is itself released.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What make_latest means downstream</h2>
                 <p>
-                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">make_latest: true</code> on the stable tag makes the new release the highlighted "latest" on the releases page. Prereleases opt out automatically. Combined with the auto-notes, the release page becomes: title = tag, body = the PR log, latest = the newest stable — assembled with zero manual content entry.
+                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">make_latest: true</code> on the stable tag makes the new release the highlighted "latest" on the releases page. Prereleases opt out automatically. Combined with the auto-notes, the release page becomes: title = tag, body = the PR log, latest = the newest stable, assembled with zero manual content entry.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The takeaway</h2>
                 <p>
-                    Release notes are an information channel, and the cheapest reliable source of that information is the commit history you already write. Generating notes from PRs, naming releases by tag, and deriving prerelease state from the version string keeps the whole release artifact derivable from facts the repo already knows — nothing to remember, nothing to type.
+                    Release notes are an information channel, and the cheapest reliable source of that information is the commit history you already write. Generating notes from PRs, naming releases by tag, and deriving prerelease state from the version string keeps the whole release artifact derivable from facts the repo already knows, nothing to remember, nothing to type.
                 </p>
             </section>
         </article>

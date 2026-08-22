@@ -34,22 +34,22 @@ export default function Page() {
         This controlled whether types were written to <code>node_modules</code> ("workspace") or fetched
         over HTTP by the client ("server"). Both modes are gone. pyRPC is now monorepo-first: types are
         always generated to your source tree. If you need a remote type fetch, run{' '}
-        <code>pyrpc codegen http://your-server</code> — no config needed.
+        <code>pyrpc codegen http://your-server</code>, no config needed.
       </p>
 
       <h3>client_root</h3>
       <p>
         This was a directory path that pyrpc used to compute where to write{' '}
         <code>node_modules/@pyrpc/types/src/index.ts</code>. With types now going to a user-owned file,
-        the relevant concept is <code>output</code> — the full path to the <code>.d.ts</code> file. More
+        the relevant concept is <code>output</code>, the full path to the <code>.d.ts</code> file. More
         explicit, more honest.
       </p>
 
       <h3>entrypoint vs module</h3>
       <p>
-        <code>entrypoint</code> was renamed to <code>module</code> because that's the Python term —
+        <code>entrypoint</code> was renamed to <code>module</code> because that's the Python term:
         it's a module you import, not an entry point in the build-tool sense. <code>main</code>,
-        <code>app.server</code>, <code>backend.main</code> — these are all Python modules.
+        <code>app.server</code>, <code>backend.main</code>, these are all Python modules.
       </p>
 
       <h3>version</h3>
@@ -63,7 +63,7 @@ export default function Page() {
         <code>pyrpc dev</code> watches <code>pyrpc.json</code> in real time. If you change{' '}
         <code>module</code>, it re-imports the new module and restarts uvicorn. If you change{' '}
         <code>output</code>, it re-wires the type watcher to the new path. The <code>framework</code>{' '}
-        field is informational — used by the wizard to set defaults, not acted on at runtime.
+        field is informational, used by the wizard to set defaults, not acted on at runtime.
       </p>
     </article>
   );

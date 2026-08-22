@@ -22,7 +22,7 @@ export default function BuildingNextjsExamplePage() {
                     The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">examples/fastapi-nextjs</code> directory is a complete working app: FastAPI backend, Next.js App Router frontend, end-to-end type safety. This post walks through every file and what it does.
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">server.py — the Python backend</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">server.py, the Python backend</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`from fastapi import FastAPI
 from pyrpc_fastapi import mount_fastapi
@@ -44,7 +44,7 @@ mount_fastapi(app)`}
                     Two procedures. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">mount_fastapi(app)</code> registers the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">POST /rpc</code> endpoint. That is the entire backend.
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">lib/pyrpc.ts — the client setup</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">lib/pyrpc.ts, the client setup</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`import { createNextClient } from "@pyrpc/next"
 import type { Types } from "@pyrpc/types"
@@ -60,7 +60,7 @@ export const { api, prefetch, dehydrate, HydrateBoundary } =
                     One line creates the full client: hooks, prefetch, dehydration, and the hydration boundary. The variable names are yours to choose.
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">app/layout.tsx — providers</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">app/layout.tsx, providers</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`import { api } from "@/lib/pyrpc"
 
@@ -78,7 +78,7 @@ export default function RootLayout({ children }) {
                     Wrap once with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.Provider</code>. All child components get access to the hooks.
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">app/page.tsx — RSC with prefetch</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">app/page.tsx, RSC with prefetch</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`import { prefetch, dehydrate, HydrateBoundary } from "@/lib/pyrpc"
 import Greeting from "./greeting"
@@ -98,7 +98,7 @@ export default async function Home() {
                     Server Component prefetches data, dehydrates the cache, passes it to the client via <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">HydrateBoundary</code>. No loading spinners for initial data.
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">app/greeting.tsx — client hook</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">app/greeting.tsx, client hook</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`"use client"
 import { api } from "@/lib/pyrpc"
@@ -112,7 +112,7 @@ export default function Greeting() {
                     The client component uses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> because <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">greet</code> is a query. If it were a mutation, it would show <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code> automatically.
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">app/providers.tsx — client provider</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">app/providers.tsx, client provider</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`"use client"
 import { api } from "@/lib/pyrpc"

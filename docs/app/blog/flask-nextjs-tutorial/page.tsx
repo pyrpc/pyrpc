@@ -19,7 +19,7 @@ export default function FlaskNextJsTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Flask + Next.js is an interesting combination: a lightweight Python server paired with a full-featured SSR frontend. Because pyRPC's transport is just <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">POST /rpc</code>, the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/next</code> adapter doesn't care whether the server is FastAPI or Flask — the setup is identical.
+                    Flask + Next.js is an interesting combination: a lightweight Python server paired with a full-featured SSR frontend. Because pyRPC's transport is just <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">POST /rpc</code>, the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/next</code> adapter doesn't care whether the server is FastAPI or Flask, the setup is identical.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Server</h2>

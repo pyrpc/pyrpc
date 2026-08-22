@@ -19,7 +19,7 @@ npm install @pyrpc/svelte @tanstack/svelte-query
 my-app/
   src/
     lib/
-      pyrpc.ts              ← createSvelteClient — import everywhere
+      pyrpc.ts              ← createSvelteClient, import everywhere
     routes/
       +layout.svelte        ← QueryClientProvider wrapper
       +page.svelte          ← api.greet.createQuery() etc.
@@ -29,17 +29,21 @@ my-app/
 
 ```ts
 // src/lib/pyrpc.ts
-import { createSvelteClient, httpLink } from "@pyrpc/svelte"
+import { createSvelteClient, httpBatchLink } from "@pyrpc/svelte"
 import type { Types } from "@pyrpc/types"
 
 export const api = createSvelteClient<Types>({
-  links: [httpLink({ url: import.meta.env.VITE_API_URL ?? "http://localhost:8000" })],
+  links: [
+    httpBatchLink({
+      url: import.meta.env.VITE_API_URL ?? "http://localhost:8000",
+    }),
+  ],
 })
 ```
 
 ## 2. Wrap the layout
 
-Svelte uses TanStack Svelte Query's `QueryClientProvider` directly in the layout — the standard approach:
+Svelte uses TanStack Svelte Query's `QueryClientProvider` directly in the layout, the standard approach:
 
 ```svelte
 <!-- src/routes/+layout.svelte -->
@@ -99,7 +103,7 @@ Svelte uses TanStack Svelte Query's `QueryClientProvider` directly in the layout
 {/if}
 ```
 
-Prefix the store with `$` to subscribe to its value — this is standard Svelte store syntax.
+Prefix the store with `$` to subscribe to its value, this is standard Svelte store syntax.
 
 ### Reactive args
 
@@ -121,7 +125,7 @@ api.read_item.createQuery(() => ({
   item_id: 42, q: "test"
 }))                                           // ✓
 api.read_item.createQuery(() => ({
-  item_id: "oops"                             // ✗ — type error
+  item_id: "oops"                             // ✗, type error
 }))
 ```
 
@@ -129,7 +133,7 @@ api.read_item.createQuery(() => ({
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `links` | `Link[]` | — | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
+| `links` | `Link[]` |, | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
 
 ## Full working examples
 

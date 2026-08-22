@@ -24,10 +24,10 @@ export default function NextRscPrefetchPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The pipeline</h2>
                 <ol className="list-decimal pl-6 space-y-2">
-                    <li><strong>prefetch</strong> — run a query on the server into a request-scoped <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">QueryClient</code>.</li>
-                    <li><strong>dehydrate</strong> — serialize that cache (TanStack API).</li>
-                    <li><strong>HydrationBoundary</strong> — client boundary that rehydrates the cache.</li>
-                    <li><strong>api.*.useQuery</strong> — reads warm data in a Client Component.</li>
+                    <li><strong>prefetch</strong>, run a query on the server into a request-scoped <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">QueryClient</code>.</li>
+                    <li><strong>dehydrate</strong>, serialize that cache (TanStack API).</li>
+                    <li><strong>HydrationBoundary</strong>, client boundary that rehydrates the cache.</li>
+                    <li><strong>api.*.useQuery</strong>, reads warm data in a Client Component.</li>
                 </ol>
 
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
@@ -48,7 +48,7 @@ export default function NextRscPrefetchPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">When you can skip hydration</h2>
                 <p>
-                    If you never prefetch on the server, you only need <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.Provider</code> + client hooks. Prefetch/dehydrate/HydrationBoundary are the fast path for SEO and first paint — not required for every page.
+                    If you never prefetch on the server, you only need <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.Provider</code> + client hooks. Prefetch/dehydrate/HydrationBoundary are the fast path for SEO and first paint, not required for every page.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">baseUrl on the server</h2>

@@ -27,7 +27,7 @@ export default function RuntimeKindConsumptionPage() {
 {`import { procedureKinds as generatedKinds } from '@pyrpc/types';`}
                 </pre>
                 <p>
-                    This is the value import that made v0.12.0 a runtime-module release. It is not <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">import type</code> — the adapter needs the actual object, so the bundler must resolve <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> to the generated file. The alias, the node_modules gap, the throwing placeholder: all of it exists to make this one line resolve correctly.
+                    This is the value import that made v0.12.0 a runtime-module release. It is not <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">import type</code>, the adapter needs the actual object, so the bundler must resolve <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code> to the generated file. The alias, the node_modules gap, the throwing placeholder: all of it exists to make this one line resolve correctly.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The override seam</h2>
@@ -75,12 +75,12 @@ const kinds = (kindsOverride ?? generatedKinds) as ProcedureKindMap<TProcedures>
 }`}
                 </pre>
                 <p>
-                    The comparisons are deliberately inverted. A mutation kind suppresses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kind !== 'mutation'</code> is false); a query kind suppresses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code>. And <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> — the unknown or unkinded case — passes both guards, yielding both hooks. The runtime default is permissive, matching the type-level <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> fallback.
+                    The comparisons are deliberately inverted. A mutation kind suppresses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kind !== 'mutation'</code> is false); a query kind suppresses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code>. And <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> (the unknown or unkinded case) passes both guards, yielding both hooks. The runtime default is permissive, matching the type-level <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> fallback.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The single point of truth</h2>
                 <p>
-                    Notice the call flow: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">queryKey</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">callProcedure</code> are shared between both hook kinds. The only difference between query and mutation hooks is <em>which TanStack Query hook wraps the same underlying call</em> — which is exactly the kind knowledge the generated module supplies. The runtime channel's whole job is one lookup per procedure access: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds?.[prop]</code>.
+                    Notice the call flow: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">queryKey</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">callProcedure</code> are shared between both hook kinds. The only difference between query and mutation hooks is <em>which TanStack Query hook wraps the same underlying call</em>, which is exactly the kind knowledge the generated module supplies. The runtime channel's whole job is one lookup per procedure access: <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds?.[prop]</code>.
                 </p>
             </section>
         </article>

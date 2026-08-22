@@ -19,7 +19,7 @@ export default function JinjaTemplateMechanicsPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Codegen is a small engine with three moving parts: a JSON-Schema collector, a type-converter, and a Jinja2 template. The template — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.ts.j2</code> — is where the Python schema dict becomes the TypeScript module. This post walks it top to bottom.
+                    Codegen is a small engine with three moving parts: a JSON-Schema collector, a type-converter, and a Jinja2 template. The template (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client.ts.j2</code>) is where the Python schema dict becomes the TypeScript module. This post walks it top to bottom.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The data: a schema dict</h2>
@@ -42,7 +42,7 @@ export default function JinjaTemplateMechanicsPage() {
 }`}
                 </pre>
                 <p>
-                    Three details hide in that block. First, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">schema.doc or "No documentation available."</code> — the Python docstring is lifted into a JSDoc comment, so hover text in your editor mirrors the server-side documentation. Second, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@kind</code> records the procedure kind in the comment as a human-readable copy. Third, the intersection with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">readonly _pyrpcKind</code> brands the type so it can be recovered at the type level later.
+                    Three details hide in that block. First, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">schema.doc or "No documentation available."</code>, the Python docstring is lifted into a JSDoc comment, so hover text in your editor mirrors the server-side documentation. Second, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@kind</code> records the procedure kind in the comment as a human-readable copy. Third, the intersection with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">readonly _pyrpcKind</code> brands the type so it can be recovered at the type level later.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Type conversion happens in filters</h2>
@@ -77,12 +77,12 @@ export const procedureKinds = {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Assembly</h2>
                 <p>
-                    The template output is one half of the file. The other half — the model interfaces for complex schemas — comes from <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">jsonschema_ts</code>. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">assemble(models=..., procedures=..., banner="")</code> concatenates them. The template is deliberately procedural-only: model extraction is delegated to the library, procedure wiring stays hand-rolled, and the two meet in one artifact.
+                    The template output is one half of the file. The other half (the model interfaces for complex schemas) comes from <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">jsonschema_ts</code>. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">assemble(models=..., procedures=..., banner="")</code> concatenates them. The template is deliberately procedural-only: model extraction is delegated to the library, procedure wiring stays hand-rolled, and the two meet in one artifact.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why a template at all</h2>
                 <p>
-                    String concatenation in Python would produce the same bytes but none of the readability. A template keeps the output's shape visible — you can read the TypeScript structure without mentally executing Python. That matters because the output is the API surface developers stare at most. The template is the spec, and the spec is meant to be read.
+                    String concatenation in Python would produce the same bytes but none of the readability. A template keeps the output's shape visible, you can read the TypeScript structure without mentally executing Python. That matters because the output is the API surface developers stare at most. The template is the spec, and the spec is meant to be read.
                 </p>
             </section>
         </article>

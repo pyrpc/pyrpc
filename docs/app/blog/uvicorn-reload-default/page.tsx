@@ -103,7 +103,7 @@ export default function UvicornReloadDefaultPost() {
                 </p>
                 <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`$ pyrpc dev
   ✓  types generated (3 procs) → ../frontend
-  ○  server already running at http://127.0.0.1:8000/rpc — skipping uvicorn
+  ○  server already running at http://127.0.0.1:8000/rpc, skipping uvicorn
   pyrpc> restart
   ○  server not managed by pyrpc`}</pre>
                 <p>

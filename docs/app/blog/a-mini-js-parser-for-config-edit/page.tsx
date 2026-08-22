@@ -32,7 +32,7 @@ export default function AMiniJsParserForConfigEditPage() {
     if c in ('"', "'"):
         # walk to the matching close quote, honoring backslash escapes
     if c == "\`":
-        # template literal — must also handle nested \${...}
+        # template literal: must also handle nested \${...}
     if c == "/" and next is "/":  # line comment → skip to newline
     if c == "/" and next is "*":  # block comment → skip to */`}
                 </pre>
@@ -56,14 +56,14 @@ export default function AMiniJsParserForConfigEditPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why not a real parser</h2>
                 <ul className="list-disc pl-6 space-y-1">
-                    <li><strong>Output preservation.</strong> Parsing and re-printing reformats. A splice preserves every byte you did not touch — your formatting, comments, and weird spacing survive.</li>
+                    <li><strong>Output preservation.</strong> Parsing and re-printing reformats. A splice preserves every byte you did not touch, your formatting, comments, and weird spacing survive.</li>
                     <li><strong>Dependency surface.</strong> A full JS parser in Python (or a Node subprocess) is heavy for a tool whose core job is RPC type generation.</li>
                     <li><strong>Failure is checkable.</strong> If the mini-parser cannot find a matching structure, it returns <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">None</code>, and the caller surfaces a warning instead of corrupting the file.</li>
                 </ul>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The boundary of the approach</h2>
                 <p>
-                    The tokenizer understands strings, comments, and balanced braces. It does not understand arrow functions, TypeScript generics, or object spread — it does not need to. Its contract is narrower: <em>find the outermost object literal belonging to the config export and report where its braces sit.</em> Staying inside that contract is what keeps the edit safe, and refusing outside it is what keeps it honest.
+                    The tokenizer understands strings, comments, and balanced braces. It does not understand arrow functions, TypeScript generics, or object spread, it does not need to. Its contract is narrower: <em>find the outermost object literal belonging to the config export and report where its braces sit.</em> Staying inside that contract is what keeps the edit safe, and refusing outside it is what keeps it honest.
                 </p>
             </section>
         </article>

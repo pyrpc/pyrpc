@@ -19,7 +19,7 @@ export default function OneApiObjectPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The easiest RPC clients are the ones you barely configure. For pyRPC’s TanStack adapters, that means a single exported value — call it <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client</code>, or <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc</code> — that carries procedures, the provider, and (on Next) prefetch/hydration.
+                    The easiest RPC clients are the ones you barely configure. For pyRPC’s TanStack adapters, that means a single exported value (call it <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api</code>, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client</code>, or <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pyrpc</code>) that carries procedures, the provider, and (on Next) prefetch/hydration.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The shape</h2>
@@ -44,7 +44,7 @@ api.greet.useQuery("Ada")`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why this beats returning four exports</h2>
                 <p>
-                    Early drafts returned <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{`{ api, prefetch, dehydrate, HydrationBoundary }`}</code>. Correct, but noisy — every file re-imported a different subset. Collapsing onto one object matches how people already think about “the client,” and keeps App Router helpers discoverable via autocomplete on the same value.
+                    Early drafts returned <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{`{ api, prefetch, dehydrate, HydrationBoundary }`}</code>. Correct, but noisy, every file re-imported a different subset. Collapsing onto one object matches how people already think about “the client,” and keeps App Router helpers discoverable via autocomplete on the same value.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Reserved helper names</h2>

@@ -33,19 +33,19 @@ export default function SurgicalSpliceWithoutAParserPage() {
                     Read carefully: the insertion happens <em>at the close brace</em>. The alias line is inserted just before <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&#125;</code>, after whatever is already inside. If the object is empty, no separator is needed; otherwise a comma-space is added first. Every byte before the close brace is untouched.
                 </p>
                 <p>
-                    Inserting as the last property (rather than the first) is a deliberate choice: it avoids inventing a comma that the first property would need, and it is the least likely position to collide with a trailing comma style. The object may already end with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">plugin: [foo()],</code> and the splice produces <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">plugin: [foo()], resolve: &#123; alias: &#123; ... &#125; &#125;</code> — valid, minimal, and formatting-neutral.
+                    Inserting as the last property (rather than the first) is a deliberate choice: it avoids inventing a comma that the first property would need, and it is the least likely position to collide with a trailing comma style. The object may already end with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">plugin: [foo()],</code> and the splice produces <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">plugin: [foo()], resolve: &#123; alias: &#123; ... &#125; &#125;</code>, valid, minimal, and formatting-neutral.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The idempotency guard</h2>
                 <p>
-                    Regeneration happens constantly — every watched procedure edit re-runs codegen. Running the injection again must not produce a duplicate alias:
+                    Regeneration happens constantly, every watched procedure edit re-runs codegen. Running the injection again must not produce a duplicate alias:
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`def _already_aliased(content):
     return '"@pyrpc/types"' in content and "__pyrpc.ts" in content`}
                 </pre>
                 <p>
-                    Before touching anything, the whole file is scanned for both the package name and the target filename. If either marker is missing, it is safe to assume no alias exists yet. The guard is deliberately loose — a project that already wired the alias manually in some other shape is left alone rather than double-patched.
+                    Before touching anything, the whole file is scanned for both the package name and the target filename. If either marker is missing, it is safe to assume no alias exists yet. The guard is deliberately loose, a project that already wired the alias manually in some other shape is left alone rather than double-patched.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Write only when changed</h2>
@@ -70,12 +70,12 @@ export default function SurgicalSpliceWithoutAParserPage() {
 _NEXT_ALIAS = 'turbopack: { resolveAlias: { "@pyrpc/types": "./__pyrpc.ts" } }'`}
                 </pre>
                 <p>
-                    Vite nests under <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">resolve.alias</code>; Turbopack under <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">turbopack.resolveAlias</code>. The object is still closed by the same brace logic, so a nested object literal inside the snippet is not a problem — it is opaque text as far as the tokenizer is concerned.
+                    Vite nests under <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">resolve.alias</code>; Turbopack under <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">turbopack.resolveAlias</code>. The object is still closed by the same brace logic, so a nested object literal inside the snippet is not a problem, it is opaque text as far as the tokenizer is concerned.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The takeaway</h2>
                 <p>
-                    Editing config files is a precision task. The winning approach here is minimalism: locate one object boundary with a tokenizer, splice one line at the close brace, guard for idempotency, and write only on change. Every decision — from inserting last to skipping unchanged writes — is in service of one goal: a config edit that is correct the hundredth time it runs, not just the first.
+                    Editing config files is a precision task. The winning approach here is minimalism: locate one object boundary with a tokenizer, splice one line at the close brace, guard for idempotency, and write only on change. Every decision (from inserting last to skipping unchanged writes) is in service of one goal: a config edit that is correct the hundredth time it runs, not just the first.
                 </p>
             </section>
         </article>

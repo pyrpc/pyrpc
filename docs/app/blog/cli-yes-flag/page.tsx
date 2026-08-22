@@ -83,7 +83,7 @@ else:
     console.print(f"  [dim]module={cfg['module']}  (no client configured)[/dim]")`}</pre>
                 <p>
                     With no client configured, type generation is skipped at startup and the dev console shows
-                    <code>○ no clients configured — skipping type generation</code>. This is a legitimate state:
+                    <code>○ no clients configured, skipping type generation</code>. This is a legitimate state:
                     a pure-API server, or a frontend that will be configured later.
                 </p>
 

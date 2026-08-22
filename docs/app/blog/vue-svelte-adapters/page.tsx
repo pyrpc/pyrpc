@@ -19,7 +19,7 @@ export default function VueSvelteAdaptersPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/vue</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/svelte</code> wrap the same <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client</code> + procedure kinds. Setup follows each ecosystem’s TanStack Query conventions — we don’t invent a second provider model.
+                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/vue</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/svelte</code> wrap the same <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/client</code> + procedure kinds. Setup follows each ecosystem’s TanStack Query conventions, we don’t invent a second provider model.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Vue</h2>
@@ -49,7 +49,7 @@ export const api = createSvelteClient<Types>({ baseUrl: "http://localhost:8000" 
 const query = api.greet.createQuery({ name: "Ada" })`}
                 </pre>
                 <p>
-                    Svelte Query uses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createQuery</code> / <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createMutation</code> instead of <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">use*</code> — we follow that naming on purpose.
+                    Svelte Query uses <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createQuery</code> / <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createMutation</code> instead of <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">use*</code>, we follow that naming on purpose.
                 </p>
 
                 <p>

@@ -44,7 +44,7 @@ for candidate in ["main.py", "server.py", "app.py", "app/main.py"]:
 module = questionary.text(
     "Entry module",
     default=default_module,
-    instruction="(e.g. main, app.server — the file that calls mount_fastapi/mount_flask)",
+    instruction="(e.g. main, app.server, the file that calls mount_fastapi/mount_flask)",
 ).ask()`}</pre>
                 <p>
                     Accepting the default is one keystroke. The candidate list encodes the platform&rsquo;s

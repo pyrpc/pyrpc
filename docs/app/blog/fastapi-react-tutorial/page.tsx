@@ -19,7 +19,7 @@ export default function FastApiReactTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">fastapi-react</code> example is the most direct way to understand what pyRPC does. You write Python functions, decorate them with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc.query</code> or <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc.mutation</code>, and the React side gets fully typed <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> / <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code> hooks — no schema file, no codegen step you have to run manually.
+                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">fastapi-react</code> example is the most direct way to understand what pyRPC does. You write Python functions, decorate them with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc.query</code> or <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@rpc.mutation</code>, and the React side gets fully typed <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> / <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code> hooks, no schema file, no codegen step you have to run manually.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Prerequisites</h2>
@@ -38,9 +38,9 @@ export default function FastApiReactTutorialPage() {
       App.tsx         ← useQuery / useMutation calls`}
                 </pre>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 1 — the server</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 1, the server</h2>
                 <p>
-                    Three procedures: <strong>two queries</strong> (read operations) and <strong>one mutation</strong> (write operation). The decorator kind is the only thing that differs — pyRPC uses it to generate the right hook type on the frontend.
+                    Three procedures: <strong>two queries</strong> (read operations) and <strong>one mutation</strong> (write operation). The decorator kind is the only thing that differs, pyRPC uses it to generate the right hook type on the frontend.
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`# server/main.py
@@ -74,7 +74,7 @@ def create_item(name: str, description: str = None):
 mount_fastapi(app)`}
                 </pre>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 2 — start pyrpc dev</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 2, start pyrpc dev</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`cd server
 uv add pyrpc-core[fastapi]
@@ -87,14 +87,14 @@ pyrpc dev`}
 {`# auto-detect module and output
 pyrpc dev --yes
 
-# fully explicit — CI-safe
+# fully explicit: CI-safe
 pyrpc dev --yes --module main --client ../client`}
                 </pre>
                 <p>
                     pyRPC starts uvicorn on <strong>:8000</strong>, writes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__pyrpc.ts</code> in the client, and re-generates it on every <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">.py</code> save.
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 3 — client setup</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 3, client setup</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`# src/pyrpc.ts
 import { createReactClient } from "@pyrpc/react"
@@ -105,7 +105,7 @@ export const api = createReactClient<Types>({
 })`}
                 </pre>
                 <p>
-                    Wrap the root component with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.Provider</code> — this is the TanStack Query cache boundary:
+                    Wrap the root component with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.Provider</code>, this is the TanStack Query cache boundary:
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`// src/index.tsx
@@ -118,7 +118,7 @@ root.render(
 )`}
                 </pre>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 4 — call the procedures</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Step 4, call the procedures</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`// src/App.tsx
 import { useState } from "react"
@@ -158,12 +158,12 @@ cd server && pyrpc dev
 cd client && npm install && npm start`}
                 </pre>
                 <p>
-                    Open <strong>http://localhost:3000</strong>. The app queries all three procedures and renders the results. Rename a procedure in Python — TypeScript flags the broken call immediately.
+                    Open <strong>http://localhost:3000</strong>. The app queries all three procedures and renders the results. Rename a procedure in Python, TypeScript flags the broken call immediately.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Next steps</h2>
                 <p>
-                    The same FastAPI server works with Next.js, Vue, and Svelte — only the frontend adapter changes. See the <a href="https://github.com/pyrpc/pyrpc/tree/main/examples" className="text-fd-foreground underline underline-offset-2">examples directory</a> for all 12 combinations.
+                    The same FastAPI server works with Next.js, Vue, and Svelte, only the frontend adapter changes. See the <a href="https://github.com/pyrpc/pyrpc/tree/main/examples" className="text-fd-foreground underline underline-offset-2">examples directory</a> for all 12 combinations.
                 </p>
             </section>
         </article>

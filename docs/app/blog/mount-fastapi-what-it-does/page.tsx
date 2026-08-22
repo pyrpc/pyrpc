@@ -4,7 +4,7 @@ export default function Page() {
       <p style={{ color: '#666', fontSize: 14 }}>Deep Dive · v0.10.0</p>
       <h1>What mount_fastapi() actually does</h1>
       <p style={{ color: '#666' }}>
-        One line that connects your Python server to your TypeScript client — here's exactly what happens under the hood.
+        One line that connects your Python server to your TypeScript client, here's exactly what happens under the hood.
       </p>
       <hr />
 
@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 
-# Your app — you created it, you own it, you run it
+# Your app: you created it, you own it, you run it
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
@@ -35,7 +35,7 @@ mount_fastapi(app)
 # uvicorn main:app --reload`}</code></pre>
 
       <h2>The two routes it registers</h2>
-      <p><strong>POST /rpc</strong> — the dispatch endpoint. Receives a JSON-RPC 2.0 request body:</p>
+      <p><strong>POST /rpc</strong>, the dispatch endpoint. Receives a JSON-RPC 2.0 request body:</p>
       <pre style={{ background: '#f4f4f4', padding: 16, borderRadius: 6, overflow: 'auto' }}><code>{`{
   "id": "abc123",
   "method": "greet",
@@ -47,7 +47,7 @@ mount_fastapi(app)
       </p>
       <pre style={{ background: '#f4f4f4', padding: 16, borderRadius: 6, overflow: 'auto' }}><code>{`{ "id": "abc123", "result": "Hello, Ada!" }`}</code></pre>
 
-      <p><strong>GET /rpc</strong> — the introspection endpoint. Returns a schema of all registered procedures:</p>
+      <p><strong>GET /rpc</strong>, the introspection endpoint. Returns a schema of all registered procedures:</p>
       <pre style={{ background: '#f4f4f4', padding: 16, borderRadius: 6, overflow: 'auto' }}><code>{`{
   "greet": {
     "parameters": [{ "name": "name", "type": "str", "required": false }],
@@ -63,7 +63,7 @@ mount_fastapi(app)
       <h2>Why "mount" and not "create"</h2>
       <p>
         The naming is intentional. You mount pyRPC onto your server the way you mount a sub-application or
-        router. You keep full control of your FastAPI app — you can add other routes, middleware, dependencies,
+        router. You keep full control of your FastAPI app, you can add other routes, middleware, dependencies,
         and lifespan hooks exactly as you normally would. pyRPC is a tenant on your server, not a replacement.
       </p>
       <p>

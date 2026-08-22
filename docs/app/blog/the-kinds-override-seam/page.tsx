@@ -19,14 +19,14 @@ export default function TheKindsOverrideSeamPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createReactClient</code> accepts a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds</code> option — documented as internal, marked with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@internal</code>, and effectively invisible to real apps. Its purpose is not for you. It exists so the adapters can be tested without a generated module.
+                    <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createReactClient</code> accepts a <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds</code> option, documented as internal, marked with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@internal</code>, and effectively invisible to real apps. Its purpose is not for you. It exists so the adapters can be tested without a generated module.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The seam</h2>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`export type ReactClientOptions = ClientOptions & {
   /**
-   * @internal Override generated kinds. Prefer relying on codegen — adapters
+   * @internal Override generated kinds. Prefer relying on codegen, adapters
    * load \`procedureKinds\` from \`@pyrpc/types\` automatically.
    */
   kinds?: ProcedureKindMap<ProceduresRecord>;
@@ -38,7 +38,7 @@ export default function TheKindsOverrideSeamPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why tests need it</h2>
                 <p>
-                    The adapter imports <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">procedureKinds</code> from <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code>. In the published package, that module is the generated <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__pyrpc.ts</code> — a file that does not exist in the adapter's own test environment, because codegen has not run there. Without the override, every test would have to either generate a module or hit the throwing placeholder.
+                    The adapter imports <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">procedureKinds</code> from <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/types</code>. In the published package, that module is the generated <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">__pyrpc.ts</code>, a file that does not exist in the adapter's own test environment, because codegen has not run there. Without the override, every test would have to either generate a module or hit the throwing placeholder.
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
 {`createReactClient<{ greet: (...args: any[]) => Promise<string> }>({
@@ -47,7 +47,7 @@ export default function TheKindsOverrideSeamPage() {
 })`}
                 </pre>
                 <p>
-                    The test supplies its own kinds, mirroring what codegen would have emitted, and asserts the hook selection behavior — <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> present, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code> absent — independent of any codegen step. The override converts an integration dependency into a pure unit-test input.
+                    The test supplies its own kinds, mirroring what codegen would have emitted, and asserts the hook selection behavior (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> present, <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code> absent) independent of any codegen step. The override converts an integration dependency into a pure unit-test input.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What the tests actually assert</h2>
@@ -57,7 +57,7 @@ export default function TheKindsOverrideSeamPage() {
                 <ul className="list-disc pl-6 space-y-1">
                     <li>a query kind yields only <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code></li>
                     <li>a mutation kind yields only <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code></li>
-                    <li>a missing kind yields both — the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> fallback</li>
+                    <li>a missing kind yields both, the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">undefined</code> fallback</li>
                 </ul>
                 <p>
                     Each case is a table row, not a bespoke test. The override makes the runtime behavior a pure function of <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">(kind)</code> and therefore exhaustively testable.

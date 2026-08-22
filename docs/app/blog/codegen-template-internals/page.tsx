@@ -35,14 +35,14 @@ export default function CodegenTemplateInternalsPage() {
 {`// 1. Imports
 import { Types as BaseTypes } from "@pyrpc/types"
 
-// 2. Types interface — one method per procedure
+// 2. Types interface, one method per procedure
 export interface Types extends BaseTypes {
   greet: (name: string) => Promise<string>
   get_user: (userId: number) => Promise<User>
   update_user: (userId: number, name: string) => Promise<User>
 }
 
-// 3. ProcedureKinds — runtime kind map
+// 3. ProcedureKinds, runtime kind map
 export type ProcedureKinds = {
   greet: "query"
   get_user: "query"
@@ -84,7 +84,7 @@ get_user: (userId: number, includePosts?: boolean) => Promise<User>`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The npx daemon</h2>
                 <p>
-                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">jsonschema-ts</code> integration runs a persistent Node.js process. First call: ~3.3s (cold start). Subsequent calls: ~4.6ms. That is a 715× speedup for the type conversion step. The template itself is instant — the bottleneck was always <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">npx</code> subprocess overhead.
+                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">jsonschema-ts</code> integration runs a persistent Node.js process. First call: ~3.3s (cold start). Subsequent calls: ~4.6ms. That is a 715× speedup for the type conversion step. The template itself is instant, the bottleneck was always <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">npx</code> subprocess overhead.
                 </p>
 
                 <p>

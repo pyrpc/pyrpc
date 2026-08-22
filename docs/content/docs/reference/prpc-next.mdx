@@ -9,11 +9,15 @@ description: API reference for the TypeScript client.
 ## createClient
 
 ```typescript
-import { createClient, httpLink } from "@pyrpc/client"
+import { createClient, httpBatchLink } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
 const client = createClient<Types>({
-  links: [httpLink({ url: "https://api.example.com" })],
+  links: [
+    httpBatchLink({
+      url: "https://api.example.com",
+    }),
+  ],
 })
 ```
 
@@ -62,8 +66,12 @@ Batched operations execute sequentially on the server and each keeps its own res
 
 ```typescript
 const client = createClient<Types>({
-  links: [httpLink({ url: "https://api.example.com" })],
+  links: [
+    httpBatchLink({
+      url: "https://api.example.com",
+    }),
+  ],
 })
 
-// Fully typed — parameters and return type inferred from the server
+// Fully typed, parameters and return type inferred from the server
 const result = await client.add(10, 5)

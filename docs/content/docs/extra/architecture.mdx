@@ -36,17 +36,17 @@ All 7 packages (pyrpc-core, pyrpc-fastapi, pyrpc-flask, pyrpc-django-adapter,
 pyrpc-codegen, @pyrpc/client, @pyrpc/types) with their relationships.
 
 ### Component Diagrams
-- **pyrpc-core** — Router, Procedure, Interpreter, CLI, ASGI transport (10 components)
-- **pyrpc-codegen** — TypeScript code generation pipeline (5 components)
-- **@pyrpc/client** — Proxy dispatch, error handling, CLI sync, postinstall
+- **pyrpc-core**: Router, Procedure, Interpreter, CLI, ASGI transport (10 components)
+- **pyrpc-codegen**: TypeScript code generation pipeline (5 components)
+- **@pyrpc/client**: Proxy dispatch, error handling, CLI sync, postinstall
 
 ### Adapter Pattern Comparison
 All four adapters (FastAPI, Flask, Django, ASGI) side by side, showing the "thin shell" pattern.
 
 ### Dynamic Views
-- **RPC Call Flow** — From TypeScript Proxy through HTTP to Procedure execution and back
-- **Codegen Flow** — From @rpc decorator to TypeScript file output
-- **Dev Loop** — File watching, hot reload, and auto-regeneration in `pyrpc dev`
+- **RPC Call Flow**: From TypeScript Proxy through HTTP to Procedure execution and back
+- **Codegen Flow**: From @rpc decorator to TypeScript file output
+- **Dev Loop**: File watching, hot reload, and auto-regeneration in `pyrpc dev`
 
 ## Related Blog Posts
 

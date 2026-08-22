@@ -37,10 +37,10 @@ def greet(name: str) -> str:
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Without kinds, both hooks appear</h2>
                 <p>
-                    If you do not pass <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds: procedureKinds</code> to the adapter, every procedure gets both <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code>. That is the backward-compatible path — you can adopt kinds gradually.
+                    If you do not pass <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">kinds: procedureKinds</code> to the adapter, every procedure gets both <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> and <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code>. That is the backward-compatible path, you can adopt kinds gradually.
                 </p>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
-{`// No kinds — both hooks exist on every procedure
+{`// No kinds, both hooks exist on every procedure
 const api = createReactClient<Types>({ baseUrl: "..." })
 api.greet.useQuery("Ada")   // works
 api.greet.useMutation()     // also works (but wasteful)`}

@@ -4,7 +4,7 @@ export default function Page() {
       <p style={{ color: '#666', fontSize: 14 }}>Engineering · v0.10.0</p>
       <h1>How pyrpc dev detects your frontend framework</h1>
       <p style={{ color: '#666' }}>
-        The first-run wizard is smarter than it looks — here's the detection logic and what it does when it can't find anything.
+        The first-run wizard is smarter than it looks, here's the detection logic and what it does when it can't find anything.
       </p>
       <hr />
 
@@ -16,9 +16,9 @@ export default function Page() {
       </p>
       <p>The scan happens in three passes, from most to least specific:</p>
       <ol>
-        <li><strong>Project root</strong> — scans the directory where you ran <code>pyrpc dev</code></li>
-        <li><strong>Known frontend subdirectories</strong> — checks <code>frontend/</code>, <code>client/</code>, <code>web/</code>, <code>ui/</code></li>
-        <li><strong>Fallback</strong> — if nothing is found, asks you directly</li>
+        <li><strong>Project root</strong>, scans the directory where you ran <code>pyrpc dev</code></li>
+        <li><strong>Known frontend subdirectories</strong>, checks <code>frontend/</code>, <code>client/</code>, <code>web/</code>, <code>ui/</code></li>
+        <li><strong>Fallback</strong>, if nothing is found, asks you directly</li>
       </ol>
 
       <h2>What it looks for</h2>
@@ -34,12 +34,12 @@ astro.config.mjs             → Astro`}</code></pre>
         <code>pyrpc dev</code> before the frontend exists, no config file is found. The wizard falls back
         to asking you directly:
       </p>
-      <pre style={{ background: '#f4f4f4', padding: 16, borderRadius: 6, overflow: 'auto' }}><code>{`pyRPC setup (runs once — saved to pyrpc.json)
+      <pre style={{ background: '#f4f4f4', padding: 16, borderRadius: 6, overflow: 'auto' }}><code>{`pyRPC setup (runs once, saved to pyrpc.json)
 
 ? Entry module  › main
 ? Frontend framework  › Next.js
 ? Output path for generated types  › src/__pyrpc.d.ts
-  (relative to this directory — e.g. src/__pyrpc.d.ts or frontend/src/__pyrpc.d.ts)
+  (relative to this directory, e.g. src/__pyrpc.d.ts or frontend/src/__pyrpc.d.ts)
 
   ✓ pyrpc.json created`}</code></pre>
       <p>

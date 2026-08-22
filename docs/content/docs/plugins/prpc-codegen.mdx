@@ -134,7 +134,7 @@ pyrpc codegen http://localhost:8000 --client ../frontend
 - Documentation comments preserved
 - Auto-regeneration on file change (when using `pyrpc dev`)
 - **Runtime kind map** &mdash; `procedureKinds` is emitted alongside the types, so framework adapters know which TanStack hook (`useQuery` vs `useMutation`) each procedure exposes
-- Pure-Python generator (Jinja2 + `jsonschema-ts`) — no Node.js dependency
+- Pure-Python generator (Jinja2 + `jsonschema-ts`), no Node.js dependency
 
 ## Generated Output
 
@@ -151,16 +151,20 @@ export type Types = {
 Use it with `@pyrpc/client`:
 
 ```typescript
-import { createClient, httpLink } from "@pyrpc/client"
+import { createClient, httpBatchLink } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
 const client = createClient<Types>({
-  links: [httpLink({ url: "http://localhost:8000" })],
+  links: [
+    httpBatchLink({
+      url: "http://localhost:8000",
+    }),
+  ],
 })
 const result = await client.add(10, 5) // Fully typed, with autocompletion!
 ```
 
-`@pyrpc/types` resolves to the generated file via a tsconfig path alias (`"paths": { "@pyrpc/types": ["./__pyrpc.ts"] }`) and a bundler alias for Vite/SvelteKit/Next.js Turbopack — both injected by `pyrpc dev`.
+`@pyrpc/types` resolves to the generated file via a tsconfig path alias (`"paths": { "@pyrpc/types": ["./__pyrpc.ts"] }`) and a bundler alias for Vite/SvelteKit/Next.js Turbopack, both injected by `pyrpc dev`.
 
 ## Next Steps
 

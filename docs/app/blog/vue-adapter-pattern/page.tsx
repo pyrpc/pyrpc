@@ -19,7 +19,7 @@ export default function TheVueAdapterPatternPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/vue</code> adapter follows the same architecture as React — one transport, TanStack Query on top — but uses Vue-native patterns: plugins instead of providers, composables instead of hooks.
+                    The <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">@pyrpc/vue</code> adapter follows the same architecture as React (one transport, TanStack Query on top) but uses Vue-native patterns: plugins instead of providers, composables instead of hooks.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Setup</h2>
@@ -84,7 +84,7 @@ const { data } = api.get_user.useQuery({ userId: 1 })
                 </ul>
 
                 <p>
-                    The adapter is intentionally thin. If you understand the React adapter, you understand this one — the framework-specific part is just the integration pattern.
+                    The adapter is intentionally thin. If you understand the React adapter, you understand this one, the framework-specific part is just the integration pattern.
                 </p>
 
                 <p>

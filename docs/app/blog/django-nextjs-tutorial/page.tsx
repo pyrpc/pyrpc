@@ -19,7 +19,7 @@ export default function DjangoNextJsTutorialPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    Django + Next.js is a production-grade combination: Django's admin, ORM, and auth on the backend; Next.js App Router with RSC prefetch on the frontend. pyRPC handles the contract between them — no API layer to maintain, no schema drift.
+                    Django + Next.js is a production-grade combination: Django's admin, ORM, and auth on the backend; Next.js App Router with RSC prefetch on the frontend. pyRPC handles the contract between them, no API layer to maintain, no schema drift.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Server</h2>
@@ -69,7 +69,7 @@ export const api = createNextClient<Types>({
 })`}
                 </pre>
                 <pre className="bg-fd-muted p-4 rounded-lg overflow-x-auto text-[11px] leading-relaxed">
-{`// app/page.tsx — Server Component
+{`// app/page.tsx, Server Component
 import { api } from "@/lib/pyrpc"
 import { Counter } from "./counter"
 
@@ -83,7 +83,7 @@ export default async function Page() {
   )
 }
 
-// app/counter.tsx — Client Component
+// app/counter.tsx, Client Component
 "use client"
 export function Counter() {
   const { data: greeting, isLoading } = api.greet.useQuery({ name: "Django User" })
@@ -114,7 +114,7 @@ cd client && npm install && npm run dev`}
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why Django + Next.js?</h2>
                 <p>
-                    Django gives you a production-grade admin panel, migrations, the ORM, and auth out of the box. Next.js gives you App Router, RSC, and first-class TypeScript. pyRPC's thin adapter layer means you never write a REST endpoint — Django procedures call through to your models directly, and the types land in Next.js automatically.
+                    Django gives you a production-grade admin panel, migrations, the ORM, and auth out of the box. Next.js gives you App Router, RSC, and first-class TypeScript. pyRPC's thin adapter layer means you never write a REST endpoint, Django procedures call through to your models directly, and the types land in Next.js automatically.
                 </p>
             </section>
         </article>

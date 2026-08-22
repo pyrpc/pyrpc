@@ -33,7 +33,7 @@ export default function PytypeToTsGrammarPage() {
 }`}
                 </pre>
                 <p>
-                    A <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&lt;class '...'&gt;</code> repr is unwrapped, its dotted prefix stripped, and the leaf name looked up. Unknown classes fall through to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">_to_safe_name</code>, which transliterates any Unicode name to ASCII and PascalCases it — a User model becomes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">User</code>.
+                    A <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&lt;class '...'&gt;</code> repr is unwrapped, its dotted prefix stripped, and the leaf name looked up. Unknown classes fall through to <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">_to_safe_name</code>, which transliterates any Unicode name to ASCII and PascalCases it, a User model becomes <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">User</code>.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The recursive grammar</h2>
@@ -74,12 +74,12 @@ export default function PytypeToTsGrammarPage() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The escape hatch</h2>
                 <p>
-                    Everything unparseable returns <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">any</code>. That is a deliberate tradeoff: failing hard on an exotic annotation would make codegen unusable for the long tail of typing idioms, so the parser degrades to untyped and lets the developer refine by hand. The cost — losing type safety on that one procedure — is visible in the generated file, which keeps it honest.
+                    Everything unparseable returns <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">any</code>. That is a deliberate tradeoff: failing hard on an exotic annotation would make codegen unusable for the long tail of typing idioms, so the parser degrades to untyped and lets the developer refine by hand. The cost (losing type safety on that one procedure) is visible in the generated file, which keeps it honest.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why strings and not an AST</h2>
                 <p>
-                    The annotation strings come from runtime introspection, not from parsing source. Holding an AST would mean either executing <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">typing.get_type_hints</code> and reflecting the resulting objects, or walking the module's AST and losing forward references. The string form is the stable, portable currency between introspection and codegen — and a 120-line recursive parser is a small price for not coupling to a specific Python version's typing internals.
+                    The annotation strings come from runtime introspection, not from parsing source. Holding an AST would mean either executing <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">typing.get_type_hints</code> and reflecting the resulting objects, or walking the module's AST and losing forward references. The string form is the stable, portable currency between introspection and codegen, and a 120-line recursive parser is a small price for not coupling to a specific Python version's typing internals.
                 </p>
             </section>
         </article>

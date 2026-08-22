@@ -80,7 +80,7 @@ const { data } = api.greet.useQuery({ name: "Ada" })`}
 
                 <p><strong>Server code.</strong> Three lines of Python vs a router builder with Zod schemas. The function signature is the contract.</p>
 
-                <p><strong>No codegen for server types.</strong> tRPC infers types from the router at build time. pyRPC generates types at codegen time. The result is the same — fully typed client — but pyRPC works across language boundaries.</p>
+                <p><strong>No codegen for server types.</strong> tRPC infers types from the router at build time. pyRPC generates types at codegen time. The result is the same (fully typed client) but pyRPC works across language boundaries.</p>
 
                 <p><strong>One install.</strong> <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">pip install pyrpc-core[fastapi]</code> gives you the runtime, CLI, and codegen. tRPC requires the server package, the client package, the adapter package, and Zod.</p>
 
@@ -93,23 +93,23 @@ const { data } = api.greet.useQuery({ name: "Ada" })`}
                 <ol className="list-decimal pl-6 space-y-1">
                     <li>Replace <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createTRPCReact</code> with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">createNextClient</code></li>
                     <li>Replace <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">trpc.</code> prefix with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">api.</code></li>
-                    <li>Remove Zod schemas from the server — use Python type hints</li>
+                    <li>Remove Zod schemas from the server, use Python type hints</li>
                     <li>Replace <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{"import type { AppRouter } from"}</code> with <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">{"import type { Types } from \"@pyrpc/types\""}</code></li>
                 </ol>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What you lose</h2>
                 <ul className="list-disc pl-6 space-y-1">
-                    <li>tRPC's batching (multiple calls in one HTTP request) — not yet in pyRPC</li>
-                    <li>tRPC's subscriptions — on pyRPC's roadmap</li>
-                    <li>The tRPC ecosystem (trpc-panel, trpc-openapi, etc.) — pyRPC has its own introspection and CLI</li>
+                    <li>tRPC's batching (multiple calls in one HTTP request), not yet in pyRPC</li>
+                    <li>tRPC's subscriptions, on pyRPC's roadmap</li>
+                    <li>The tRPC ecosystem (trpc-panel, trpc-openapi, etc.), pyRPC has its own introspection and CLI</li>
                 </ul>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What you gain</h2>
                 <ul className="list-disc pl-6 space-y-1">
                     <li>Python's type system (Pydantic, dataclasses, enums, unions)</li>
                     <li>Any Python web framework (FastAPI, Flask, Django, Starlette)</li>
-                    <li>No build-time type inference — codegen works at dev time</li>
-                    <li>Cross-language by design — the same frontend works with any backend</li>
+                    <li>No build-time type inference, codegen works at dev time</li>
+                    <li>Cross-language by design, the same frontend works with any backend</li>
                 </ul>
 
                 <p>

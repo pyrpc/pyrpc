@@ -24,7 +24,7 @@ export default function Page() {
       <ul>
         <li>
           <strong>After git clone + npm install:</strong> types are gone. The stub from the published
-          package is empty — <code>Types = Record&lt;string, never&gt;</code>. The developer has to
+          package is empty, <code>Types = Record&lt;string, never&gt;</code>. The developer has to
           run <code>pyrpc dev</code> before TypeScript works.
         </li>
         <li>
@@ -43,7 +43,7 @@ export default function Page() {
 
       <h2>The new approach</h2>
       <p>
-        <code>pyrpc dev</code> writes to <code>src/__pyrpc.d.ts</code> — a file in your source tree.
+        <code>pyrpc dev</code> writes to <code>src/__pyrpc.d.ts</code>, a file in your source tree.
         This file is committed to git. It survives reinstalls, CI runs, and Docker builds. When a
         procedure changes, the diff shows up in your PR.
       </p>
@@ -54,7 +54,7 @@ export default function Page() {
       <pre style={{ background: '#f4f4f4', padding: 16, borderRadius: 6, overflow: 'auto' }}><code>{`"paths": { "@pyrpc/types": ["./src/__pyrpc.d.ts"] }`}</code></pre>
       <p>
         The <code>@pyrpc/types</code> package is still installed (satisfies peer deps and provides the
-        fallback stub before first run), but TypeScript never actually uses it — the paths alias takes
+        fallback stub before first run), but TypeScript never actually uses it, the paths alias takes
         priority.
       </p>
 
@@ -68,11 +68,11 @@ export default function Page() {
 
       <h2>What to commit and what not to</h2>
       <p>
-        <strong>Commit</strong> <code>src/__pyrpc.d.ts</code> — it's your generated API contract.
+        <strong>Commit</strong> <code>src/__pyrpc.d.ts</code>, it's your generated API contract.
         When a teammate adds a procedure, their PR will show the type change.
       </p>
       <p>
-        <strong>Don't gitignore it</strong> — unlike build artifacts, this file doesn't change on
+        <strong>Don't gitignore it</strong>, unlike build artifacts, this file doesn't change on
         every build. It only changes when your Python procedures change. That's a meaningful diff.
       </p>
     </article>

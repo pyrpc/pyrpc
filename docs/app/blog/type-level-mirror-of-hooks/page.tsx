@@ -19,7 +19,7 @@ export default function TypeLevelMirrorOfHooksPage() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    The runtime Proxy reads kinds to decide what <em>exists</em>. But TypeScript must agree before your code even compiles — and it does, through a conditional type that mirrors the runtime selection one-for-one.
+                    The runtime Proxy reads kinds to decide what <em>exists</em>. But TypeScript must agree before your code even compiles, and it does, through a conditional type that mirrors the runtime selection one-for-one.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The three hook shapes</h2>
@@ -44,7 +44,7 @@ export type ProcedureHooksBoth<TProc> = ProcedureQueryHooks<TProc> &
   ProcedureMutationHooks<TProc>;`}
                 </pre>
                 <p>
-                    Note how the query and mutation inputs differ. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> takes the input as its first argument and returns a result that may be <em>wider</em> than the procedure's (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&lt;TData&gt;</code>). <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code> takes only options and returns a result plus the imperative <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">mutate</code>. The two contracts are genuinely different — which is why exposing both on a mutation-only procedure is a real API leak, not a cosmetic one.
+                    Note how the query and mutation inputs differ. <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useQuery</code> takes the input as its first argument and returns a result that may be <em>wider</em> than the procedure's (<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">&lt;TData&gt;</code>). <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useMutation</code> takes only options and returns a result plus the imperative <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">mutate</code>. The two contracts are genuinely different, which is why exposing both on a mutation-only procedure is a real API leak, not a cosmetic one.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The selector</h2>
@@ -73,7 +73,7 @@ export type ProcedureHooksBoth<TProc> = ProcedureQueryHooks<TProc> &
 };`}
                 </pre>
                 <p>
-                    A mapped type walks every procedure key and applies <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">ProcedureHooksForKind</code> with that procedure's inferred kind. The intersection adds the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Provider</code>/<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useUtils</code>/<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client</code> members — matching exactly which <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">prop in target</code> checks the Proxy short-circuits at runtime.
+                    A mapped type walks every procedure key and applies <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">ProcedureHooksForKind</code> with that procedure's inferred kind. The intersection adds the <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">Provider</code>/<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">useUtils</code>/<code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">client</code> members, matching exactly which <code className="text-[10px] font-mono bg-fd-muted px-1.5 py-0.5 rounded">prop in target</code> checks the Proxy short-circuits at runtime.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Mirror discipline</h2>
