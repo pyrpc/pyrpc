@@ -131,7 +131,7 @@ export function Providers({ children }) {
                 </p>
 
                 <p>
-                    <a href="https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-nextjs" className="text-fd-foreground underline underline-offset-2">examples/fastapi-nextjs on GitHub</a> · <Link href="/docs/client/nextjs" className="text-fd-foreground underline underline-offset-2">Next.js docs</Link>
+                    <a href="https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-nextjs" className="text-fd-foreground underline underline-offset-2">examples/fastapi-nextjs on GitHub</a> · <Link href="/docs/client/adapters/nextjs" className="text-fd-foreground underline underline-offset-2">Next.js docs</Link>
                 </p>
             </section>
         </article>

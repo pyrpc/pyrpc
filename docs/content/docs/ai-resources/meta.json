@@ -1,0 +1,11 @@
+{
+    "title": "AI Resources",
+    "description": "LLMs.txt, MCP, and skills for coding assistants",
+    "icon": "AIRources",
+    "pages": [
+        "index",
+        "llms-txt",
+        "mcp",
+        "skills"
+    ]
+}

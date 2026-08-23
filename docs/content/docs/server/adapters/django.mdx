@@ -1,9 +1,8 @@
 ---
-title: Django Adapter
+title: Django
 description: Mount pyRPC on a Django application using pyrpc_django.mount_django.
 ---
 
-# Django Adapter
 
 The Django adapter wires pyRPC into your URLconf with `mount_django(urlpatterns)`. It uses Django's native `async def` views (Django 4.2+), so there is no bridge or wrapper needed.
 
@@ -55,8 +54,7 @@ myproject/
 
 Add `corsheaders` and your app to `INSTALLED_APPS`. Put `CorsMiddleware` first in `MIDDLEWARE` -- this is required by [django-cors-headers](https://github.com/adamchainz/django-cors-headers).
 
-```python
-# myproject/settings.py
+```python title="myproject/settings.py"
 INSTALLED_APPS = [
     "corsheaders",
     "django.contrib.admin",
@@ -90,8 +88,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 Procedures are functions decorated with `@rpc.query` or `@rpc.mutation`. Django 4.2+ runs `async def` procedures as native async views with no bridge needed; plain `def` procedures work too.
 
-```python
-# myproject/views.py
+```python title="myproject/views.py"
 from django.http import HttpResponse
 from pyrpc_core import rpc
 
@@ -119,8 +116,7 @@ async def create_item(name: str, description: str = None) -> dict:
 
 Call `mount_django(urlpatterns)` in your URLconf. The import of `views` at the top is required -- it executes the `@rpc` decorators. Without it the procedures are never registered and `/rpc` returns an empty schema.
 
-```python
-# myproject/urls.py
+```python title="myproject/urls.py"
 from django.contrib import admin
 from django.urls import path
 from pyrpc_django import mount_django
@@ -158,8 +154,7 @@ Django runs the async RPC views natively -- no separate WSGI/ASGI bridge require
 
 ## 7. Connect the frontend
 
-```ts
-// lib/pyrpc.ts (React example)
+```ts title="lib/pyrpc.ts"
 import { createReactClient, httpBatchLink } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
@@ -172,7 +167,7 @@ export const api = createReactClient<Types>({
 })
 ```
 
-See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) for full frontend setup per framework.
+See [React](/docs/client/adapters/react), [Next.js](/docs/client/adapters/nextjs), [Vue](/docs/client/adapters/vue), or [Svelte](/docs/client/adapters/svelte) for full frontend setup per framework.
 
 ## How it works
 
@@ -185,8 +180,7 @@ See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/cli
 
 If you want to isolate procedures by app rather than using the global default router:
 
-```python
-# myapp/procedures.py
+```python title="myapp/procedures.py"
 from pyrpc_core import Router
 
 router = Router()
@@ -200,8 +194,7 @@ async def create_item(name: str) -> dict:
     return {"name": name, "created": True}
 ```
 
-```python
-# myproject/urls.py
+```python title="myproject/urls.py"
 from myapp.procedures import router
 from pyrpc_django import mount_django
 

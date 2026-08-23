@@ -3,7 +3,6 @@ title: Svelte
 description: Svelte + TanStack Svelte Query adapter with @pyrpc/svelte.
 ---
 
-# Svelte
 
 `@pyrpc/svelte` gives you typed `createQuery` / `createMutation` stores for every pyRPC procedure. Works with SvelteKit and plain Svelte.
 
@@ -44,8 +43,7 @@ export const api = createSvelteClient<Types>({
 
 Svelte uses TanStack Svelte Query's `QueryClientProvider` directly in the layout, the standard approach:
 
-```svelte
-<!-- src/routes/+layout.svelte -->
+```svelte title="src/routes/+layout.svelte"
 <script lang="ts">
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query"
   const queryClient = new QueryClient()
@@ -58,8 +56,7 @@ Svelte uses TanStack Svelte Query's `QueryClientProvider` directly in the layout
 
 ## 3. Call procedures in pages
 
-```svelte
-<!-- src/routes/+page.svelte -->
+```svelte title="src/routes/+page.svelte"
 <script lang="ts">
   import { api } from "$lib/pyrpc"
 

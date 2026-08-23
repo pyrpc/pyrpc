@@ -1,0 +1,62 @@
+---
+title: MCP
+description: Connect pyRPC documentation to MCP-capable clients via the documentation MCP server.
+---
+
+pyRPC ships a **documentation MCP server** that exposes docs search, examples, and setup help to any MCP-capable client (Cursor, Claude Code, Open Code, and others).
+
+## Using the CLI
+
+Run the pyRPC CLI and pick your client:
+
+```bash title="terminal"
+npx pyrpc mcp
+```
+
+With no flags, the command lists supported targets. You can pass a target directly:
+
+<Tabs items={["Cursor", "Claude Code", "Open Code", "Manual"]}>
+  <Tab value="Cursor">
+    ```bash title="terminal"
+    npx pyrpc mcp --cursor
+    ```
+
+    This opens Cursor with a deeplink so the server is added to your MCP configuration.
+  </Tab>
+
+  <Tab value="Claude Code">
+    ```bash title="terminal"
+    npx pyrpc mcp --claude-code
+    ```
+
+    This runs `claude mcp add` with the pyRPC URL. If that fails, the CLI prints the exact command to run yourself.
+  </Tab>
+
+  <Tab value="Open Code">
+    ```bash title="terminal"
+    npx pyrpc mcp --open-code
+    ```
+
+    This merges a `pyrpc` entry into `opencode.json` in the current directory (remote transport).
+  </Tab>
+
+  <Tab value="Manual">
+    ```bash title="terminal"
+    npx pyrpc mcp --manual
+    ```
+
+    Writes or merges `mcp.json` in the current working directory with:
+
+    ```json
+    {
+      "pyrpc": {
+        "url": "https://pyrpc.com/mcp"
+      }
+    }
+    ```
+
+    For **Cursor**, you can add the same `pyrpc` entry to MCP config—commonly `~/.cursor/mcp.json` (user) or `.cursor/mcp.json` (project)—using the shape your Cursor version expects for HTTP servers (`url` for remote MCP).
+
+    Restart or reload MCP in your client after changes.
+  </Tab>
+</Tabs>

@@ -1,0 +1,29 @@
+---
+title: LLMs.txt
+description: Machine-friendly indexes and per-page Markdown for LLMs and tools.
+---
+
+The docs are served in plain Markdown forms that tools and assistants can consume directly, no scraping required.
+
+| Route | What it is |
+|-------|------------|
+| [`/llms.txt`](/llms.txt) | A flat index of every page: title, URL, and description. Good for orientation and link discovery. |
+| [`/llms-full.txt`](/llms-full.txt) | The full content of every page in one Markdown document. Good for offline context or one-shot ingestion. |
+| `/llms.mdx/docs/<slug>.mdx` | The raw Markdown of a single page. Every docs page links to its own version. |
+
+## Per-Page Markdown
+
+Each docs page exposes its raw content by appending its path to `/llms.mdx`:
+
+```
+/llms.mdx/docs/get-started/quickstart.mdx
+/llms.mdx/docs/client/adapters/react.mdx
+```
+
+Use the **Copy MD** and **Copy MD Link** actions on any page to grab this without constructing the URL yourself.
+
+## Tips
+
+- Point an agent at `/llms.txt` first; it is small enough to fit in a prompt and lets the agent decide which pages to fetch as Markdown.
+- Use `/llms-full.txt` when you want a single artifact for RAG indexing or a local assistant.
+- Per-page Markdown is stable across deploys, so you can cache it.

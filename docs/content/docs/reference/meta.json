@@ -1,10 +1,18 @@
 {
     "title": "Reference",
-    "description": "Complete API documentation",
-    "icon": "Library",
+    "description": "API documentation, protocol spec, and resources",
+    "icon": "ReferenceBook",
     "pages": [
         "prpc-core",
         "prpc-client",
-        "prpc-next"
+        "prpc-next",
+        "---Protocol---",
+        "spec",
+        "protocol-design",
+        "---Resources---",
+        "error-handling",
+        "architecture",
+        "faq",
+        "further-reading"
     ]
 }

@@ -1,0 +1,14 @@
+---
+title: Skills
+description: Install pyRPC agent skills so your coding assistant follows library conventions and patterns.
+---
+
+[Agent skills](https://agentskills.io) are portable instruction files (for example `SKILL.md`) that teach your coding agent project conventions, safe patterns, and where to look in the docs. The **pyRPC** skill pack covers server setup, adapters, client configuration, and codegen.
+
+Install it with the [`skills` CLI](https://www.npmjs.com/package/skills) (uses `npx` so nothing global is required):
+
+```bash title="terminal"
+npx skills add pyrpc
+```
+
+Your editor or agent loads skills from its configured skills directory (often project-level). After installing, restart the agent or reload skills if your tool requires it.

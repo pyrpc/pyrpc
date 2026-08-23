@@ -53,7 +53,7 @@ const query = api.greet.createQuery({ name: "Ada" })`}
                 </p>
 
                 <p>
-                    <Link href="/docs/client/vue" className="text-fd-foreground underline underline-offset-2">Vue docs</Link> · <Link href="/docs/client/svelte" className="text-fd-foreground underline underline-offset-2">Svelte docs</Link>
+                    <Link href="/docs/client/adapters/vue" className="text-fd-foreground underline underline-offset-2">Vue docs</Link> · <Link href="/docs/client/adapters/svelte" className="text-fd-foreground underline underline-offset-2">Svelte docs</Link>
                 </p>
             </section>
         </article>
