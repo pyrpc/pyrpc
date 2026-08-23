@@ -61,7 +61,7 @@ export function SidebarContent({
               data-collapsed={collapsed}
               data-hovered={collapsed && hovered}
               className={cn(
-                'fixed flex flex-col start-0 top-14 bottom-0 pt-[var(--fd-docs-row-1)] bg-fd-background text-sm border-e duration-250 w-[var(--fd-sidebar-width)] z-30 pb-16',
+                'fixed flex flex-col start-0 top-14 bottom-0 pt-[var(--fd-docs-row-1)] bg-white dark:bg-fd-background text-sm border-e duration-250 w-[var(--fd-sidebar-width)] z-30 pb-16',
                 collapsed && [
                   'inset-y-2 rounded-xl transition-transform border w-[var(--fd-sidebar-width)]',
                   hovered
@@ -104,7 +104,7 @@ export function SidebarDrawer({
       <Base.SidebarDrawerOverlay className="fixed z-40 inset-0 backdrop-blur-xs data-[state=open]:animate-fd-fade-in data-[state=closed]:animate-fd-fade-out" />
       <Base.SidebarDrawerContent
         className={cn(
-          'fixed text-[0.9375rem] flex flex-col shadow-lg border-s end-0 inset-y-0 w-[85%] max-w-[380px] z-40 bg-fd-background data-[state=open]:animate-fd-sidebar-in data-[state=closed]:animate-fd-sidebar-out',
+          'fixed text-[0.9375rem] flex flex-col shadow-lg border-s end-0 inset-y-0 w-[85%] max-w-[380px] z-40 bg-white dark:bg-fd-background data-[state=open]:animate-fd-sidebar-in data-[state=closed]:animate-fd-sidebar-out',
           className,
         )}
         {...props}

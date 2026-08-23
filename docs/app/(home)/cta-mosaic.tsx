@@ -1,8 +1,10 @@
 /*
  * CTA background mosaic, a wide field of independent rectangular tiles
- * whose brightness forms abstract clusters dissolving into black.
+ * whose brightness forms abstract clusters dissolving into the canvas.
  * Deterministic (seeded) so SSR and client render identically.
  */
+
+import type { CSSProperties } from 'react';
 
 const W = 1600;
 const H = 420;
@@ -10,6 +12,9 @@ const CELL_W = 26;
 const CELL_H = 13;
 
 const TIERS = ['#090909', '#0e0e0e', '#151515', '#1f1f1f', '#232a21', '#2e3a2a'];
+
+/* Light-mode ramp: same geometry, inverted quiet grays with the green accent */
+const LIGHT_TIERS = ['#f7f7f7', '#f1f1f1', '#eaeaea', '#e2e2e2', '#e9eee1', '#dde5d2'];
 
 /* Irregular cluster field, weight toward left/right thirds, quiet center */
 const CLUSTERS = [
@@ -40,6 +45,7 @@ type MosaicCell = {
   x: number;
   y: number;
   fill: string;
+  lightFill: string;
   drift: boolean;
   dur: number;
   delay: number;
@@ -90,6 +96,7 @@ function buildMosaic(): MosaicCell[] {
         x: cx,
         y: cy,
         fill: TIERS[tier],
+        lightFill: LIGHT_TIERS[tier],
         /* ~7% of cells breathe very slowly; geometry never moves */
         drift: nHi > 0.29 && nHi < 0.365,
         dur: 9 + Math.round(nLo * 90) / 5,
@@ -120,11 +127,14 @@ export function CtaMosaic() {
             height={CELL_H}
             rx={1}
             fill={c.fill}
-            className={`${c.sparse ? 'max-md:hidden' : ''} ${c.drift ? 'cta-drift' : ''}`}
+            className={`mosaic-tile ${c.sparse ? 'max-md:hidden' : ''} ${c.drift ? 'cta-drift' : ''}`}
             style={
-              c.drift
-                ? { animationDuration: `${c.dur}s`, animationDelay: `${c.delay}s` }
-                : undefined
+              {
+                ...(c.drift
+                  ? { animationDuration: `${c.dur}s`, animationDelay: `${c.delay}s` }
+                  : {}),
+                '--t': c.lightFill,
+              } as CSSProperties
             }
           />
         ))}

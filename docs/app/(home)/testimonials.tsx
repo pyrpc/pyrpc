@@ -207,7 +207,7 @@ export default function TestimonialsSection() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-[13px] font-medium tracking-tight text-neutral-900 transition-colors hover:text-neutral-500 dark:text-white dark:hover:text-neutral-400"
               >
-                Post it on X
+                Post it on
                 <XIcon className="h-[13px] w-[13px]" />
               </a>
             </figcaption>
