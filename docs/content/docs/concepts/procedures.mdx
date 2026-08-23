@@ -3,7 +3,6 @@ title: Procedures
 description: The fundamental unit of pyRPC, typed functions registered as queries or mutations.
 ---
 
-# Procedures
 
 A **procedure** is the fundamental unit of pyRPC. It is a plain Python function that you register with a decorator, and it becomes a single, fully-typed, callable endpoint on the client. There is no separate route definition, schema file, or controller, the function *is* the contract.
 
@@ -79,5 +78,5 @@ Because the procedure kind drives the client shape, the same Python decorator de
 ## Next
 
 - [Mental Model](/docs/concepts/mental-model), how pyRPC thinks about your API
-- [Error Handling](/docs/concepts/error-handling), structured errors that flow back from procedures
-- [Client: React](/docs/client/react), turning procedures into hooks in practice
+- [Error Handling](/docs/reference/error-handling), structured errors that flow back from procedures
+- [Client: React](/docs/client/adapters/react), turning procedures into hooks in practice
