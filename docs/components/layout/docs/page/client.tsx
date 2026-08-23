@@ -14,7 +14,7 @@ import {
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'fumadocs-core/link';
 import { cn } from '@/lib/cn';
-import { useI18n } from 'fumadocs-ui/contexts/i18n';
+import { useTranslations } from '@fuma-translate/react';
 import { useTreeContext, useTreePath } from 'fumadocs-ui/contexts/tree';
 import type * as PageTree from 'fumadocs-core/page-tree';
 import { usePathname } from 'fumadocs-core/framework';
@@ -86,7 +86,7 @@ export function PageTOCPopover({ className, children, ...rest }: ComponentProps<
 }
 
 export function PageTOCPopoverTrigger({ className, ...props }: ComponentProps<'button'>) {
-  const { text } = useI18n();
+  const t = useTranslations({ note: 'table of contents' });
   const { open } = use(TocPopoverContext)!;
   const items = useTOCItems();
   const active = useActiveAnchor();
@@ -119,7 +119,7 @@ export function PageTOCPopoverTrigger({ className, ...props }: ComponentProps<'b
             showItem && 'opacity-0 -translate-y-full pointer-events-none',
           )}
         >
-          {path?.name ?? text.toc}
+          {path?.name ?? t('On this page')}
         </span>
         <span
           className={cn(
@@ -249,7 +249,7 @@ export function PageFooter({ items, children, className, ...props }: FooterProps
 }
 
 function FooterItem({ item, index }: { item: Item; index: 0 | 1 }) {
-  const { text } = useI18n();
+  const t = useTranslations({ note: 'page navigation' });
   const Icon = index === 0 ? ChevronLeft : ChevronRight;
 
   return (
@@ -270,7 +270,7 @@ function FooterItem({ item, index }: { item: Item; index: 0 | 1 }) {
         <p>{item.name}</p>
       </div>
       <p className="text-fd-muted-foreground truncate">
-        {item.description ?? (index === 0 ? text.previousPage : text.nextPage)}
+        {item.description ?? (index === 0 ? t('Previous Page') : t('Next Page'))}
       </p>
     </Link>
   );

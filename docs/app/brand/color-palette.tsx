@@ -4,17 +4,17 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 
 const COLORS = [
-  { name: 'Background', var: '--fd-background', bgClass: 'bg-fd-background' },
-  { name: 'Foreground', var: '--fd-foreground', bgClass: 'bg-fd-foreground' },
-  { name: 'Primary', var: '--fd-primary', bgClass: 'bg-fd-primary' },
-  { name: 'Primary FG', var: '--fd-primary-foreground', bgClass: 'bg-fd-primary-foreground' },
-  { name: 'Secondary', var: '--fd-secondary', bgClass: 'bg-fd-secondary' },
-  { name: 'Secondary FG', var: '--fd-secondary-foreground', bgClass: 'bg-fd-secondary-foreground' },
-  { name: 'Muted', var: '--fd-muted', bgClass: 'bg-fd-muted' },
-  { name: 'Muted FG', var: '--fd-muted-foreground', bgClass: 'bg-fd-muted-foreground' },
-  { name: 'Accent', var: '--fd-accent', bgClass: 'bg-fd-accent' },
-  { name: 'Accent FG', var: '--fd-accent-foreground', bgClass: 'bg-fd-accent-foreground' },
-  { name: 'Border', var: '--fd-border', bgClass: 'bg-fd-border' },
+  { name: 'Background', var: '--color-fd-background', bgClass: 'bg-fd-background' },
+  { name: 'Foreground', var: '--color-fd-foreground', bgClass: 'bg-fd-foreground' },
+  { name: 'Primary', var: '--color-fd-primary', bgClass: 'bg-fd-primary' },
+  { name: 'Primary FG', var: '--color-fd-primary-foreground', bgClass: 'bg-fd-primary-foreground' },
+  { name: 'Secondary', var: '--color-fd-secondary', bgClass: 'bg-fd-secondary' },
+  { name: 'Secondary FG', var: '--color-fd-secondary-foreground', bgClass: 'bg-fd-secondary-foreground' },
+  { name: 'Muted', var: '--color-fd-muted', bgClass: 'bg-fd-muted' },
+  { name: 'Muted FG', var: '--color-fd-muted-foreground', bgClass: 'bg-fd-muted-foreground' },
+  { name: 'Accent', var: '--color-fd-accent', bgClass: 'bg-fd-accent' },
+  { name: 'Accent FG', var: '--color-fd-accent-foreground', bgClass: 'bg-fd-accent-foreground' },
+  { name: 'Border', var: '--color-fd-border', bgClass: 'bg-fd-border' },
 ];
 
 /** Resolve any CSS color (oklch, rgb, …) to a 6-digit hex string. */
