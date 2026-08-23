@@ -20,16 +20,28 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const MDX = page.data.body;
 
   return (
-    <DocsPage toc={page.data.toc} full={page.data.full}>
-      <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription className="mb-0">{page.data.description}</DocsDescription>
-      <div className="flex flex-row gap-2 items-center border-b pb-6">
-        <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
-        <ViewOptions
-          markdownUrl={`${page.url}.mdx`}
-          // update it to match your repo
-          githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/content/docs/${page.path}`}
-        />
+    <DocsPage
+      toc={page.data.toc}
+      full={page.data.full}
+      tableOfContent={{
+        style: 'clerk',
+      }}
+      breadcrumb={{ enabled: false }}
+    >
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
+          <DocsTitle className="mb-0">{page.data.title}</DocsTitle>
+          {page.data.description && (
+            <DocsDescription className="mt-2 mb-0">{page.data.description}</DocsDescription>
+          )}
+        </div>
+        <div className="flex flex-wrap items-center gap-2 not-prose lg:shrink-0">
+          <LLMCopyButton markdownUrl={`/llms.mdx${page.url}.mdx`} />
+          <ViewOptions
+            markdownUrl={`/llms.mdx${page.url}.mdx`}
+            githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/content/docs/${page.path}`}
+          />
+        </div>
       </div>
       <DocsBody>
         <MDX

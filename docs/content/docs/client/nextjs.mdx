@@ -28,8 +28,7 @@ my-app/
 
 ## 1. Create the client
 
-```ts
-// lib/pyrpc.ts
+```ts title="lib/pyrpc.ts"
 import { createNextClient, httpBatchLink } from "@pyrpc/next"
 import type { Types } from "@pyrpc/types"
 
@@ -46,8 +45,7 @@ One file, one import everywhere, same variable on the server and in client compo
 
 ## 2. Set up Providers
 
-```tsx
-// app/providers.tsx
+```tsx title="app/providers.tsx"
 "use client"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { api } from "@/lib/pyrpc"
@@ -63,8 +61,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 }
 ```
 
-```tsx
-// app/layout.tsx
+```tsx title="app/layout.tsx"
 import { Providers } from "./providers"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -82,8 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 Prefetch in a Server Component so the client gets data on first render with no loading state:
 
-```tsx
-// app/page.tsx
+```tsx title="app/page.tsx"
 import { api } from "@/lib/pyrpc"
 import { Counter } from "./counter"
 
@@ -102,8 +98,7 @@ export default async function Page() {
 
 ## 4. Client component: hooks
 
-```tsx
-// app/counter.tsx
+```tsx title="app/counter.tsx"
 "use client"
 import { api } from "@/lib/pyrpc"
 import { useState } from "react"
@@ -151,8 +146,8 @@ export function Counter() {
 
 Prefetch is optional. If you skip it, the client component fetches on mount exactly like plain `@pyrpc/react`:
 
-```tsx
-// app/page.tsx, no prefetch
+```tsx title="app/page.tsx"
+// no prefetch
 export default function Page() {
   return <Counter />
 }
@@ -162,8 +157,7 @@ export default function Page() {
 
 Mutations can't be prefetched (they have side effects), but you can call them from Server Actions or Route Handlers:
 
-```ts
-// app/actions.ts
+```ts title="app/actions.ts"
 "use server"
 import { api } from "@/lib/pyrpc"
 

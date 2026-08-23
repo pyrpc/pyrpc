@@ -15,7 +15,13 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
   useEffect(() => { setMounted(true) }, [])
 
   if (pathname?.startsWith("/docs")) {
-    return <>{children}</>
+    return (
+      // Same canvas as the landing page: body token (white / black), not the
+      // fumadocs shell tint — only sidebar/toc chrome keeps fd-background.
+      <div className="min-h-svh bg-background">
+        {children}
+      </div>
+    )
   }
 
   const aiQuery = "What+is+pyRPC%3F+It+is+a+Python+library+that+provides+tRPC-level+type+safety+for+teams+shipping+Python+backends+with+TypeScript+frontends.+Procedures+are+defined+in+Python+and+called+from+TypeScript+with+full+type+safety+-+no+schemas,+no+drift,+no+boilerplate.+Compare+it+to+alternatives+like+OpenAPI,+gRPC,+and+JSON-RPC+and+explain+when+to+use+it."

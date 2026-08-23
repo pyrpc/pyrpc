@@ -39,7 +39,7 @@ export default function CTASection() {
   ];
 
   return (
-    <div className="relative mt-16 w-full overflow-hidden border-y border-white/[0.1] bg-[#060606] md:mt-20">
+    <div className="relative mt-16 w-full overflow-hidden border-y border-foreground/[0.08] bg-background dark:border-white/[0.1] dark:bg-[#060606] md:mt-20">
       {/* Mosaic background, abstract tile field, quiet behind the copy */}
       <CtaMosaic />
 
@@ -49,7 +49,7 @@ export default function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.4 }}
-          className="text-2xl md:text-4xl font-semibold tracking-tight leading-tight text-white"
+          className="text-2xl md:text-4xl font-semibold tracking-tight leading-tight text-neutral-900 dark:text-white"
         >
           Ship end-to-end types.
         </motion.h2>
@@ -59,7 +59,7 @@ export default function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.4, delay: 0.06 }}
-          className="mt-5 max-w-xl text-sm leading-relaxed text-white/80"
+          className="mt-5 max-w-xl text-sm leading-relaxed text-neutral-600 dark:text-white/80"
         >
           Define procedures in Python. Consume them in TypeScript with full type
           safety. No schema drift, no codegen pipelines.
@@ -71,12 +71,12 @@ export default function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.4, delay: 0.08 }}
-          className="mt-10 grid w-full max-w-lg grid-cols-3 gap-4 border-t border-dashed border-white/[0.16] pt-5"
+          className="mt-10 grid w-full max-w-lg grid-cols-3 gap-4 border-t border-dashed border-neutral-300 dark:border-white/[0.16] pt-5"
         >
           {stats.map((s) => (
             <div key={s.suffix} className="font-mono text-sm">
-              <span className="text-white">{s.value}</span>{' '}
-              <span className="text-white/60">{s.suffix}</span>
+              <span className="text-neutral-900 dark:text-white">{s.value}</span>{' '}
+              <span className="text-neutral-500 dark:text-white/60">{s.suffix}</span>
             </div>
           ))}
         </motion.div>
@@ -91,7 +91,7 @@ export default function CTASection() {
         >
           <Link
             href="/docs/get-started/installation"
-            className="inline-flex items-center justify-center rounded-md bg-white px-8 py-2.5 text-sm font-medium tracking-tight text-black transition-all hover:opacity-90 active:scale-[0.98]"
+            className="inline-flex items-center justify-center rounded-md bg-neutral-900 px-8 py-2.5 text-sm font-medium tracking-tight text-white transition-all hover:bg-neutral-700 active:scale-[0.98] dark:bg-white dark:text-black dark:hover:bg-neutral-200"
           >
             Get Started
           </Link>
@@ -101,63 +101,63 @@ export default function CTASection() {
             href="https://github.com/pyrpc/pyrpc"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-center rounded-md px-6 py-2.5 text-sm font-medium tracking-tight text-white"
+            className="group relative inline-flex items-center justify-center rounded-md px-6 py-2.5 text-sm font-medium tracking-tight text-neutral-900 dark:text-white"
           >
             <span
               aria-hidden
-              className="absolute left-0 top-0 h-2 w-2 border-l border-t border-neutral-700 transition-colors group-hover:border-neutral-500"
+              className="absolute left-0 top-0 h-2 w-2 border-l border-t border-neutral-300 transition-colors group-hover:border-neutral-400 dark:border-neutral-700 dark:group-hover:border-neutral-500"
             />
             <span
               aria-hidden
-              className="absolute right-0 top-0 h-2 w-2 border-r border-t border-neutral-700 transition-colors group-hover:border-neutral-500"
+              className="absolute right-0 top-0 h-2 w-2 border-r border-t border-neutral-300 transition-colors group-hover:border-neutral-400 dark:border-neutral-700 dark:group-hover:border-neutral-500"
             />
             <span
               aria-hidden
-              className="absolute bottom-0 left-0 h-2 w-2 border-b border-l border-neutral-700 transition-colors group-hover:border-neutral-500"
+              className="absolute bottom-0 left-0 h-2 w-2 border-b border-l border-neutral-300 transition-colors group-hover:border-neutral-400 dark:border-neutral-700 dark:group-hover:border-neutral-500"
             />
             <span
               aria-hidden
-              className="absolute bottom-0 right-0 h-2 w-2 border-b border-r border-neutral-700 transition-colors group-hover:border-neutral-500"
+              className="absolute bottom-0 right-0 h-2 w-2 border-b border-r border-neutral-300 transition-colors group-hover:border-neutral-400 dark:border-neutral-700 dark:group-hover:border-neutral-500"
             />
             <span
               aria-hidden
-              className="absolute -top-[7px] left-[14px] hidden h-[3px] w-[18px] sm:block"
+              className="absolute -top-[7px] left-[14px] hidden h-[3px] w-[18px] sm:block [--hatch:#d4d4d4] dark:[--hatch:#404040]"
               style={{
                 backgroundImage:
-                  'repeating-linear-gradient(-45deg, #404040 0, #404040 1px, transparent 1px, transparent 4px)',
+                  'repeating-linear-gradient(-45deg, var(--hatch) 0, var(--hatch) 1px, transparent 1px, transparent 4px)',
                 backgroundSize: '4px 3px',
               }}
             />
             <span
               aria-hidden
-              className="absolute -bottom-[7px] right-[14px] hidden h-[3px] w-[18px] sm:block"
+              className="absolute -bottom-[7px] right-[14px] hidden h-[3px] w-[18px] sm:block [--hatch:#d4d4d4] dark:[--hatch:#404040]"
               style={{
                 backgroundImage:
-                  'repeating-linear-gradient(-45deg, #404040 0, #404040 1px, transparent 1px, transparent 4px)',
+                  'repeating-linear-gradient(-45deg, var(--hatch) 0, var(--hatch) 1px, transparent 1px, transparent 4px)',
                 backgroundSize: '4px 3px',
               }}
             />
             <span
               aria-hidden
-              className="absolute -left-[9px] -top-[9px] font-mono text-[10px] leading-none text-neutral-600 transition-colors group-hover:text-neutral-400"
+              className="absolute -left-[9px] -top-[9px] font-mono text-[10px] leading-none text-neutral-400 transition-colors group-hover:text-neutral-500 dark:text-neutral-600 dark:group-hover:text-neutral-400"
             >
               +
             </span>
             <span
               aria-hidden
-              className="absolute -right-[9px] -top-[9px] font-mono text-[10px] leading-none text-neutral-600 transition-colors group-hover:text-neutral-400"
+              className="absolute -right-[9px] -top-[9px] font-mono text-[10px] leading-none text-neutral-400 transition-colors group-hover:text-neutral-500 dark:text-neutral-600 dark:group-hover:text-neutral-400"
             >
               +
             </span>
             <span
               aria-hidden
-              className="absolute -bottom-[9px] -left-[9px] font-mono text-[10px] leading-none text-neutral-600 transition-colors group-hover:text-neutral-400"
+              className="absolute -bottom-[9px] -left-[9px] font-mono text-[10px] leading-none text-neutral-400 transition-colors group-hover:text-neutral-500 dark:text-neutral-600 dark:group-hover:text-neutral-400"
             >
               +
             </span>
             <span
               aria-hidden
-              className="absolute -bottom-[9px] -right-[9px] font-mono text-[10px] leading-none text-neutral-600 transition-colors group-hover:text-neutral-400"
+              className="absolute -bottom-[9px] -right-[9px] font-mono text-[10px] leading-none text-neutral-400 transition-colors group-hover:text-neutral-500 dark:text-neutral-600 dark:group-hover:text-neutral-400"
             >
               +
             </span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { Check, Copy, Eye, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
@@ -8,13 +9,16 @@ import { cn } from '@/lib/cn';
 const PYTHON_ICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg';
 const TS_ICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg';
 
-const CODE = 'text-[#dcdcdc]';
-const PUNCT = 'text-[#7a7a7a]';
-const KW = 'font-medium text-[#e8e8e8]';
-const FN = 'text-[#c9c9c9]';
-const STR = 'text-[#97c983]';
-const TYPE = 'italic text-[#a3a3a3]';
-const DIM = 'text-[#6b6b6b]';
+/* Syntax tokens, theme aware like the rest of the site:
+   light mode draws near-ink monochrome with a green accent,
+   dark mode keeps the Vesper palette on the near-black surface. */
+const CODE = 'text-neutral-700 dark:text-[#dcdcdc]';
+const PUNCT = 'text-neutral-400 dark:text-[#7a7a7a]';
+const KW = 'font-medium text-neutral-900 dark:text-[#e8e8e8]';
+const FN = 'text-neutral-600 dark:text-[#c9c9c9]';
+const STR = 'text-emerald-700 dark:text-[#97c983]';
+const TYPE = 'italic text-neutral-500 dark:text-[#a3a3a3]';
+const DIM = 'text-neutral-400 dark:text-[#6b6b6b]';
 
 const AGENT_PROMPT = `Set up pyRPC in my project and connect my Python backend to my TypeScript frontend with end-to-end type safety.
 
@@ -28,7 +32,7 @@ function LineNumbers({ count }: { count: number }) {
   return (
     <div
       aria-hidden
-      className="select-none border-r border-[#262626] pb-6 pl-4 pr-3 pt-4 text-right font-mono text-sm leading-[1.7] text-[#4d4d4d]"
+      className="select-none border-r border-foreground/[0.08] pb-6 pl-4 pr-3 pt-4 text-right font-mono text-sm leading-[1.7] text-neutral-400 dark:text-[#4d4d4d]"
     >
       {Array.from({ length: count }, (_, i) => (
         <div key={i}>{i + 1}</div>
@@ -131,12 +135,12 @@ function AgentCopyButton({ text, withText }: { text: string; withText?: boolean 
       aria-label="Copy"
       className={cn(
         "shrink-0 cursor-pointer transition-colors",
-        withText 
-          ? "flex items-center gap-1.5 text-[11px] text-[#888888] hover:text-white"
-          : "p-1 text-white/30 hover:text-white/60"
+        withText
+          ? "flex items-center gap-1.5 text-[11px] text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300"
+          : "p-1 text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300"
       )}
     >
-      {copied ? <Check className={cn("h-3 w-3", !withText && "text-[#97c983]")} /> : <Copy className="h-3 w-3" />}
+      {copied ? <Check className={cn("h-3 w-3", !withText && "text-[#5a8a4a] dark:text-[#97c983]")} /> : <Copy className="h-3 w-3" />}
       {withText && <span>{copied ? "Copied" : "Copy prompt"}</span>}
     </button>
   );
@@ -158,21 +162,23 @@ function PromptModal({ open, onClose }: { open: boolean; onClose: () => void }) 
     };
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || typeof document === 'undefined') return null;
 
-  return (
+  // Portal to body so the dialog escapes <main>'s stacking context and
+  // layers above the fixed site header like every other overlay.
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Full agent prompt"
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 z-[300] flex items-center justify-center p-4 sm:p-6"
     >
       <button
         aria-label="Close"
         onClick={onClose}
         className="absolute inset-0 cursor-default bg-black/50 backdrop-blur-sm"
       />
-      <div className="relative w-full max-w-2xl rounded-md border border-neutral-200 bg-white shadow-[0_24px_80px_-24px_rgba(0,0,0,0.5)] dark:border-white/[0.1] dark:bg-[#0c0c0c]">
+      <div className="relative w-full max-w-2xl rounded-md border border-foreground/[0.08] bg-neutral-50 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.15)] dark:border-white/[0.06] dark:bg-[#0a0a0a] dark:shadow-[0_24px_80px_-24px_rgba(0,0,0,0.5)]">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-neutral-200 py-3 pl-5 pr-3 dark:border-white/[0.08]">
           <h3 className="text-sm font-medium tracking-tight text-neutral-900 dark:text-white">
@@ -218,7 +224,8 @@ function PromptModal({ open, onClose }: { open: boolean; onClose: () => void }) 
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -251,8 +258,8 @@ export default function HeroSection() {
         </p>
 
         {/* CLI / Prompt / MCP / Skills, agent tab card */}
-        <div className="mt-8 w-full max-w-lg rounded-md border border-white/[0.08] relative overflow-hidden text-left">
-          <div className="flex items-center border-b border-white/[0.08]">
+        <div className="mt-8 w-full max-w-lg rounded-md border border-foreground/[0.1] relative overflow-hidden text-left">
+          <div className="flex items-center border-b border-foreground/[0.1]">
             {AGENT_TABS.map((t, i) => (
               <button
                 key={t.label}
@@ -260,31 +267,32 @@ export default function HeroSection() {
                 className={cn(
                   'relative cursor-pointer px-4 py-2 text-[12px] transition-colors duration-150',
                   agentTab === i
-                    ? 'text-white'
-                    : 'text-white/40 hover:text-white/60',
+                    ? 'text-neutral-800 dark:text-neutral-200'
+                    : 'text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-400',
                 )}
               >
                 {t.label}
                 {agentTab === i && (
-                  <div className="absolute bottom-0 left-4 right-4 h-[1.5px] bg-white/40" />
+                  <div className="absolute bottom-0 left-4 right-4 h-[1.5px] bg-neutral-600 dark:bg-neutral-400" />
                 )}
               </button>
             ))}
           </div>
           {activeAgent.content ? (
-            <div className="flex flex-col">
-              <div className="relative px-5 py-5 pb-6">
-                <h3 className="text-[14px] font-medium text-white mb-1.5 leading-snug truncate">
-                  {activeAgent.content.split('\n\n')[0]}
-                </h3>
-                <p className="text-[12px] text-[#888888] leading-relaxed line-clamp-2 [-webkit-mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]">
+            <div className="bg-neutral-100/50 px-5 py-4 dark:bg-[#050505]">
+              <p className="truncate text-[13px] font-medium leading-relaxed text-neutral-700 dark:text-neutral-200">
+                {activeAgent.content.split('\n\n')[0]}
+              </p>
+              <div className="relative mt-1.5">
+                <p className="line-clamp-2 text-xs leading-relaxed text-neutral-400 dark:text-neutral-500">
                   {activeAgent.content.split('\n\n').slice(1).join(' ')}
                 </p>
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-5 bg-gradient-to-t from-neutral-100/50 to-transparent dark:from-[#050505]" />
               </div>
-              <div className="flex items-center justify-between border-t border-white/[0.08] py-2.5 px-5">
+              <div className="mt-3 flex items-center justify-between border-t border-foreground/[0.04] pt-2">
                 <button
                   onClick={() => setPromptOpen(true)}
-                  className="flex cursor-pointer items-center gap-1.5 text-[11px] text-[#888888] transition-colors hover:text-white"
+                  className="flex cursor-pointer items-center gap-1.5 text-xs text-neutral-400 transition-colors hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
                 >
                   <Eye className="h-3 w-3" />
                   View full prompt
@@ -293,10 +301,12 @@ export default function HeroSection() {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between gap-2 px-5 py-4">
+            <div className="flex items-center justify-between gap-2 bg-neutral-100/50 px-4 py-3 dark:bg-[#050505]">
               <code className="truncate font-mono text-[13px]">
-                <span className="text-[#97c983]">{activeAgent.command!.split(' ')[0]}</span>{' '}
-                <span className="text-white/70">{activeAgent.command!.split(' ').slice(1).join(' ')}</span>
+                <span className="text-[#5a8a4a] dark:text-[#97c983]">{activeAgent.command!.split(' ')[0]}</span>{' '}
+                <span className="text-neutral-700 dark:text-neutral-300">
+                  {activeAgent.command!.split(' ').slice(1).join(' ')}
+                </span>
               </code>
               <AgentCopyButton text={activeAgent.command!} />
             </div>
@@ -331,19 +341,20 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Right, tabbed code window: server.py / client.ts */}
+      {/* Right, tabbed code window: server.py / client.ts — theme aware,
+          same surface treatment as better-auth's hero code block */}
       <div className="w-full min-w-0">
-        <div className="w-full overflow-hidden border border-[#262626] bg-[#101010]">
-          <div className="flex items-stretch border-b border-[#262626]">
+        <div className="w-full overflow-hidden border border-foreground/[0.08] bg-neutral-50 dark:bg-black">
+          <div className="flex items-stretch border-b border-foreground/[0.08]">
             {CODE_TABS.map((t, i) => (
               <button
                 key={t.label}
                 onClick={() => setCodeTab(i)}
                 className={cn(
-                  'flex cursor-pointer items-center gap-1.5 border-r border-[#262626] px-4 py-2 transition-colors',
+                  'flex cursor-pointer items-center gap-1.5 border-r border-foreground/[0.08] px-4 py-2 transition-colors',
                   codeTab === i
-                    ? 'bg-[#161616] text-[#dcdcdc]'
-                    : 'bg-transparent text-[#6b6b6b] hover:text-[#a3a3a3]',
+                    ? 'bg-neutral-100 dark:bg-white/[0.04] text-neutral-800 dark:text-[#dcdcdc]'
+                    : 'bg-transparent text-neutral-400 hover:text-neutral-600 dark:text-[#6b6b6b] dark:hover:text-[#a3a3a3]',
                 )}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}

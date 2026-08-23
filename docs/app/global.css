@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/black.css';
 @import 'fumadocs-ui/css/preset.css';
 
 @theme {
@@ -8,9 +8,19 @@
   --radius: 0.2rem;
 }
 
+/* Bridge the shadcn-style tokens into utilities (bg-background,
+   text-foreground). Inline so they resolve per-theme, not once. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
 html {
   overflow-y: auto;
   overflow-x: hidden;
+  /* Anchored headings land below the fixed 3.5rem header with breathing
+     room — same offset math better-auth.com uses. */
+  scroll-padding-top: calc(3.5rem + 24px);
 }
 
 /* Display headings, Geist Mono, tight tracking. Ties headlines
@@ -25,80 +35,64 @@ body {
   margin: 0;
 }
 
-/* Light mode, deliberate neutral tokens mirroring the dark scale.
-   Every token resolves in both modes; components never assume one. */
+/* Light mode, warm neutral scale matching better-auth.com's light theme
+   (same oklch values as their :root). Fumadocs consumes the --color-fd-*
+   set from fumadocs-ui/css/black.css, identical to better-auth's import;
+   the shadcn-style tokens here document the same palette for hand-rolled
+   components. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #171717;
-  --primary-foreground: #fafafa;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #171717;
-  --muted: #f5f5f5;
-  --muted-foreground: #737373;
-  --accent: #f5f5f5;
-  --accent-foreground: #171717;
-  --border: #e5e5e5;
-  --input: #e5e5e5;
-  --ring: #a3a3a3;
-
-  --fd-background: 255 255 255;
-  --fd-foreground: 23 23 23;
-  --fd-muted: 245 245 245;
-  --fd-muted-foreground: 115 115 115;
-  --fd-accent: 245 245 245;
-  --fd-accent-foreground: 23 23 23;
-  --fd-border: 229 229 229;
-  --fd-input: 229 229 229;
-  --fd-primary: 23 23 23;
-  --fd-primary-foreground: 250 250 250;
-  --fd-secondary: 245 245 245;
-  --fd-secondary-foreground: 23 23 23;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.147 0.004 49.25);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.147 0.004 49.25);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.147 0.004 49.25);
+  --primary: oklch(0.216 0.006 56.043);
+  --primary-foreground: oklch(0.985 0.001 106.423);
+  --secondary: oklch(0.97 0.001 106.424);
+  --secondary-foreground: oklch(0.216 0.006 56.043);
+  --muted: oklch(0.97 0.001 106.424);
+  --muted-foreground: oklch(0.553 0.013 58.071);
+  --accent: oklch(0.97 0.001 106.424);
+  --accent-foreground: oklch(0.216 0.006 56.043);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.923 0.003 48.717);
+  --input: oklch(0.923 0.003 48.717);
+  --ring: oklch(0.709 0.01 56.259);
 }
 
 /* =============================================
-   pyRPC Design System - Dark Mode Token Override
+   Dark Mode, better-auth.com parity
+   Body stays pure black; the docs shell (#nd-docs-layout, sidebar, TOC)
+   follows fumadocs black theme tokens: #050505 canvas.
    ============================================= */
 html.dark {
-  /* Core surfaces, brand neutrals, see /brand (Surface #0a0a0a,
-     Raised #101010, Hairline #1f1f1f, Hairline Strong #262626) */
-  --background: #000000;
-  --foreground: #fafafa;
-  --primary: #fafafa;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1f1f1f;
-  --secondary-foreground: #fafafa;
-  --muted: #1f1f1f;
-  --muted-foreground: #a3a3a3;
-  --accent: #1f1f1f;
-  --accent-foreground: #fafafa;
-  --border: #262626;
-  --input: #262626;
-  --ring: #737373;
-  --destructive: #82181A;
-
-  /* Fumadocs overrides - raw RGB channel values */
-  --fd-background: 0 0 0;
-  --fd-foreground: 250 250 250;
-  --fd-muted: 31 31 31;
-  --fd-muted-foreground: 163 163 163;
-  --fd-accent: 31 31 31;
-  --fd-accent-foreground: 250 250 250;
-  --fd-border: 38 38 38;
-  --fd-input: 38 38 38;
-  --fd-primary: 250 250 250;
-  --fd-primary-foreground: 10 10 10;
-  --fd-secondary: 31 31 31;
-  --fd-secondary-foreground: 250 250 250;
+  --background: hsl(0 0% 0%);
+  --foreground: oklch(0.985 0.001 106.423);
+  --card: oklch(0.147 0.004 49.25);
+  --card-foreground: oklch(0.985 0.001 106.423);
+  --popover: oklch(0.147 0.004 49.25);
+  --popover-foreground: oklch(0.985 0.001 106.423);
+  --primary: oklch(0.985 0.001 106.423);
+  --primary-foreground: oklch(0.216 0.006 56.043);
+  --secondary: oklch(0.268 0.007 34.298);
+  --secondary-foreground: oklch(0.985 0.001 106.423);
+  --muted: oklch(0.268 0.007 34.298);
+  --muted-foreground: oklch(0.709 0.01 56.259);
+  --accent: oklch(0.268 0.007 34.298);
+  --accent-foreground: oklch(0.985 0.001 106.423);
+  --destructive: oklch(0.396 0.141 25.723);
+  --border: oklch(0.268 0.007 34.298);
+  --input: oklch(0.268 0.007 34.298);
+  --ring: oklch(0.553 0.013 58.071);
 
   color-scheme: dark;
-  background-color: #000000 !important;
 }
 
 html.dark body,
 html.dark #__next,
 html.dark header {
-  background-color: #000000 !important;
+  background-color: var(--background) !important;
 }
 
 /* Header full width and left aligned */
@@ -181,7 +175,7 @@ aside button[aria-label*="Search"] {
   /* Header is usually z-40, we stay below it but above content */
   z-index: 30 !important;
   overflow: hidden !important;
-  background-color: var(--fd-background) !important;
+  background-color: var(--color-fd-background) !important;
 }
 
 /* 
@@ -190,7 +184,7 @@ aside button[aria-label*="Search"] {
 */
 #nd-nav {
   z-index: 50 !important;
-  background-color: var(--fd-background) !important;
+  background-color: var(--color-fd-background) !important;
 }
 
 /* Ensure internal aside fills the fixed wrapper and stays contained */
@@ -231,27 +225,16 @@ aside button[aria-label*="Search"] {
   display: none !important;
 }
 
-/* Docs background - theme-aware */
-.dark #nd-docs-layout, 
-.dark .fd-toc, 
-.dark .fd-doc {
-  background-color: #000000 !important;
-}
-
-.dark aside,
-.dark .fd-sidebar, 
-.dark .fd-sidebar-viewport,
-.dark [data-sidebar="true"],
-.dark [data-radix-scroll-area-viewport] {
-  background-color: #000000 !important;
-  background: #000000 !important;
-}
+/* Docs canvas follows the body background exactly like better-auth.com:
+   pure white in light mode, pure black in dark. Only the chrome (sidebar,
+   header, toc) carries the fd-background token (#fafafa / #050505) via its
+   own component classes — no forced repaints here. */
 
 /* Adjust Sidebar to sit below SiteHeader */
 .fd-sidebar {
   top: 3.5rem !important; /* h-14 */
   height: calc(100vh - 3.5rem) !important;
-  border-right: 1px solid var(--fd-border) !important;
+  border-right: 1px solid var(--color-fd-border) !important;
   z-index: 40 !important;
 }
 
@@ -445,58 +428,101 @@ aside button[aria-label*="Search"] {
 }
 
 /* =============================================
-   Code Block Hero, typography & syntax tokens
+   Code blocks — flat near-black in dark mode, sharp edges, no
+   gradients (ported from better-auth.com globals.css; both sites
+   use the same fumadocs-ui 16.12 codeblock markup).
    ============================================= */
-.code-block-hero code {
-  font-family: "Geist Mono", monospace !important;
-  font-size: 12px !important;
-  font-weight: 400 !important;
-  line-height: 17.1429px !important;
-  color: rgb(225, 228, 232);
+.dark .shiki {
+  background-color: #050505 !important;
+  border-color: rgba(255, 255, 255, 0.06);
 }
 
-:root:not(.dark) .code-block-hero code {
-  color: #1e1e1e;
+/* Tab/card wrappers containing code blocks */
+.dark .bg-fd-card:has(.shiki),
+.dark [data-slot="tabs"]:has(.shiki),
+.dark div:has(> [role="tablist"]):has(.shiki) {
+  background-color: #050505 !important;
+  border-color: rgba(255, 255, 255, 0.06);
 }
 
-/* Shiki dual-theme token colors */
-.code-block-hero .shiki code span {
-  color: var(--shiki-light);
-}
-.dark .code-block-hero .shiki code span {
-  color: var(--shiki-dark);
+/* Override when keepBackground is enabled */
+.dark .bg-\(--shiki-dark-bg\),
+.dark [class*="bg-(--shiki-dark-bg)"] {
+  background-color: #050505 !important;
 }
 
-/* Syntax highlight tokens (manual spans, always used on dark code surfaces).
-   Monochrome-first, single muted green accent, matches the Vesper Shiki theme. */
-.hl-kw   { color: #e8e8e8; font-weight: 500; }
-.hl-fn   { color: #c9c9c9; }
-.hl-type { color: #a3a3a3; font-style: italic; }
-.hl-dec  { color: #8f8f8f; }
-.hl-str  { color: #97c983; }
-.hl-cmt  { color: #6b6b6b; font-style: italic; }
-.hl-ln   { color: #4d4d4d; }
+/* Code block title bar / tab list — flat, no gradient */
+.dark figure.shiki > div:first-child,
+.dark [role="tablist"]:has(+ [role="tabpanel"] .shiki),
+.dark [role="tablist"]:has(+ div .shiki) {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Tab content panel background */
+.dark [role="tabpanel"]:has(.shiki) {
+  background-color: #050505 !important;
+}
+
+/* Code block inside tabs — match parent, no extra border/shadow */
+.dark [role="tabpanel"] .shiki {
+  background-color: #050505 !important;
+  border: none;
+  box-shadow: none;
+}
+
+/* Code block content viewport — force near-black in dark mode */
+.dark .fd-scroll-container,
+.dark figure.shiki .fd-scroll-container,
+.dark figure:has(.shiki) > div:last-child {
+  background-color: #050505 !important;
+}
+
+/* Code block figure bg-fd-secondary / bg-fd-card wrappers */
+.dark figure.shiki,
+.dark figure:has(pre) {
+  background-color: #050505 !important;
+  border-color: rgba(255, 255, 255, 0.06);
+}
 
 /* =============================================
    Motifs, background patterns
+   Light mode draws dark lines; .dark flips to white
+   (same treatment as .tile above).
    ============================================= */
 .bg-grid {
   background-image:
+    linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.dark .bg-grid {
+  background-image:
     linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 32px 32px;
 }
 
 .bg-grid-small {
   background-image:
-    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
   background-size: 8px 8px;
 }
 
+.dark .bg-grid-small {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+}
+
 .bg-dot {
-  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(0,0,0,0.08) 1px, transparent 1px);
   background-size: 16px 16px;
+}
+
+.dark .bg-dot {
+  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
 }
 
 /* CTA mosaic, nearly imperceptible per-cell brightness drift */
@@ -511,6 +537,11 @@ aside button[aria-label*="Search"] {
 @keyframes cta-cell-drift {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
+}
+
+/* CTA mosaic light-mode fills; dark mode keeps the SVG fill attributes */
+html:not(.dark) .mosaic-tile {
+  fill: var(--t);
 }
 
 /* Thin overlay scrollbar for scrollable code/prompt panes */
@@ -534,5 +565,69 @@ aside button[aria-label*="Search"] {
 }
 .dark .thin-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.16);
+}
+
+/* =============================================
+   Docs page footer nav (prev/next) — sharp, minimal, monospaced.
+   Ported from better-auth.com globals.css; pyrpc's PageFooter renders
+   the same `div.@container` structure directly inside article#nd-page.
+   ============================================= */
+#nd-page > div.\@container {
+  gap: 0;
+  border-top: 1px dashed
+    color-mix(in oklch, var(--color-fd-foreground) 8%, transparent);
+  padding-top: 0;
+  padding-bottom: 2rem;
+  margin-top: 3rem;
+}
+
+#nd-page > div.\@container > a {
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px dashed
+    color-mix(in oklch, var(--color-fd-foreground) 8%, transparent);
+  padding: 1.25rem 1.5rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  background: transparent;
+  transition: all 200ms ease;
+  position: relative;
+}
+
+#nd-page > div.\@container > a:first-child {
+  border-right: 1px dashed
+    color-mix(in oklch, var(--color-fd-foreground) 8%, transparent);
+}
+
+#nd-page > div.\@container > a:hover {
+  background: color-mix(in oklch, var(--color-fd-foreground) 3%, transparent);
+  border-color: color-mix(in oklch, var(--color-fd-foreground) 15%, transparent);
+  border-style: solid;
+}
+
+#nd-page > div.\@container > a div {
+  gap: 0.5rem;
+  font-weight: 400;
+}
+
+#nd-page > div.\@container > a div p {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+#nd-page > div.\@container > a div svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.45;
+  transition: opacity 200ms ease;
+}
+
+#nd-page > div.\@container > a:hover div svg {
+  opacity: 0.8;
+}
+
+#nd-page > div.\@container > a > p {
+  font-size: 11px;
+  opacity: 0.5;
+  letter-spacing: 0;
 }
 

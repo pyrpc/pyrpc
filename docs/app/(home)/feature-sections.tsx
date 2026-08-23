@@ -90,13 +90,13 @@ export default function FeatureSections() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.5 }}
-          className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-fd-border bg-fd-border sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-foreground/[0.08] bg-foreground/[0.08] sm:grid-cols-2 lg:grid-cols-3"
         >
           {FEATURES.map((feature) => (
             <a
               key={feature.index}
               href={feature.href}
-              className="group relative z-0 flex min-h-[150px] flex-col overflow-hidden bg-white p-6 transition-all duration-300 hover:z-10 hover:-translate-y-0.5 hover:bg-white dark:bg-[#0a0a0a] dark:hover:bg-[#101010] md:min-h-[160px]"
+              className="group relative z-0 flex min-h-[150px] flex-col overflow-hidden bg-background p-6 transition-all duration-300 hover:z-10 hover:-translate-y-0.5 hover:bg-foreground/[0.02] hover:shadow-[inset_0_1px_0_0_rgba(128,128,128,0.1)] md:min-h-[160px]"
             >
               <ArrowUpRight className="absolute right-5 top-5 h-4 w-4 translate-y-1 text-fd-foreground/40 opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:text-fd-foreground group-hover:opacity-100" />
               <span className="mb-4 block font-mono text-[11px] uppercase tracking-wider text-fd-foreground/30 transition-colors group-hover:text-fd-foreground/50">

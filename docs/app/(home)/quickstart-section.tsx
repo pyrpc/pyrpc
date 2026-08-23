@@ -87,7 +87,7 @@ export default function QuickstartSection({
 
       <div className="mx-auto flex flex-col md:flex-row max-w-[1200px] gap-8 px-6 pt-10 md:gap-0 md:px-10">
         {/* Step list and description */}
-        <div className="w-full flex-shrink-0 flex flex-col md:w-[320px] lg:w-[360px] md:border-l md:border-r md:border-neutral-200 dark:md:border-[#262626]">
+        <div className="w-full flex-shrink-0 flex flex-col md:w-[320px] lg:w-[360px] md:border-l md:border-r md:border-foreground/[0.08] dark:md:border-white/[0.06]">
           {STEPS.map((s, i) => (
             <button
               key={s.label}
@@ -95,10 +95,10 @@ export default function QuickstartSection({
                 setActive(i);
                 setCopied(false);
               }}
-              className={`relative cursor-pointer border-t border-neutral-200 dark:border-[#262626] px-4 py-4 md:px-6 md:py-5 text-left transition-colors ${
+              className={`relative cursor-pointer border-t border-foreground/[0.08] dark:border-white/[0.06] px-4 py-4 md:px-6 md:py-5 text-left transition-colors ${
                 active === i
-                  ? 'bg-neutral-50 dark:bg-white/[0.03]'
-                  : 'hover:bg-neutral-50/50 dark:hover:bg-white/[0.015]'
+                  ? 'bg-foreground/[0.02]'
+                  : 'hover:bg-foreground/[0.015]'
               }`}
             >
               {active === i && (
@@ -113,7 +113,7 @@ export default function QuickstartSection({
               </span>
             </button>
           ))}
-          <div className="border-t border-neutral-200 dark:border-[#262626]"></div>
+          <div className="border-t border-foreground/[0.08] dark:border-white/[0.06]"></div>
 
           {/* Active Description */}
           <div className="mt-auto px-4 pt-6 pb-1 md:px-6 md:pt-8 text-sm leading-relaxed text-neutral-600 dark:text-white/70">
@@ -121,7 +121,7 @@ export default function QuickstartSection({
           </div>
         </div>
 
-        {/* Code window */}
+        {/* Code window, theme aware: light surface in light mode, near-black in dark */}
         <div className="w-full min-w-0 flex-1 md:pl-10 lg:pl-12">
           <AnimatePresence mode="wait">
             <motion.div
@@ -132,20 +132,20 @@ export default function QuickstartSection({
               transition={{ duration: 0.22 }}
               className="w-full"
             >
-              <div className="w-full overflow-hidden border border-[#262626] bg-[#101010]">
-                <div className="flex items-center justify-between border-b border-[#262626] px-4 py-2">
+              <div className="w-full overflow-hidden border border-foreground/[0.08] bg-neutral-50 dark:bg-black dark:border-white/[0.06]">
+                <div className="flex items-center justify-between border-b border-foreground/[0.08] px-4 py-2 dark:border-white/[0.06]">
                   <span className="flex items-center gap-1.5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={step.icon} alt="" className="h-3.5 w-3.5" />
-                    <span className="font-mono text-[11px] text-[#8a8a8a]">{step.filename}</span>
+                    <span className="font-mono text-[11px] text-neutral-500 dark:text-[#8a8a8a]">{step.filename}</span>
                   </span>
                   <button
                     onClick={copy}
                     aria-label="Copy code"
-                    className="cursor-pointer text-[#8a8a8a] transition-colors hover:text-[#dcdcdc]"
+                    className="cursor-pointer text-neutral-500 transition-colors hover:text-neutral-900 dark:text-[#8a8a8a] dark:hover:text-[#dcdcdc]"
                   >
                     {copied ? (
-                      <Check className="h-3.5 w-3.5 text-white" />
+                      <Check className="h-3.5 w-3.5 text-emerald-700 dark:text-[#97c983]" />
                     ) : (
                       <Copy className="h-3.5 w-3.5" />
                     )}

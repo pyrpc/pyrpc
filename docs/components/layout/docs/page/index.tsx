@@ -2,7 +2,6 @@ import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import { buttonVariants } from '../../../ui/button';
 import { Text } from 'lucide-react';
-import { I18nLabel } from 'fumadocs-ui/contexts/i18n';
 import {
   type BreadcrumbProps,
   type FooterProps,
@@ -158,7 +157,7 @@ export function DocsPage({
               className="inline-flex items-center gap-1.5 text-sm text-fd-muted-foreground"
             >
               <Text className="size-4" />
-              <I18nLabel label="toc" />
+              On this page
             </h3>
             <TOCScrollArea>
               {tocOptions.style === 'clerk' ? <TocClerk.TOCItems /> : <TocDefault.TOCItems />}

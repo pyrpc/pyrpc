@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import { PlaygroundEditor } from '@/components/playground/PlaygroundEditor'
 import * as Select from '@radix-ui/react-select'
-import { ChevronDown, RotateCcw, Play, Loader2, Terminal, Code2, Sparkles } from 'lucide-react'
+import { ChevronDown, Play, Loader2, Terminal, Code2, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { useTheme } from 'next-themes'
 import { fetchIntrospection, validateServerCode } from '@/lib/parsePythonTypes'
@@ -97,13 +97,6 @@ export default function PlaygroundPage() {
         setClientCode(TEMPLATES[serverLang].client[v])
     }, [serverLang])
 
-    const handleReset = () => {
-        setClientCode(TEMPLATES[serverLang].client[clientLang])
-        setServerCode(TEMPLATES[serverLang].server)
-        setServerErrors([])
-        setServerTypes(fetchIntrospection(TEMPLATES[serverLang].server))
-    }
-
     return (
         <div className="relative min-h-[calc(100svh-6.5rem)] pt-14 md:pt-24 pb-16 overflow-hidden">
 
@@ -119,26 +112,16 @@ export default function PlaygroundPage() {
                         </p>
                     </div>
 
-                    {/* Controls */}
-                    <div className="flex items-center gap-3 shrink-0">
-                        <button
-                            onClick={handleReset}
-                            className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-medium tracking-tight rounded-md border border-neutral-200 bg-white hover:bg-neutral-100 dark:border-[#262626] dark:bg-[#161616] dark:hover:bg-[#262626] transition-colors text-fd-foreground cursor-pointer"
-                        >
-                            <RotateCcw className="w-3.5 h-3.5" />
-                            Reset
-                        </button>
                     </div>
-                </div>
 
                 {/* Split Workspace Editor Card */}
-                <div className="border border-[#262626] bg-[#101010] rounded-lg overflow-hidden flex flex-col">
+                <div className="border border-foreground/[0.08] bg-white dark:border-white/[0.06] dark:bg-[#050505] rounded-lg overflow-hidden flex flex-col">
                     {/* IDE Header Bar */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[#262626] border-b border-[#262626] bg-[#101010]">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-foreground/[0.08] dark:divide-white/[0.06] border-b border-foreground/[0.08] dark:border-white/[0.06] bg-neutral-50 dark:bg-[#050505]">
                         <div className="flex items-center justify-between px-4 py-2">
                             <div className="flex items-center gap-2">
                                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" className="w-4 h-4" />
-                                <span className="text-[11px] font-mono font-medium text-neutral-200">server.py</span>
+                                <span className="text-[11px] font-mono font-medium text-neutral-700 dark:text-neutral-200">server.py</span>
                             </div>
                             <FrameworkSelect
                                 value={serverLang}
@@ -149,7 +132,7 @@ export default function PlaygroundPage() {
                         <div className="flex items-center justify-between px-4 py-2">
                             <div className="flex items-center gap-2">
                                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" className="w-4 h-4" />
-                                <span className="text-[11px] font-mono font-medium text-neutral-200">client.ts</span>
+                                <span className="text-[11px] font-mono font-medium text-neutral-700 dark:text-neutral-200">client.ts</span>
                             </div>
                             <FrameworkSelect
                                 value={clientLang}
@@ -160,7 +143,7 @@ export default function PlaygroundPage() {
                     </div>
 
                     {/* Side-by-Side Monaco Editor Panes */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[#262626] h-[380px]">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-foreground/[0.08] dark:divide-white/[0.06] h-[380px]">
                         <div className="relative h-full overflow-hidden">
                             <PlaygroundEditor
                                 language="python"
@@ -169,7 +152,7 @@ export default function PlaygroundPage() {
                                 serverErrors={serverErrors}
                             />
                             {serverErrors.length > 0 && (
-                                <div className="absolute bottom-3 left-3 right-3 bg-[#101010]/80 border border-red-500/20 px-3 py-1.5 rounded text-[10px] text-red-400 font-mono backdrop-blur">
+                                <div className="absolute bottom-3 left-3 right-3 bg-white/85 dark:bg-[#050505]/80 border border-red-500/20 px-3 py-1.5 rounded text-[10px] text-red-500 dark:text-red-400 font-mono backdrop-blur">
                                     {serverErrors[0].message}
                                 </div>
                             )}
@@ -194,24 +177,24 @@ function FrameworkSelect({ label, value, options, onChange }: any) {
         <div className="flex items-center gap-2">
             {label && <span className="text-[10px] font-semibold text-neutral-500 font-sans">{label}:</span>}
             <Select.Root value={value} onValueChange={onChange}>
-                <Select.Trigger className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md border border-[#262626] bg-[#161616] hover:bg-[#262626] transition-colors outline-none text-neutral-300 cursor-pointer">
+                <Select.Trigger className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded border border-neutral-200 bg-transparent hover:bg-neutral-100 transition-colors outline-none font-mono text-[11px] text-neutral-600 dark:border-white/[0.1] dark:bg-transparent dark:hover:bg-white/[0.06] dark:text-neutral-400 cursor-pointer">
                     <Select.Value />
                     <Select.Icon>
-                        <ChevronDown className="w-3 h-3 opacity-60" />
+                        <ChevronDown className="w-2.5 h-2.5 opacity-60" />
                     </Select.Icon>
                 </Select.Trigger>
                 <Select.Portal>
                     <Select.Content
                         position="popper"
                         sideOffset={4}
-                        className="min-w-[160px] bg-white dark:bg-[#0a0a0a] rounded-lg border border-neutral-200 dark:border-white/[0.08] shadow-xl p-1.5 z-[100] animate-in fade-in zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2"
+                        className="min-w-[120px] bg-white dark:bg-[#0a0a0a] rounded-md border border-neutral-200 dark:border-white/[0.08] shadow-lg p-1 z-[100] animate-in fade-in zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2"
                     >
                         <Select.Viewport className="p-0">
                             {options.map((opt: string) => (
                                 <Select.Item
                                     key={opt}
                                     value={opt}
-                                    className="flex items-center px-2 py-1.5 text-[13px] font-medium outline-none cursor-default rounded-md text-fd-muted-foreground data-[highlighted]:bg-fd-accent data-[highlighted]:text-fd-foreground data-[state=checked]:text-fd-foreground transition-colors"
+                                    className="flex items-center px-1.5 py-1 font-mono text-[11px] outline-none cursor-default rounded-sm text-neutral-500 data-[highlighted]:bg-neutral-100 data-[highlighted]:text-neutral-900 dark:text-neutral-400 dark:data-[highlighted]:bg-white/[0.06] dark:data-[highlighted]:text-neutral-200 data-[state=checked]:text-neutral-900 dark:data-[state=checked]:text-neutral-200 transition-colors"
                                 >
                                     <Select.ItemText>{opt}</Select.ItemText>
                                 </Select.Item>
