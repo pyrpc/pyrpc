@@ -1,9 +1,8 @@
 ---
-title: Flask Adapter
+title: Flask
 description: Mount pyRPC on a Flask application using mount_flask.
 ---
 
-# Flask Adapter
 
 The Flask adapter mounts pyRPC onto a Flask app. Flask is sync-only, so the adapter handles async procedure execution internally, your procedure code stays the same.
 
@@ -19,8 +18,7 @@ This also installs `flask-cors`, which you'll need for local frontend developmen
 
 ## 2. Write the server
 
-```python
-# main.py
+```python title="main.py"
 from flask import Flask
 from flask_cors import CORS
 from pyrpc_core import rpc
@@ -67,8 +65,7 @@ pyrpc dev --yes --module main --client ../client
 
 ## 4. Connect the frontend
 
-```ts
-// lib/pyrpc.ts (React)
+```ts title="lib/pyrpc.ts"
 import { createReactClient, httpBatchLink } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
@@ -83,7 +80,7 @@ export const api = createReactClient<Types>({
 
 Note: the URL must match the port your Flask app is served on. `pyrpc dev` uses port `8000` by default; if you run the app directly with `app.run(port=5000)` instead, use `5000`.
 
-See [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) for full frontend setup.
+See [React](/docs/client/adapters/react), [Next.js](/docs/client/adapters/nextjs), [Vue](/docs/client/adapters/vue), or [Svelte](/docs/client/adapters/svelte) for full frontend setup.
 
 ## How it works
 

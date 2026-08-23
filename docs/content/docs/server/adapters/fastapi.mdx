@@ -1,9 +1,8 @@
 ---
-title: FastAPI Adapter
+title: FastAPI
 description: Mount pyRPC on a FastAPI application using mount_fastapi.
 ---
 
-# FastAPI Adapter
 
 The FastAPI adapter mounts pyRPC onto a FastAPI app. Every registered procedure becomes callable at `POST /rpc`. Queries map to `useQuery` and mutations to `useMutation` on the frontend, no extra config needed.
 
@@ -17,8 +16,7 @@ pip install "pyrpc-core[fastapi]"
 
 ## 2. Write the server
 
-```python
-# main.py
+```python title="main.py"
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pyrpc_core import rpc
@@ -89,8 +87,7 @@ npm install @pyrpc/svelte @tanstack/svelte-query
 
 Then create the typed client, the import from `@pyrpc/types` resolves to the generated `__pyrpc.ts` in your client project:
 
-```ts
-// React, lib/pyrpc.ts
+```ts title="lib/pyrpc.ts"
 import { createReactClient, httpBatchLink } from "@pyrpc/react"
 import type { Types } from "@pyrpc/types"
 
@@ -103,7 +100,7 @@ export const api = createReactClient<Types>({
 })
 ```
 
-See the [React](/docs/client/react), [Next.js](/docs/client/nextjs), [Vue](/docs/client/vue), or [Svelte](/docs/client/svelte) docs for complete setup per framework.
+See the [React](/docs/client/adapters/react), [Next.js](/docs/client/adapters/nextjs), [Vue](/docs/client/adapters/vue), or [Svelte](/docs/client/adapters/svelte) docs for complete setup per framework.
 
 ## How it works
 
