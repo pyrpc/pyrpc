@@ -88,7 +88,7 @@ const { data } = api.get_user.useQuery({ userId: 1 })
                 </p>
 
                 <p>
-                    <Link href="/docs/client/vue" className="text-fd-foreground underline underline-offset-2">Vue docs</Link> · <Link href="/blog/vue-svelte-adapters" className="text-fd-foreground underline underline-offset-2">Vue and Svelte adapters</Link>
+                    <Link href="/docs/client/adapters/vue" className="text-fd-foreground underline underline-offset-2">Vue docs</Link> · <Link href="/blog/vue-svelte-adapters" className="text-fd-foreground underline underline-offset-2">Vue and Svelte adapters</Link>
                 </p>
             </section>
         </article>

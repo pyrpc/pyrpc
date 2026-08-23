@@ -167,7 +167,7 @@ export const procedureKinds = { ... } as const satisfies ProcedureKinds`}
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Where to go next</h2>
                 <ul className="list-disc pl-6 space-y-1">
                     <li><Link href="/blog/nextjs-tanstack-query-tutorial" className="text-fd-foreground underline underline-offset-2">Tutorial: Next.js App Router + pyRPC</Link></li>
-                    <li><Link href="/docs/client/react" className="text-fd-foreground underline underline-offset-2">Docs: React</Link> · <Link href="/docs/client/nextjs" className="text-fd-foreground underline underline-offset-2">Next.js</Link></li>
+                    <li><Link href="/docs/client/adapters/react" className="text-fd-foreground underline underline-offset-2">Docs: React</Link> · <Link href="/docs/client/adapters/nextjs" className="text-fd-foreground underline underline-offset-2">Next.js</Link></li>
                     <li><Link href="/blog/package-versioning-and-releases" className="text-fd-foreground underline underline-offset-2">How we version and release the packages</Link></li>
                     <li><a href="https://github.com/pyrpc/pyrpc/tree/main/examples/fastapi-nextjs" className="text-fd-foreground underline underline-offset-2">examples/fastapi-nextjs</a></li>
                 </ul>

@@ -1,13 +1,11 @@
 {
     "title": "Concepts",
     "description": "Core concepts of pyRPC",
-    "icon": "Book",
+    "icon": "Books",
     "pages": [
         "index",
         "mental-model",
-        "architecture",
-        "protocol-design",
         "procedures",
-        "error-handling"
+        "architecture"
     ]
 }

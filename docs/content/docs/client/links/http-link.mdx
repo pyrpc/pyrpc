@@ -1,0 +1,57 @@
+---
+title: HTTP Link
+description: Send one RPC operation per HTTP request.
+---
+
+
+`httpLink` is a terminating link that sends **one RPC operation per HTTP request**.
+
+```
+one RPC operation
+        ↓
+one HTTP request
+```
+
+```ts
+import { createClient, httpLink } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+export const client = createClient<Types>({
+  links: [
+    httpLink({
+      url: "https://api.example.com",
+    }),
+  ],
+});
+
+const user = await client.get_user({ id: 1 });
+```
+
+## How It Works
+
+Each call POSTs the operation as JSON to the server's `/rpc` endpoint with `Content-Type: application/json`:
+
+```
+POST /rpc
+Content-Type: application/json
+
+{"id":"k3j2h1","method":"get_user","params":{"id":1}}
+```
+
+The response is the wire result of the single operation:
+
+```json
+{
+  "id": "k3j2h1",
+  "result": { "id": 1, "name": "Ada" },
+  "error": null
+}
+```
+
+If the procedure fails on the server, `result` is `null` and `error` carries the code and message — the client throws a [`PyRPCError`](/docs/reference/error-handling) from it. If the HTTP request itself fails (non-2xx status), the link throws an HTTP error before any result parsing happens.
+
+For day-to-day use, reach for [`httpBatchLink`](/docs/client/links/http-batch-link) instead; it sends the same calls with fewer round trips.
+
+## Options
+
+- `url`: server URL (required). Give the root (`https://api.example.com`) or the full endpoint (`https://api.example.com/rpc`); the link normalizes to `/rpc`.

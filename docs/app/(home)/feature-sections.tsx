@@ -61,13 +61,13 @@ const FEATURES: {
       index: '05',
       title: 'Server Actions.',
       description: 'Call procedures directly from React Server Components and Actions.',
-      href: '/docs/client/nextjs',
+      href: '/docs/client/adapters/nextjs',
     },
     {
       index: '06',
       title: 'Typed errors.',
       description: 'Exceptions arrive in catch blocks as typed PyRPCError values.',
-      href: '/docs/concepts/error-handling',
+      href: '/docs/reference/error-handling',
     },
   ];
 

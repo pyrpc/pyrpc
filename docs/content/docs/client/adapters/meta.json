@@ -1,0 +1,12 @@
+{
+    "title": "Adapters",
+    "description": "Framework adapters for consuming your pyRPC API",
+    "icon": "Plugs",
+    "pages": [
+        "react",
+        "nextjs",
+        "vue",
+        "svelte"
+    ],
+    "collapsible": false
+}

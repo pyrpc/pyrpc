@@ -3,7 +3,6 @@ title: Vue
 description: Vue 3 + TanStack Vue Query adapter with @pyrpc/vue.
 ---
 
-# Vue
 
 `@pyrpc/vue` gives you typed `createQuery` / `createMutation` composables for every pyRPC procedure. No hand-written types, no schema files.
 
@@ -25,8 +24,7 @@ my-app/
 
 ## 1. Create the client
 
-```ts
-// src/pyrpc.ts
+```ts title="src/pyrpc.ts"
 import { createPyrpcVue, httpBatchLink } from "@pyrpc/vue"
 import type { Types } from "@pyrpc/types"
 
@@ -43,8 +41,7 @@ export const pyrpc = createPyrpcVue<Types>({
 
 Vue uses a plugin instead of a Provider component. Install it once on the root app, this sets up the TanStack Vue Query cache:
 
-```ts
-// src/main.ts
+```ts title="src/main.ts"
 import { createApp } from "vue"
 import App from "./App.vue"
 import { pyrpc } from "./pyrpc"
@@ -54,8 +51,7 @@ createApp(App).use(pyrpc.plugin).mount("#app")
 
 ## 3. Call procedures in components
 
-```vue
-<!-- src/App.vue -->
+```vue title="src/App.vue"
 <script setup lang="ts">
 import { ref } from "vue"
 import { pyrpc } from "./pyrpc"

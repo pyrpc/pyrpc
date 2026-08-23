@@ -1,10 +1,9 @@
 {
     "title": "Community",
     "description": "Join the pyRPC community",
-    "icon": "MessageCircle",
+    "icon": "UsersFill",
     "pages": [
         "contributing",
-        "testimonials",
         "sponsors"
     ]
 }

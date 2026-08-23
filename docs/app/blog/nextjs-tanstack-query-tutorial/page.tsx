@@ -183,7 +183,7 @@ npm run dev   # Next on :3000`}
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Next reading</h2>
                 <ul className="list-disc pl-6 space-y-1">
                     <li><Link href="/blog/framework-adapters-deep-dive" className="text-fd-foreground underline underline-offset-2">Deep dive: adapters architecture</Link></li>
-                    <li><Link href="/docs/client/nextjs" className="text-fd-foreground underline underline-offset-2">Docs: Next.js adapter</Link></li>
+                    <li><Link href="/docs/client/adapters/nextjs" className="text-fd-foreground underline underline-offset-2">Docs: Next.js adapter</Link></li>
                     <li><Link href="/docs/server/procedures" className="text-fd-foreground underline underline-offset-2">Docs: query vs mutation</Link></li>
                 </ul>
             </section>

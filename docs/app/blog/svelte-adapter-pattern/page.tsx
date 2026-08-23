@@ -84,7 +84,7 @@ const userQuery = createQuery(
                 </p>
 
                 <p>
-                    <Link href="/docs/client/svelte" className="text-fd-foreground underline underline-offset-2">Svelte docs</Link> · <Link href="/blog/vue-svelte-adapters" className="text-fd-foreground underline underline-offset-2">Vue and Svelte adapters</Link>
+                    <Link href="/docs/client/adapters/svelte" className="text-fd-foreground underline underline-offset-2">Svelte docs</Link> · <Link href="/blog/vue-svelte-adapters" className="text-fd-foreground underline underline-offset-2">Vue and Svelte adapters</Link>
                 </p>
             </section>
         </article>

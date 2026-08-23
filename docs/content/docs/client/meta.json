@@ -1,15 +1,21 @@
 {
     "title": "Client",
     "description": "Consume your pyRPC API from the client",
-    "icon": "Laptop",
+    "icon": "BrowserWindow",
     "pages": [
         "overview",
         "typescript",
-        "react",
-        "nextjs",
-        "vue",
-        "svelte",
         "vanilla",
+        "---Links---",
+        "./links/overview",
+        "./links/http-link",
+        "./links/http-batch-link",
+        "---Adapters---",
+        "./adapters/react",
+        "./adapters/nextjs",
+        "./adapters/vue",
+        "./adapters/svelte",
+        "---Others---",
         "advanced"
     ]
 }

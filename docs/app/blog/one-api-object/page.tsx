@@ -58,7 +58,7 @@ api.greet.useQuery("Ada")`}
                 </p>
 
                 <p>
-                    Next: <Link href="/blog/nextjs-rsc-prefetch-hydration" className="text-fd-foreground underline underline-offset-2">RSC prefetch &amp; hydration</Link> · <Link href="/docs/client/nextjs" className="text-fd-foreground underline underline-offset-2">Docs</Link>
+                    Next: <Link href="/blog/nextjs-rsc-prefetch-hydration" className="text-fd-foreground underline underline-offset-2">RSC prefetch &amp; hydration</Link> · <Link href="/docs/client/adapters/nextjs" className="text-fd-foreground underline underline-offset-2">Docs</Link>
                 </p>
             </section>
         </article>

@@ -1,0 +1,64 @@
+---
+title: HTTP Batch Link
+description: Combine concurrent RPC operations into a single HTTP request.
+---
+
+
+`httpBatchLink` is a terminating link that automatically combines **multiple independent RPC operations that occur close together into a single HTTP request**.
+
+```
+multiple RPC operations
+        ↓
+one HTTP request
+```
+
+You still write normal, independent RPC calls. The link collects eligible operations from the same scheduling window and sends them as one batch:
+
+```ts
+import { createClient, httpBatchLink } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+export const client = createClient<Types>({
+  links: [
+    httpBatchLink({
+      url: "https://api.example.com",
+      maxItems: 10,
+    }),
+  ],
+});
+
+// The three concurrent calls are combined into one HTTP request.
+const [alice, bob, carol] = await Promise.all([
+  client.get_user({ id: 1 }),
+  client.get_user({ id: 2 }),
+  client.get_user({ id: 3 }),
+]);
+```
+
+## How It Works
+
+Operations that occur in the same scheduling window are collected and sent as a single JSON array to the server's `/rpc` endpoint:
+
+```
+POST /rpc
+Content-Type: application/json
+
+[
+  {"id":"a1b2c3","method":"get_user","params":{"id":1}},
+  {"id":"d4e5f6","method":"get_user","params":{"id":2}}
+]
+```
+
+The server responds with an array of results, matched back to the pending calls by index. Each operation keeps its own `id` and resolves or rejects independently — so one failed procedure never fails the others. The HTTP request succeeding is a transport success; a per-operation error is an operation failure that surfaces as a [`PyRPCError`](/docs/reference/error-handling) on that call only. Only a failed HTTP request fails the whole batch.
+
+## Batching Semantics
+
+- Both queries and mutations can be batched. pyRPC uses `POST` for both, so they can share one batch.
+- Operations inside a batch execute **sequentially on the server**, in request order.
+- A batch is **not a transaction**: if one operation fails, the others still execute, and successful operations are not rolled back.
+- Each operation keeps its own result or error. A single failed procedure does not fail the others.
+
+## Options
+
+- `url`: server URL (required). Give the root (`https://api.example.com`) or the full endpoint (`https://api.example.com/rpc`); the link normalizes to `/rpc`.
+- `maxItems`: maximum operations per batch; when more operations are queued, they flush immediately rather than waiting for the batching window. Defaults to `Infinity`.

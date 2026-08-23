@@ -1,0 +1,11 @@
+{
+    "title": "Links",
+    "description": "Transport links that carry RPC operations to the server",
+    "icon": "LinkBox",
+    "pages": [
+        "overview",
+        "http-link",
+        "http-batch-link"
+    ],
+    "collapsible": false
+}

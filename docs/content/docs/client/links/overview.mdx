@@ -1,0 +1,57 @@
+---
+title: Overview
+description: How pyRPC clients transport operations to the server.
+---
+
+# Links
+
+A **link** transports an RPC operation to the server. The URL, HTTP transport, request serialization, response deserialization, and HTTP-level error handling all live in the link — the client core only knows how to turn procedure calls into operations and results back into typed values.
+
+## Configuration
+
+Links are configured on the client. The URL belongs to the link, not the client:
+
+```ts
+import { createClient, httpBatchLink } from "@pyrpc/client"
+import type { Types } from "@pyrpc/types"
+
+export const client = createClient<Types>({
+  links: [
+    httpBatchLink({
+      url: "https://api.example.com",
+    }),
+  ],
+});
+```
+
+Exactly one terminating link is supported (`httpLink` or `httpBatchLink`); supplying zero or multiple terminating links is a configuration error.
+
+## Available Links
+
+| Link | Behavior | Use when |
+|------|----------|----------|
+| [`httpLink`](/docs/client/links/http-link) | One RPC operation → one HTTP request | Debugging, low-traffic clients |
+| [`httpBatchLink`](/docs/client/links/http-batch-link) | Multiple independent RPC operations → one HTTP request | Day-to-day use |
+
+For day-to-day use, reach for `httpBatchLink`; it sends the same calls with fewer round trips.
+
+## The Operation Wire Format
+
+Every call is transported as an **operation** — "run procedure `method` with `params`":
+
+```json
+{
+  "id": "k3j2h1",
+  "method": "get_user",
+  "params": { "id": 1 }
+}
+```
+
+The link POSTs the operation (or an array of operations) to the server and resolves each call with its result. If the HTTP request succeeds but the procedure itself fails, the `error` field is set and the client throws a `PyRPCError` — the two are mutually exclusive.
+
+Non-terminating links (logging, retry, auth, splitting) are not implemented yet; the interface is kept minimal so they can be added later without changing the client core.
+
+## Next Steps
+
+- [HTTP Link](/docs/client/links/http-link) — one operation per request
+- [HTTP Batch Link](/docs/client/links/http-batch-link) — batch concurrent operations

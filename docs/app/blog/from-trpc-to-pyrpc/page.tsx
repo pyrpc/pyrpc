@@ -113,7 +113,7 @@ const { data } = api.greet.useQuery({ name: "Ada" })`}
                 </ul>
 
                 <p>
-                    <Link href="/docs/client/react" className="text-fd-foreground underline underline-offset-2">React docs</Link> · <Link href="/docs/client/nextjs" className="text-fd-foreground underline underline-offset-2">Next.js docs</Link> · <Link href="/blog/from-createClient-to-hooks" className="text-fd-foreground underline underline-offset-2">Migration guide</Link>
+                    <Link href="/docs/client/adapters/react" className="text-fd-foreground underline underline-offset-2">React docs</Link> · <Link href="/docs/client/adapters/nextjs" className="text-fd-foreground underline underline-offset-2">Next.js docs</Link> · <Link href="/blog/from-createClient-to-hooks" className="text-fd-foreground underline underline-offset-2">Migration guide</Link>
                 </p>
             </section>
         </article>
