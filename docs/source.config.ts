@@ -3,6 +3,8 @@ import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
 
 import { z } from 'zod';
 
+import { pyrpcDark, pyrpcLight } from './lib/shiki-themes';
+
 // You can customise Zod schemas for frontmatter and `meta.json` here
 // see https://fumadocs.dev/docs/mdx/collections
 export const docs = defineDocs({
@@ -25,9 +27,10 @@ export const docs = defineDocs({
 export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
+      // Same syntax voice as the hero/quickstart windows (lib/shiki-themes).
       themes: {
-        light: 'vitesse-light',
-        dark: 'vesper', // Brand syntax identity, monochrome-first, single green accent
+        light: pyrpcLight,
+        dark: pyrpcDark,
       },
     },
   },

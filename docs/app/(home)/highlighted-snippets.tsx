@@ -56,9 +56,19 @@ async function highlightSnippet(code: string, lang: string) {
   return highlight(code, {
     lang,
     ...shikiHighlightOptions,
+    // Emit only --shiki-light/--shiki-dark variables (no inline colors) so
+    // fumadocs' preset stylesheet can swap token colors under `.dark`.
+    defaultColor: false,
     components: {
       pre: ({ children, className, style }: { children?: ReactNode; className?: string; style?: Record<string, string> }) => (
-        <div className={className} style={style}>{children}</div>
+        <div
+          className={className}
+          // The code window provides its own theme-aware surface; shiki's
+          // inline light-theme background would paint a second one on top.
+          style={{ ...style, backgroundColor: undefined }}
+        >
+          {children}
+        </div>
       ),
     },
   } satisfies HighlightOptions);
