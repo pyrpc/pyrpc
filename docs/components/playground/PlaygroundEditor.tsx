@@ -191,45 +191,88 @@ export function PlaygroundEditor({ code, language, onChange, serverTypes, server
         monacoRef.current = monaco
         editorRef.current = editor
 
-        monaco.editor.defineTheme('pyrpc-dark', {
-            base: 'vs-dark',
-            inherit: true,
+        // Same syntax voice as the hero/docs windows (lib/shiki-themes)
+        monaco.editor.defineTheme('pyrpc-light', {
+            base: 'vs',
+            inherit: false,
             rules: [
-                { token: 'comment', foreground: '5a5a5a', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'c8c8c8' },
-                { token: 'string', foreground: '97c983' },
-                { token: 'number', foreground: 'd0d0d0' },
-                { token: 'type', foreground: 'e0e0e0' },
-                { token: 'identifier', foreground: 'a0a0a0' },
+                { token: 'comment', foreground: 'a1a1a1', fontStyle: 'italic' },
+                { token: 'keyword', foreground: '171717' },
+                { token: 'string', foreground: '047857' },
+                { token: 'number', foreground: '047857' },
+                { token: 'type', foreground: '737373', fontStyle: 'italic' },
+                { token: 'type.identifier', foreground: '737373', fontStyle: 'italic' },
+                { token: 'identifier', foreground: '404040' },
+                { token: 'delimiter', foreground: 'a3a3a3' },
+                { token: 'operator', foreground: '525252' },
             ],
             colors: {
-                'editor.background': '#101010',
-                'editor.lineHighlightBackground': '#161616',
-                'editor.selectionBackground': '#262626',
-                'editorCursor.foreground': '#ffffff',
-                'editorLineNumber.foreground': '#404040',
-                'editorLineNumber.activeForeground': '#a0a0a0',
+                'editor.background': '#fafafa',
+                'editor.foreground': '#404040',
+                'editor.lineHighlightBackground': '#f0f0f0',
+                'editor.selectionBackground': '#e5e5e5',
+                'editorCursor.foreground': '#171717',
+                'editorLineNumber.foreground': '#a3a3a3',
+                'editorLineNumber.activeForeground': '#525252',
+                'editorBracketHighlight.foreground1': '#a3a3a3',
+                'editorBracketHighlight.foreground2': '#a3a3a3',
+                'editorBracketHighlight.foreground3': '#a3a3a3',
+                'editorBracketHighlight.foreground4': '#a3a3a3',
+                'editorBracketHighlight.foreground5': '#a3a3a3',
+                'editorBracketHighlight.foreground6': '#a3a3a3',
             }
         })
 
-        const activeTheme = theme === 'dark' ? 'pyrpc-dark' : 'vs'
+        monaco.editor.defineTheme('pyrpc-dark', {
+            base: 'vs-dark',
+            inherit: false,
+            rules: [
+                { token: 'comment', foreground: '6b6b6b', fontStyle: 'italic' },
+                { token: 'keyword', foreground: 'e8e8e8' },
+                { token: 'string', foreground: '97c983' },
+                { token: 'number', foreground: '97c983' },
+                { token: 'type', foreground: 'a3a3a3', fontStyle: 'italic' },
+                { token: 'type.identifier', foreground: 'a3a3a3', fontStyle: 'italic' },
+                { token: 'identifier', foreground: 'dcdcdc' },
+                { token: 'delimiter', foreground: '7a7a7a' },
+                { token: 'operator', foreground: 'c9c9c9' },
+            ],
+            colors: {
+                'editor.background': '#000000',
+                'editor.foreground': '#dcdcdc',
+                'editor.lineHighlightBackground': '#0d0d0d',
+                'editor.selectionBackground': '#262626',
+                'editorCursor.foreground': '#ffffff',
+                'editorLineNumber.foreground': '#404040',
+                'editorLineNumber.activeForeground': '#7a7a7a',
+                'editorBracketHighlight.foreground1': '#7a7a7a',
+                'editorBracketHighlight.foreground2': '#7a7a7a',
+                'editorBracketHighlight.foreground3': '#7a7a7a',
+                'editorBracketHighlight.foreground4': '#7a7a7a',
+                'editorBracketHighlight.foreground5': '#7a7a7a',
+                'editorBracketHighlight.foreground6': '#7a7a7a',
+            }
+        })
+
+        const activeTheme = theme === 'dark' ? 'pyrpc-dark' : 'pyrpc-light'
         monaco.editor.setTheme(activeTheme)
     }
 
     return (
-        <div className="flex flex-col h-full bg-background overflow-hidden">
+        <div className="flex flex-col h-full bg-neutral-50 dark:bg-black overflow-hidden">
             <div className="flex-1">
                 <Editor
                     height="100%"
                     language={language}
                     value={code}
                     path={language === 'typescript' ? '/model.ts' : undefined}
-                    theme={theme === 'dark' ? 'pyrpc-dark' : 'vs'}
+                    theme={theme === 'dark' ? 'pyrpc-dark' : 'pyrpc-light'}
                     onChange={onChange}
                     beforeMount={handleBeforeMount}
                     onMount={handleEditorDidMount}
                     options={{
                         minimap: { enabled: false },
+                        bracketPairColorization: { enabled: false },
                         fontSize: 13,
                         fontFamily: 'var(--font-mono), "JetBrains Mono", "Fira Code", monospace',
                         fontLigatures: true,
