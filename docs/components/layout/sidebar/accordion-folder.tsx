@@ -10,19 +10,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '../../ui/collapsible';
-import { ChevronDown, Server, Laptop, Plug, Library, LayoutGrid, Users, BookOpen } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { CustomIcon } from '../../custom-icon';
-
-const ICONS: Record<string, React.ElementType> = {
-  'server': Server,
-  'client': Laptop,
-  'plugins': Plug,
-  'reference': Library,
-  'extra': LayoutGrid,
-  'community': Users,
-  'concepts': BookOpen,
-};
+import { useTreeContext } from 'fumadocs-ui/contexts/tree';
 
 const SECTION_DEPTH = 1; // Get Started, Concepts, etc. are top-level sections (depth 1)
 
@@ -37,9 +28,15 @@ function useAccordion() {
 
 export function AccordionProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { root } = useTreeContext();
   const [openId, setOpenId] = useState<string | null>(() => {
     const slug = pathname.replace(/^\/docs\/?/, '').split('/')[0];
-    return slug || null;
+    if (slug) return slug;
+    // fall back to the first section marked `defaultOpen` in meta.json
+    const folder = root.children.find(
+      (node): node is PageTree.Folder => node.type === 'folder' && node.defaultOpen === true,
+    );
+    return folder?.index?.url?.match(/\/docs\/([^/?#]+)/)?.[1] ?? null;
   });
   useEffect(() => {
     const slug = pathname.replace(/^\/docs\/?/, '').split('/')[0];
@@ -85,10 +82,7 @@ export function AccordionFolder({
   const active = path.includes(item);
   const defaultOpen = item.defaultOpen ?? active;
 
-  // Debug icon resolution
-  const fallbackIcon = ICONS[folderId] ?? (typeof item.name === 'string' ? ICONS[item.name.toLowerCase()] : undefined);
-  const Icon = fallbackIcon ? (fallbackIcon as React.ElementType) : CustomIcon;
-  const iconProps = fallbackIcon ? { className: 'size-4' } : { icon: item.icon, className: 'size-4' };
+  const iconValue = item.icon;
 
   const open = ctx !== null && ctx.openId === folderId;
   const setOpen = useCallback(
@@ -120,8 +114,7 @@ export function AccordionFolder({
 
           {item.index ? (
             <Base.SidebarFolderLink href={item.index.url} external={item.index.external}>
-              {/* @ts-ignore */}
-              <Icon {...iconProps} />
+              <CustomIcon icon={iconValue} className="size-4" />
               {item.name}
             </Base.SidebarFolderLink>
           ) : (
@@ -129,8 +122,7 @@ export function AccordionFolder({
               className={cn(itemVariants({ variant: 'button' }), 'w-full')}
               style={{ paddingInlineStart: getItemOffset(depth - 1) }}
             >
-              {/* @ts-ignore */}
-              <Icon {...iconProps} />
+              <CustomIcon icon={iconValue} className="size-4" />
               {item.name}
               <ChevronDown
                 data-icon
@@ -154,14 +146,12 @@ export function AccordionFolder({
     >
       {item.index ? (
         <Base.SidebarFolderLink href={item.index.url} external={item.index.external}>
-          {/* @ts-ignore */}
-          <Icon {...iconProps} />
+          <CustomIcon icon={iconValue} className="size-4" />
           {item.name}
         </Base.SidebarFolderLink>
       ) : (
         <Base.SidebarFolderTrigger>
-          {/* @ts-ignore */}
-          <Icon {...iconProps} />
+          <CustomIcon icon={iconValue} className="size-4" />
           {item.name}
         </Base.SidebarFolderTrigger>
       )}
