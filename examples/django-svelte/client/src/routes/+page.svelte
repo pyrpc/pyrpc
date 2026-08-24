@@ -3,8 +3,8 @@
 
   let name = "";
   
-  const greeting = api.greet.createQuery(() => ({ name: "Django User" }));
-  const item = api.read_item.createQuery(() => ({ item_id: 42, q: "django-test" }));
+  const greeting = api.greet.createQuery({ name: "Django User" });
+  const item = api.read_item.createQuery({ item_id: 42, q: "django-test" });
   const createItem = api.create_item.createMutation();
 
   function handleCreate() {
@@ -19,8 +19,8 @@
 </script>
 
 <svelte:head>
-  <title>pyRPC FastAPI Svelte App</title>
-  <meta name="description" content="FastAPI + Svelte with pyRPC" />
+  <title>pyRPC Django Svelte App</title>
+  <meta name="description" content="Django + Svelte with pyRPC" />
 </svelte:head>
 
 <main>

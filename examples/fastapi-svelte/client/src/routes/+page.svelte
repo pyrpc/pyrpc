@@ -4,7 +4,7 @@
   let name = "";
   
   const greeting = api.read_root.createQuery();
-  const item = api.read_item.createQuery(() => ({ item_id: 42, q: "test" }));
+  const item = api.read_item.createQuery({ item_id: 42, q: "test" });
   const createItem = api.create_item.createMutation();
 
   function handleCreate() {
