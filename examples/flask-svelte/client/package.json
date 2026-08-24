@@ -19,9 +19,9 @@
     "vite": "^6.0.0"
   },
   "dependencies": {
-    "@pyrpc/svelte": "^0.13.0",
-    "@pyrpc/client": "^0.13.0",
-    "@pyrpc/types": "^0.13.0",
+    "@pyrpc/svelte": "^0.14.0",
+    "@pyrpc/client": "^0.14.0",
+    "@pyrpc/types": "^0.14.0",
     "@tanstack/svelte-query": "^5.83.0"
   },
   "type": "module"

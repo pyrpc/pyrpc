@@ -1187,7 +1187,7 @@ crypto = [
 
 [[package]]
 name = "pyrpc-codegen"
-version = "0.13.0"
+version = "0.14.0"
 source = { editable = "packages/pyrpc-codegen" }
 dependencies = [
     { name = "jinja2" },
@@ -1202,7 +1202,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-core"
-version = "0.13.0"
+version = "0.14.0"
 source = { editable = "packages/pyrpc-core" }
 dependencies = [
     { name = "anyio" },
@@ -1259,7 +1259,7 @@ provides-extras = ["mcp", "fastapi", "flask", "django"]
 
 [[package]]
 name = "pyrpc-django-adapter"
-version = "0.13.0"
+version = "0.14.0"
 source = { editable = "packages/pyrpc-django-adapter" }
 dependencies = [
     { name = "django", version = "5.2.15", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -1275,7 +1275,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-fastapi"
-version = "0.13.0"
+version = "0.14.0"
 source = { editable = "packages/pyrpc-fastapi" }
 dependencies = [
     { name = "fastapi" },
@@ -1290,7 +1290,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-flask"
-version = "0.13.0"
+version = "0.14.0"
 source = { editable = "packages/pyrpc-flask" }
 dependencies = [
     { name = "flask" },
@@ -1305,7 +1305,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-workspace"
-version = "0.13.0"
+version = "0.14.0"
 source = { editable = "." }
 
 [package.optional-dependencies]
