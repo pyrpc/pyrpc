@@ -29,6 +29,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # jsonc-edit bootstraps its parser through npm, so the tsconfig tests
+      # need Node on PATH. setup-node also installs to a space-free location,
+      # avoiding a cmd.exe quoting bug in jsonc-edit 0.2.1 where
+      # shutil.which("npm") resolves to "C:\Program Files\nodejs\npm.cmd".
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install dependencies
         run: uv sync --all-extras --dev
 
