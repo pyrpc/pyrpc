@@ -85,6 +85,8 @@ export function createNextClient<TProcedures extends ProceduresRecord>(
       return async (input: unknown) => {
         const queryClient = getQueryClient();
         const caller = createCaller();
+        // Same variance-capture idiom as the client Proxy; see eslint.config.mjs.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const fn = (caller as Record<string, (...args: any[]) => Promise<any>>)[prop];
         const utils = createUtils(caller, queryClient);
         const procedureUtils = (

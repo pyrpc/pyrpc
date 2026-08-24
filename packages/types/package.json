@@ -13,7 +13,8 @@
   ],
   "scripts": {
     "lint": "echo 'no lint'",
-    "test": "echo 'no test'"
+    "test": "echo 'no test'",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "pyrpc",

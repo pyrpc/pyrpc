@@ -914,6 +914,7 @@ def test_cfg_watcher_restarts_backend_on_entrypoint_change(tmp_path):
 # ── client-root autocomplete ──────────────────────────────────────────────────
 
 def _make_tree(root: Path, outside: Path):
+    """Build a fixture tree; skips the escape symlink where unsupported."""
     (root / "src" / "app").mkdir(parents=True)
     (root / "src" / "api").mkdir()
     (root / "components").mkdir()
@@ -921,7 +922,11 @@ def _make_tree(root: Path, outside: Path):
     (root / ".venv").mkdir()
     (root / "README.md").write_text("x", encoding="utf-8")
     (outside / "elsewhere").mkdir(parents=True)
+    if sys.platform == "win32":
+        # Creating symlinks on Windows requires developer mode or admin.
+        return False
     os.symlink(outside / "elsewhere", root / "escape_link")
+    return True
 
 
 def test_client_filter_hides_junk_and_escapes(tmp_path):
@@ -929,7 +934,7 @@ def test_client_filter_hides_junk_and_escapes(tmp_path):
     outside = tmp_path / "outside"
     root = tmp_path / "project"
     root.mkdir()
-    _make_tree(root, outside)
+    has_symlink = _make_tree(root, outside)
 
     visible = cli_mod._client_visible_filter(str(root))
     shown = sorted(
@@ -938,6 +943,8 @@ def test_client_filter_hides_junk_and_escapes(tmp_path):
     assert shown == ["components", "src"]
     assert visible(str(outside / "elsewhere")) is False
     assert visible(str(root / "src" / "app")) is True
+    if has_symlink:
+        assert visible(str(root / "escape_link")) is False
 
 
 def test_client_completer_suggests_scoped_dirs(tmp_path):

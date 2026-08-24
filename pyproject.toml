@@ -38,9 +38,9 @@ members = [
 [tool.uv.sources]
 pyrpc-core = { workspace = true }
 pyrpc-django-adapter = { workspace = true }
-pyrpc-flask = { workspace = true }
 pyrpc-fastapi = { workspace = true }
 pyrpc-codegen = { workspace = true }
+pyrpc-flask = { workspace = true }
 
 
 [tool.hatch.build.targets.wheel]
@@ -103,6 +103,7 @@ dev = [
     "pyrpc-codegen",
     "pyrpc-django-adapter",
     "pyrpc-fastapi",
+    "pyrpc-flask",
     "pytest>=9.0.2",
     "pytest-asyncio>=0.25.0",
     "pytest-cov>=7.1.0",
