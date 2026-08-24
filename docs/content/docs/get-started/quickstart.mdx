@@ -38,7 +38,7 @@ mount_fastapi(app)
 
 ## 3. Start the dev server
 
-Run `pyrpc dev` - on first run it will prompt for your entry module, client project root, and frontend framework, then generate types automatically.
+Run `pyrpc dev` - on first run it walks you through setup: your backend framework and entry point, then the client project root and frontend framework. The backend framework decides which native dev server runs (uvicorn for FastAPI/ASGI, `flask run` for Flask, `manage.py runserver` for Django), so pick the one your project actually uses.
 
 ```bash
 pyrpc dev
@@ -47,9 +47,10 @@ pyrpc dev
 **First run output:**
 
 ```
-pyRPC setup (runs once, saved to pyrpc.json)
+pyRPC setup (runs once — saved to pyrpc.json)
 
-? Entry module  (main, app.server, the file that calls mount_fastapi/mount_flask):  server
+? Backend framework:  FastAPI
+? Backend entry point (module[:app] — the file that calls mount_fastapi):  server
 ? Client project root:  ../frontend
 ? Frontend framework:  Next.js
 
@@ -57,14 +58,17 @@ pyRPC setup (runs once, saved to pyrpc.json)
   pyRPC dev  http://127.0.0.1:8000/rpc
 ```
 
-This creates a `pyrpc.json` config file and starts the dev server with auto-type regeneration on file changes. `pyrpc dev` writes `__pyrpc.ts` to your client project root and wires `@pyrpc/types` to it automatically.
+The client root prompt autocompletes directories as you type (Tab accepts a suggestion). This creates a `pyrpc.json` config file and starts the dev server with auto-type regeneration on file changes. `pyrpc dev` writes `__pyrpc.ts` to your client project root and wires `@pyrpc/types` to it automatically.
 
 To skip the wizard in CI or on repeat setups:
 
 ```bash
-pyrpc dev --yes                       # auto-detect module and client
-pyrpc dev --yes --module server --client ../frontend
+pyrpc dev --yes                       # sniff the framework, auto-detect module and client
+pyrpc dev --yes --framework fastapi --module server --client ../frontend
+pyrpc dev --yes --framework flask --module app --client ../frontend
 ```
+
+With `--yes`, pyRPC sniffs your code for `mount_fastapi` / `mount_flask` / `mount_django` and refuses to guess when detection fails — pass `--framework` explicitly to be sure.
 
 ## 4. Client (TypeScript)
 

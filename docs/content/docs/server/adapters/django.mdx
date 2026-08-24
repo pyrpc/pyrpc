@@ -139,12 +139,12 @@ mount_django(urlpatterns)
 Run `pyrpc dev` from the directory containing `manage.py` to generate and keep TypeScript types in sync:
 
 ```bash
-pyrpc dev --yes --module myproject.views --client ../client
+pyrpc dev --yes --framework django --module myproject.views --client ../client
 ```
 
-First run: 2-question wizard, writes `pyrpc.json`. Every run after reads it automatically. `pyrpc dev` imports your views module, generates `__pyrpc.ts` in the client project, and regenerates it on every `.py` save.
+First run: the wizard asks for your backend framework (Django), the path to `manage.py`, and a **types module** - the module whose import registers your `@rpc` procedures (usually the `views.py` that declares them, e.g. `myproject.views`; Django's settings and manage.py register nothing). This is written to `pyrpc.json`. Every run after reads it automatically.
 
-Serve the Django app itself with Django's own development server:
+`pyrpc dev` launches Django's own development server (`manage.py runserver`) for you, generates `__pyrpc.ts` in the client project, and regenerates it on every `.py` save. If you prefer to manage the server yourself, run it separately:
 
 ```bash
 python manage.py runserver
