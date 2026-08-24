@@ -1,0 +1,45 @@
+<svg width="100%" viewBox="0 0 880 400" role="img" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect x="0" y="0" width="880" height="400" rx="16" fill="#16161a"/>
+  <text x="40" y="48" fill="#e6e6e0" font-size="18" font-weight="600">Registration is an import side effect</text>
+  <text x="40" y="70" fill="#9c9ca8" font-size="12">types_module names the module whose import populates the router</text>
+
+  <!-- chain -->
+  <g font-size="12">
+    <rect x="50" y="120" width="180" height="70" rx="10" fill="#222226"/>
+    <text x="140" y="150" fill="#e6e6e0" text-anchor="middle">@rpc def add(...)</text>
+    <text x="140" y="172" fill="#9c9ca8" text-anchor="middle">views.py / main.py</text>
+
+    <path d="M230 155 H290" stroke="#4e8a68" stroke-width="1.5" marker-end="url(#e)"/>
+
+    <rect x="295" y="120" width="200" height="70" rx="10" fill="#1d2b23" stroke="#4e8a68"/>
+    <text x="395" y="148" fill="#6fb58d" text-anchor="middle" font-weight="600">import types_module</text>
+    <text x="395" y="170" fill="#9c9ca8" text-anchor="middle">decorators execute</text>
+
+    <path d="M495 155 H555" stroke="#4e8a68" stroke-width="1.5" marker-end="url(#e)"/>
+
+    <rect x="560" y="120" width="170" height="70" rx="10" fill="#222226"/>
+    <text x="645" y="150" fill="#e6e6e0" text-anchor="middle">default_router</text>
+    <text x="645" y="172" fill="#9c9ca8" text-anchor="middle">module singleton</text>
+  </g>
+
+  <path d="M645 190 V240" stroke="#505060" stroke-width="1.5" marker-end="url(#f)"/>
+
+  <g font-size="12">
+    <rect x="430" y="245" width="300" height="60" rx="10" fill="#222226"/>
+    <text x="580" y="270" fill="#e6e6e0" text-anchor="middle">GET /rpc schema + codegen</text>
+    <text x="580" y="290" fill="#9c9ca8" text-anchor="middle">__pyrpc.ts reflects what registered</text>
+
+    <rect x="90" y="245" width="280" height="60" rx="10" fill="#2a2020"/>
+    <text x="230" y="270" fill="#d89c9c" text-anchor="middle">wrong module = empty schema</text>
+    <text x="230" y="290" fill="#9c9ca8" text-anchor="middle">manage.py registers nothing</text>
+  </g>
+
+  <defs>
+    <marker id="e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#4e8a68"/>
+    </marker>
+    <marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#505060"/>
+    </marker>
+  </defs>
+</svg>

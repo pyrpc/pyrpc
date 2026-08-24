@@ -1,0 +1,47 @@
+<svg width="100%" viewBox="0 0 880 420" role="img" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect x="0" y="0" width="880" height="420" rx="16" fill="#16161a"/>
+  <text x="40" y="48" fill="#e6e6e0" font-size="18" font-weight="600">pyrpc.json changes are diffed, not guessed</text>
+  <text x="40" y="70" fill="#9c9ca8" font-size="12">the config watcher compares parsed BackendSpec values (dataclass equality)</text>
+
+  <g font-size="12">
+    <rect x="50" y="105" width="215" height="56" rx="8" fill="#222226"/>
+    <text x="157" y="128" fill="#e6e6e0" text-anchor="middle">pyrpc.json saved</text>
+    <text x="157" y="148" fill="#9c9ca8" text-anchor="middle">watchfiles event</text>
+  </g>
+
+  <path d="M265 133 H320" stroke="#505060" stroke-width="1.5" marker-end="url(#h)"/>
+
+  <g font-size="12">
+    <rect x="325" y="105" width="205" height="56" rx="8" fill="#1d2b23" stroke="#4e8a68"/>
+    <text x="427" y="128" fill="#6fb58d" text-anchor="middle" font-weight="600">parse_backend()</text>
+    <text x="427" y="148" fill="#9c9ca8" text-anchor="middle">BackendSpec(fw, ep, tm)</text>
+  </g>
+
+  <path d="M530 133 H585" stroke="#505060" stroke-width="1.5" marker-end="url(#h)"/>
+
+  <g font-size="12">
+    <rect x="590" y="105" width="250" height="56" rx="8" fill="#222226"/>
+    <text x="715" y="128" fill="#e6e6e0" text-anchor="middle">spec != old_spec ?</text>
+    <text x="715" y="148" fill="#9c9ca8" text-anchor="middle">clients changed?</text>
+  </g>
+
+  <path d="M715 161 V210 M715 210 H240 V240 M715 210 H640 V255" stroke="#505060" fill="none" stroke-width="1.5" marker-end="url(#h)"/>
+
+  <g font-size="12">
+    <rect x="90" y="245" width="300" height="86" rx="10" fill="#2a2020"/>
+    <text x="240" y="272" fill="#d89c9c" text-anchor="middle" font-weight="600">backend changed</text>
+    <text x="240" y="294" fill="#c0c0ba" text-anchor="middle">import new types_module</text>
+    <text x="240" y="314" fill="#c0c0ba" text-anchor="middle">terminate + relaunch native server</text>
+
+    <rect x="480" y="245" width="300" height="86" rx="10" fill="#222226"/>
+    <text x="630" y="272" fill="#6fb58d" text-anchor="middle" font-weight="600">only clients changed</text>
+    <text x="630" y="294" fill="#c0c0ba" text-anchor="middle">re-point codegen callback</text>
+    <text x="630" y="314" fill="#c0c0ba" text-anchor="middle">no restart, server keeps running</text>
+  </g>
+
+  <defs>
+    <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#505060"/>
+    </marker>
+  </defs>
+</svg>

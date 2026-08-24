@@ -1,0 +1,45 @@
+<svg width="100%" viewBox="0 0 880 440" role="img" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect x="0" y="0" width="880" height="440" rx="16" fill="#16161a"/>
+  <text x="40" y="48" fill="#e6e6e0" font-size="18" font-weight="600">From inferred to declared</text>
+  <text x="40" y="70" fill="#9c9ca8" font-size="12">the wizard asks; sniffing only preselects</text>
+
+  <!-- before -->
+  <rect x="40" y="100" width="240" height="130" rx="10" fill="#222226" stroke="#3a3a46"/>
+  <text x="60" y="126" fill="#9c9ca8" font-size="11">before v0.13.0</text>
+  <text x="60" y="152" fill="#e6e6e0" font-size="12">&#123; "module": "main",</text>
+  <text x="74" y="172" fill="#e6e6e0" font-size="12">"framework": "Next.js",</text>
+  <text x="74" y="192" fill="#e6e6e0" font-size="12">"client": "../web" &#125;</text>
+  <text x="60" y="216" fill="#9c9ca8" font-size="11">server inferred from imports</text>
+
+  <path d="M280 165 H340" stroke="#4e8a68" stroke-width="1.5" marker-end="url(#d)"/>
+
+  <!-- wizard -->
+  <rect x="345" y="96" width="215" height="260" rx="10" fill="#1d1d22" stroke="#3a3a46"/>
+  <text x="365" y="122" fill="#9c9ca8" font-size="11">pyrpc dev wizard</text>
+  <g font-size="12">
+    <circle cx="372" cy="146" r="3" fill="#4e8a68"/><text x="384" y="150" fill="#e6e6e0">Backend framework</text>
+    <circle cx="372" cy="182" r="3" fill="#4e8a68"/><text x="384" y="186" fill="#e6e6e0">Entry point</text>
+    <circle cx="372" cy="218" r="3" fill="#4e8a68"/><text x="384" y="222" fill="#e6e6e0">types_module*</text>
+    <circle cx="372" cy="254" r="3" fill="#4e8a68"/><text x="384" y="258" fill="#e6e6e0">Client root</text>
+    <circle cx="372" cy="290" r="3" fill="#4e8a68"/><text x="384" y="294" fill="#e6e6e0">Frontend fw</text>
+  </g>
+  <text x="365" y="330" fill="#9c9ca8" font-size="10">* django only, auto-detected</text>
+
+  <path d="M560 165 H620" stroke="#4e8a68" stroke-width="1.5" marker-end="url(#d)"/>
+
+  <!-- after -->
+  <rect x="625" y="100" width="215" height="180" rx="10" fill="#1d2b23" stroke="#4e8a68"/>
+  <text x="645" y="126" fill="#9c9ca8" font-size="11">after</text>
+  <text x="645" y="150" fill="#6fb58d" font-size="12">&#123; "backend": &#123;</text>
+  <text x="657" y="170" fill="#e6e6e0" font-size="12">"framework", "entrypoint",</text>
+  <text x="657" y="190" fill="#e6e6e0" font-size="12">"types_module" &#125;,</text>
+  <text x="645" y="212" fill="#6fb58d" font-size="12">"clients": [</text>
+  <text x="657" y="232" fill="#e6e6e0" font-size="12">&#123; "framework", "root" &#125;</text>
+  <text x="645" y="254" fill="#6fb58d" font-size="12">] &#125;</text>
+
+  <defs>
+    <marker id="d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#4e8a68"/>
+    </marker>
+  </defs>
+</svg>
