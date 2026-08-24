@@ -965,7 +965,10 @@ def test_client_completer_suggests_scoped_dirs(tmp_path):
     )
 
     def suggestions(text):
-        return [c.display[0][1] for c in completer.get_completions(Document(text), CompleteEvent())]
+        return [
+            c.display[0][1].replace(os.sep, "/")
+            for c in completer.get_completions(Document(text), CompleteEvent())
+        ]
 
     # Prefix match inside src/
     assert [s for s in suggestions("src/a") if s.startswith("a")] == ["api/", "app/"]

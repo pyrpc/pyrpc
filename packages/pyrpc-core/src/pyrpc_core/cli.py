@@ -400,6 +400,7 @@ def _report_import_error(module_path: str, exc: BaseException, cwd: str) -> None
     if frame is not None:
         filename, lineno = frame
         rel = os.path.relpath(filename, cwd)
+        rel = rel.replace(os.sep, "/")  # consistent, greppable across platforms
         console.print(f'[bold red]✗[/bold red] Failed to load entry module "{module_path}"')
         console.print()
         console.print(f"  [bold]{type(exc).__name__}[/bold]: {exc}")

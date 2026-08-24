@@ -425,11 +425,11 @@ wheels = [
 
 [[package]]
 name = "jsonc-edit"
-version = "0.2.0"
+version = "0.2.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/15/95/fa04af2619307115f5b6ce885aee94d2cfb726a932ed319adaccf6001487/jsonc_edit-0.2.0.tar.gz", hash = "sha256:6ece44225dea00d6bc8b808f93cb074c35148f5fb64c150b382fe09824805eb3", size = 88640, upload-time = "2026-08-10T23:31:21.785Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f7/9f/aabef72fd23097d4d18cc97296123a1c49e92b1c656c42a4b66a361d18d0/jsonc_edit-0.2.1.tar.gz", hash = "sha256:3bb5beb878cdeb3a21d5d9d70d9084fc8b34cc9c068ee0cd24dcc447cbdd6ac3", size = 89940, upload-time = "2026-08-24T15:19:55.947Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/60/75/243c039a2b0a91434ccc5a9991ff1e32ad6455849496bea0558387fdce7d/jsonc_edit-0.2.0-py3-none-any.whl", hash = "sha256:5d3036c5230c57c89f0ede622b2b50c4f4fbc752b2d92f25ca59c8e0c0dbd3c6", size = 11300, upload-time = "2026-08-10T23:31:22.827Z" },
+    { url = "https://files.pythonhosted.org/packages/97/06/737345d3ddce6cc8b7b8d94e381756b920374771e3a2129208bc9156a0b7/jsonc_edit-0.2.1-py3-none-any.whl", hash = "sha256:1963b1efef1c2e6000e76baf8719b37375690f41ea6859803b0a51133f6135f6", size = 11777, upload-time = "2026-08-24T15:19:54.475Z" },
 ]
 
 [[package]]
@@ -935,7 +935,7 @@ requires-dist = [
     { name = "fastapi", marker = "extra == 'fastapi'", specifier = ">=0.100.0" },
     { name = "flask", marker = "extra == 'flask'", specifier = ">=3.0.0" },
     { name = "httpx", specifier = ">=0.24.0" },
-    { name = "jsonc-edit", specifier = ">=0.1.0" },
+    { name = "jsonc-edit", specifier = ">=0.2.1" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pyrpc-codegen", editable = "packages/pyrpc-codegen" },
     { name = "pyrpc-django-adapter", marker = "extra == 'django'", editable = "packages/pyrpc-django-adapter" },
