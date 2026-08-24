@@ -65,7 +65,7 @@ pyRPC is a Python-first RPC system with TypeScript reach. It gives you type safe
 │  Introspection → TypeScript type generation (library)     │
 ├──────────────────────────────────────────────────────────┤
 │  pyrpc.json (written by the pyrpc dev wizard)             │
-│  module, framework, client | clients                      │
+│  backend.{framework, entrypoint, types_module}, clients   │
 ├──────────────────────────────────────────────────────────┤
 │  <client>/__pyrpc.ts (generated, committed to git)      │
 │  Resolved via tsconfig paths: "@pyrpc/types"              │
@@ -90,16 +90,16 @@ The wire format is part of the product identity. Changing the protocol shape mus
 `get_registry_schema()` is the single source of truth for both runtime introspection (used by debug tools) and TypeScript code generation. Codegen must not re-invent schema extraction. If introspection changes, codegen and the TypeScript client must be evaluated together.
 
 **Config is pyrpc.json, written by the `pyrpc dev` wizard on first run.**
-`pyrpc.json` holds `module` (entry point), `framework` (detected), and `client` (single project root) or `clients` (list of roots). All other configuration is derived from these. There are no distribution modes, no `client_root`, no `entrypoint`, and no `output` field — generated types always land at `<client>/__pyrpc.ts`. The wizard that writes pyrpc.json walks the directory tree to detect frontend projects, asks the module and client questions, and never runs again. Re-run it with `--reconfigure`; skip it entirely with `--yes`.
+`pyrpc.json` declares the backend explicitly: `backend.framework` (one of fastapi, flask, django, asgi), `backend.entrypoint` (framework-specific: a `module[:app]` target for FastAPI/Flask/ASGI, the path to `manage.py` for Django), and optional `backend.types_module` (the module whose import registers `@rpc` procedures; defaults to the entrypoint's module part, required for Django). Clients are stored as a list of `{ framework, root }`. All other configuration is derived from these. There are no distribution modes, no `client_root`, and no `output` field. Generated types always land at `<client>/__pyrpc.ts`. The wizard asks the backend framework first (sniffing only preselects; the choice is confirmed), then the framework-specific entry point, client roots with filesystem autocomplete, and frontend frameworks. Re-run it with `--reconfigure`; skip it entirely with `--yes`, which sniffs or requires an explicit `--framework` and never guesses. Legacy flat configs are treated as unconfigured and rewritten in place.
 
 **Generated types live in the user's source tree.**
-`pyrpc dev`, `pyrpc watch`, and `pyrpc codegen` write TypeScript types to `<client>/__pyrpc.ts` for every configured client. This file is in source control — it is the user's file, committed to their repo, diffable in PRs. TypeScript resolves `import type { Types } from "@pyrpc/types"` to this file via a `tsconfig.json` paths alias.
+`pyrpc dev`, `pyrpc watch`, and `pyrpc codegen` write TypeScript types to `<client>/__pyrpc.ts` for every configured client. This file is in source control, it is the user's file, committed to their repo, diffable in PRs. TypeScript resolves `import type { Types } from "@pyrpc/types"` to this file via a `tsconfig.json` paths alias.
 
 **tsconfig paths are injected by pyrpc-core via jsonc-edit.**
 The alias `"@pyrpc/types": ["./__pyrpc.ts"]` is injected into each client's `tsconfig.json` by `pyrpc_core/tsconfig.py` on every dev, watch, and codegen run. It uses jsonc-edit so comments and trailing commas survive, it is idempotent on repeat runs, and it raises instead of silently overwriting an alias that already points elsewhere. The developer owns the entry.
 
 **pyrpc dev is the single dev command.**
-`pyrpc dev` reads `pyrpc.json`, probes `host:port` to see if a server is already running (if so it skips uvicorn and attaches watcher-only; otherwise it starts uvicorn with `--reload`), regenerates types for every client on every `.py` save — reloading edited modules so the types reflect the latest code — watches `pyrpc.json` itself and re-wires when module or clients change, and exposes an interactive console. `pyrpc watch` is the watcher-only variant for developers who manage their own server. Neither command requires flags after first run; `--yes` with optional `--module`/`--client` makes setup fully non-interactive for CI.
+`pyrpc dev` reads `pyrpc.json`, probes `host:port` to see if a server is already running (if so it attaches watcher-only; otherwise it resolves a framework-native launch: uvicorn for fastapi/asgi targets, `flask --app <module:app> run` for Flask, `manage.py runserver` for Django), regenerates types for every client on every `.py` save (reloading edited modules so the types reflect the latest code), watches `pyrpc.json` itself, diffs the parsed backend spec on change, and restarts the native server or re-wires codegen without ending the session. It also exposes an interactive console. `pyrpc watch` is the watcher-only variant for developers who manage their own server, and accepts an explicit `--module` without a config file. Neither command requires flags after first run; `--yes` with optional `--framework`/`--module`/`--client` makes setup fully non-interactive for CI.
 
 **Versioning is lockstep.**
 All PyPI packages and all npm packages release together at the same version. Drift between Python and npm package versions is a release bug, not an inconvenience. The `scripts/release.mjs` script enforces this.

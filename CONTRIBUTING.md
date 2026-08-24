@@ -8,7 +8,7 @@ Thank you for considering contributing to pyRPC. This guide will help you get st
 
 - **Python** >= 3.11
 - **Node.js** >= 20
-- **npm** or **pnpm**
+- **npm** (with workspaces; the repo has a package-lock.json)
 - **uv** or **pip** (Python package manager)
 
 ### Repository Structure
