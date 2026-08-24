@@ -54,12 +54,15 @@ class Procedure:
         if self.sig.return_annotation is not inspect.Signature.empty and self.sig.return_annotation is not Any:
             self.return_adapter = TypeAdapter(self.sig.return_annotation)
 
-    async def execute(self, params: Any) -> Any:
+    def validate_args(self, params: Any) -> inspect.BoundArguments:
         """
-        Execute the procedure with the given parameters.
-        This is the optimized 'hot path' for RPC requests.
+        Bind and validate RPC arguments without executing the procedure.
+
+        This is the shared front half of ``execute`` — argument binding plus
+        per-parameter TypeAdapter validation. The MCP server reuses it to
+        answer "would these arguments be valid?" without ever calling ``fn``.
+        Raises ``ProcedureError`` on binding or validation failure.
         """
-        # 1. Bind arguments
         try:
             if isinstance(params, list):
                 bound_args = self.sig.bind(*params)
@@ -70,7 +73,6 @@ class Procedure:
         except TypeError as e:
             raise ProcedureError(code=-32602, message=f"Invalid params: {str(e)}") from e
 
-        # 2. Validate arguments using pre-built adapters
         for name, value in bound_args.arguments.items():
             adapter = self.arg_adapters.get(name)
             if adapter:
@@ -82,6 +84,15 @@ class Procedure:
                     if not error_data.get("field") or error_data["field"] == "unknown":
                         error_data["field"] = name
                     raise ProcedureError(code=-32602, message="Validation failed", data=error_data) from ve
+
+        return bound_args
+
+    async def execute(self, params: Any) -> Any:
+        """
+        Execute the procedure with the given parameters.
+        This is the optimized 'hot path' for RPC requests.
+        """
+        bound_args = self.validate_args(params)
 
         # 3. Call the function (Sync or Async)
         if self.is_async:
