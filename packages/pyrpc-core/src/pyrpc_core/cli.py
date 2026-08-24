@@ -16,11 +16,31 @@ from rich.console import Console
 from rich.table import Table
 from watchfiles import watch
 
+from .config import (
+    CONFIG_FILE,
+    BackendConfigError,
+    clients_from_config,
+    find_config as _find_config,
+    has_valid_backend,
+    normalize_entrypoint,
+    parse_backend,
+    read_config as _read_config,
+    write_config as _write_config,
+)
+from .constants import BACKEND_LABELS, FRAMEWORKS
+from .runners import LaunchPlan, resolve_launch, resolve_types_module
+
 # ── Constants ─────────────────────────────────────────────────────────────────
 
-CONFIG_FILE = "pyrpc.json"
 _DEFAULT_CLIENT = "."
 _DEBOUNCE_SECONDS = 0.3
+
+_BACKEND_LABELS = [BACKEND_LABELS[f] for f in FRAMEWORKS]
+_LABEL_TO_FRAMEWORK = {label: fw for fw, label in BACKEND_LABELS.items()}
+
+_SKIP_DIRS = frozenset(
+    {"node_modules", "__pycache__", ".venv", "venv", "env", "dist", "build", ".git", ".next"}
+)
 
 # Framework detection: config file name → canonical label
 _FRAMEWORK_SIGNATURES: list[tuple[str, str]] = [
@@ -55,46 +75,9 @@ def _lazy_core():
     from pyrpc_core import default_router, get_registry_schema
     return default_router, get_registry_schema
 
-def _get_clients(cfg: dict) -> list[str]:
-    """Normalizes the configuration to a list of client paths."""
-    if "clients" in cfg:
-        return cfg["clients"]
-    elif "client" in cfg and cfg["client"]:
-        return [cfg["client"]]
-    return []
-
 def _lazy_codegen():
     from pyrpc_codegen import save_typescript_client
     return save_typescript_client
-
-# ── pyrpc.json helpers ────────────────────────────────────────────────────────
-
-def _find_config() -> Path | None:
-    """Walk up from cwd to find pyrpc.json."""
-    p = Path.cwd()
-    for parent in [p] + list(p.parents):
-        candidate = parent / CONFIG_FILE
-        if candidate.is_file():
-            return candidate
-    return None
-
-def _read_config() -> dict | None:
-    path = _find_config()
-    if not path:
-        return None
-    try:
-        with open(path) as f:
-            return json.load(f)
-    except Exception:
-        return None
-
-def _write_config(config: dict, path: Path | None = None) -> Path:
-    if path is None:
-        path = Path.cwd() / CONFIG_FILE
-    with open(path, "w") as f:
-        json.dump(config, f, indent=2)
-        f.write("\n")
-    return path
 
 # ── Framework detection ───────────────────────────────────────────────────────
 
@@ -107,10 +90,9 @@ def _detect_framework(root: str) -> str | None:
 
 def _find_frontend_projects(root: str) -> list[tuple[str, str]]:
     """Walk the directory tree to find frontend projects."""
-    _skip = {"node_modules", "__pycache__", ".venv", "venv", "env", "dist", "build", ".git", ".next"}
     projects = []
     for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [d for d in dirnames if d not in _skip and not d.startswith(".")]
+        dirnames[:] = [d for d in dirnames if d not in _SKIP_DIRS and not d.startswith(".")]
         fw = _detect_framework(dirpath)
         if fw:
             rel = os.path.relpath(dirpath, root)
@@ -121,46 +103,166 @@ def _find_frontend_projects(root: str) -> list[tuple[str, str]]:
     return projects
 
 
+# ── Backend detection / defaults ─────────────────────────────────────────────
+
+_BACKEND_CANDIDATES = ["main.py", "server.py", "app.py", "app/main.py"]
+
+def _default_module(root: str) -> str:
+    """Dotted module default derived from the first likely entry file."""
+    for candidate in _BACKEND_CANDIDATES:
+        if (Path(root) / candidate).exists():
+            return candidate.replace(".py", "").replace("/", ".")
+    return "main"
+
+def _sniff_backend(root: str) -> str | None:
+    """Best-effort backend framework guess from entry-file contents.
+
+    Sniffing only preselects a wizard choice — it is never persisted without
+    explicit confirmation (interactive) or an explicit --framework/--module
+    declaration (non-interactive falls back to this sniff or errors).
+    """
+    texts = []
+    for candidate in _BACKEND_CANDIDATES:
+        p = Path(root) / candidate
+        if not p.is_file():
+            continue
+        try:
+            texts.append(p.read_text(encoding="utf-8", errors="ignore"))
+        except OSError:
+            continue
+    markers = [
+        ("mount_fastapi(", "fastapi"),
+        ("mount_flask(", "flask"),
+        ("mount_django(", "django"),
+        ("PyRPCAsgiApp", "asgi"),
+    ]
+    for marker, framework in markers:
+        if any(marker in text for text in texts):
+            return framework
+    if (Path(root) / "manage.py").is_file():
+        return "django"
+    return None
+
+def _detect_django_types_module(root: str) -> str | None:
+    """Shallowest ``views`` module under root as a dotted name, if any."""
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in _SKIP_DIRS and not d.startswith(".")]
+        if "views.py" in filenames:
+            rel = os.path.relpath(dirpath, root)
+            pkg = "" if rel == "." else rel.replace(os.sep, ".") + "."
+            return f"{pkg}views"
+    return None
+
+
+# ── Client-root autocomplete ─────────────────────────────────────────────────
+
+def _client_visible_filter(root_abs: str):
+    """Suggestion filter: directories only, no junk/dot dirs, jailed to project root."""
+    def _visible(full_name: str) -> bool:
+        if not os.path.isdir(full_name):
+            return False
+        name = os.path.basename(full_name.rstrip(os.sep))
+        if not name or name.startswith(".") or name in _SKIP_DIRS:
+            return False
+        real = os.path.realpath(full_name)
+        return real == root_abs or real.startswith(root_abs + os.sep)
+    return _visible
+
+def _ask_client_root(message: str, default: str, root: str) -> str:
+    """Ask for a client project root with filesystem autocomplete jailed to ``root``."""
+    root_abs = os.path.abspath(root)
+
+    def _exists(path: str):
+        if os.path.isdir(os.path.abspath(path)):
+            return True
+        return "Directory does not exist"
+
+    return questionary.path(
+        message,
+        default=default,
+        only_directories=True,
+        get_paths=lambda: [root_abs],
+        file_filter=_client_visible_filter(root_abs),
+        validate=_exists,
+    ).ask()
+
+
 # ── First-run wizard ──────────────────────────────────────────────────────────
+
+def _ask_backend(root: str) -> dict:
+    """Ask for (and persist only the explicitly confirmed) backend configuration."""
+    sniffed = _sniff_backend(root)
+
+    fw_label = questionary.select(
+        "Which backend framework are you using?",
+        choices=_BACKEND_LABELS,
+        default=BACKEND_LABELS[sniffed] if sniffed else None,
+    ).ask()
+    if fw_label is None: raise typer.Exit(code=0)
+    framework = _LABEL_TO_FRAMEWORK[fw_label]
+
+    if framework == "django":
+        while True:
+            manage = questionary.text("Path to manage.py", default="manage.py").ask()
+            if manage is None: raise typer.Exit(code=0)
+            manage = manage.strip()
+            if manage and (Path(root) / manage).is_file():
+                break
+            console.print(f"[red]✗[/red] No such file: [bold]{manage or '(empty)'}[/bold]")
+        default_types = _detect_django_types_module(root) or ""
+        types_module = questionary.text(
+            "Types module (imports your @rpc procedures)",
+            default=default_types,
+            instruction="(e.g. myproject.views — settings and manage.py register nothing)",
+        ).ask()
+        if types_module is None: raise typer.Exit(code=0)
+        backend = {
+            "framework": framework,
+            "entrypoint": manage,
+            **({"types_module": t} if (t := types_module.strip()) else {}),
+        }
+        return backend
+
+    instruction = {
+        "fastapi": "(module[:app] — the file that calls mount_fastapi)",
+        "flask": "(module[:app] — the file that calls mount_flask)",
+        "asgi": "(module[:app] — the file that builds PyRPCAsgiApp)",
+    }[framework]
+    raw = questionary.text(
+        "Backend entry point",
+        default=_default_module(root),
+        instruction=instruction,
+    ).ask()
+    if raw is None: raise typer.Exit(code=0)
+    return {"framework": framework, "entrypoint": normalize_entrypoint(raw)}
 
 def _run_wizard(root: str) -> dict:
     """
-    Interactive first-run wizard. Returns a config dict ready to write.
+    Interactive first-run wizard. Returns a nested config dict ready to write.
     """
     console.print()
     console.print("[bold]pyRPC setup[/bold] [dim](runs once — saved to pyrpc.json)[/dim]")
     console.print()
 
-    default_module = "main"
-    for candidate in ["main.py", "server.py", "app.py", "app/main.py"]:
-        if (Path(root) / candidate).exists():
-            default_module = candidate.replace(".py", "").replace("/", ".")
-            break
+    backend = _ask_backend(root)
 
-    module = questionary.text(
-        "Entry module",
-        default=default_module,
-        instruction="(e.g. main, app.server — the file that calls mount_fastapi/mount_flask)",
-    ).ask()
-    if module is None: raise typer.Exit(code=0)
-    module = module.strip()
+    def _client_entry(client_root: str, detected_fw: str | None) -> dict:
+        client = _ask_client_root("Client project root", default=client_root, root=root)
+        if client is None: raise typer.Exit(code=0)
+        framework = questionary.select(
+            "Frontend framework", choices=_FRAMEWORK_LABELS, default=detected_fw or "Next.js"
+        ).ask()
+        if framework is None: raise typer.Exit(code=0)
+        return {"framework": framework, "root": client}
 
     detected_projects = _find_frontend_projects(root)
 
     if not detected_projects:
-        client = questionary.text("Client project root", default=".").ask()
-        if client is None: raise typer.Exit(code=0)
-        framework = questionary.select("Frontend framework", choices=_FRAMEWORK_LABELS, default="Next.js").ask()
-        if framework is None: raise typer.Exit(code=0)
-        return {"module": module, "framework": framework, "client": client}
+        return {"backend": backend, "clients": [_client_entry(_DEFAULT_CLIENT, None)]}
 
     if len(detected_projects) == 1:
         client_dir, fw = detected_projects[0]
-        client = questionary.text("Client project root", default=client_dir).ask()
-        if client is None: raise typer.Exit(code=0)
-        framework = questionary.select("Frontend framework", choices=_FRAMEWORK_LABELS, default=fw).ask()
-        if framework is None: raise typer.Exit(code=0)
-        return {"module": module, "framework": framework, "client": client}
+        return {"backend": backend, "clients": [_client_entry(client_dir, fw)]}
 
     console.print("\n[bold]Detected frontend projects:[/bold]")
     for path, fw in detected_projects:
@@ -173,11 +275,7 @@ def _run_wizard(root: str) -> dict:
     if action is None: raise typer.Exit(code=0)
 
     if action == "Enter a client path manually":
-        client = questionary.text("Client project root", default=".").ask()
-        if client is None: raise typer.Exit(code=0)
-        framework = questionary.select("Frontend framework", choices=_FRAMEWORK_LABELS, default="Next.js").ask()
-        if framework is None: raise typer.Exit(code=0)
-        return {"module": module, "framework": framework, "client": client}
+        return {"backend": backend, "clients": [_client_entry(_DEFAULT_CLIENT, None)]}
 
     choices = [f"{path} ({fw})" for path, fw in detected_projects]
     while True:
@@ -190,10 +288,66 @@ def _run_wizard(root: str) -> dict:
     clients = []
     for sel in selections:
         for p, f in detected_projects:
+            # Selection of a listed project confirms its detected framework.
             if sel == f"{p} ({f})":
-                clients.append(p)
+                clients.append({"framework": f, "root": p})
                 break
-    return {"module": module, "framework": "Mixed", "clients": clients}
+    return {"backend": backend, "clients": clients}
+
+
+def _auto_configure(cwd: str, *, framework: str | None, module: str | None, client: str | None) -> dict:
+    """Non-interactive (--yes) configuration. Sniffs or requires --framework."""
+    fw = framework
+    if fw is None:
+        fw = _sniff_backend(cwd)
+    if fw is None:
+        console.print("[red]✗ Could not detect a backend framework.[/red]\n")
+        console.print("[dim]Run [cyan]pyrpc dev[/cyan] interactively, or declare it explicitly:[/dim]")
+        console.print(
+            "  [cyan]pyrpc dev --yes --framework <fastapi|flask|django|asgi> "
+            "[--module main] [--client ../frontend][/cyan]\n"
+        )
+        raise typer.Exit(1)
+
+    if fw == "django":
+        manage = "manage.py"
+        if not (Path(cwd) / manage).is_file():
+            console.print(f"[red]✗ No manage.py found in {cwd}.[/red]")
+            console.print("[dim]Run pyrpc dev from the directory containing manage.py.[/dim]")
+            raise typer.Exit(1)
+        types_mod = module or _detect_django_types_module(cwd)
+        if not types_mod:
+            console.print("[red]✗ Could not detect a Django types module.[/red]")
+            console.print("[dim]Pass it explicitly: [cyan]--module myproject.views[/cyan][/dim]")
+            raise typer.Exit(1)
+        backend = {"framework": fw, "entrypoint": manage, "types_module": types_mod}
+    else:
+        backend = {
+            "framework": fw,
+            "entrypoint": normalize_entrypoint(module or _default_module(cwd)),
+        }
+
+    cfg = {"backend": backend}
+    if client:
+        cfg["clients"] = [{"framework": _detect_framework(client) or "Other", "root": client}]
+        console.print(f"  [dim]{backend['framework']} {backend['entrypoint']}  client={client}[/dim]")
+    else:
+        detected_projects = _find_frontend_projects(cwd)
+        if len(detected_projects) > 1:
+            console.print("[red]✗ Multiple TypeScript projects found.[/red]\n")
+            for p, _ in detected_projects:
+                console.print(f"  • {p}")
+            console.print("\n[dim]Specify which client to use:[/dim]\n")
+            console.print("  [cyan]pyrpc dev --client <path>[/cyan]\n")
+            console.print("[dim]Or configure clients explicitly in pyrpc.json.[/dim]")
+            raise typer.Exit(1)
+        if detected_projects:
+            p, f = detected_projects[0]
+            cfg["clients"] = [{"framework": f, "root": p}]
+            console.print(f"  [dim]{backend['framework']} {backend['entrypoint']}  client={p}[/dim]")
+        else:
+            console.print(f"  [dim]{backend['framework']} {backend['entrypoint']}  (no client configured)[/dim]")
+    return cfg
 
 
 # ── Core helpers ──────────────────────────────────────────────────────────────
@@ -599,28 +753,38 @@ def codegen(
 
 @app.command("watch")
 def watch_command(
-    module: str = typer.Argument(None, help="Module to watch (reads pyrpc.json if omitted)"),
+    module: str = typer.Argument(None, help="Types module override (reads pyrpc.json if omitted)"),
     client: str = typer.Option(None, "--client", "-c", help="Client project root"),
 ):
     """Watch for Python changes and regenerate TypeScript types. No server started."""
     cwd = os.getcwd()
     cfg = _read_config() or {}
-    module = module or cfg.get("module")
-    
+    spec = parse_backend(cfg)
+
+    if not module:
+        if spec is None:
+            console.print(
+                "[red]No module specified and no valid backend in pyrpc.json. "
+                "Run pyrpc dev first.[/red]"
+            )
+            raise typer.Exit(1)
+        try:
+            module = resolve_types_module(spec)
+        except BackendConfigError as e:
+            console.print(f"[red]✗[/red] {e}")
+            raise typer.Exit(1) from e
+
     if client:
         client_dirs = [client]
     else:
-        client_dirs = _get_clients(cfg)
-        
-    if not module:
-        console.print("[red]No module specified. Run pyrpc dev first to create pyrpc.json.[/red]")
-        raise typer.Exit(1)
+        client_dirs = [c["root"] for c in clients_from_config(cfg)]
+
     if not client_dirs:
-        console.print("[red]No clients configured. Specify --client or configure in pyrpc.json.[/red]")
+        console.print("[red]No clients configured. Specify --client or configure clients in pyrpc.json.[/red]")
         raise typer.Exit(1)
-        
+
     _lazy_core()
-    
+
     try:
         n = _regenerate_clients(module, client_dirs)
         if len(client_dirs) == 1:
@@ -657,104 +821,78 @@ def watch_command(
 def dev(
     host: str = typer.Option("127.0.0.1", "--host", "-h", help="Server host"),
     port: int = typer.Option(8000, "--port", "-p", help="Server port"),
-    reload: bool = typer.Option(True, "--reload/--no-reload", help="Uvicorn auto-reload"),
-    yes: bool = typer.Option(False, "--yes", "-y", help="Skip the setup wizard; auto-detect module and client."),
-    module: str = typer.Option(None, "--module", "-m", help="Entry module (skips wizard prompt). Requires --yes."),
+    reload: bool = typer.Option(True, "--reload/--no-reload", help="Backend dev-server auto-reload"),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Skip the setup wizard; auto-detect backend and client."),
+    framework: str = typer.Option(None, "--framework", "-f", help="Backend framework: fastapi, flask, django, asgi. Requires --yes."),
+    module: str = typer.Option(None, "--module", "-m", help="Backend entry point (django: types module). Requires --yes."),
     client: str = typer.Option(None, "--client", "-c", help="Client project root (skips wizard prompt). Requires --yes."),
     reconfigure: bool = typer.Option(False, "--reconfigure", help="Re-run the setup wizard even if pyrpc.json exists."),
 ):
     """Start the dev server and keep TypeScript types in sync.
 
-    First run: wizard asks 2 questions and writes pyrpc.json.
-    Every run after: reads pyrpc.json, no questions asked.
+    First run: wizard asks for your backend framework and entry point, then
+    client roots — and writes pyrpc.json. Every run after reads it silently.
 
-    Pass --yes to skip the wizard entirely. pyRPC will auto-detect your
-    entry module and client root, or you can provide them explicitly:
+    backend.entrypoint is framework-specific:
+    FastAPI/Flask/ASGI -> module[:app]; Django -> path to manage.py.
+
+    Pass --yes to skip the wizard entirely:
 
       pyrpc dev --yes
-      pyrpc dev --yes --module main --client ../frontend
+      pyrpc dev --yes --framework fastapi --module main --client ../frontend
+
+    The backend framework determines the native dev server: FastAPI/ASGI run
+    under uvicorn, Flask uses `flask run`, Django uses `manage.py runserver`.
 
     Detects if a server is already running on host:port — if so, skips
-    starting uvicorn and just runs the type watcher. Otherwise starts
-    uvicorn with --reload and watches .py files for type regeneration.
+    starting one and just runs the type watcher.
 
-    Also watches pyrpc.json itself — if module or client changes, the
-    watcher re-wires automatically and uvicorn restarts if needed.
+    Also watches pyrpc.json itself — if backend or clients change, the
+    session re-wires automatically and restarts the server if needed.
     """
     cwd = os.getcwd()
 
+    if framework is not None and framework not in FRAMEWORKS:
+        console.print(
+            f"[red]✗ Unsupported --framework '{framework}'.[/red] "
+            f"Choose from: [cyan]{', '.join(FRAMEWORKS)}[/cyan]"
+        )
+        raise typer.Exit(1)
+
     # ── Config: read or run wizard ────────────────────────────────────────────
     cfg_path = _find_config()
-
-    if yes and module and client:
-        # Fully non-interactive: all values supplied on the command line.
-        cfg = {"module": module, "framework": "Other", "client": client}
-        if cfg_path is None:
-            cfg_path = _write_config(cfg)
-            console.print(f"  [green]✓[/green]  pyrpc.json created")
-    elif yes:
-        # --yes without explicit flags: auto-detect, no prompts.
-        if cfg_path is not None and not reconfigure:
-            with open(cfg_path) as f:
-                cfg = json.load(f)
-        else:
-            # Auto-detect module
-            default_module = "main"
-            for candidate in ["main.py", "server.py", "app.py", "app/main.py"]:
-                if (Path(cwd) / candidate).exists():
-                    default_module = candidate.replace(".py", "").replace("/", ".")
-                    break
-            resolved_module = module or default_module
-
-            # Auto-detect framework and client
-            if client:
-                resolved_client = client
-                resolved_framework = _detect_framework(client) or "Other"
-            else:
-                detected_projects = _find_frontend_projects(cwd)
-                if len(detected_projects) == 1:
-                    resolved_client = detected_projects[0][0]
-                    resolved_framework = detected_projects[0][1]
-                elif len(detected_projects) > 1:
-                    console.print("[red]✗ Multiple TypeScript projects found.[/red]\n")
-                    for p, _ in detected_projects:
-                        console.print(f"  • {p}")
-                    console.print("\n[dim]Specify which client to use:[/dim]\n")
-                    console.print("  [cyan]pyrpc dev --client <path>[/cyan]\n")
-                    console.print("[dim]Or configure clients explicitly in pyrpc.json.[/dim]")
-                    raise typer.Exit(1)
-                else:
-                    resolved_client = None
-                    resolved_framework = "Other"
-
-            cfg = {"module": resolved_module, "framework": resolved_framework}
-            if resolved_client is not None:
-                cfg["client"] = resolved_client
-            if cfg_path is None:
-                cfg_path = _write_config(cfg)
-                console.print(f"  [green]✓[/green]  pyrpc.json created (auto-configured)")
-            
-            if resolved_client is not None:
-                console.print(f"  [dim]module={cfg['module']}  client={cfg['client']}[/dim]")
-            else:
-                console.print(f"  [dim]module={cfg['module']}  (no client configured)[/dim]")
-    elif cfg_path is None or reconfigure:
-        cfg = _run_wizard(cwd)
-        cfg_path = _write_config(cfg)
-        console.print(f"  [green]✓[/green]  pyrpc.json created")
-    else:
+    cfg = None
+    if cfg_path is not None and not reconfigure:
         with open(cfg_path) as f:
-            cfg = json.load(f)
+            loaded = json.load(f)
+        if has_valid_backend(loaded):
+            cfg = loaded
 
-    module: str = cfg["module"]
-    client_dirs = _get_clients(cfg)
+    if cfg is None and not yes:
+        cfg = _run_wizard(cwd)
+        cfg_path = _write_config(cfg, cfg_path)
+        console.print("  [green]✓[/green]  pyrpc.json created")
+    elif cfg is None:
+        cfg = _auto_configure(cwd, framework=framework, module=module, client=client)
+        legacy = cfg_path is not None
+        cfg_path = _write_config(cfg, cfg_path)
+        console.print(f"  [green]✓[/green]  pyrpc.json {'rewritten' if legacy else 'created'} (auto-configured)")
 
-    # ── Import module + initial codegen ───────────────────────────────────────
+    spec = parse_backend(cfg)
+    base_dir = str(cfg_path.parent)
+    try:
+        types_module = resolve_types_module(spec)
+    except BackendConfigError as e:
+        console.print(f"[red]✗[/red] {e}")
+        raise typer.Exit(1) from e
+    client_dirs = [c["root"] for c in clients_from_config(cfg)]
+
+    # ── Import types module + initial codegen ─────────────────────────────────
     _lazy_core()
-    _import_module(module)
+    _import_module(types_module)
     if client_dirs:
         try:
-            n = _regenerate_clients(module, client_dirs)
+            n = _regenerate_clients(types_module, client_dirs)
             if len(client_dirs) == 1:
                 console.print(f"  [green]✓[/green]  types generated ({n} procs) → {client_dirs[0]}")
             else:
@@ -769,38 +907,30 @@ def dev(
     server_proc: subprocess.Popen | None = None
     server_managed = False
 
-    def _start_uvicorn(mod: str) -> subprocess.Popen:
-        """Start uvicorn for module, return the Popen object."""
-        # Derive app variable: try 'app', fall back to module name
-        app_var = "app"
-        cmd = [
-            sys.executable, "-m", "uvicorn",
-            f"{mod}:{app_var}",
-            "--host", host,
-            "--port", str(port),
-            "--log-level", "error",
-        ]
-        if reload:
-            cmd.append("--reload")
+    def _start_server(current_spec) -> subprocess.Popen:
+        """Resolve the framework-native launch command and spawn it."""
+        plan: LaunchPlan = resolve_launch(
+            current_spec, host=host, port=port, reload=reload, base_cwd=base_dir
+        )
         env = os.environ.copy()
         env.setdefault("PYTHONPATH", cwd)
-        proc = subprocess.Popen(cmd, cwd=cwd, env=env)
-        proc._cwd = cwd  # stash for restart
+        proc = subprocess.Popen(plan.argv, cwd=plan.cwd or cwd, env=env)
+        proc._cwd = plan.cwd or cwd  # stash for restart
         return proc
 
     if _server_is_running(host, port):
         console.print(
             f"  [dim]○[/dim]  server already running at "
-            f"http://{host}:{port}/rpc — skipping uvicorn"
+            f"http://{host}:{port}/rpc — skipping backend startup"
         )
     else:
-        server_proc = _start_uvicorn(module)
+        server_proc = _start_server(spec)
         server_managed = True
         console.print(f"  [bold]pyRPC dev[/bold]  http://{host}:{port}/rpc")
 
-    # ── Regen callback wired to current module/output ─────────────────────────
+    # ── Regen callback wired to current types module/output ──────────────────
     if client_dirs:
-        _do_regen, schedule = _make_regen_callback(module, client_dirs)
+        _do_regen, schedule = _make_regen_callback(types_module, client_dirs)
     else:
         def _do_regen(): pass
         def schedule(): pass
@@ -826,10 +956,10 @@ def dev(
     def _cfg_watcher():
         """
         Watch pyrpc.json — on change reload config and re-wire.
-        If module changed → restart uvicorn (if we own it).
-        If output changed → point regen callback at new path.
+        If backend changed → import new types module, restart server (if we own it).
+        If clients changed → point regen callback at the new roots.
         """
-        nonlocal _do_regen, schedule, server_proc, module, client_dirs
+        nonlocal _do_regen, schedule, server_proc, types_module, spec, client_dirs
 
         for changes in watch(
             str(cfg_path.parent),
@@ -850,13 +980,13 @@ def dev(
             except Exception:
                 continue
 
-            new_module = new_cfg.get("module", module)
-            new_client_dirs = _get_clients(new_cfg)
+            new_spec = parse_backend(new_cfg) or spec
+            new_client_dirs = [c["root"] for c in clients_from_config(new_cfg)]
 
-            module_changed = new_module != module
+            backend_changed = new_spec != spec
             output_changed = new_client_dirs != client_dirs
 
-            if not module_changed and not output_changed:
+            if not backend_changed and not output_changed:
                 continue
 
             console.print("  [blue]pyrpc.json changed — reloading...[/blue]")
@@ -865,20 +995,26 @@ def dev(
                 client_dirs = new_client_dirs
                 console.print(f"  [dim]clients → {client_dirs}[/dim]")
 
-            if module_changed:
-                module = new_module
-                console.print(f"  [dim]module → {module}[/dim]")
-                _import_module(module)
+            if backend_changed:
+                try:
+                    new_types_module = resolve_types_module(new_spec)
+                    _import_module(new_types_module)
+                except BackendConfigError as e:
+                    console.print(f"[red]✗[/red] {e}")
+                    continue
+                spec = new_spec
+                types_module = new_types_module
+                console.print(f"  [dim]types module → {types_module}[/dim]")
 
             # Re-wire regen callback to new module/output
-            _do_regen, schedule = _make_regen_callback(module, client_dirs)
+            _do_regen, schedule = _make_regen_callback(types_module, client_dirs)
 
-            # Restart uvicorn if we own it and module changed
-            if module_changed and server_managed and server_proc:
-                console.print("  [yellow]restarting uvicorn...[/yellow]")
+            # Restart backend if we own it and its launch config changed
+            if backend_changed and server_managed and server_proc:
+                console.print("  [yellow]restarting backend...[/yellow]")
                 server_proc.terminate()
                 server_proc.wait()
-                server_proc = _start_uvicorn(module)
+                server_proc = _start_server(spec)
 
             # Regenerate immediately with new config
             _do_regen()
