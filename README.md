@@ -49,7 +49,7 @@ uv add pyrpc-core
 pip install pyrpc-core
 ```
 
-Framework adapters are available as extras — the adapter is included in the same install:
+Framework adapters are available as extras, the adapter is included in the same install:
 
 ```bash
 pip install pyrpc-core[fastapi]   # FastAPI
@@ -66,9 +66,9 @@ from pyrpc_core import rpc
 from pyrpc_fastapi import mount_fastapi
 from fastapi import FastAPI
 
-# Your FastAPI app — you own it fully.
+# Your FastAPI app: you own it fully.
 # mount_fastapi() adds POST /rpc and GET /rpc to it.
-# No wrapping, no separate server — just two new routes.
+# No wrapping, no separate server, just two new routes.
 app = FastAPI()
 
 @rpc.query
@@ -84,7 +84,9 @@ mount_fastapi(app)
 pyrpc dev
 ```
 
-First run: answers a couple of quick questions (entry module + client project root; the frontend framework is auto-detected) and writes `pyrpc.json`. Every run after: reads `pyrpc.json`, no questions asked. Starts the server, watches `.py` files, and regenerates TypeScript types automatically.
+First run: a short wizard asks for your backend framework and entry point, then your client project root and frontend framework (the wizard preselects what it detects), and writes `pyrpc.json`. Every run after: reads `pyrpc.json`, no questions asked. Launches your framework's native dev server (uvicorn for FastAPI/ASGI, `flask run` for Flask, `manage.py runserver` for Django), watches `.py` files, and regenerates TypeScript types automatically.
+
+Non-interactive (CI): `pyrpc dev --yes --framework fastapi --module main --client ../frontend`.
 
 ### 3. Call from TypeScript
 
@@ -110,7 +112,7 @@ npm install @pyrpc/client @pyrpc/vue     # Vue
 npm install @pyrpc/client @pyrpc/svelte  # Svelte
 ```
 
-See [docs](https://pyrpc.com/docs/client/react) and `examples/fastapi-nextjs`.
+See [docs](https://pyrpc.com/docs/client/adapters/react) and `examples/fastapi-nextjs`.
 
 ### 4. Or from Python
 
@@ -134,7 +136,7 @@ Python @rpc decorator
   → import type { Types } from "@pyrpc/types"  ✓
 ```
 
-`pyrpc dev` configures the `@pyrpc/types` resolution automatically on every dev and watch run: it injects the tsconfig paths entry via `jsonc-edit` (preserving comments and trailing commas) and adds a bundler alias for Vite, SvelteKit, and Next.js Turbopack, which don't honor tsconfig `paths` for imports inside `node_modules`. `pyrpc.json` (written on first `pyrpc dev` run) stores the module and client project root — no further config needed.
+`pyrpc dev` configures the `@pyrpc/types` resolution automatically on every dev and watch run: it injects the tsconfig paths entry via `jsonc-edit` (preserving comments and trailing commas) and adds a bundler alias for Vite, SvelteKit, and Next.js Turbopack, which don't honor tsconfig `paths` for imports inside `node_modules`. `pyrpc.json` (written on first `pyrpc dev` run) stores your backend framework and entry point plus one or more client project roots. No further config needed.
 
 ---
 

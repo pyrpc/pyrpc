@@ -1,123 +1,123 @@
 import Link from 'next/link'
 
 export default function SourceTreeTypesPost() {
-    return (
-        <article className="max-w-3xl mx-auto px-6 py-20">
-            <div className="mb-12">
-                <Link href="/blog" className="text-[10px] font-mono uppercase tracking-[0.2em] text-fd-muted-foreground hover:text-fd-foreground transition-colors">
-                    &larr; Back to Blog
-                </Link>
-                <h1 className="text-2xl font-bold tracking-tight mt-6 mb-3">
-                    Types in your source tree: why generated types left node_modules
-                </h1>
-                <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>August 8, 2026 at 10:00am</time>
-                    <span>&middot;</span>
-                    <span>8 min read</span>
-                </div>
-            </div>
+ return (
+ <article className="max-w-3xl mx-auto px-6 py-20">
+ <div className="mb-12">
+ <Link href="/blog" className="text-[10px] font-mono uppercase tracking-[0.2em] text-fd-muted-foreground hover:text-fd-foreground transition-colors">
+ &larr; Back to Blog
+ </Link>
+ <h1 className="text-2xl font-bold tracking-tight mt-6 mb-3">
+ Types in your source tree: why generated types left node_modules
+ </h1>
+ <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
+ <time>August 8, 2026 at 10:00am</time>
+ <span>&middot;</span>
+ <span>8 min read</span>
+ </div>
+ </div>
 
-            <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
-                <p>
-                    pyRPC generates a TypeScript declaration file describing your Python procedures. Where that
-                    file lives is a product decision, not an implementation detail. For a long time it lived in
-                    <code>node_modules/@pyrpc/types/src/index.ts</code>, like the type package it replaced. The
-                    source-tree model moves it to <code>&lt;client&gt;/__pyrpc.d.ts</code> &mdash; a file inside
-                    your frontend, tracked in git alongside everything else.
-                </p>
+ <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
+ <p>
+ pyRPC generates a TypeScript declaration file describing your Python procedures. Where that
+ file lives is a product decision, not an implementation detail. For a long time it lived in
+ <code>node_modules/@pyrpc/types/src/index.ts</code>, like the type package it replaced. The
+ source-tree model moves it to <code>&lt;client&gt;/__pyrpc.d.ts</code>, a file inside
+ your frontend, tracked in git alongside everything else.
+ </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
-                    The node_modules problem
-                </h2>
-                <p>
-                    Writing generated types into <code>node_modules</code> worked, but it was structurally wrong
-                    in three ways:
-                </p>
-                <ul className="list-disc pl-5 space-y-2">
-                    <li><strong>Non-durable.</strong> <code>node_modules</code> is disposable by contract. Any <code>npm install</code>, any CI checkout that skips it, any <code>npm ci</code> run &mdash; and your types are gone, regenerated from a cold start or, worse, silently stale.</li>
-                    <li><strong>Not reviewable.</strong> You cannot diff a generated file you never committed. Changes to procedure signatures flew past without showing up in pull requests.</li>
-                    <li><strong>Confusing ownership.</strong> A file that belongs to a dependency directory reads as someone else&rsquo;s code, even though pyRPC wrote it. Debuggers, linters, and teammates all misattribute it.</li>
-                </ul>
+ <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
+ The node_modules problem
+ </h2>
+ <p>
+ Writing generated types into <code>node_modules</code> worked, but it was structurally wrong
+ in three ways:
+ </p>
+ <ul className="list-disc pl-5 space-y-2">
+ <li><strong>Non-durable.</strong> <code>node_modules</code> is disposable by contract. Any <code>npm install</code>, any CI checkout that skips it, any <code>npm ci</code> run, and your types are gone, regenerated from a cold start or, worse, silently stale.</li>
+ <li><strong>Not reviewable.</strong> You cannot diff a generated file you never committed. Changes to procedure signatures flew past without showing up in pull requests.</li>
+ <li><strong>Confusing ownership.</strong> A file that belongs to a dependency directory reads as someone else&rsquo;s code, even though pyRPC wrote it. Debuggers, linters, and teammates all misattribute it.</li>
+ </ul>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
-                    The source-tree contract
-                </h2>
-                <p>
-                    The new model treats generated types like any other source file. There is one convention and
-                    it is enforced in one place:
-                </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`_DEFAULT_CLIENT = "."
+ <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
+ The source-tree contract
+ </h2>
+ <p>
+ The new model treats generated types like any other source file. There is one convention and
+ it is enforced in one place:
+ </p>
+ <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`_DEFAULT_CLIENT = "."
 
 # ...in _regenerate_clients:
 output_path = os.path.abspath(os.path.join(client_dir, "__pyrpc.d.ts"))`}</pre>
-                <p>
-                    Types land at <code>&lt;client&gt;/__pyrpc.d.ts</code>, relative to the client root configured
-                    in <code>pyrpc.json</code>. The <code>.d.ts</code> extension means TypeScript treats it as a
-                    declaration file; the leading double-underscore keeps it visually separate from your own
-                    modules and immune to <code>tsc</code> glob collisions with your <code>src</code> tree.
-                </p>
-                <p>
-                    The file&rsquo;s header makes the contract explicit:
-                </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`/**
+ <p>
+ Types land at <code>&lt;client&gt;/__pyrpc.d.ts</code>, relative to the client root configured
+ in <code>pyrpc.json</code>. The <code>.d.ts</code> extension means TypeScript treats it as a
+ declaration file; the leading double-underscore keeps it visually separate from your own
+ modules and immune to <code>tsc</code> glob collisions with your <code>src</code> tree.
+ </p>
+ <p>
+ The file&rsquo;s header makes the contract explicit:
+ </p>
+ <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`/**
  * Auto-generated by pyrpc dev, do not edit by hand.
  * Re-generated automatically whenever your Python procedures change.
  *
  * Resolved via tsconfig.json paths alias:
- *   "paths": { "@pyrpc/types": ["./__pyrpc.d.ts"] }
+ * "paths": { "@pyrpc/types": ["./__pyrpc.d.ts"] }
  */`}</pre>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
-                    Committed, diffed, trusted
-                </h2>
-                <p>
-                    Because the file is committed, it becomes part of your review loop:
-                </p>
-                <ul className="list-disc pl-5 space-y-2">
-                    <li><strong>Renames show up.</strong> Rename <code>get_user</code> to <code>fetch_user</code> on the server and the next regeneration produces a visible diff in <code>__pyrpc.d.ts</code> &mdash; the frontend change is now an explicit review point.</li>
-                    <li><strong>CI is deterministic.</strong> A fresh checkout has your types from git immediately; the watcher only needs to run to update them.</li>
-                    <li><strong>No reinstall races.</strong> Nothing about the workflow depends on npm having run, or on <code>postinstall</code> scripts having fired.</li>
-                </ul>
+ <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
+ Committed, diffed, trusted
+ </h2>
+ <p>
+ Because the file is committed, it becomes part of your review loop:
+ </p>
+ <ul className="list-disc pl-5 space-y-2">
+ <li><strong>Renames show up.</strong> Rename <code>get_user</code> to <code>fetch_user</code> on the server and the next regeneration produces a visible diff in <code>__pyrpc.d.ts</code>, the frontend change is now an explicit review point.</li>
+ <li><strong>CI is deterministic.</strong> A fresh checkout has your types from git immediately; the watcher only needs to run to update them.</li>
+ <li><strong>No reinstall races.</strong> Nothing about the workflow depends on npm having run, or on <code>postinstall</code> scripts having fired.</li>
+ </ul>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
-                    How imports still resolve
-                </h2>
-                <p>
-                    Your frontend code never imports <code>./__pyrpc.d.ts</code> directly. It writes the stable
-                    import, and the tsconfig alias redirects it:
-                </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`import type { Types } from "@pyrpc/types"
+ <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
+ How imports still resolve
+ </h2>
+ <p>
+ Your frontend code never imports <code>./__pyrpc.d.ts</code> directly. It writes the stable
+ import, and the tsconfig alias redirects it:
+ </p>
+ <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto">{`import type { Types } from "@pyrpc/types"
 
 // tsconfig.json
 "compilerOptions": {
-  "paths": {
-    "@pyrpc/types": ["./__pyrpc.d.ts"]
-  }
+ "paths": {
+ "@pyrpc/types": ["./__pyrpc.d.ts"]
+ }
 }`}</pre>
-                <p>
-                    The <code>@pyrpc/types</code> package still exists on npm &mdash; it ships a placeholder and
-                    the <code>ProcedureKinds</code> constant used by the framework adapters. But for your
-                    <em>procedures</em>, TypeScript resolves the alias to the generated file in your tree, so the
-                    published package&rsquo;s placeholder is never what you actually type-check against.
-                </p>
+ <p>
+ The <code>@pyrpc/types</code> package still exists on npm, it ships a placeholder and
+ the <code>ProcedureKinds</code> constant used by the framework adapters. But for your
+ <em>procedures</em>, TypeScript resolves the alias to the generated file in your tree, so the
+ published package&rsquo;s placeholder is never what you actually type-check against.
+ </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
-                    What you gain
-                </h2>
-                <p>
-                    The source-tree model is the quiet foundation of everything else: multi-client support works
-                    because each client simply owns its own committed <code>__pyrpc.d.ts</code>; the tsconfig
-                    injection works because there is a fixed, predictable path to alias; CI works because nothing
-                    depends on ephemeral install state. It is the difference between generated code you tolerate
-                    and generated code you treat as part of your codebase &mdash; which is exactly how the best
-                    typed-contract tools treat their output.
-                </p>
-                <p>
-                    Read the full
-                    <Link href="/changelog" className="text-fd-foreground underline"> changelog</Link>
-                    for the complete list of changes.
-                </p>
-            </section>
-        </article>
-    )
+ <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">
+ What you gain
+ </h2>
+ <p>
+ The source-tree model is the quiet foundation of everything else: multi-client support works
+ because each client simply owns its own committed <code>__pyrpc.d.ts</code>; the tsconfig
+ injection works because there is a fixed, predictable path to alias; CI works because nothing
+ depends on ephemeral install state. It is the difference between generated code you tolerate
+ and generated code you treat as part of your codebase, which is exactly how the best
+ typed-contract tools treat their output.
+ </p>
+ <p>
+ Read the full
+ <Link href="/changelog" className="text-fd-foreground underline"> changelog</Link>
+ for the complete list of changes.
+ </p>
+ </section>
+ </article>
+ )
 }

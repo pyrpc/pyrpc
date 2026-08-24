@@ -129,7 +129,42 @@ api.read_item.createQuery(() => ({
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `links` | `Link[]` |, | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
+| `links` | `Link[]` | required | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
+| `kinds` | `ProcedureKindMap` | generated | Override generated procedure kinds |
+
+## Invalidating after a mutation
+
+Queries are cached under the key `[QUERY_KEY_PREFIX, procedure, input]` (`QUERY_KEY_PREFIX` is exported from `@pyrpc/svelte`). To invalidate after a mutation, use the shared TanStack Query client:
+
+```svelte title="src/routes/+page.svelte"
+<script lang="ts">
+  import { useQueryClient } from "@tanstack/svelte-query"
+  import { QUERY_KEY_PREFIX } from "@pyrpc/svelte"
+  import { api } from "$lib/pyrpc"
+
+  const queryClient = useQueryClient()
+  const createItem = api.create_item.createMutation()
+
+  function handleCreate() {
+    createItem.mutate(
+      { name: "Item" },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: [QUERY_KEY_PREFIX, "list_items"] })
+        },
+      }
+    )
+  }
+</script>
+```
+
+## Vanilla escape hatch
+
+Every procedure also stays callable as a plain promise via `api.client`, which is the underlying vanilla client:
+
+```ts
+const greeting = await api.client.greet({ name: "World" })
+```
 
 ## Full working examples
 

@@ -13,6 +13,65 @@ export interface Release {
 
 export const releases: Release[] = [
     {
+        version: 'v0.13.0',
+        date: '2026-08-24',
+        tag: 'v0.13.0',
+        description: 'The backend is now explicit: pyrpc.json declares your framework, entry point, and types module, and pyrpc dev launches each framework\u2019s native dev server (uvicorn, flask run, or manage.py runserver). The TypeScript client gains tRPC-style terminating links with automatic request batching, and the site ships a full visual redesign.',
+        sections: [
+            {
+                title: 'Breaking Changes',
+                items: [
+                    'pyrpc.json moved from the flat `{ module, framework, client }` shape to a nested `{ backend: { framework, entrypoint, types_module }, clients: [{ framework, root }] }` schema. Legacy files are treated as unconfigured and rewritten in place the next time you run `pyrpc dev` \u2014 the wizard preselects whatever it can detect.',
+                    '`pyrpc dev --yes` never guesses: it sniffs your code for `mount_fastapi(`/`mount_flask(`/`mount_django(` markers and exits nonzero with guidance when detection fails. Declare the framework explicitly with `--framework <fastapi|flask|django|asgi>`.',
+                    'Scaffolded and example clients now use the links API (`createClient<Types>({ links: [httpBatchLink({ url })] })`). The previous constructor options are gone; see the migration guide for the mechanical rename.',
+                ],
+            },
+            {
+                title: 'Features',
+                items: [
+                    'Explicit backend configuration: a new validated `BackendSpec` model parses `pyrpc.json`, normalizes FastAPI/Flask/ASGI entry points to `module[:app]`, and treats Django\u2019s entry point as the path to `manage.py`. Unknown frameworks are rejected up front, before any config is touched.',
+                    'Framework-native dev runners: `pyrpc dev` launches uvicorn for fastapi/asgi targets, Flask\u2019s own dev server (`flask --app <module:app> run`) for Flask, and `manage.py runserver` for Django (\u2013\u2013noreload when reload is disabled). No WSGI-to-ASGI bridging anywhere.',
+                    'The setup wizard asks for the backend framework first. Sniffing only preselects \u2014 the choice is confirmed interactively. Django additionally requires a `types_module`: the module whose import registers `@rpc` procedures (typically the `views.py` that declares them), auto-detected as the shallowest `*/views.py` when possible.',
+                    '`pyrpc watch` works without `pyrpc.json` again when you pass an explicit `--module`; with a config it reads `backend.types_module`, which fixes stale-type regen for split-module layouts where importing the entrypoint alone registers nothing.',
+                    'The config watcher diffs the parsed spec: changing the backend in `pyrpc.json` terminates and relaunches the right server live; editing client roots re-wires codegen without a restart.',
+                    'The client-root prompt gained filesystem autocomplete (via questionary.path): live directory suggestions jailed to the project root, dot dirs and node_modules hidden, symlink and `../` escapes filtered, Tab to accept.',
+                ],
+            },
+            {
+                title: 'TypeScript Client & Codegen',
+                items: [
+                    'Terminating links: `@pyrpc/client` now takes a `links` pipeline ending in exactly one terminating link \u2014 `httpLink` (one operation, one request) or `httpBatchLink` (many operations, one request). Non-terminating links (retry, auth, logging) can be composed in front.',
+                    'Request batching end to end: `httpBatchLink` collects operations issued in the same scheduling window into a single JSON-array POST and resolves each caller independently; the interpreter dispatches every element sequentially through the normal router (max 100 per batch) and returns one response per operation, in order.',
+                    'All four framework adapters (`@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`) accept and re-export the links, so `httpBatchLink` comes from your adapter package.',
+                    'The codegen template now emits links-based client setup out of the box.',
+                ],
+            },
+            {
+                title: 'Fixes',
+                items: [
+                    '`pyrpc watch` no longer shadows the `watchfiles` import with its own function parameter, which crashed the command with a TypeError at startup.',
+                    'Client-config tables across adapter docs had a mangled table cell; fixed, and the Svelte guide gained mutation-invalidation and query-key documentation for parity with React.',
+                ],
+            },
+            {
+                title: 'Website & Docs',
+                items: [
+                    'Full visual redesign: new brand assets, a unified light/dark theming system, and shared Shiki syntax themes so landing page, docs, and playground render code identically.',
+                    'Docs restructured: server/client adapters split into their own sections, a dedicated Links section, a reference area, and an AI resources section (llms.txt, MCP, skills). File names now show as code-block titles in adapter guides.',
+                    'Migrated the docs app to fumadocs 16.12 APIs and token names; playground editors match the site palette.',
+                    'All 12 framework examples aligned with current APIs: links-based clients, correct provider scoping, working inputs and procedures, consistent branding, and a missing next.config.ts restored.',
+                ],
+            },
+            {
+                title: 'Tests',
+                items: [
+                    'New suites for launch-command resolution (argv matrix per framework, reload flags, Django manage.py handling), nested-config parsing/rejection, wizard flows including confirmed framework selection and Django prompts, and headless autocomplete jail tests.',
+                    'A deterministic config-watch test drives the restart flow through a scripted watcher with a single writer, eliminating shutdown-vs-detection races.',
+                ],
+            },
+        ],
+    },
+    {
         version: 'v0.12.1',
         date: '2026-08-16',
         tag: 'v0.12.1',

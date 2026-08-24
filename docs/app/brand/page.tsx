@@ -235,46 +235,46 @@ export default function BrandPage() {
                   Use the mark at 24px minimum. Prefer the wordmark when the brand needs to read at a distance.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* Mark Light (Dark BG) */}
+                  {/* Mark Dark (Dark BG) */}
                   <div className="border border-[#262626] rounded-lg overflow-hidden flex flex-col group bg-black">
                     <div className="h-40 flex items-center justify-center">
-                      <Image src="/branding/png/pyrpc-mark-bg-dark.png" alt="Mark Light" width={64} height={64} className="h-12 w-12" />
+                      <Image src="/branding/png/pyrpc-mark-bg-dark.png" alt="Mark Dark" width={64} height={64} className="h-12 w-12" />
                     </div>
                     <div className="flex items-center justify-between border-t border-[#262626] bg-black px-4 py-3">
-                      <p className="text-[11px] font-semibold tracking-wide text-white">Mark · Light</p>
+                      <p className="text-[11px] font-semibold tracking-wide text-white">Mark · Dark</p>
                       <a href="/branding/png/pyrpc-mark-bg-dark.png" download className="text-[10px] font-mono text-neutral-500 hover:text-white transition-colors">.png ↓</a>
                     </div>
                   </div>
 
-                  {/* Mark Dark (Light BG) */}
+                  {/* Mark Light (Light BG) */}
                   <div className="border border-[#262626] rounded-lg overflow-hidden flex flex-col group bg-black">
                     <div className="h-40 flex items-center justify-center bg-white">
-                      <Image src="/branding/png/pyrpc-mark-bg-light.png" alt="Mark Dark" width={64} height={64} className="h-12 w-12" />
+                      <Image src="/branding/png/pyrpc-mark-bg-light.png" alt="Mark Light" width={64} height={64} className="h-12 w-12" />
                     </div>
                     <div className="flex items-center justify-between border-t border-[#262626] bg-black px-4 py-3">
-                      <p className="text-[11px] font-semibold tracking-wide text-white">Mark · Dark</p>
+                      <p className="text-[11px] font-semibold tracking-wide text-white">Mark · Light</p>
                       <a href="/branding/png/pyrpc-mark-bg-light.png" download className="text-[10px] font-mono text-neutral-500 hover:text-white transition-colors">.png ↓</a>
                     </div>
                   </div>
 
-                  {/* Wordmark Light (Dark BG) */}
+                  {/* Wordmark Dark (Dark BG) */}
                   <div className="border border-[#262626] rounded-lg overflow-hidden flex flex-col group bg-black">
                     <div className="h-40 flex items-center justify-center">
-                      <Image src="/branding/png/pyrpc-wordmark-bg-dark.png" alt="Wordmark Light" width={160} height={40} className="h-8 w-auto px-4" />
+                      <Image src="/branding/png/pyrpc-wordmark-bg-dark.png" alt="Wordmark Dark" width={160} height={40} className="h-8 w-auto px-4" />
                     </div>
                     <div className="flex items-center justify-between border-t border-[#262626] bg-black px-4 py-3">
-                      <p className="text-[11px] font-semibold tracking-wide text-white">Wordmark · Light</p>
+                      <p className="text-[11px] font-semibold tracking-wide text-white">Wordmark · Dark</p>
                       <a href="/branding/png/pyrpc-wordmark-bg-dark.png" download className="text-[10px] font-mono text-neutral-500 hover:text-white transition-colors">.png ↓</a>
                     </div>
                   </div>
 
-                  {/* Wordmark Dark (Light BG) */}
+                  {/* Wordmark Light (Light BG) */}
                   <div className="border border-[#262626] rounded-lg overflow-hidden flex flex-col group bg-black">
                     <div className="h-40 flex items-center justify-center bg-white">
-                      <Image src="/branding/png/pyrpc-wordmark-bg-light.png" alt="Wordmark Dark" width={160} height={40} className="h-8 w-auto px-4" />
+                      <Image src="/branding/png/pyrpc-wordmark-bg-light.png" alt="Wordmark Light" width={160} height={40} className="h-8 w-auto px-4" />
                     </div>
                     <div className="flex items-center justify-between border-t border-[#262626] bg-black px-4 py-3">
-                      <p className="text-[11px] font-semibold tracking-wide text-white">Wordmark · Dark</p>
+                      <p className="text-[11px] font-semibold tracking-wide text-white">Wordmark · Light</p>
                       <a href="/branding/png/pyrpc-wordmark-bg-light.png" download className="text-[10px] font-mono text-neutral-500 hover:text-white transition-colors">.png ↓</a>
                     </div>
                   </div>

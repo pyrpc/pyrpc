@@ -20,7 +20,7 @@ Please do not open a public GitHub issue for security reports.
 
 ## Supported Versions
 
-Until 1.0.0, only the latest minor release receives security fixes. Right now that is 0.11.x.
+Until 1.0.0, only the latest minor release receives security fixes. Right now that is 0.13.x.
 
 Pre-release versions (alpha, beta, rc) get best-effort evaluation with no SLA.
 
@@ -41,8 +41,8 @@ Pre-release versions (alpha, beta, rc) get best-effort evaluation with no SLA.
 ## What We Do to Keep Things Safe
 
 - **Validation at the boundary.** All RPC input is validated through Pydantic at the core interpreter layer. Adapters must not skip or re-implement this validation.
-- **No executable codegen output.** The TypeScript codegen emits type definitions only - no runtime code, no eval, no dynamic imports.
-- **Introspection is opt-in.** The `GET /rpc` endpoint is served when you mount an adapter. You can disable it at the server level.
+- **Codegen emits no executable logic.** The generated `__pyrpc.ts` carries type definitions plus a small, data-only `procedureKinds` map. pyRPC-generated output contains no function bodies that call anything, no eval, and no dynamic imports.
+- **Introspection ships mounted.** The `GET /rpc` endpoint is served whenever you mount an adapter; there is currently no adapter-level switch to turn it off, so restrict access at the reverse proxy or network level if the surface must stay private.
 - **Error messages are safe by default.** Stack traces and internal state require explicit opt-in to be exposed in responses.
 - **Dependency CVEs are prioritized.** Security updates in dependencies get expedited release queue placement.
 

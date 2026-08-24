@@ -1,0 +1,30 @@
+<svg width="100%" viewBox="0 0 880 340" role="img" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect x="0" y="0" width="880" height="340" rx="16" fill="#16161a"/>
+  <text x="40" y="48" fill="#e6e6e0" font-size="18" font-weight="600">Django wiring in one picture</text>
+  <text x="40" y="70" fill="#9c9ca8" font-size="12">manage.py launches; views.py registers; urls.py mounts</text>
+
+  <g font-size="12">
+    <rect x="50" y="105" width="240" height="90" rx="10" fill="#222226"/>
+    <text x="170" y="130" fill="#e6e6e0" text-anchor="middle">myproject/views.py</text>
+    <text x="170" y="152" fill="#6fb58d" text-anchor="middle">@rpc.query def greet(...)</text>
+    <text x="170" y="174" fill="#9c9ca8" text-anchor="middle">= your types_module</text>
+
+    <rect x="330" y="105" width="220" height="90" rx="10" fill="#222226"/>
+    <text x="440" y="130" fill="#e6e6e0" text-anchor="middle">myproject/urls.py</text>
+    <text x="440" y="152" fill="#c0c0ba" text-anchor="middle">from . import views</text>
+    <text x="440" y="174" fill="#c0c0ba" text-anchor="middle">mount_django(urlpatterns)</text>
+
+    <rect x="590" y="105" width="250" height="90" rx="10" fill="#1d2b23" stroke="#4e8a68"/>
+    <text x="715" y="130" fill="#6fb58d" text-anchor="middle" font-weight="600">pyrpc dev</text>
+    <text x="715" y="152" fill="#e6e6e0" text-anchor="middle">$ manage.py runserver :8000</text>
+    <text x="715" y="174" fill="#9c9ca8" text-anchor="middle">+ regenerates __pyrpc.ts</text>
+  </g>
+
+  <path d="M290 150 H325 M550 150 H585" stroke="#4e8a68" stroke-width="1.5"/>
+
+  <g font-size="12">
+    <rect x="50" y="230" width="790" height="56" rx="10" fill="#1d1d22"/>
+    <text x="70" y="253" fill="#c0c0ba">Import chain matters: urls.py importing views executes the decorators.</text>
+    <text x="70" y="274" fill="#9c9ca8">settings.py registers nothing - pointing types_module at it yields an empty schema.</text>
+  </g>
+</svg>

@@ -1,0 +1,47 @@
+<svg width="100%" viewBox="0 0 880 430" role="img" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect x="0" y="0" width="880" height="430" rx="16" fill="#16161a"/>
+  <text x="40" y="48" fill="#e6e6e0" font-size="18" font-weight="600">Suggestions are jailed to the project root</text>
+  <text x="40" y="70" fill="#9c9ca8" font-size="12">typed input is only existence-checked; suggestions never leave the jail</text>
+
+  <!-- jail boundary -->
+  <rect x="60" y="95" width="330" height="290" rx="12" fill="#1d2b23" stroke="#4e8a68" stroke-dasharray="6 4"/>
+  <text x="80" y="122" fill="#6fb58d" font-size="12" font-weight="600">project root (realpath jail)</text>
+
+  <g font-size="12">
+    <rect x="85" y="140" width="150" height="28" rx="6" fill="#222226"/><text x="100" y="158" fill="#e6e6e0">apps/web/</text>
+    <rect x="85" y="176" width="150" height="28" rx="6" fill="#222226"/><text x="100" y="194" fill="#e6e6e0">components/</text>
+    <rect x="85" y="212" width="150" height="28" rx="6" fill="#222226"/><text x="100" y="230" fill="#e6e6e0">src/</text>
+
+    <rect x="85" y="252" width="170" height="26" rx="6" fill="#16161a" stroke="#3a3a46"/><text x="98" y="269" fill="#5b5b66">node_modules/</text>
+    <rect x="85" y="284" width="170" height="26" rx="6" fill="#16161a" stroke="#3a3a46"/><text x="98" y="301" fill="#5b5b66">.venv/</text>
+    <rect x="85" y="316" width="170" height="26" rx="6" fill="#16161a" stroke="#3a3a46"/><text x="98" y="333" fill="#5b5b66">escape -&gt; ../sibling</text>
+  </g>
+
+  <!-- legend -->
+  <g font-size="11">
+    <circle cx="80" cy="252" r="0"/><text x="270" y="269" fill="#9c9ca8">filtered: skip-dir</text>
+    <text x="270" y="301" fill="#9c9ca8">filtered: dot dir</text>
+    <text x="270" y="333" fill="#9c9ca8">filtered: realpath escapes</text>
+  </g>
+
+  <path d="M390 240 H450" stroke="#505060" stroke-width="1.5" marker-end="url(#g)"/>
+
+  <!-- prompt -->
+  <rect x="455" y="130" width="385" height="220" rx="10" fill="#1d1d22" stroke="#3a3a46"/>
+  <text x="475" y="158" fill="#9c9ca8" font-size="11">questionary.path</text>
+  <text x="475" y="186" fill="#e6e6e0" font-size="13">? Client project root &#8250; src/&#9166;</text>
+  <g font-size="12">
+    <rect x="475" y="205" width="110" height="24" rx="5" fill="#222226"/><text x="487" y="221" fill="#6fb58d">app/</text>
+    <rect x="593" y="205" width="110" height="24" rx="5" fill="#222226"/><text x="605" y="221" fill="#6fb58d">api/</text>
+    <text x="475" y="256" fill="#9c9ca8">only_directories=True</text>
+    <text x="475" y="278" fill="#9c9ca8">file_filter = jail(realpath)</text>
+    <text x="475" y="300" fill="#9c9ca8">validate = isdir (submit gate)</text>
+    <text x="475" y="330" fill="#c0c0ba">Tab accepts a suggestion.</text>
+  </g>
+
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#505060"/>
+    </marker>
+  </defs>
+</svg>

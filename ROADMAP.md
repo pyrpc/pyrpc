@@ -2,7 +2,7 @@
 
 High-level direction and explicit non-goals for the project.
 
-## Shipped (v0.1.0-alpha.1 → v0.11.1)
+## Shipped (v0.1.0-alpha.1 → v0.13.0)
 
 ### Core & protocol
 
@@ -14,10 +14,10 @@ High-level direction and explicit non-goals for the project.
 
 ### Server adapters
 
-- **FastAPI** — `mount_fastapi(app)`
-- **Flask** — `mount_flask(app)`
-- **Django** — `mount_django(app)` (native async views, no anyio bridge)
-- **Standalone ASGI** — `PyRPCAsgiApp`
+- **FastAPI**: `mount_fastapi(app)`
+- **Flask**: `mount_flask(app)`
+- **Django**: `mount_django(app)` (native async views, no anyio bridge)
+- **Standalone ASGI**: `PyRPCAsgiApp`
 - Framework extras: `pip install pyrpc-core[fastapi]`, `[flask]`, `[django]`
 
 ### Code generation
@@ -29,43 +29,60 @@ High-level direction and explicit non-goals for the project.
 
 ### TypeScript client
 
-- `createClient<Types>()` — proxy-based with full type inference
-- `@pyrpc/types` — `import type { Types } from "@pyrpc/types"` resolves to the generated source-tree file via tsconfig paths
+- `createClient<Types>()`, proxy-based with full type inference
+- `@pyrpc/types`, `import type { Types } from "@pyrpc/types"` resolves to the generated source-tree file via tsconfig paths
 - `@pyrpc/client` with `PyRPCError` (code, message, data)
 
 ### Client framework adapters (v0.9.0)
 
-- `@pyrpc/react` — TanStack Query hooks + utils
-- `@pyrpc/next` — App Router: `createNextClient`, RSC prefetch, HydrateClient
-- `@pyrpc/vue` — Vue 3 + TanStack VueQueryPlugin
-- `@pyrpc/svelte` — Svelte + TanStack Query
+- `@pyrpc/react`, TanStack Query hooks + utils
+- `@pyrpc/next`, App Router: `createNextClient`, RSC prefetch, HydrateClient
+- `@pyrpc/vue`, Vue 3 + TanStack VueQueryPlugin
+- `@pyrpc/svelte`, Svelte + TanStack Query
 - Procedure kinds: `@rpc.query` / `@rpc.mutation` (bare `@rpc` = query)
 - One `api` object: Provider, hooks, server helpers on the same export
 
 ### CLI & dev tools
 
-- `pyrpc dev` — setup wizard, file watcher, type regeneration, dev server
-- `pyrpc dev` server detection — probes `host:port`; skips uvicorn and attaches watcher-only when a server is already running
+- `pyrpc dev`, setup wizard, file watcher, type regeneration, dev server
+- `pyrpc dev` server detection, probes `host:port`; skips uvicorn and attaches watcher-only when a server is already running
 - `pyrpc dev` starts uvicorn with `--reload` by default (`--no-reload` to disable)
-- `pyrpc dev --yes` / `--module` / `--client` — fully non-interactive setup for CI and scripts
-- `pyrpc dev --reconfigure` — re-run the setup wizard, pre-filling current values
-- `pyrpc watch` — type-watcher only, no server started
+- `pyrpc dev --yes` / `--module` / `--client`, fully non-interactive setup for CI and scripts
+- `pyrpc dev --reconfigure`, re-run the setup wizard, pre-filling current values
+- `pyrpc watch`, type-watcher only, no server started
 - Watcher reloads edited modules (`importlib.reload`) so regenerated types reflect the latest code
-- `pyrpc serve` — standalone server
+- `pyrpc serve`, standalone server
 - `pyrpc version`, `pyrpc inspect`, `pyrpc pull`
 - Daemon-first design: JSON pipe (stdio) for Python ↔ TypeScript communication
 - 715× speedup via persistent npx daemon
-- Auto adapter installation (`npm install @pyrpc/<adapter>` on first run)
+- Codegen emits links-based client setup (`httpBatchLink`) out of the template
 
-### Config (v0.10.0 → v0.11.x)
+### Config (v0.10.0 → v0.13.0)
 
-- `pyrpc.json` — dedicated config (replaces `[tool.pyrpc]` in pyproject.toml)
+- `pyrpc.json`, dedicated config (replaces `[tool.pyrpc]` in pyproject.toml)
 - Zero-config setup: the `pyrpc dev` wizard writes `pyrpc.json` on first run, then never runs again
-- Fields: `module`, `framework` (auto-detected), and `client` (single root) or `clients` (list) — no `output`, `entrypoint`, or `client_root`
+- Fields: `module`, `framework` (auto-detected), and `client` (single root) or `clients` (list), no `output`, `entrypoint`, or `client_root`
 - Multi-client support (v0.11.0): one schema, many TypeScript frontends; types generated per client
-- Generated types live at `<client>/__pyrpc.d.ts` in the user's source tree — committed, diffable, never in `node_modules`
+- Generated types live at `<client>/__pyrpc.ts` in the user's source tree, committed, diffable, never in `node_modules`
 - tsconfig paths injected surgically by `pyrpc_core/tsconfig.py` via jsonc-edit (idempotent, preserves comments, raises on conflicting aliases)
 - The dev loop watches `pyrpc.json` itself and re-wires when module or clients change
+
+### Types as a runtime module & links API (v0.12.0 → v0.13.0)
+
+- Generated types are a real runtime module: `<client>/__pyrpc.ts` carries the `Types` type plus a `procedureKinds` map adapters read at runtime
+- Bundler aliasing for Vite, SvelteKit, and Next.js Turbopack, which ignore tsconfig `paths` for imports inside `node_modules`
+- Terminating links: `httpLink` / `httpBatchLink` end a composable link pipeline in `@pyrpc/client`; all four framework adapters re-export them
+- Batched requests end to end: same-tick operations coalesce into one JSON-array POST; the interpreter dispatches up to 100 sequentially with per-operation errors
+
+### Explicit backends & native dev servers (v0.13.0)
+
+- `pyrpc.json` declares `{ backend: { framework, entrypoint, types_module }, clients: [{ framework, root }] }`; legacy flat configs are rewritten in place on next run
+- Framework-native launch: uvicorn for fastapi/asgi, `flask --app <module:app> run` for Flask, `manage.py runserver` for Django
+- Sniffing only preselects the wizard choice; `--yes` sniffs or errors, `--framework <name>` is fully explicit
+- Required `types_module` for Django fixes stale-type regen in split-module layouts
+- Client-root prompt with jailed filesystem autocomplete (questionary.path)
+- Live reconfiguration: editing `pyrpc.json` diffs the parsed spec and swaps or rewires without ending the session
+- Crash-safe watchers, concise entry-module import errors, and the watch-command shadowing fix
 
 ### Docs & publishing
 
@@ -77,17 +94,17 @@ High-level direction and explicit non-goals for the project.
 
 ## Near-term
 
-- **Middleware hooks** — request/response middleware at the core level (auth, logging, rate limiting as user-space patterns)
-- **Typed errors** — user-defined error codes and data shapes that flow from Python procedures through codegen into `PyRPCError` on the TypeScript side
-- **Performance benchmarks** — baseline latency and throughput numbers per adapter, with a repeatable benchmark suite
+- **Middleware hooks**: request/response middleware at the core level (auth, logging, rate limiting as user-space patterns)
+- **Typed errors**: user-defined error codes and data shapes that flow from Python procedures through codegen into `PyRPCError` on the TypeScript side
+- **Performance benchmarks**: baseline latency and throughput numbers per adapter, with a repeatable benchmark suite
 
 ## Longer-term
 
-- **WebSocket transport** — persistent connection with JSON-RPC 2.0 over WebSocket
-- **Subscription support** — server-push procedures via the WebSocket transport
-- **Context propagation** — request-scoped context that flows through procedure chains
-- **Plugin system** — user-space plugins that hook into core events without modifying core
-- **OpenTelemetry integration** — trace spans at adapter and core boundaries
+- **WebSocket transport**: persistent connection with JSON-RPC 2.0 over WebSocket
+- **Subscription support**: server-push procedures via the WebSocket transport
+- **Context propagation**: request-scoped context that flows through procedure chains
+- **Plugin system**: user-space plugins that hook into core events without modifying core
+- **OpenTelemetry integration**: trace spans at adapter and core boundaries
 
 ## Non-goals
 
