@@ -1,7 +1,8 @@
 import pytest
 from flask import Flask
-from pyrpc_core import rpc, default_router
+from pyrpc_core import default_router, rpc
 from pyrpc_flask import mount_flask
+
 
 @pytest.fixture(autouse=True)
 def clear_registry():

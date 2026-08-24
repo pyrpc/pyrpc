@@ -1,6 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class RpcRequest(BaseModel):
@@ -8,15 +8,15 @@ class RpcRequest(BaseModel):
     Represents an RPC request.
     """
 
-    id: Optional[Union[str, int]] = None
+    id: str | int | None = None
     method: str
-    params: Optional[Union[List[Any], Dict[str, Any]]] = None
+    params: list[Any] | dict[str, Any] | None = None
 
 
 class RpcErrorModel(BaseModel):
     code: int
     message: str
-    data: Optional[Any] = None
+    data: Any | None = None
 
 
 class RpcResponse(BaseModel):
@@ -24,6 +24,6 @@ class RpcResponse(BaseModel):
     Represents an RPC response.
     """
 
-    id: Optional[Union[int, str]] = None
-    result: Optional[Any] = None
-    error: Optional[RpcErrorModel] = None
+    id: int | str | None = None
+    result: Any | None = None
+    error: RpcErrorModel | None = None

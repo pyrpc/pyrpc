@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
+    "typecheck": "tsc --noEmit",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
     "test": "vitest run"
   },

@@ -2,12 +2,18 @@ import json
 import os
 import shutil
 import tempfile
+
 import pytest
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
-from pyrpc_core import rpc, default_router, get_registry_schema
 from pyrpc_codegen import generate_typescript_client, save_typescript_client
-from pyrpc_codegen.ts_codegen import _to_safe_name, _to_pascal_case, _collect_schema_defs
+from pyrpc_codegen.ts_codegen import (
+    _collect_schema_defs,
+    _to_pascal_case,
+    _to_safe_name,
+)
+from pyrpc_core import default_router, get_registry_schema, rpc
+
 
 def _npx_works() -> bool:
     """Check if npx works via subprocess.run without shell=True (how jsonschema_ts calls it)."""

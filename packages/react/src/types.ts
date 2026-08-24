@@ -75,6 +75,7 @@ export type ReactClientProviderProps = {
 
 export type ReactClient<
   TProcedures extends ProceduresRecord,
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- deliberate unconstrained default when kinds are not provided
   TKinds extends ProcedureKindMap<TProcedures> = {},
 > = {
   [K in keyof TProcedures]: ProcedureHooksForKind<

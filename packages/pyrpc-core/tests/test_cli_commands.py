@@ -6,14 +6,14 @@ import tempfile
 import threading
 import time
 import unittest.mock as mock
+from pathlib import Path
 
+import pyrpc_core.cli as cli_mod
 import pytest
 import typer
 from pyrpc_core import default_router, rpc
-import pyrpc_core.cli as cli_mod
-from pyrpc_core.cli import app, _parse_entry
+from pyrpc_core.cli import _parse_entry, app
 from typer.testing import CliRunner
-from pathlib import Path
 
 runner = CliRunner()
 
@@ -199,7 +199,7 @@ def test_cli_dev_yes_zero_clients():
             with mock.patch("pyrpc_core.cli._write_config") as mock_write:
                 with mock.patch("pyrpc_core.cli._import_module"):
                     with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
-                        with mock.patch("pyrpc_core.cli.subprocess.Popen"):
+                        with mock.patch("pyrpc_core.cli._ServerProcess"):
                             with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
                                 with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
                                     mock_console.return_value.run = mock.MagicMock()
@@ -220,7 +220,7 @@ def test_cli_dev_yes_one_client():
                 with mock.patch("pyrpc_core.cli._import_module"):
                     with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=1):
                         with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
-                            with mock.patch("pyrpc_core.cli.subprocess.Popen"):
+                            with mock.patch("pyrpc_core.cli._ServerProcess"):
                                 with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
                                     with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
                                         mock_console.return_value.run = mock.MagicMock()
@@ -291,16 +291,16 @@ def test_cli_dev_starts_server_when_not_running(tmp_path):
         with mock.patch("pyrpc_core.cli._import_module"):
             with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=2):
                 with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
-                    with mock.patch("pyrpc_core.cli.subprocess") as mock_sub:
+                    with mock.patch("pyrpc_core.cli._ServerProcess") as mock_sub:
                         mock_proc = mock.MagicMock()
-                        mock_sub.Popen.return_value = mock_proc
+                        mock_sub.return_value = mock_proc
                         with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
                             with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
                                 mock_console.return_value.run = mock.MagicMock()
                                 result = runner.invoke(app, ["dev"])
     assert result.exit_code == 0
-    mock_sub.Popen.assert_called_once()
-    argv = mock_sub.Popen.call_args[0][0]
+    mock_sub.assert_called_once()
+    argv = mock_sub.call_args[0][0]
     assert argv[1:4] == ["-m", "uvicorn", "my_module:app"]
 
 
@@ -314,14 +314,14 @@ def test_cli_dev_starts_flask_native_server(tmp_path):
         with mock.patch("pyrpc_core.cli._import_module"):
             with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=1):
                 with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
-                    with mock.patch("pyrpc_core.cli.subprocess") as mock_sub:
-                        mock_sub.Popen.return_value = mock.MagicMock()
+                    with mock.patch("pyrpc_core.cli._ServerProcess") as mock_sub:
+                        mock_sub.return_value = mock.MagicMock()
                         with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
                             with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
                                 mock_console.return_value.run = mock.MagicMock()
                                 result = runner.invoke(app, ["dev"])
     assert result.exit_code == 0
-    argv = mock_sub.Popen.call_args[0][0]
+    argv = mock_sub.call_args[0][0]
     assert "-m" in argv and "flask" in argv
     assert "uvicorn" not in argv
     assert "--app" in argv and "app:app" in argv
@@ -387,9 +387,9 @@ def test_cli_dev_exits_nonzero_when_watcher_crashes(tmp_path):
         with mock.patch("pyrpc_core.cli._import_module"):
             with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=2):
                 with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
-                    with mock.patch("pyrpc_core.cli.subprocess") as mock_sub:
+                    with mock.patch("pyrpc_core.cli._ServerProcess") as mock_sub:
                         mock_proc = mock.MagicMock()
-                        mock_sub.Popen.return_value = mock_proc
+                        mock_sub.return_value = mock_proc
                         with mock.patch("pyrpc_core.cli.watch", side_effect=TypeError("boom")):
                             with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
                                 mock_console.return_value.run = mock.MagicMock()
@@ -418,7 +418,7 @@ def test_dev_watch_calls_never_use_stop_event(tmp_path):
         with mock.patch("pyrpc_core.cli._import_module"):
             with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=2):
                 with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
-                    with mock.patch("pyrpc_core.cli.subprocess.Popen"):
+                    with mock.patch("pyrpc_core.cli._ServerProcess"):
                         with mock.patch("pyrpc_core.cli.watch", side_effect=strict_watch):
                             with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
                                 mock_console.return_value.run = mock.MagicMock()
@@ -884,15 +884,15 @@ def test_cfg_watcher_restarts_backend_on_entrypoint_change(tmp_path):
         # Keep the session alive until the restart has been observed; this
         # removes shutdown-vs-detection timing from the test entirely.
         deadline = time.time() + 5
-        while time.time() < deadline and mock_sub.Popen.call_count < 2:
+        while time.time() < deadline and mock_sub.call_count < 2:
             time.sleep(0.01)
 
     with mock.patch("pyrpc_core.cli._find_config", return_value=cfg_file):
         with mock.patch("pyrpc_core.cli._import_module") as mock_import:
             with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=1):
                 with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
-                    with mock.patch("pyrpc_core.cli.subprocess") as mock_sub:
-                        mock_sub.Popen.return_value = mock.MagicMock()
+                    with mock.patch("pyrpc_core.cli._ServerProcess") as mock_sub:
+                        mock_sub.return_value = mock.MagicMock()
                         with mock.patch("pyrpc_core.cli.watch", side_effect=scripted_watch):
                             with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
                                 mock_console.return_value.run.side_effect = fake_run
@@ -901,12 +901,12 @@ def test_cfg_watcher_restarts_backend_on_entrypoint_change(tmp_path):
     while time.time() < stop_deadline and threading.active_count() > 2:
         time.sleep(0.01)
     assert result.exit_code == 0, f"exit={result.exit_code} out={result.output}"
-    assert mock_sub.Popen.call_count == 2, "backend must be restarted once"
-    first_argv = mock_sub.Popen.call_args_list[0][0][0]
-    second_argv = mock_sub.Popen.call_args_list[1][0][0]
+    assert mock_sub.call_count == 2, "backend must be restarted once"
+    first_argv = mock_sub.call_args_list[0][0][0]
+    second_argv = mock_sub.call_args_list[1][0][0]
     assert "uvicorn" in first_argv and "main:app" in first_argv
     assert "flask" in second_argv and "app:app" in second_argv
-    assert mock_sub.Popen.return_value.terminate.called
+    assert mock_sub.return_value.terminate.called
     # The new types module was imported and regen re-wired
     assert any("app" in str(c) for c in mock_import.call_args_list)
 
@@ -914,6 +914,7 @@ def test_cfg_watcher_restarts_backend_on_entrypoint_change(tmp_path):
 # ── client-root autocomplete ──────────────────────────────────────────────────
 
 def _make_tree(root: Path, outside: Path):
+    """Build a fixture tree; skips the escape symlink where unsupported."""
     (root / "src" / "app").mkdir(parents=True)
     (root / "src" / "api").mkdir()
     (root / "components").mkdir()
@@ -921,7 +922,11 @@ def _make_tree(root: Path, outside: Path):
     (root / ".venv").mkdir()
     (root / "README.md").write_text("x", encoding="utf-8")
     (outside / "elsewhere").mkdir(parents=True)
+    if sys.platform == "win32":
+        # Creating symlinks on Windows requires developer mode or admin.
+        return False
     os.symlink(outside / "elsewhere", root / "escape_link")
+    return True
 
 
 def test_client_filter_hides_junk_and_escapes(tmp_path):
@@ -929,7 +934,7 @@ def test_client_filter_hides_junk_and_escapes(tmp_path):
     outside = tmp_path / "outside"
     root = tmp_path / "project"
     root.mkdir()
-    _make_tree(root, outside)
+    has_symlink = _make_tree(root, outside)
 
     visible = cli_mod._client_visible_filter(str(root))
     shown = sorted(
@@ -938,6 +943,8 @@ def test_client_filter_hides_junk_and_escapes(tmp_path):
     assert shown == ["components", "src"]
     assert visible(str(outside / "elsewhere")) is False
     assert visible(str(root / "src" / "app")) is True
+    if has_symlink:
+        assert visible(str(root / "escape_link")) is False
 
 
 def test_client_completer_suggests_scoped_dirs(tmp_path):
@@ -958,7 +965,10 @@ def test_client_completer_suggests_scoped_dirs(tmp_path):
     )
 
     def suggestions(text):
-        return [c.display[0][1] for c in completer.get_completions(Document(text), CompleteEvent())]
+        return [
+            c.display[0][1].replace(os.sep, "/")
+            for c in completer.get_completions(Document(text), CompleteEvent())
+        ]
 
     # Prefix match inside src/
     assert [s for s in suggestions("src/a") if s.startswith("a")] == ["api/", "app/"]

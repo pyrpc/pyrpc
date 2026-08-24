@@ -1,6 +1,6 @@
 import asyncio
 import uuid
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import httpx
 
@@ -25,8 +25,8 @@ class RPCClient:
     def __init__(
         self, 
         base_url: str, 
-        async_client: Optional[httpx.AsyncClient] = None,
-        sync_client: Optional[httpx.Client] = None
+        async_client: httpx.AsyncClient | None = None,
+        sync_client: httpx.Client | None = None
     ) -> None:
         """
         Initialize the RPC client.
@@ -41,9 +41,9 @@ class RPCClient:
         self._sync_client = sync_client or httpx.Client(base_url=self.base_url)
         self._schema_loaded = False
         self._schema_fetch_attempted = False
-        self._is_async_cache: Dict[str, bool] = {}
+        self._is_async_cache: dict[str, bool] = {}
 
-    def set_schema(self, schema: Dict[str, bool]) -> None:
+    def set_schema(self, schema: dict[str, bool]) -> None:
         """Manually set procedure schema for sync/async dispatch.
 
         Bypasses the HTTP introspection fetch. Useful for testing or when
@@ -88,8 +88,8 @@ class RPCClient:
         response = self._sync_client.post("/rpc", json=payload)
         return self._handle_response(response)
 
-    def _prepare_payload(self, method: str, *args: Any, **kwargs: Any) -> Dict[str, Any]:
-        params: Union[List[Any], Dict[str, Any]]
+    def _prepare_payload(self, method: str, *args: Any, **kwargs: Any) -> dict[str, Any]:
+        params: list[Any] | dict[str, Any]
         if kwargs:
             params = kwargs
         else:

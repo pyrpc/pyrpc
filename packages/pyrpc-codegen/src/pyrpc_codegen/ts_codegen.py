@@ -2,13 +2,13 @@ import os
 import re
 import unicodedata
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
 from jsonschema_ts import Options as JsonschemaTsOptions
 from jsonschema_ts import assemble, collect_defs, convert_all, ensure_inline_models
 
-_TYPE_MAP: Dict[str, str] = {
+_TYPE_MAP: dict[str, str] = {
     "int": "number",
     "float": "number",
     "str": "string",
@@ -118,7 +118,7 @@ def _return_type_to_ts(return_type: str) -> str:
     return _pytype_to_ts(return_type)
 
 
-def _collect_schema_defs(schemas: Dict[str, Any]) -> dict:
+def _collect_schema_defs(schemas: dict[str, Any]) -> dict:
     schema_sources = []
     for _name, schema in schemas.items():
         if isinstance(schema, dict):
@@ -143,7 +143,7 @@ def _collect_schema_defs(schemas: Dict[str, Any]) -> dict:
     return collect_defs(*processed)
 
 
-def generate_typescript_client(schemas: Dict[str, Any]) -> str:
+def generate_typescript_client(schemas: dict[str, Any]) -> str:
     defs = _collect_schema_defs(schemas)
 
     opts = JsonschemaTsOptions(
@@ -169,7 +169,7 @@ def generate_typescript_client(schemas: Dict[str, Any]) -> str:
     )
 
 
-def save_typescript_client(schemas: Dict[str, Any], output_path: str):
+def save_typescript_client(schemas: dict[str, Any], output_path: str):
     if not os.path.isabs(output_path):
         raise ValueError(
             "save_typescript_client requires an absolute path"

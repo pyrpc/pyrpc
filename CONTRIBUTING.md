@@ -102,7 +102,29 @@ Open a draft PR early if you want feedback mid-flight. Mark "Ready for review" w
 
 ### Required checks
 
-Merging into `main` requires the `Test` workflow jobs to pass: branch protection requires the `test-python` and `test-ts` checks (matched by check-run job name, not `Test / <job>`). The same workflow also runs a `lint-docs` job for the docs site; it is informational, not required. If you rename, split, or add jobs in `test.yml`, update these required checks to match the job names exactly, or every PR will silently fail to merge.
+Merging into `main` requires the `Test` workflow jobs to pass. Branch protection requires the `test-python` and `test-ts` checks (matched by check-run job name, not `Test / <job>`). The Python suite itself runs as a `test-python-matrix` job (OS x Python version); the plain `test-python` job is an aggregate gate over it, which is what keeps the protected name stable no matter how the matrix expands. If you rename or restructure jobs in `test.yml`, keep that pattern or update the branch-protection required checks to match exactly, otherwise every PR will silently fail to merge.
+
+The same workflow also runs these informational (non-required) jobs: `lint-docs`, `lint-python` (ruff), `typecheck-python` (mypy), `coverage`, `examples-smoke`, and `docs-code`. Treat red as a review blocker even where protection does not.
+
+### Quality gates (local equivalents)
+
+| Gate | Command |
+|------|---------|
+| Lint (Python) | `uv run ruff check .` |
+| Types (Python) | `uv run mypy` |
+| Tests + coverage floor | `uv run pytest --cov=pyrpc_core --cov=pyrpc_codegen --cov=pyrpc_fastapi --cov=pyrpc_flask --cov=pyrpc_django --cov-fail-under=78` |
+| Types (packages) | `npm run typecheck --workspaces --if-present` |
+| Lint (packages) | `npm run lint:packages` |
+| Examples | `uv pip install flask-cors django-cors-headers && uv run python scripts/verify_examples.py` |
+| Docs code blocks | `uv run python scripts/check_docs_code.py` |
+
+Notes for contributors:
+
+- Ruff's configured rule set is enforced in CI (`lint-python`). Line length (E501) and single-line compound statements (E701/E702) are currently accepted style, encoded as documented ignores rather than silent exceptions.
+- mypy runs against every package's `src/`; tests are not yet type-checked.
+- Coverage has a hard floor of 78% on the five Python packages; raise it when adding code, never lower it to make a PR pass.
+- Docs fences: every ```python block is syntax-checked; blocks marked ```python test are executed in CI and must be self-contained. Pseudo-code must opt out explicitly with ```python nocheck.
+- Dependency updates come from Dependabot (pip/npm/docs/actions, weekly, grouped minor+patch).
 
 Approvals are not enforced by branch protection, but maintainers review contributor PRs and may ask for changes before merging.
 

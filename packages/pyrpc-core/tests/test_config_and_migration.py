@@ -12,7 +12,13 @@ import tempfile
 
 import pytest
 from pyrpc_codegen import save_typescript_client
-
+from pyrpc_core.config import (
+    BackendSpec,
+    clients_from_config,
+    has_valid_backend,
+    parse_backend,
+    write_config,
+)
 
 # ── save_typescript_client invariants ────────────────────────────────────────
 
@@ -27,7 +33,8 @@ class TestSaveTypescriptClient:
             schemas = {"ping": {"name": "ping", "parameters": [], "return_type": "str", "doc": ""}}
             save_typescript_client(schemas, out)
             assert os.path.isfile(out)
-            content = open(out).read()
+            with open(out, encoding="utf-8") as fh:
+                content = fh.read()
             assert "ping:" in content
             assert "ProcedureKinds" in content
             assert "procedureKinds" in content
@@ -60,8 +67,8 @@ def test_cli_default_client_is_dot():
 
 def test_codegen_command_uses_default_client(tmp_path):
     """Running `pyrpc codegen <schema>` with no --client flag writes to __pyrpc.ts."""
-    from typer.testing import CliRunner
     from pyrpc_core.cli import app
+    from typer.testing import CliRunner
 
     schemas = {
         "add": {
@@ -91,8 +98,8 @@ def test_codegen_command_uses_default_client(tmp_path):
 
 def test_codegen_command_respects_client_flag(tmp_path):
     """--client flag overrides the default path."""
-    from typer.testing import CliRunner
     from pyrpc_core.cli import app
+    from typer.testing import CliRunner
 
     schemas = {"greet": {"name": "greet", "doc": "", "parameters": [], "return_type": "<class 'str'>"}}
     schema_file = tmp_path / "schema.json"
@@ -104,18 +111,12 @@ def test_codegen_command_respects_client_flag(tmp_path):
     
     expected_out = os.path.join(custom_client, "__pyrpc.ts")
     assert os.path.isfile(expected_out)
-    assert "greet" in open(expected_out).read()
+    with open(expected_out, encoding="utf-8") as fh:
+        assert "greet" in fh.read()
 
 
 # ── nested pyrpc.json model (0.13+) ──────────────────────────────────────────
 
-from pyrpc_core.config import (
-    BackendSpec,
-    has_valid_backend,
-    clients_from_config,
-    parse_backend,
-    write_config,
-)
 
 
 def test_parse_backend_full_nested_config():

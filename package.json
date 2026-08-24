@@ -22,10 +22,15 @@
   "scripts": {
     "test": "npm run test --workspaces",
     "test:python": "cd packages/pyrpc-core && python3 -m pytest",
-    "test:client": "npm test --workspace=@pyrpc/client"
+    "test:client": "npm test --workspace=@pyrpc/client",
+    "lint:packages": "eslint packages",
+    "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "devDependencies": {
-    "likec4": "^1.58.0"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.0",
+    "likec4": "^1.58.0",
+    "typescript-eslint": "^8.67.0"
   },
   "optionalDependencies": {
     "@rollup/rollup-win32-x64-msvc": "^4.62.3",

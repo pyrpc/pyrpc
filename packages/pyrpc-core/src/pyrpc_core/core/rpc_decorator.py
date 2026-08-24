@@ -1,4 +1,5 @@
-from typing import Any, Callable, Literal, Optional
+from collections.abc import Callable
+from typing import Any, Literal
 
 from .procedure import Procedure
 
@@ -19,7 +20,7 @@ class RpcDecorator:
     Bare ``@rpc`` defaults to kind ``query`` for backward compatibility.
     """
 
-    def __init__(self, router: Any, kind: Optional[ProcedureKind] = None) -> None:
+    def __init__(self, router: Any, kind: ProcedureKind | None = None) -> None:
         self._router = router
         self._kind = kind
 

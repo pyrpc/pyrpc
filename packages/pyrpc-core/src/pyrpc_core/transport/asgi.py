@@ -1,10 +1,11 @@
 import json
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from collections.abc import Callable
+from typing import Any
 
 from ..core.interpreter import handle_request
 from ..core.introspection import get_registry_schema
 
-CORS_HEADERS: List[Tuple[bytes, bytes]] = [
+CORS_HEADERS: list[tuple[bytes, bytes]] = [
     (b"access-control-allow-origin", b"*"),
     (b"access-control-allow-methods", b"OPTIONS, GET, POST"),
     (b"access-control-allow-headers", b"Content-Type"),
@@ -17,10 +18,10 @@ class PyRPCAsgiApp:
     A minimal ASGI application for serving pyRPC requests.
     """
 
-    def __init__(self, router: Optional[Any] = None) -> None:
+    def __init__(self, router: Any | None = None) -> None:
         self.router = router
 
-    async def __call__(self, scope: Dict[str, Any], receive: Callable, send: Callable) -> None:
+    async def __call__(self, scope: dict[str, Any], receive: Callable, send: Callable) -> None:
         """
         The ASGI entry point.
         """
@@ -88,7 +89,9 @@ class PyRPCAsgiApp:
         response_dict = await handle_request(payload, router=self.router)
         await self.send_response(send, 200, response_dict)
 
-    async def send_response(self, send: Callable, status_code: int, content: Dict[str, Any]) -> None:
+    async def send_response(
+        self, send: Callable, status_code: int, content: dict[str, Any] | list[dict[str, Any]]
+    ) -> None:
         """
         Helper to send a JSON response.
         """

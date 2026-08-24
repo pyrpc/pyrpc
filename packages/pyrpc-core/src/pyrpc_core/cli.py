@@ -6,25 +6,32 @@ import sys
 import threading
 import time
 import traceback
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 import questionary
 import typer
-from pyrpc_core import __version__
 from rich.console import Console
 from rich.table import Table
 from watchfiles import watch
+
+from pyrpc_core import Router, __version__
 
 from .config import (
     CONFIG_FILE,
     BackendConfigError,
     clients_from_config,
-    find_config as _find_config,
     has_valid_backend,
     normalize_entrypoint,
     parse_backend,
+)
+from .config import (
+    find_config as _find_config,
+)
+from .config import (
     read_config as _read_config,
+)
+from .config import (
     write_config as _write_config,
 )
 from .constants import BACKEND_LABELS, FRAMEWORKS
@@ -57,9 +64,10 @@ _FRAMEWORK_SIGNATURES: list[tuple[str, str]] = [
 ]
 _FRAMEWORK_LABELS = ["Next.js", "Nuxt", "Svelte", "Vite", "Astro", "Other"]
 
-# Populated by _lazy_core() on first use
-default_router = None
-get_registry_schema = None
+# Populated by _lazy_core() on first use; annotation-only so mypy sees the
+# real types instead of the None placeholder they replace at runtime.
+get_registry_schema: Callable[[Router | None], dict]
+default_router: Router
 
 app = typer.Typer(
     name="pyrpc",
@@ -91,7 +99,7 @@ def _detect_framework(root: str) -> str | None:
 def _find_frontend_projects(root: str) -> list[tuple[str, str]]:
     """Walk the directory tree to find frontend projects."""
     projects = []
-    for dirpath, dirnames, filenames in os.walk(root):
+    for dirpath, dirnames, _ in os.walk(root):
         dirnames[:] = [d for d in dirnames if d not in _SKIP_DIRS and not d.startswith(".")]
         fw = _detect_framework(dirpath)
         if fw:
@@ -327,7 +335,7 @@ def _auto_configure(cwd: str, *, framework: str | None, module: str | None, clie
             "entrypoint": normalize_entrypoint(module or _default_module(cwd)),
         }
 
-    cfg = {"backend": backend}
+    cfg: dict = {"backend": backend}
     if client:
         cfg["clients"] = [{"framework": _detect_framework(client) or "Other", "root": client}]
         console.print(f"  [dim]{backend['framework']} {backend['entrypoint']}  client={client}[/dim]")
@@ -392,6 +400,7 @@ def _report_import_error(module_path: str, exc: BaseException, cwd: str) -> None
     if frame is not None:
         filename, lineno = frame
         rel = os.path.relpath(filename, cwd)
+        rel = rel.replace(os.sep, "/")  # consistent, greppable across platforms
         console.print(f'[bold red]✗[/bold red] Failed to load entry module "{module_path}"')
         console.print()
         console.print(f"  [bold]{type(exc).__name__}[/bold]: {exc}")
@@ -462,8 +471,8 @@ def _run_codegen(module: str, output_path: str, *, reload: bool = False) -> int:
 
 def _regenerate_clients(module: str, client_dirs: list[str], *, reload: bool = False) -> int:
     """Generate types for every configured client and configure each tsconfig + bundler."""
-    from pyrpc_core.tsconfig import configure_tsconfig
     from pyrpc_core.bundlers import configure_bundler
+    from pyrpc_core.tsconfig import configure_tsconfig
     n = 0
     for client_dir in client_dirs:
         output_path = os.path.abspath(os.path.join(client_dir, "__pyrpc.ts"))
@@ -555,6 +564,16 @@ def _make_regen_callback(module: str, client_dirs: list[str]) -> tuple[Callable[
 
     return _do_regen, schedule
 
+class _ServerProcess(subprocess.Popen[bytes]):
+    """Popen that remembers the working directory its command runs in.
+
+    Config-triggered restarts need the original cwd to relaunch the same
+    framework-native server; plain Popen offers no attribute for it.
+    """
+
+    cwd: str
+
+
 # ── Watcher runner (crash-safe) ───────────────────────────────────────────────
 
 def _run_watcher(name: str, fn: Callable[[], None], stop: threading.Event,
@@ -616,7 +635,7 @@ class _DevConsole:
                 "inspect": self._inspect, "generate": self._generate,
                 "types": self._types, "restart": self._restart,
                 "exit": self._exit, "quit": self._exit,
-            }.get(cmd, lambda _: console.print(f"[red]Unknown: {cmd}. Type help.[/red]"))(arg)
+            }.get(cmd, lambda _, c=cmd: console.print(f"[red]Unknown: {c}. Type help.[/red]"))(arg)
 
     def _help(self, _=""):
         console.print("[bold]Commands:[/bold]  help · procedures · inspect <name> · generate · types · restart · exit")
@@ -663,7 +682,7 @@ class _DevConsole:
         console.print("[yellow]Restarting...[/yellow]")
         self.server_proc.terminate(); self.server_proc.wait()
         self.server_proc = subprocess.Popen(self.server_proc.args,
-                                            cwd=getattr(self.server_proc, "_cwd", None))
+                                            cwd=getattr(self.server_proc, "cwd", None))
         console.print("[green]Restarted[/green]")
 
     def _exit(self, _=""):
@@ -717,14 +736,17 @@ def serve(
     reload: bool = typer.Option(False, "--reload"),
 ):
     """Start the standalone pyRPC ASGI server."""
-    import uvicorn, tempfile
+    import tempfile
+
+    import uvicorn
     _lazy_core(); _import_module(module)
     from pyrpc_core.transport.asgi import PyRPCAsgiApp
     inst = PyRPCAsgiApp(default_router)
     console.print(f"  [bold]pyRPC[/bold]  http://{host}:{port}/rpc")
     if reload:
         code = f"from pyrpc_core import default_router\nfrom pyrpc_core.transport.asgi import PyRPCAsgiApp\nimport {module}\napp = PyRPCAsgiApp(default_router)\n"
-        tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8")
+        # uvicorn reload needs the temp file path to outlive this write
+        tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8")  # noqa: SIM115
         tmp.write(code); tmp.close()
         mp = os.path.splitext(os.path.basename(tmp.name))[0]
         sys.path.insert(0, os.path.dirname(tmp.name))
@@ -879,6 +901,10 @@ def dev(
         console.print(f"  [green]✓[/green]  pyrpc.json {'rewritten' if legacy else 'created'} (auto-configured)")
 
     spec = parse_backend(cfg)
+    # By construction: cfg is either a freshly written config or a validated
+    # load, and both paths leave cfg_path pointing at the file on disk.
+    assert spec is not None, "config validated before this point"
+    assert cfg_path is not None
     base_dir = str(cfg_path.parent)
     try:
         types_module = resolve_types_module(spec)
@@ -901,7 +927,7 @@ def dev(
             console.print(f"  [red]✗[/red]  initial codegen failed: {e}")
             raise typer.Exit(1) from e
     else:
-        console.print(f"  [dim]○[/dim]  no clients configured — skipping type generation")
+        console.print("  [dim]○[/dim]  no clients configured — skipping type generation")
 
     # ── Server: attach or start ───────────────────────────────────────────────
     server_proc: subprocess.Popen | None = None
@@ -914,8 +940,8 @@ def dev(
         )
         env = os.environ.copy()
         env.setdefault("PYTHONPATH", cwd)
-        proc = subprocess.Popen(plan.argv, cwd=plan.cwd or cwd, env=env)
-        proc._cwd = plan.cwd or cwd  # stash for restart
+        proc = _ServerProcess(plan.argv, cwd=plan.cwd or cwd, env=env)
+        proc.cwd = plan.cwd or cwd
         return proc
 
     if _server_is_running(host, port):
