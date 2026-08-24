@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@pyrpc/vue": "^0.12.1",
-    "@pyrpc/client": "^0.12.1",
-    "@pyrpc/types": "^0.12.1",
+    "@pyrpc/vue": "^0.13.0",
+    "@pyrpc/client": "^0.13.0",
+    "@pyrpc/types": "^0.13.0",
     "@tanstack/vue-query": "^5.83.0",
     "vue": "^3.5.13"
   },
