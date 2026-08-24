@@ -56,7 +56,7 @@ export const releases: Release[] = [
             {
                 title: 'Website & Docs',
                 items: [
-                    'Full visual redesign: new brand assets, better-auth-style light/dark theming, and shared Shiki syntax themes so landing page, docs, and playground render code identically.',
+                    'Full visual redesign: new brand assets, a unified light/dark theming system, and shared Shiki syntax themes so landing page, docs, and playground render code identically.',
                     'Docs restructured: server/client adapters split into their own sections, a dedicated Links section, a reference area, and an AI resources section (llms.txt, MCP, skills). File names now show as code-block titles in adapter guides.',
                     'Migrated the docs app to fumadocs 16.12 APIs and token names; playground editors match the site palette.',
                     'All 12 framework examples aligned with current APIs: links-based clients, correct provider scoping, working inputs and procedures, consistent branding, and a missing next.config.ts restored.',

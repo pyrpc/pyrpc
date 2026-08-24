@@ -57,7 +57,7 @@ export default function CommunityPage() {
           </p>
         </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-neutral-200 dark:bg-white/[0.08] rounded-lg overflow-hidden border border-neutral-200 dark:border-white/[0.08]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-fd-border rounded-lg overflow-hidden border border-fd-border">
         {channels.map((channel) => {
           const isComingSoon = channel.href === '#';
           const Comp = isComingSoon ? 'div' : 'a';
@@ -68,10 +68,10 @@ export default function CommunityPage() {
               {...(isComingSoon ? {} : { href: channel.href })}
               {...extra}
               className={cn(
-                "flex items-start gap-4 p-6 bg-white dark:bg-[#0a0a0a] transition-colors group",
+                "flex items-start gap-4 p-6 bg-fd-background transition-colors group",
                 isComingSoon
                   ? "blur-sm cursor-default select-none"
-                  : "hover:bg-neutral-50 dark:hover:bg-white/[0.03]"
+                  : "hover:bg-fd-accent/30"
               )}
             >
               <div className={cn(
@@ -86,12 +86,12 @@ export default function CommunityPage() {
                 <div className={cn(
                   "text-[14px] font-semibold tracking-tight mb-1",
                   isComingSoon
-                    ? "text-fd-foreground/40"
+                    ? "text-fd-muted-foreground"
                     : "text-fd-foreground group-hover:underline"
                 )}>
                   {channel.name}
                 </div>
-                <div className="text-[12px] text-fd-foreground/40 leading-relaxed">
+                <div className="text-[12px] text-fd-muted-foreground leading-relaxed">
                   {channel.description}
                 </div>
               </div>
