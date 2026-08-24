@@ -1,6 +1,6 @@
 [project]
 name = "pyrpc-core"
-version = "0.12.1"
+version = "0.13.0"
 description = "pyRPC Core - tRPC-style RPC protocol and runtime for Python"
 requires-python = ">=3.11"
 dependencies = [

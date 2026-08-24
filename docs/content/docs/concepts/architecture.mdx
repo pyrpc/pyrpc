@@ -30,19 +30,24 @@ pyRPC stores project settings in a dedicated `pyrpc.json` file:
 
 ```json
 {
-  "module": "main",
-  "framework": "Next.js",
-  "client": "../frontend"
+  "backend": {
+    "framework": "fastapi",
+    "entrypoint": "main:app"
+  },
+  "clients": [
+    { "framework": "Next.js", "root": "../frontend" }
+  ]
 }
 ```
 
-- **module**: The Python entry module to scan for `@rpc` procedures
-- **framework**: The detected frontend framework (used for bundler aliasing)
-- **client** / **clients**: One or more TypeScript client project roots
+- **backend.framework**: The backend framework (`fastapi`, `flask`, `django`, or `asgi`) - decides which native dev server `pyrpc dev` launches (uvicorn, `flask run`, or `manage.py runserver`)
+- **backend.entrypoint**: Framework-specific launch target - a `module[:app]` for FastAPI/Flask/ASGI, the path to `manage.py` for Django
+- **backend.types_module**: Optional module whose import registers your `@rpc` procedures; defaults to the module part of `entrypoint`
+- **clients**: One or more TypeScript client project roots, each with its detected frontend framework (used for bundler aliasing)
 
-All paths are resolved relative to `pyrpc.json`'s directory at config load time. The types output path is `<client>/__pyrpc.ts`, derived automatically from `client`.
+All paths are resolved relative to `pyrpc.json`'s directory at config load time. The types output path is `<client>/__pyrpc.ts`, derived automatically from each client root.
 
-The config file is created by `pyrpc dev` on first run and can be updated with `--reconfigure` or individual flags (`--yes`, `--module`, `--client`).
+The config file is created by `pyrpc dev` on first run and can be updated with `--reconfigure` or individual flags (`--yes`, `--framework`, `--module`, `--client`).
 
 ## 4. Contract Synchronization
 

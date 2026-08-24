@@ -4,6 +4,7 @@ import re
 import sys
 import tempfile
 import threading
+import time
 import unittest.mock as mock
 
 import pytest
@@ -184,6 +185,13 @@ def test_cli_serve():
 
 # ── dev ───────────────────────────────────────────────────────────────────────
 
+def _nested_cfg(entrypoint="my_module:app", framework="fastapi", clients=None):
+    cfg = {"backend": {"framework": framework, "entrypoint": entrypoint}}
+    if clients is not None:
+        cfg["clients"] = clients
+    return cfg
+
+
 def test_cli_dev_yes_zero_clients():
     """dev --yes with 0 clients configures no client."""
     with mock.patch("pyrpc_core.cli._find_config", return_value=None):
@@ -195,12 +203,14 @@ def test_cli_dev_yes_zero_clients():
                             with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
                                 with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
                                     mock_console.return_value.run = mock.MagicMock()
-                                    result = runner.invoke(app, ["dev", "--yes"])
+                                    result = runner.invoke(app, ["dev", "--yes", "--framework", "fastapi"])
     assert result.exit_code == 0
     assert "no client configured" in result.output
-    # Ensure it writes config without 'client' key
+    # Nested config: backend only, no clients key
     cfg = mock_write.call_args[0][0]
-    assert "client" not in cfg
+    assert cfg["backend"]["framework"] == "fastapi"
+    assert cfg["backend"]["entrypoint"] == "main:app"
+    assert "clients" not in cfg
 
 def test_cli_dev_yes_one_client():
     """dev --yes with 1 client automatically uses it."""
@@ -214,17 +224,19 @@ def test_cli_dev_yes_one_client():
                                 with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
                                     with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
                                         mock_console.return_value.run = mock.MagicMock()
-                                        result = runner.invoke(app, ["dev", "--yes"])
+                                        result = runner.invoke(app, ["dev", "--yes", "--framework", "flask"])
     assert result.exit_code == 0
     assert "./apps/web" in result.output
     cfg = mock_write.call_args[0][0]
-    assert cfg["client"] == "./apps/web"
+    assert cfg["backend"]["framework"] == "flask"
+    assert cfg["clients"] == [{"framework": "Next.js", "root": "./apps/web"}]
 
 def test_cli_dev_yes_multiple_clients():
     """dev --yes with >1 client fails and demands explicit selection."""
+    detected = [("./apps/web", "Next.js"), ("./apps/admin", "React")]
     with mock.patch("pyrpc_core.cli._find_config", return_value=None):
-        with mock.patch("pyrpc_core.cli._find_frontend_projects", return_value=[("./apps/web", "Next.js"), ("./apps/admin", "React")]):
-            result = runner.invoke(app, ["dev", "--yes"])
+        with mock.patch("pyrpc_core.cli._find_frontend_projects", return_value=detected):
+            result = runner.invoke(app, ["dev", "--yes", "--framework", "fastapi"])
     assert result.exit_code == 1
     assert "Multiple TypeScript projects found" in result.output
     assert "./apps/web" in result.output
@@ -232,9 +244,26 @@ def test_cli_dev_yes_multiple_clients():
     assert "--client <path>" in result.output
 
 
+def test_cli_dev_yes_unsniffable_exits_with_hint():
+    """--yes without a detectable or declared framework must error, never guess."""
+    with mock.patch("pyrpc_core.cli._find_config", return_value=None):
+        with mock.patch("pyrpc_core.cli._sniff_backend", return_value=None):
+            result = runner.invoke(app, ["dev", "--yes"])
+    assert result.exit_code == 1
+    assert "Could not detect a backend framework" in result.output
+    assert "--framework" in result.output
+
+
+def test_cli_dev_rejects_unknown_framework_flag():
+    result = runner.invoke(app, ["dev", "--yes", "--framework", "express"])
+    assert result.exit_code == 1
+    assert "Unsupported --framework 'express'" in result.output
+    assert "fastapi, flask, django, asgi" in result.output
+
+
 def test_cli_dev_attaches_when_server_running(tmp_path):
-    """When server is already running, pyrpc dev skips uvicorn."""
-    config = {"module": "my_module", "framework": "Next.js", "client": "../client"}
+    """When server is already running, pyrpc dev skips starting a backend."""
+    config = _nested_cfg(clients=[{"framework": "Next.js", "root": "../client"}])
     cfg_file = tmp_path / "pyrpc.json"
     cfg_file.write_text(json.dumps(config))
 
@@ -253,8 +282,8 @@ def test_cli_dev_attaches_when_server_running(tmp_path):
 
 
 def test_cli_dev_starts_server_when_not_running(tmp_path):
-    """When server is not running, pyrpc dev launches uvicorn."""
-    config = {"module": "my_module", "framework": "Next.js", "client": "../client"}
+    """When server is not running, pyrpc dev launches uvicorn for ASGI backends."""
+    config = _nested_cfg(clients=[{"framework": "Next.js", "root": "../client"}])
     cfg_file = tmp_path / "pyrpc.json"
     cfg_file.write_text(json.dumps(config))
 
@@ -271,6 +300,32 @@ def test_cli_dev_starts_server_when_not_running(tmp_path):
                                 result = runner.invoke(app, ["dev"])
     assert result.exit_code == 0
     mock_sub.Popen.assert_called_once()
+    argv = mock_sub.Popen.call_args[0][0]
+    assert argv[1:4] == ["-m", "uvicorn", "my_module:app"]
+
+
+def test_cli_dev_starts_flask_native_server(tmp_path):
+    """A flask backend must launch `python -m flask ... run`, never uvicorn."""
+    config = _nested_cfg(entrypoint="app:app", framework="flask")
+    cfg_file = tmp_path / "pyrpc.json"
+    cfg_file.write_text(json.dumps(config))
+
+    with mock.patch("pyrpc_core.cli._find_config", return_value=cfg_file):
+        with mock.patch("pyrpc_core.cli._import_module"):
+            with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=1):
+                with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
+                    with mock.patch("pyrpc_core.cli.subprocess") as mock_sub:
+                        mock_sub.Popen.return_value = mock.MagicMock()
+                        with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
+                            with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
+                                mock_console.return_value.run = mock.MagicMock()
+                                result = runner.invoke(app, ["dev"])
+    assert result.exit_code == 0
+    argv = mock_sub.Popen.call_args[0][0]
+    assert "-m" in argv and "flask" in argv
+    assert "uvicorn" not in argv
+    assert "--app" in argv and "app:app" in argv
+    assert "run" in argv
 
 
 def test_dev_flags_in_help():
@@ -279,6 +334,7 @@ def test_dev_flags_in_help():
     output = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', result.output)
     assert "--host" in output
     assert "--port" in output
+    assert "--framework" in output
 
 
 # ── watch ─────────────────────────────────────────────────────────────────────
@@ -323,7 +379,7 @@ def test_cli_watch_exits_nonzero_when_watcher_crashes():
 
 def test_cli_dev_exits_nonzero_when_watcher_crashes(tmp_path):
     """dev must not keep running (and must terminate the server) when a watcher crashes."""
-    config = {"module": "my_module", "framework": "Next.js", "client": "../client"}
+    config = _nested_cfg(clients=[{"framework": "Next.js", "root": "../client"}])
     cfg_file = tmp_path / "pyrpc.json"
     cfg_file.write_text(json.dumps(config))
 
@@ -354,7 +410,7 @@ def test_dev_watch_calls_never_use_stop_event(tmp_path):
         assert "stop_event" not in kwargs, "watch() got stop_event — not portable"
         return iter([])
 
-    config = {"module": "my_module", "framework": "Next.js", "client": "../client"}
+    config = _nested_cfg(clients=[{"framework": "Next.js", "root": "../client"}])
     cfg_file = tmp_path / "pyrpc.json"
     cfg_file.write_text(json.dumps(config))
 
@@ -412,32 +468,57 @@ def test_run_watcher_clean_exit_records_nothing():
     assert not stop.is_set()
 
 
-# ── wizard (multi-client) ─────────────────────────────────────────────────────
+# ── wizard (backend + multi-client) ───────────────────────────────────────────
 
-def _fake_questionary(select_answers, text_answers, checkbox_answers):
+def _fake_questionary(select_answers, text_answers, checkbox_answers, path_answers=None):
     q = mock.MagicMock()
     q.select.return_value.ask.side_effect = select_answers
     q.text.return_value.ask.side_effect = text_answers
     q.checkbox.return_value.ask.side_effect = checkbox_answers
+    q.path.return_value.ask.side_effect = path_answers or []
     return q
+
+
+def test_wizard_backend_framework_is_explicitly_confirmed():
+    """The sniffed framework only preselects; the confirmed value is persisted."""
+    detected = [("./web", "Next.js")]
+    q = _fake_questionary(
+        select_answers=["Flask", "React"],   # backend framework, frontend framework
+        text_answers=["app"],                # entry point
+        checkbox_answers=[],
+        path_answers=["./web"],
+    )
+    with mock.patch("pyrpc_core.cli.questionary", q):
+        with mock.patch.object(cli_mod, "_find_frontend_projects", return_value=detected):
+            cfg = cli_mod._run_wizard(".")
+    assert cfg["backend"] == {"framework": "flask", "entrypoint": "app:app"}
+    assert cfg["clients"] == [{"framework": "React", "root": "./web"}]
+    # Backend prompt is the first select, with the sniffed default when available
+    first_kwargs = q.select.call_args_list[0].kwargs
+    assert first_kwargs["choices"] == ["FastAPI", "Flask", "Django", "ASGI"]
+    assert "default" in first_kwargs
 
 
 def test_wizard_manual_entry_is_a_separate_action_not_a_checkbox_item():
     """'Enter a client path manually' must be an action, never a checkbox option."""
     detected = [("./client", "Vite"), ("./web", "Next.js"), ("./admin", "Next.js")]
     q = _fake_questionary(
-        select_answers=["Enter a client path manually", "React"],
-        text_answers=["main", "./custom"],
+        select_answers=["FastAPI", "Enter a client path manually", "React"],
+        text_answers=["main"],
         checkbox_answers=[],
+        path_answers=["./custom"],
     )
     with mock.patch("pyrpc_core.cli.questionary", q):
         with mock.patch.object(
             cli_mod, "_find_frontend_projects", return_value=detected
         ):
             cfg = cli_mod._run_wizard(".")
-    assert cfg == {"module": "main", "framework": "React", "client": "./custom"}
+    assert cfg == {
+        "backend": {"framework": "fastapi", "entrypoint": "main:app"},
+        "clients": [{"framework": "React", "root": "./custom"}],
+    }
     assert q.checkbox.called is False
-    action_choices = q.select.call_args_list[0].kwargs["choices"]
+    action_choices = q.select.call_args_list[1].kwargs["choices"]
     assert action_choices == [
         "Select detected projects",
         "Enter a client path manually",
@@ -448,7 +529,7 @@ def test_wizard_detected_projects_never_include_manual_entry():
     """The detected-projects checkbox must not mix a manual-entry option in."""
     detected = [("./client", "Vite"), ("./web", "Next.js")]
     q = _fake_questionary(
-        select_answers=["Select detected projects"],
+        select_answers=["ASGI", "Select detected projects"],
         text_answers=["main"],
         checkbox_answers=[["./client (Vite)", "./web (Next.js)"]],
     )
@@ -458,7 +539,11 @@ def test_wizard_detected_projects_never_include_manual_entry():
         ):
             cfg = cli_mod._run_wizard(".")
     assert cfg == {
-        "module": "main", "framework": "Mixed", "clients": ["./client", "./web"],
+        "backend": {"framework": "asgi", "entrypoint": "main:app"},
+        "clients": [
+            {"framework": "Vite", "root": "./client"},
+            {"framework": "Next.js", "root": "./web"},
+        ],
     }
     assert q.checkbox.called is True
     checkbox_choices = q.checkbox.call_args.kwargs["choices"]
@@ -466,13 +551,34 @@ def test_wizard_detected_projects_never_include_manual_entry():
     assert checkbox_choices == ["./client (Vite)", "./web (Next.js)"]
 
 
+def test_wizard_django_asks_manage_py_and_types_module(tmp_path):
+    """Django's entrypoint is the manage.py path; codegen needs an explicit types module."""
+    (tmp_path / "manage.py").write_text("", encoding="utf-8")
+    pkg = tmp_path / "myproject"
+    pkg.mkdir()
+    (pkg / "views.py").write_text("", encoding="utf-8")
+
+    q = _fake_questionary(
+        select_answers=["Django", "Svelte"],
+        text_answers=["manage.py", "myproject.views"],
+        checkbox_answers=[],
+        path_answers=["./client"],
+    )
+    with mock.patch("pyrpc_core.cli.questionary", q):
+        with mock.patch.object(cli_mod, "_find_frontend_projects", return_value=[("./client", "Svelte")]):
+            cfg = cli_mod._run_wizard(str(tmp_path))
+    assert cfg["backend"] == {
+        "framework": "django",
+        "entrypoint": "manage.py",
+        "types_module": "myproject.views",
+    }
+
+
 def test_wizard_selection_is_never_silently_discarded():
-    """Selecting detected projects and picking manual entry keeps BOTH — but manual
-    entry is no longer a checkbox item, so the mixed case can't happen. Picking
-    projects must preserve every checked project."""
+    """Selecting detected projects preserves every checked project."""
     detected = [("./client", "Vite"), ("./web", "Next.js")]
     q = _fake_questionary(
-        select_answers=["Select detected projects"],
+        select_answers=["FastAPI", "Select detected projects"],
         text_answers=["main"],
         checkbox_answers=[["./client (Vite)", "./web (Next.js)"]],
     )
@@ -481,14 +587,14 @@ def test_wizard_selection_is_never_silently_discarded():
             cli_mod, "_find_frontend_projects", return_value=detected
         ):
             cfg = cli_mod._run_wizard(".")
-    assert cfg["clients"] == ["./client", "./web"]
+    assert [c["root"] for c in cfg["clients"]] == ["./client", "./web"]
 
 
 def test_wizard_empty_checkbox_selection_reprompts():
     """An empty checkbox selection re-prompts instead of silently falling back."""
     detected = [("./client", "Vite"), ("./web", "Next.js")]
     q = _fake_questionary(
-        select_answers=["Select detected projects"],
+        select_answers=["FastAPI", "Select detected projects"],
         text_answers=["main"],
         checkbox_answers=[[], ["./web (Next.js)"]],
     )
@@ -498,13 +604,15 @@ def test_wizard_empty_checkbox_selection_reprompts():
         ):
             cfg = cli_mod._run_wizard(".")
     assert q.checkbox.call_count == 2
-    assert cfg == {"module": "main", "framework": "Mixed", "clients": ["./web"]}
+    assert cfg["clients"] == [{"framework": "Next.js", "root": "./web"}]
 
 
 def test_wizard_cancel_at_action_exits():
     detected = [("./client", "Vite"), ("./web", "Next.js")]
     q = _fake_questionary(
-        select_answers=[None], text_answers=["main"], checkbox_answers=[]
+        select_answers=["FastAPI", None],
+        text_answers=["main"],
+        checkbox_answers=[],
     )
     with mock.patch("pyrpc_core.cli.questionary", q):
         with mock.patch.object(
@@ -719,3 +827,188 @@ def test_old_distribution_symbols_gone():
                 "_prompt_for_config", "_ensure_config", "_handle_migration",
                 "_resolve_client_root"):
         assert not hasattr(cli_mod, sym), f"Old symbol still present: {sym}"
+
+
+# ── legacy config → wizard ────────────────────────────────────────────────────
+
+def test_dev_rewrites_legacy_config_via_wizard(tmp_path):
+    """A pre-0.13 flat pyrpc.json is treated as unconfigured: the wizard runs
+    and the file is rewritten in the nested shape."""
+    legacy = {"module": "old_main", "framework": "Next.js", "client": "./old_client"}
+    cfg_file = tmp_path / "pyrpc.json"
+    cfg_file.write_text(json.dumps(legacy))
+    nested = {
+        "backend": {"framework": "fastapi", "entrypoint": "main:app"},
+        "clients": [{"framework": "Next.js", "root": "./client"}],
+    }
+
+    with mock.patch("pyrpc_core.cli._find_config", return_value=cfg_file):
+        with mock.patch("pyrpc_core.cli._run_wizard", return_value=nested) as mock_wizard:
+            with mock.patch("pyrpc_core.cli._import_module"):
+                with mock.patch("pyrpc_core.cli._regenerate_clients"):
+                    with mock.patch("pyrpc_core.cli._server_is_running", return_value=True):
+                        with mock.patch("pyrpc_core.cli.watch", return_value=iter([])):
+                            with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
+                                mock_console.return_value.run = mock.MagicMock()
+                                result = runner.invoke(app, ["dev"])
+    assert result.exit_code == 0
+    mock_wizard.assert_called_once()
+    written = json.loads(cfg_file.read_text())
+    assert written == nested
+    assert "rewritten" not in result.output or "created" in result.output
+
+
+# ── config watcher restarts on backend change ────────────────────────────────
+
+def test_cfg_watcher_restarts_backend_on_entrypoint_change(tmp_path):
+    """Editing pyrpc.json's backend section swaps the launch command live."""
+    config = _nested_cfg(entrypoint="main:app", framework="fastapi",
+                         clients=[{"framework": "Next.js", "root": "./web"}])
+    cfg_file = tmp_path / "pyrpc.json"
+    cfg_file.write_text(json.dumps(config))
+
+    def scripted_watch(*paths, **kwargs):
+        """Only the config watcher (watching cfg_file's dir) mutates and yields;
+        the python watcher gets an exhausted iterator so there is exactly one
+        writer of pyrpc.json. Batches keep flowing like watchfiles polling,
+        so shutdown can never swallow the change before it is processed."""
+        if str(cfg_file.parent) not in {str(p) for p in paths}:
+            return iter([])
+        data = json.loads(cfg_file.read_text())
+        data["backend"] = {"framework": "flask", "entrypoint": "app:app"}
+        cfg_file.write_text(json.dumps(data))
+        while True:
+            yield [(1, str(cfg_file))]
+
+    def fake_run(*_args, **_kwargs):
+        # Keep the session alive until the restart has been observed; this
+        # removes shutdown-vs-detection timing from the test entirely.
+        deadline = time.time() + 5
+        while time.time() < deadline and mock_sub.Popen.call_count < 2:
+            time.sleep(0.01)
+
+    with mock.patch("pyrpc_core.cli._find_config", return_value=cfg_file):
+        with mock.patch("pyrpc_core.cli._import_module") as mock_import:
+            with mock.patch("pyrpc_core.cli._regenerate_clients", return_value=1):
+                with mock.patch("pyrpc_core.cli._server_is_running", return_value=False):
+                    with mock.patch("pyrpc_core.cli.subprocess") as mock_sub:
+                        mock_sub.Popen.return_value = mock.MagicMock()
+                        with mock.patch("pyrpc_core.cli.watch", side_effect=scripted_watch):
+                            with mock.patch("pyrpc_core.cli._DevConsole") as mock_console:
+                                mock_console.return_value.run.side_effect = fake_run
+                                result = runner.invoke(app, ["dev"])
+    stop_deadline = time.time() + 5
+    while time.time() < stop_deadline and threading.active_count() > 2:
+        time.sleep(0.01)
+    assert result.exit_code == 0, f"exit={result.exit_code} out={result.output}"
+    assert mock_sub.Popen.call_count == 2, "backend must be restarted once"
+    first_argv = mock_sub.Popen.call_args_list[0][0][0]
+    second_argv = mock_sub.Popen.call_args_list[1][0][0]
+    assert "uvicorn" in first_argv and "main:app" in first_argv
+    assert "flask" in second_argv and "app:app" in second_argv
+    assert mock_sub.Popen.return_value.terminate.called
+    # The new types module was imported and regen re-wired
+    assert any("app" in str(c) for c in mock_import.call_args_list)
+
+
+# ── client-root autocomplete ──────────────────────────────────────────────────
+
+def _make_tree(root: Path, outside: Path):
+    (root / "src" / "app").mkdir(parents=True)
+    (root / "src" / "api").mkdir()
+    (root / "components").mkdir()
+    (root / "node_modules" / "pkg").mkdir(parents=True)
+    (root / ".venv").mkdir()
+    (root / "README.md").write_text("x", encoding="utf-8")
+    (outside / "elsewhere").mkdir(parents=True)
+    os.symlink(outside / "elsewhere", root / "escape_link")
+
+
+def test_client_filter_hides_junk_and_escapes(tmp_path):
+    """Suggestions hide dot-dirs/junk and anything resolving outside the root."""
+    outside = tmp_path / "outside"
+    root = tmp_path / "project"
+    root.mkdir()
+    _make_tree(root, outside)
+
+    visible = cli_mod._client_visible_filter(str(root))
+    shown = sorted(
+        entry.name for entry in root.iterdir() if visible(str(entry))
+    )
+    assert shown == ["components", "src"]
+    assert visible(str(outside / "elsewhere")) is False
+    assert visible(str(root / "src" / "app")) is True
+
+
+def test_client_completer_suggests_scoped_dirs(tmp_path):
+    """Headless drive of questionary's path completer through our filter."""
+    from prompt_toolkit.completion import CompleteEvent
+    from prompt_toolkit.document import Document
+    from questionary.prompts.path import GreatUXPathCompleter
+
+    outside = tmp_path / "outside"
+    root = tmp_path / "project"
+    root.mkdir()
+    _make_tree(root, outside)
+
+    completer = GreatUXPathCompleter(
+        get_paths=lambda: [str(root)],
+        only_directories=True,
+        file_filter=cli_mod._client_visible_filter(str(root)),
+    )
+
+    def suggestions(text):
+        return [c.display[0][1] for c in completer.get_completions(Document(text), CompleteEvent())]
+
+    # Prefix match inside src/
+    assert [s for s in suggestions("src/a") if s.startswith("a")] == ["api/", "app/"]
+    # Empty input lists only visible root children
+    assert set(suggestions("")) == {"components/", "src/"}
+    # Nonexistent prefix yields nothing
+    assert suggestions("nope/") == []
+    # Escaping the jail is filtered out of suggestions: ../ lists the parent,
+    # but only the project itself survives the filter — never outside dirs.
+    assert set(suggestions("../")) == {"project/"}
+
+
+def test_ask_client_root_wires_questionary_path(monkeypatch):
+    """The prompt delegates to questionary.path with jail/filter/validator wired."""
+    captured = {}
+    sentinel = mock.MagicMock()
+
+    def fake_path(message, **kwargs):
+        captured.update(kwargs)
+        captured["message"] = message
+        return sentinel
+
+    monkeypatch.setattr(cli_mod.questionary, "path", fake_path)
+    result = cli_mod._ask_client_root("Client project root", ".", "/tmp/some-root")
+
+    assert result is sentinel.ask.return_value
+    assert captured["message"] == "Client project root"
+    assert captured["only_directories"] is True
+    assert captured["get_paths"]() == [os.path.abspath("/tmp/some-root")]
+    visible = captured["file_filter"]
+    assert callable(visible)
+
+
+def test_ask_client_root_validator_blocks_missing_dir(tmp_path):
+    """Submitting a nonexistent client root is rejected by the validator."""
+    captured = {}
+
+    def fake_path(message, **kwargs):
+        captured.update(kwargs)
+        return mock.MagicMock()
+
+    with mock.patch("pyrpc_core.cli.questionary.path", side_effect=fake_path):
+        cli_mod._ask_client_root("Root", ".", str(tmp_path))
+    validate = captured["validate"]
+    assert validate(str(tmp_path / "missing")) == "Directory does not exist"
+    assert validate(str(tmp_path)) is True
+
+
+def test_skip_dirs_constant_shared():
+    """The consolidated skip list covers the previously duplicated sets."""
+    for name in ("node_modules", "__pycache__", ".venv", "venv", "env",
+                 "dist", "build", ".git", ".next"):
+        assert name in cli_mod._SKIP_DIRS

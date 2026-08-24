@@ -25,19 +25,28 @@ Run `pyrpc dev` from your Python project root:
 pyrpc dev
 ```
 
-On first run, it will prompt for your entry module, client project root, and frontend framework. This creates a `pyrpc.json` config file, generates `__pyrpc.ts` in your client project, and wires `@pyrpc/types` to it automatically.
+On first run, it will prompt for your backend framework and entry point, then your client project root and frontend framework. This creates a `pyrpc.json` config file, generates `__pyrpc.ts` in your client project, and wires `@pyrpc/types` to it automatically.
 
 ### Configuration file (`pyrpc.json`)
 
 ```json
 {
-  "module": "main",
-  "framework": "Next.js",
-  "client": "../frontend"
+  "backend": {
+    "framework": "fastapi",
+    "entrypoint": "main:app"
+  },
+  "clients": [
+    { "framework": "Next.js", "root": "../frontend" }
+  ]
 }
 ```
 
-All paths in `pyrpc.json` are resolved relative to the config file's directory. The types output is `<client>/__pyrpc.ts`, derived from `client` (or `clients`) automatically.
+- `backend.framework` - `fastapi`, `flask`, `django`, or `asgi`; decides the native dev server (`uvicorn`, `flask run`, or `manage.py runserver`).
+- `backend.entrypoint` - framework-specific: a `module[:app]` target for FastAPI/Flask/ASGI, the path to `manage.py` for Django.
+- `backend.types_module` - optional; module whose import registers your `@rpc` procedures (defaults to the module part of `entrypoint`, required for Django).
+- `clients[].root` - one or more frontend project roots; each gets its own generated types.
+
+All paths in `pyrpc.json` are resolved relative to the config file's directory. The types output is `<client>/__pyrpc.ts`, derived from each client root automatically.
 
 ## CLI Usage
 
@@ -65,11 +74,12 @@ Flags:
 
 | Flag | Description |
 |------|-------------|
-| `--yes`, `-y` | Skip the setup wizard; auto-detect module and client |
-| `--module`, `-m` | Entry module (requires `--yes`) |
+| `--yes`, `-y` | Skip the setup wizard; sniff the framework and auto-detect module and client (errors if the framework can't be detected) |
+| `--framework`, `-f` | Backend framework: `fastapi`, `flask`, `django`, or `asgi` (requires `--yes`) |
+| `--module`, `-m` | Entry point - `module[:app]` for FastAPI/Flask/ASGI, types module for Django (requires `--yes`) |
 | `--client`, `-c` | Client project root (requires `--yes`) |
 | `--reconfigure` | Re-run the setup wizard even if `pyrpc.json` exists |
-| `--reload/--no-reload` | Uvicorn auto-reload (default: on) |
+| `--reload/--no-reload` | Dev-server auto-reload (default: on) |
 | `--host`, `-h` | Bind socket to this host (default: 127.0.0.1) |
 | `--port`, `-p` | Bind socket to this port (default: 8000) |
 
