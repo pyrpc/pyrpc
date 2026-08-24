@@ -1,0 +1,164 @@
+---
+title: MCP
+description: Connect AI coding agents to your real pyRPC project over the Model Context Protocol.
+---
+
+pyRPC ships a local MCP (Model Context Protocol) server as a first-class CLI
+capability. It lets AI coding agents such as Claude Code, Cursor, VS Code,
+Windsurf, and OpenCode work from your project's **actual** registry instead of
+guessing at your API.
+
+```bash
+uv add "pyrpc-core[mcp]"
+```
+
+The server runs entirely on your machine, launched by your MCP client as a
+`pyrpc mcp` subprocess. Nothing is sent to any pyRPC-hosted server.
+
+## What it can do
+
+| Tool | Read-only | What it gives the agent |
+|---|---|---|
+| `introspect_project` | yes | Backend framework, entrypoint, every registered procedure with kind (`query`/`mutation`), parameter names, types, requiredness, defaults, docstrings, and full input/output JSON Schemas |
+| `check_call` | yes | Whether hypothetical arguments would be accepted by a procedure, validated against its real Python types, with per-parameter errors. Nothing is executed |
+| `run_codegen` | when `dry_run=true` (default) | Regenerates each configured client's `__pyrpc.ts` through the same pipeline as `pyrpc codegen`, reporting created/updated/up-to-date per target |
+
+## What it deliberately cannot do
+
+- **Execute procedures.** There is no tool that invokes your backend code, so
+  an agent can never cause database writes, network calls, or other side
+  effects through pyRPC's MCP.
+- **Send your code anywhere.** The process is local stdio only: no telemetry,
+  no network egress.
+- **Touch configuration silently.** `run_codegen` writes generated files only.
+  tsconfig and bundler setup stay with `pyrpc init` / `pyrpc codegen`.
+
+## How it works
+
+MCP clients launch the server themselves and speak JSON-RPC over stdin/stdout:
+
+```
+Claude / Cursor / VS Code / OpenCode
+        │ launches subprocess
+        ▼
+    pyrpc mcp
+        │ imports your backend module
+        ▼
+your routers, registry, schemas
+```
+
+Because the server imports your configured backend module (from
+`backend.entrypoint`, or `backend.types_module` for Django), it must run in
+the same Python environment as your project. That is automatic when the
+client spawns `uv run pyrpc mcp` from the project root.
+
+## Configuring clients
+
+All clients register the same launch command.
+
+**Claude Code**
+
+```bash
+claude mcp add pyrpc -- uv run pyrpc mcp
+```
+
+**Cursor** (`.cursor/mcp.json`)
+
+```json
+{
+  "mcpServers": {
+    "pyrpc": {
+      "command": "uv",
+      "args": ["run", "pyrpc", "mcp"]
+    }
+  }
+}
+```
+
+**VS Code** (`.vscode/mcp.json`)
+
+```json
+{
+  "servers": {
+    "pyrpc": {
+      "command": "uv",
+      "args": ["run", "pyrpc", "mcp"]
+    }
+  }
+}
+```
+
+**Claude Desktop** (`claude_desktop_config.json`)
+
+```json
+{
+  "mcpServers": {
+    "pyrpc": {
+      "command": "uv",
+      "args": ["run", "--directory", "/absolute/path/to/project", "pyrpc", "mcp"]
+    }
+  }
+}
+```
+
+Desktop apps do not inherit your shell's working directory, so use an
+absolute path with `--directory`.
+
+**OpenCode** (`opencode.json`)
+
+```json
+{
+  "mcp": {
+    "pyrpc": {
+      "type": "local",
+      "command": ["uv", "run", "pyrpc", "mcp"]
+    }
+  }
+}
+```
+
+**pip projects**: substitute `uv run` with your environment's interpreter,
+for example `"command": ".venv/bin/pyrpc", "args": ["mcp"]` (or
+`.venv\\Scripts\\pyrpc.exe` on Windows).
+
+## Example interaction
+
+With the server connected, an agent can ground its work in reality:
+
+> **Agent:** calls `introspect_project`
+>
+> ```json
+> {
+>   "framework": "fastapi",
+>   "entrypoint": "server:app",
+>   "procedures": [
+>     {
+>       "name": "get_post",
+>       "kind": "query",
+>       "parameters": [{ "name": "id", "type": "<class 'int'>", "required": true }],
+>       "return_type": "<class 'Post'>"
+>     }
+>   ]
+> }
+> ```
+>
+> **Agent:** drafts client code, then verifies with
+> `check_call("get_post", { "id": "abc" })` before saving anything:
+>
+> ```json
+> { "valid": false, "errors": [{ "param": "id", "message": "Input should be a valid integer" }] }
+> ```
+>
+> **Agent:** fixes the payload, then confirms types are current with
+> `run_codegen(dry_run=true)` and regenerates with `dry_run=false` once the
+> router settles.
+
+## Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| `No pyrpc.json found` | Run the client from your project root (or configure `cwd`) so config discovery finds `pyrpc.json`. |
+| `has no valid 'backend' section` | Set `backend.framework` and `backend.entrypoint`; run `pyrpc init` to generate them interactively. The error lists what was detected. |
+| Django: `must set backend.types_module` | Add `"types_module": "myproject.views"` (the module whose import registers your procedures). |
+| `Failed to import backend module ...` | The module or one of its dependencies is missing from the environment running the MCP server. Verify `uv run pyrpc dev` works in the same checkout. |
+| Client shows no tools | Confirm `uv add "pyrpc-core[mcp]"` succeeded; plain `pyrpc-core` installs print a remediation hint on stderr when `pyrpc mcp` starts without it. |
