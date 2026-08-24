@@ -131,6 +131,7 @@ Follow existing patterns. Read 2-3 adjacent files before adding new ones.
 - **Python:** follow existing patterns in the package you're modifying.
 - **Comments:** only for _why_, not _what_. Code should explain itself. No multi-paragraph docstrings.
 - No emojis in code or commit messages.
+- **No em-dashes** in prose, docs, blog posts, or user-facing copy. Use commas, colons, or parentheses instead.
 - American English in user-facing strings.
 
 ## FAQ
