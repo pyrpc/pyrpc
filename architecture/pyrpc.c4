@@ -76,7 +76,7 @@ model {
         technology 'decorators.py'
       }
       core_interpreter = component 'handle_request()' {
-        description 'Core request dispatcher: validates the JSON-RPC 2.0 envelope via RpcRequest model, looks up the Procedure via Router, executes with validated params, returns a JSON-RPC 2.0 response. Handles sync and async functions transparently.'
+        description 'Core request dispatcher: validates the JSON-RPC 2.0 envelope via RpcRequest model, looks up the Procedure via Router, executes with validated params, returns a JSON-RPC 2.0 response. Accepts a single operation (dict) or a batch (list): batches dispatch sequentially through the normal path up to MAX_BATCH_SIZE 100, one response per operation in order, per-operation errors never fail siblings.'
         technology 'interpreter.py'
       }
       core_introspection = component 'get_registry_schema()' {
@@ -92,8 +92,20 @@ model {
         technology 'transport/asgi.py'
       }
       core_cli = component 'CLI' {
-        description 'Typer-based CLI with commands: dev (file-watching dev server with interactive console), watch (type regeneration watcher), serve (production ASGI server), inspect (list procedures), pull (extract schema to JSON), codegen (generate TypeScript), version.'
-        technology 'cli.py'
+        description 'Typer-based CLI with commands: dev (framework-native dev server, file watcher, live config reconfiguration, interactive console), watch (type regeneration only; explicit --module works without pyrpc.json), serve (production ASGI server), inspect (list procedures), pull (extract schema to JSON), codegen (generate TypeScript), version. The first-run wizard asks the backend framework first (sniffing mount_fastapi/mount_flask/mount_django markers only preselects; Enter confirms), then the framework-specific entry point, a required types_module for Django (auto-detected as the shallowest */views.py), and client roots via questionary.path with suggestions jailed to the project root. --yes sniffs or errors and never guesses; --framework <fastapi|flask|django|asgi> is fully explicit and validated before anything else runs.'
+        technology 'cli.py / config.py / runners.py'
+      }
+      core_config = component 'BackendSpec config model' {
+        description 'pyrpc.json IO and validation: find/read/write helpers, frozen BackendSpec(framework, entrypoint, types_module), parse_backend() rejecting unknown frameworks and normalizing FastAPI/Flask/ASGI entry points to module[:app] (Django keeps its manage.py path), clients_from_config() filtering valid { framework, root } entries. Legacy flat configs are treated as unconfigured so the next run rewrites them in place.'
+        technology 'config.py'
+      }
+      core_runners = component 'Native launch resolver' {
+        description 'resolve_launch(spec) returns a frozen LaunchPlan(argv, cwd): python -m uvicorn <module[:app]> for fastapi/asgi, python -m flask --app <module:app> run for Flask, python manage.py runserver host:port for Django (cwd set to manage.py directory, --noreload when reload is off). resolve_types_module() defaults to the entrypoint module part and refuses Django without an explicit types_module. Because plans are data, the config watcher can relaunch on change.'
+        technology 'runners.py'
+      }
+      core_wiring = component 'tsconfig + bundler wiring' {
+        description 'Injects "@pyrpc/types": ["./__pyrpc.ts"] into tsconfig paths via jsonc-edit (comment-preserving, idempotent, raises on conflicting aliases) and adds explicit bundler aliases for Vite, SvelteKit, and Next.js Turbopack, which ignore tsconfig paths for imports inside node_modules.'
+        technology 'tsconfig.py / bundlers.py'
       }
       core_pyclient = component 'Python RPCClient' {
         description 'Dynamic Python client using httpx. Wraps sync/async HTTP calls. Auto-fetches schema via GET /rpc for method introspection. Supports named and positional arguments. Context manager compatible.'
@@ -158,19 +170,23 @@ model {
     }
 
     pyrpc_client = container '@pyrpc/client' {
-      description 'Universal TypeScript client for pyRPC. Uses a JavaScript Proxy to forward any method call to POST /rpc. Published on npm; type generation is handled by server-side pyrpc commands.'
+      description 'Universal TypeScript client for pyRPC. Procedure calls become Operations that flow through a link pipeline ending in exactly one terminating link that owns the transport. Published on npm; type generation is handled by server-side pyrpc commands.'
       technology 'TypeScript / npm'
 
       client_proxy = component 'createClient<Types>()' {
-        description 'Factory function returning a Proxy object. The Proxy intercepts any property access and returns a function that sends a JSON-RPC 2.0 POST request to /rpc. Normalizes arguments: single object arg is sent as named params, positional args as array. The Types generic provides full type safety.'
+        description 'Factory function returning a Proxy object. The Proxy intercepts procedure access and returns a callable that wraps the call as an Operation and hands it to the configured link pipeline. ClientOptions require exactly one terminating link; a missing or duplicated terminator is a construction error. Normalizes arguments: single object arg is sent as named params, positional args as array. The Types generic provides full type safety.'
         technology 'src/client.ts'
+      }
+      client_links = component 'httpLink / httpBatchLink' {
+        description 'Terminating links owning fetch(). httpLink sends one operation per POST. httpBatchLink collects operations issued in the same scheduling window (setTimeout 0 flush, optional maxItems cap) into one JSON-array POST, then resolves or rejects each caller independently by response position. normalizeUrl accepts base URLs with or without trailing slash or /rpc suffix.'
+        technology 'src/links.ts'
       }
       client_error = component 'PyRPCError' {
         description 'Custom Error subclass carrying code, message, and data fields from JSON-RPC error responses. Enables structured error handling on the client side.'
         technology 'src/error.ts'
       }
       client_types = component 'RpcRequest / RpcResponse / ClientOptions' {
-        description 'TypeScript interfaces for the JSON-RPC 2.0 envelope and client configuration. RpcRequest: id, method, params. RpcResponse: id, result, error. ClientOptions: baseUrl, headers.'
+        description 'TypeScript interfaces for the JSON-RPC 2.0 envelope and client configuration. RpcRequest: id, method, params. RpcResponse: id, result, error. ClientOptions: links pipeline (exactly one terminating link).'
         technology 'src/types.ts'
       }
     }
@@ -190,7 +206,7 @@ model {
       technology 'TypeScript / React / TanStack Query'
 
       react_factory = component 'createReactClient()' {
-        description 'Builds createClient under the hood, then a Proxy that exposes useQuery/useMutation per procedure. Optional kinds map restricts hooks to query or mutation.'
+        description 'Builds createClient with the configured links, then a Proxy that exposes useQuery/useMutation per procedure. Kinds load from @pyrpc/types automatically; an explicit kinds override exists for tests. Re-exports httpLink and httpBatchLink so imports stay canonical.'
         technology 'src/createReactClient.ts'
       }
       react_provider = component 'PyRPCProvider' {
@@ -226,7 +242,7 @@ model {
       technology 'TypeScript / Vue / TanStack Query'
 
       vue_factory = component 'createVueClient()' {
-        description 'Proxy over createClient exposing useQuery/useMutation with optional procedure kinds.'
+        description 'Proxy over createClient exposing useQuery/useMutation; kinds load from @pyrpc/types. Accepts and re-export the terminating links.'
         technology 'src/createVueClient.ts'
       }
     }
@@ -236,7 +252,7 @@ model {
       technology 'TypeScript / Svelte / TanStack Query'
 
       svelte_factory = component 'createSvelteClient()' {
-        description 'Proxy over createClient exposing createQuery/createMutation with optional procedure kinds.'
+        description 'Proxy over createClient exposing createQuery/createMutation stores; kinds load from @pyrpc/types. Accepts and re-exports the terminating links.'
         technology 'src/createSvelteClient.ts'
       }
     }
@@ -246,7 +262,7 @@ model {
   // CONFIG FILES
   // ═══════════════════════════════════════════
   cfg_pyrpc_json = storage 'pyrpc.json' {
-    description 'Project configuration file. Fields: module (Python entry module to scan for @rpc), framework (detected frontend framework), client or clients (one or more TypeScript client project roots). Created by pyrpc dev setup wizard.'
+    description 'Project configuration file. Nested schema: backend { framework: fastapi|flask|django|asgi, entrypoint (module[:app] for FastAPI/Flask/ASGI, path to manage.py for Django), optional types_module } plus clients [{ framework, root }] (one or more TypeScript client roots). Written by the pyrpc dev wizard; legacy flat configs are rewritten in place on the next run. The running dev session watches this file and live-reconfigures.'
     technology 'JSON'
   }
   cfg_tsconfig = storage 'tsconfig.json + bundler config' {
@@ -322,11 +338,29 @@ model {
   }
 
   // ── CLI -> Everything ──
-  core_cli -> cfg_pyrpc_json 'reads/writes pyrpc.json via _read_config() / _write_config()' {
-    description 'The CLI reads pyrpc.json for startup configuration and writes it during setup wizard.'
+  core_cli -> core_config 'reads/writes pyrpc.json through the BackendSpec config model' {
+    description 'dev, watch, and codegen locate pyrpc.json, parse it into a validated BackendSpec, and rewrite legacy flat configs in place.'
   }
-  core_cli -> cfg_tsconfig 'injects @pyrpc/types resolution wiring' {
-    description 'dev, watch, and codegen run configure_tsconfig() and configure_bundler() so @pyrpc/types resolves to ./__pyrpc.ts in TypeScript and supported bundlers.'
+  core_config -> cfg_pyrpc_json 'find / read / write the nested schema' {
+    description 'Walking up from cwd to find pyrpc.json; writes preserve the backend/clients shape.'
+  }
+  core_cli -> core_runners 'dev resolves a LaunchPlan for the spec and spawns the native server' {
+    description 'On startup and whenever the config watcher detects a backend change: terminate the owned process, resolve_launch(new spec), relaunch.'
+  }
+  core_runners -> pyrpc_fastapi 'python -m uvicorn <module[:app]>' {
+    description 'FastAPI and ASGI backends run under uvicorn with optional --reload.'
+  }
+  core_runners -> pyrpc_flask 'python -m flask --app <module:app> run' {
+    description 'Flask runs on its own dev server; no WSGI-to-ASGI bridge involved.'
+  }
+  core_runners -> pyrpc_django 'python manage.py runserver host:port' {
+    description 'Django runs manage.py runserver from its own directory (--noreload when reload is off).'
+  }
+  core_wiring -> cfg_tsconfig 'writes paths and bundler alias entries' {
+    description 'configure_tsconfig() and configure_bundler() keep @pyrpc/types pointed at ./__pyrpc.ts across TypeScript and supported bundlers.'
+  }
+  core_cli -> core_wiring 'injects @pyrpc/types resolution wiring' {
+    description 'dev, watch, and codegen run the tsconfig/bundler configurators on every run.'
   }
   core_cli -> core_introspection 'pyrpc inspect reads schema; pyrpc codegen triggers generation' {
     description 'The CLI reads the registry schema for inspection, and passes it to codegen for TypeScript generation.'
@@ -384,12 +418,15 @@ model {
   client_proxy -> client_error 'throws PyRPCError on server error responses' {
     description 'When the server returns a JSON-RPC error, the client parses code, message, and data into a PyRPCError instance.'
   }
-  client_proxy -> fastapi_mount 'HTTP POST /rpc (JSON-RPC 2.0 request body)' {
-    description 'The client issues a POST request containing the JSON-RPC 2.0 envelope: id, method, params.'
+  client_proxy -> client_links 'hands each Operation to the one terminating link' {
+    description 'Exactly one terminating link is required at construction; it owns all transport concerns including URL normalization.'
   }
-  client_proxy -> flask_mount 'HTTP POST /rpc'
-  client_proxy -> django_mount 'HTTP POST /rpc'
-  client_proxy -> core_asgi 'HTTP POST /rpc'
+  client_links -> fastapi_mount 'HTTP POST /rpc (single op or JSON-array batch)' {
+    description 'httpLink posts one envelope per request; httpBatchLink coalesces same-tick operations into a single array request and demultiplexes responses by position.'
+  }
+  client_links -> flask_mount 'HTTP POST /rpc'
+  client_links -> django_mount 'HTTP POST /rpc'
+  client_links -> core_asgi 'HTTP POST /rpc'
 
   // ── Cross-boundary type safety ──
   types_index -> client_proxy 'Types generic parameter provides full type safety and autocompletion' {
@@ -415,7 +452,7 @@ views {
   view of pyrpc {
     title 'pyRPC - Container Diagram'
 
-    description 'Core, server adapters, codegen, @pyrpc/client/types, and framework adapters (react/next/vue/svelte), plus external actors and config files.'
+    description 'Core (with the BackendSpec config model and native launch resolver), server adapters, codegen, @pyrpc/client/types with terminating links, framework adapters (react/next/vue/svelte), plus external actors and config files.'
 
     include *
   }
@@ -523,12 +560,16 @@ views {
     include core_procedure
     include core_models
     include client_error
+    include client_links
 
-    client_proxy -> fastapi_mount 'HTTP POST /rpc' {
+    client_proxy -> client_links 'operation dispatched to terminating link' {
+      description 'Exactly one terminating link owns all transport'
+    }
+    client_links -> fastapi_mount 'HTTP POST /rpc' {
       description 'Sends JSON-RPC 2.0 envelope with id, method, params'
     }
     fastapi_mount -> core_interpreter 'await handle_request(payload)' {
-      description 'FastAPI adapter passes the parsed JSON payload to core'
+      description 'Adapter passes the parsed JSON payload to core'
     }
     core_interpreter -> core_models 'RpcRequest.model_validate()' {
       description 'Validates envelope structure, extracts method name'
@@ -569,6 +610,7 @@ views {
     include codegen_save
     include types_index
     include cfg_tsconfig
+    include core_wiring
     include python_dev
     include core_cli
 
@@ -602,8 +644,11 @@ views {
     codegen_save -> types_index 'writes <client>/__pyrpc.ts' {
       description 'Final TypeScript runtime module in the client source tree'
     }
-    core_cli -> cfg_tsconfig 'configures @pyrpc/types alias' {
+    core_cli -> core_wiring 'configures @pyrpc/types alias' {
       description 'configure_tsconfig() and configure_bundler() keep imports pointed at the generated module'
+    }
+    core_wiring -> cfg_tsconfig 'writes paths + bundler entries' {
+      description 'Idempotent jsonc-edit injection plus explicit Vite/SvelteKit/Turbopack aliases'
     }
     cfg_tsconfig -> types_index 'resolves @pyrpc/types imports' {
       description 'Framework adapters consume @pyrpc/types, which resolves to ./__pyrpc.ts'
@@ -617,6 +662,8 @@ views {
     description 'The interactive development loop: pyrpc dev starts a server, watches Python files for changes, debounces regeneration, and provides an interactive console.'
 
     include core_cli
+    include core_config
+    include core_runners
     include cfg_pyrpc_json
     include cfg_tsconfig
     include python_dev
@@ -629,11 +676,20 @@ views {
     python_dev -> core_cli 'pyrpc dev' {
       description 'Developer starts the dev server'
     }
-    core_cli -> cfg_pyrpc_json 'reads config' {
-      description 'Loads module, framework, and client or clients'
+    core_cli -> core_config 'find + parse_backend()' {
+      description 'Locates pyrpc.json and parses it into a validated BackendSpec(framework, entrypoint, types_module)'
     }
-    core_cli -> python_dev 'prompts if no config' {
-      description 'First-run wizard asks for module, framework, and client roots'
+    core_config -> python_dev 'wizard when unconfigured' {
+      description 'Asks the backend framework first (sniffing only preselects), then entry point, django types_module, and client roots with jailed path autocomplete'
+    }
+    core_config -> cfg_pyrpc_json 'writes pyrpc.json on first run' {
+      description 'Nested backend/clients schema; legacy files are rewritten in place'
+    }
+    core_cli -> core_runners 'resolve_launch(spec)' {
+      description 'Returns a LaunchPlan for the framework-native server'
+    }
+    core_runners -> fastapi_mount 'spawns uvicorn | flask run | manage.py runserver' {
+      description 'The configured framework hosts its own dev server; pyRPC never substitutes for it'
     }
     core_cli -> cfg_tsconfig 'configures type resolution' {
       description 'Injects @pyrpc/types paths alias and supported framework bundler alias'
@@ -644,8 +700,8 @@ views {
     core_cli -> core_cli 'starts file watcher' {
       description 'watchfiles monitors .py files in project directories'
     }
-    core_cli -> core_cli 'starts uvicorn + dev console' {
-      description 'ASGI server starts and interactive console (pyrpc>) opens'
+    core_cli -> core_cli 'starts native server + dev console' {
+      description 'The resolved LaunchPlan process starts and interactive console (pyrpc>) opens'
     }
     python_dev -> core_cli 'edits .py file' {
       description 'Developer changes a Python file'
@@ -664,6 +720,48 @@ views {
     }
     core_cli -> python_dev 'console output: regenerated N procs' {
       description 'Console confirms regeneration and shows procedure count'
+    }
+  }
+
+  // ── DYNAMIC: LIVE RECONFIGURATION ──
+  dynamic view reconfigure_flow {
+    title 'Live Reconfiguration - editing pyrpc.json while dev runs'
+
+    description 'The config watcher diffs the parsed BackendSpec on every save: a backend change imports the new types module and relaunches the native server; a clients-only change re-points codegen without touching the running server.'
+
+    include python_dev
+    include cfg_pyrpc_json
+    include core_config
+    include core_cli
+    include core_runners
+    include core_introspection
+    include codegen_save
+    include types_index
+    include fastapi_mount
+
+    python_dev -> cfg_pyrpc_json 'edits backend or clients section' {
+      description 'Any editor change to the nested schema while the session runs'
+    }
+    cfg_pyrpc_json -> core_cli 'watchfiles event' {
+      description 'The config watcher monitors the file and re-reads it'
+    }
+    core_cli -> core_config 'parse_backend(new_cfg)' {
+      description 'Parse into a fresh BackendSpec instead of diffing file bytes'
+    }
+    core_config -> core_cli 'BackendSpec differs from current spec' {
+      description 'Dataclass equality makes the diff precise; comment or formatting churn is ignored'
+    }
+    core_cli -> core_introspection 'import new types_module' {
+      description 'Registration module imported before anything restarts; failure keeps the old spec alive'
+    }
+    core_cli -> core_runners 'resolve_launch(new spec)' {
+      description 'Only when pyRPC owns the server process'
+    }
+    core_runners -> fastapi_mount 'terminate old, relaunch native server' {
+      description 'Switching framework mid-session genuinely swaps runtimes'
+    }
+    core_cli -> codegen_save 're-wire regen callback' {
+      description 'Clients-only changes re-point codegen at new roots with no restart'
     }
   }
 }
