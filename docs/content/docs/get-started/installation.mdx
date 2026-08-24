@@ -112,13 +112,13 @@ The fastest way to get started:
 pyrpc dev
 ```
 
-On first run, `pyrpc dev` walks you through setup interactively - entry module, client project root, and frontend framework. It creates a `pyrpc.json` config file, generates types, and starts the development server with auto-regeneration on file changes.
+On first run, `pyrpc dev` walks you through setup interactively - backend framework and entry point, client project root, and frontend framework. It creates a `pyrpc.json` config file, generates types, and starts the development server with auto-regeneration on file changes. The entry point is framework-specific: FastAPI/Flask/ASGI take a `module[:app]` target, Django takes the path to `manage.py`.
 
 You can also pass flags to skip the wizard:
 
 ```bash
-pyrpc dev --yes                          # auto-detect everything
-pyrpc dev --yes --module main --client ../frontend
+pyrpc dev --yes                          # sniff the framework, auto-detect everything
+pyrpc dev --yes --framework fastapi --module main --client ../frontend
 ```
 
 ### Configuration (`pyrpc.json`)
@@ -127,23 +127,22 @@ pyRPC stores its project configuration in a dedicated `pyrpc.json` file (not in 
 
 ```json
 {
-  "module": "main",
-  "framework": "Next.js",
-  "client": "../frontend"
+  "backend": {
+    "framework": "fastapi",
+    "entrypoint": "main:app"
+  },
+  "clients": [
+    { "framework": "Next.js", "root": "../frontend" }
+  ]
 }
 ```
 
-For multiple frontend projects, use `clients`:
+- `backend.framework` - one of `fastapi`, `flask`, `django`, `asgi`. It decides which native dev server `pyrpc dev` launches (uvicorn, `flask run`, or `manage.py runserver`).
+- `backend.entrypoint` - what the dev server launches: a `module[:app]` target for FastAPI/Flask/ASGI, or the path to your `manage.py` for Django.
+- `backend.types_module` - optional; the module whose import registers your `@rpc` procedures. Defaults to the module part of `entrypoint`. Required for Django (e.g. the `views.py` module that declares your procedures).
+- `clients[].root` - one or more frontend project roots; types are written to each. Paths are resolved relative to the config file's directory.
 
-```json
-{
-  "module": "main",
-  "framework": "Mixed",
-  "clients": ["../web", "../admin"]
-}
-```
-
-The file is created automatically by `pyrpc dev`. Paths in `pyrpc.json` are resolved relative to the config file's directory.
+The file is created automatically by `pyrpc dev`.
 
 ### Manual Codegen
 

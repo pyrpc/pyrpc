@@ -17,10 +17,9 @@ pip install "pyrpc-core[django]" django-cors-headers
 cd ../client
 npm install
 
-# 3. Start development (3 terminals)
-cd ../server && pyrpc watch --module myproject.views --client ../client  # Terminal 1: type generation
-cd ../server && python manage.py runserver                               # Terminal 2: Django on :8000
-cd ../client && npm run dev                                              # Terminal 3: Next.js dev server
+# 3. Start development (2 terminals)
+cd ../server && pyrpc dev                                 # Terminal 1: Django on :8000 + type generation
+cd ../client && npm run dev                               # Terminal 2: Next.js dev server
 ```
 
 Visit: http://localhost:3000
@@ -52,15 +51,15 @@ django-nextjs/
 
 ## How It Works
 
-1. **Backend**: Django serves pyRPC endpoints at `/rpc` (port 8000)
-2. **Type Generation**: `pyrpc watch` watches Python files and regenerates TypeScript types
+1. **Backend**: `pyrpc dev` launches Django's own dev server (`manage.py runserver`) and serves pyRPC endpoints at `/rpc`
+2. **Type Generation**: the same command imports your views module (the configured `types_module`) and regenerates TypeScript types on every `.py` save
 3. **Frontend**: Next.js components use generated types for full type safety
 4. **Queries/Mutations**: TanStack Query provides caching and state management
 
 ## Key Features Demonstrated
 
 - End-to-end type safety from Python to TypeScript
-- Automatic type generation with `pyrpc watch`
+- Automatic type generation with `pyrpc dev`
 - Django project structure following official tutorial
 - Async views with pyRPC procedures
 - TanStack Query integration for data fetching

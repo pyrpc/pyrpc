@@ -77,8 +77,9 @@ Expected output:
 ```
 pyRPC setup (runs once — saved to pyrpc.json)
 
-? Entry module  › main          ← auto-filled from main.py
-? Client project root  › .      ← the frontend project
+? Backend framework  › FastAPI          ← preselected by sniffing main.py for mount_fastapi
+? Backend entry point (module[:app] — the file that calls mount_fastapi)  › main
+? Client project root  › .      ← directory autocomplete, Tab accepts a suggestion
 ? Frontend framework  › Next.js ← auto-detected from next.config.ts
 
   ✓ pyrpc.json created
@@ -93,9 +94,8 @@ Check `__pyrpc.ts` exists at the client project root and contains `greet`
 and `set_name`. Check `pyrpc.json`:
 ```json
 {
-  "module": "main",
-  "framework": "Next.js",
-  "client": "."
+  "backend": { "framework": "fastapi", "entrypoint": "main:app" },
+  "clients": [{ "framework": "Next.js", "root": "." }]
 }
 ```
 
@@ -188,6 +188,9 @@ if __name__ == "__main__":
     app.run(port=8000)
 ```
 
+`pyrpc dev` detects the `mount_flask(` marker and launches Flask's own dev
+server (`flask --app main:app run`) — no uvicorn, no WSGI bridge.
+
 ## 9. Django example
 
 ```python
@@ -207,4 +210,7 @@ mount_django(urlpatterns)
 
 `mount_django` mutates `urlpatterns` in place and returns None — it does
 not return a new list. The `views` import matters: without it Python never
-executes the module, so no procedures are registered.
+executes the module, so no procedures are registered. `pyrpc dev` detects
+Django, asks for the path to `manage.py` and a types module (the `views`
+module that declares your procedures), then launches
+`manage.py runserver` directly.

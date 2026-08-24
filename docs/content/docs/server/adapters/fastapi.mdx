@@ -55,17 +55,17 @@ From the directory containing `main.py`:
 pyrpc dev
 ```
 
-First run launches a short wizard (2 questions) and writes `pyrpc.json`. Every subsequent run reads that file, no prompts. To skip the wizard entirely:
+First run launches a short wizard - backend framework (FastAPI is preselected when detected) and entry point, then client root and frontend framework - and writes `pyrpc.json`. Every subsequent run reads that file, no prompts. To skip the wizard entirely:
 
 ```bash
 # auto-detect everything
 pyrpc dev --yes
 
 # fully explicit: good for CI
-pyrpc dev --yes --module main --client ../client
+pyrpc dev --yes --framework fastapi --module main --client ../client
 ```
 
-`pyrpc dev` starts uvicorn, generates `__pyrpc.ts` at the client project root, and re-generates it on every `.py` save. If a server is already running on that port, it skips starting uvicorn and only runs the type watcher.
+`pyrpc dev` starts uvicorn with your `module[:app]` entry point, generates `__pyrpc.ts` at the client project root, and re-generates it on every `.py` save. If a server is already running on that port, it skips starting uvicorn and only runs the type watcher.
 
 ## 4. Connect the frontend
 

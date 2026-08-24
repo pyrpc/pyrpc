@@ -17,10 +17,9 @@ pip install "pyrpc-core[flask]" flask-cors
 cd ../client
 npm install
 
-# 3. Start development (3 terminals)
-cd ../server && pyrpc watch --module main --client ../client  # Terminal 1: type generation
-cd ../server && python main.py                                # Terminal 2: Flask on :5000
-cd ../client && npm run dev                                   # Terminal 3: Next.js dev server
+# 3. Start development (2 terminals)
+cd ../server && pyrpc dev                                     # Terminal 1: Flask on :8000 + type generation
+cd ../client && npm run dev                                   # Terminal 2: Next.js dev server
 ```
 
 Visit: http://localhost:3000
@@ -46,8 +45,8 @@ flask-nextjs/
 
 ## How It Works
 
-1. **Backend**: Flask serves pyRPC endpoints at `/rpc` (port 5000)
-2. **Type Generation**: `pyrpc watch` watches Python files and regenerates TypeScript types
+1. **Backend**: `pyrpc dev` launches Flask's native dev server (`flask run`) and serves pyRPC endpoints at `/rpc`
+2. **Type Generation**: the same command watches Python files and regenerates TypeScript types
 3. **Frontend**: Next.js components use generated types for full type safety
 4. **Queries/Mutations**: TanStack Query provides caching and state management
 

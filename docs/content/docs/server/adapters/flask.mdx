@@ -51,17 +51,17 @@ if __name__ == "__main__":
 pyrpc dev
 ```
 
-First run: 2-question wizard writes `pyrpc.json`. Every run after: reads `pyrpc.json` automatically. To skip the wizard:
+First run: a short wizard asks for your backend framework (Flask is preselected when detected) and entry point, then client root and frontend framework, and writes `pyrpc.json`. Every run after: reads `pyrpc.json` automatically. To skip the wizard:
 
 ```bash
 # auto-detect
 pyrpc dev --yes
 
 # fully explicit
-pyrpc dev --yes --module main --client ../client
+pyrpc dev --yes --framework flask --module main --client ../client
 ```
 
-`pyrpc dev` serves the app with uvicorn (default `http://127.0.0.1:8000/rpc`), generates `__pyrpc.ts` at the client project root, and re-generates it on every `.py` save.
+`pyrpc dev` serves the app with Flask's own dev server (`flask run` on your `module:app` - no WSGI-to-ASGI bridge involved; default `http://127.0.0.1:8000/rpc`), generates `__pyrpc.ts` at the client project root, and re-generates it on every `.py` save.
 
 ## 4. Connect the frontend
 

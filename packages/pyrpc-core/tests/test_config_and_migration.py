@@ -105,3 +105,71 @@ def test_codegen_command_respects_client_flag(tmp_path):
     expected_out = os.path.join(custom_client, "__pyrpc.ts")
     assert os.path.isfile(expected_out)
     assert "greet" in open(expected_out).read()
+
+
+# ── nested pyrpc.json model (0.13+) ──────────────────────────────────────────
+
+from pyrpc_core.config import (
+    BackendSpec,
+    has_valid_backend,
+    clients_from_config,
+    parse_backend,
+    write_config,
+)
+
+
+def test_parse_backend_full_nested_config():
+    cfg = {
+        "backend": {"framework": "flask", "entrypoint": "app", "types_module": "api.procs"},
+        "clients": [{"framework": "Next.js", "root": "./web"}],
+    }
+    spec = parse_backend(cfg)
+    assert spec == BackendSpec(framework="flask", entrypoint="app:app", types_module="api.procs")
+
+
+def test_parse_backend_normalizes_bare_entrypoint():
+    spec = parse_backend({"backend": {"framework": "fastapi", "entrypoint": "main"}})
+    assert spec.entrypoint == "main:app"
+
+
+def test_parse_backend_django_entrypoint_is_a_path_not_normalized():
+    spec = parse_backend({"backend": {"framework": "django", "entrypoint": "manage.py",
+                                      "types_module": "myproject.views"}})
+    assert spec.entrypoint == "manage.py"
+    assert spec.types_module == "myproject.views"
+
+
+def test_has_valid_backend_rejects_legacy_and_partial_configs():
+    legacy = {"module": "main", "framework": "Next.js", "client": "./web"}
+    assert has_valid_backend(legacy) is False
+    assert has_valid_backend({}) is False
+    assert has_valid_backend(None) is False
+    assert has_valid_backend({"backend": {"framework": "express", "entrypoint": "x"}}) is False
+    assert has_valid_backend({"backend": {"framework": "fastapi", "entrypoint": ""}}) is False
+    assert has_valid_backend({"backend": {"framework": "asgi", "entrypoint": "app:api"}}) is True
+
+
+def test_clients_from_config_filters_invalid_entries():
+    cfg = {
+        "clients": [
+            {"framework": "Vite", "root": "./web"},
+            {"root": ""},                      # empty root dropped
+            {"framework": "Svelte"},           # missing root dropped
+            "not-a-dict",                      # wrong type dropped
+        ]
+    }
+    assert clients_from_config(cfg) == [{"framework": "Vite", "root": "./web"}]
+    assert clients_from_config({}) == []
+    assert clients_from_config({"client": "./legacy"}) == []  # legacy key not honored
+
+
+def test_write_read_roundtrip_nested(tmp_path):
+    cfg = {
+        "backend": {"framework": "django", "entrypoint": "manage.py",
+                    "types_module": "proj.views"},
+        "clients": [{"framework": "Nuxt", "root": "../frontend"}],
+    }
+    path = write_config(cfg, tmp_path / "pyrpc.json")
+    loaded = json.loads(path.read_text())
+    assert parse_backend(loaded).entrypoint == "manage.py"
+    assert clients_from_config(loaded)[0]["root"] == "../frontend"

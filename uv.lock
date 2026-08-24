@@ -519,7 +519,7 @@ requires-dist = [
 
 [[package]]
 name = "pyrpc-core"
-version = "0.12.1"
+version = "0.13.0"
 source = { editable = "packages/pyrpc-core" }
 dependencies = [
     { name = "anyio" },

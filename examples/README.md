@@ -73,13 +73,15 @@ All examples are built using **official starter templates**:
 Each example follows the same development pattern:
 
 ```bash
-# FastAPI backends — one command starts the server and watches types
+# All backends — one command starts the framework's native dev server
+# (uvicorn for FastAPI/ASGI, `flask run` for Flask, `manage.py runserver`
+# for Django) and watches types
 cd server
 pyrpc dev
 
-# Flask / Django backends — run their native dev server, plus a type watcher
+# Server-less type watching only, if you prefer to launch the backend yourself
 cd server
-pyrpc watch --module main --client ../client          # Flask
+pyrpc watch --module main --client ../client          # FastAPI / Flask
 pyrpc watch --module myproject.views --client ../client  # Django
 python main.py            # Flask (or: python manage.py runserver for Django)
 ```
