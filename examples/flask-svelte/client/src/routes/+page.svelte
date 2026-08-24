@@ -3,8 +3,8 @@
 
   let name = "";
   
-  const greeting = api.read_root.createQuery();
-  const item = api.read_item.createQuery(() => ({ item_id: 42, q: "test" }));
+  const greeting = api.greet.createQuery({ name: "Flask User" });
+  const item = api.read_item.createQuery({ item_id: 42, q: "test" });
   const createItem = api.create_item.createMutation();
 
   function handleCreate() {
@@ -19,13 +19,13 @@
 </script>
 
 <svelte:head>
-  <title>pyRPC FastAPI Svelte App</title>
-  <meta name="description" content="FastAPI + Svelte with pyRPC" />
+  <title>pyRPC Flask Svelte App</title>
+  <meta name="description" content="Flask + Svelte with pyRPC" />
 </svelte:head>
 
 <main>
-  <h1>pyRPC × FastAPI × Svelte</h1>
-  <p>Full-stack type safety with FastAPI backend and Svelte frontend</p>
+  <h1>pyRPC × Flask × Svelte</h1>
+  <p>Full-stack type safety with Flask backend and Svelte frontend</p>
   
   <section class="card">
     <h3>API Response</h3>

@@ -73,13 +73,23 @@ All examples are built using **official starter templates**:
 Each example follows the same development pattern:
 
 ```bash
-# Terminal 1: Start backend with type generation
+# FastAPI backends — one command starts the server and watches types
 cd server
 pyrpc dev
 
-# Terminal 2: Start frontend dev server  
+# Flask / Django backends — run their native dev server, plus a type watcher
+cd server
+pyrpc watch --module main --client ../client          # Flask
+pyrpc watch --module myproject.views --client ../client  # Django
+python main.py            # Flask (or: python manage.py runserver for Django)
+```
+
+Then start the frontend in a second terminal:
+
+```bash
 cd client
-npm run dev
+npm install   # first time only
+npm run dev   # CRA examples use: npm start
 ```
 
 ## What Each Example Demonstrates

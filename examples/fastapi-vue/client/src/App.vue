@@ -4,9 +4,9 @@ import { pyrpc } from "./pyrpc";
 
 const name = ref("");
 
-const { data: greeting, isPending: isLoadingGreeting } = pyrpc.read_root.createQuery();
-const { data: item } = pyrpc.read_item.createQuery(() => ({ item_id: 42, q: "test" }));
-const createItem = pyrpc.create_item.createMutation();
+const { data: greeting, isPending: isLoadingGreeting } = pyrpc.read_root.useQuery();
+const { data: item } = pyrpc.read_item.useQuery({ item_id: 42, q: "test" });
+const createItem = pyrpc.create_item.useMutation();
 
 const handleCreate = () => {
   if (name.value.trim()) {

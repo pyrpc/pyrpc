@@ -35,5 +35,5 @@ npm run dev
 ## Key Files
 
 - `server/main.py` - FastAPI app with @rpc procedures
-- `client/lib/pyrpc.ts` - pyRPC client configuration  
+- `client/src/lib/pyrpc.ts` - pyRPC client configuration  
 - `client/src/` - Svelte application code

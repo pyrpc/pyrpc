@@ -4,9 +4,9 @@ import { pyrpc } from "./pyrpc";
 
 const name = ref("");
 
-const { data: greeting, isPending: isLoadingGreeting } = pyrpc.greet.createQuery(() => ({ name: "Django User" }));
-const { data: item } = pyrpc.read_item.createQuery(() => ({ item_id: 42, q: "django-test" }));
-const createItem = pyrpc.create_item.createMutation();
+const { data: greeting, isPending: isLoadingGreeting } = pyrpc.greet.useQuery({ name: "Django User" });
+const { data: item } = pyrpc.read_item.useQuery({ item_id: 42, q: "django-test" });
+const createItem = pyrpc.create_item.useMutation();
 
 const handleCreate = () => {
   if (name.value.trim()) {

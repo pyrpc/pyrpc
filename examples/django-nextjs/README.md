@@ -11,15 +11,16 @@ Built using **official starter templates**:
 ```bash
 # 1. Install Python dependencies
 cd server
-pip install pyrpc-core pyrpc-django-adapter
+pip install "pyrpc-core[django]" django-cors-headers
 
 # 2. Install frontend dependencies  
 cd ../client
 npm install
 
-# 3. Start development (2 terminals)
-cd ../server && pyrpc dev     # Terminal 1: Django + type generation
-cd ../client && npm run dev   # Terminal 2: Next.js dev server
+# 3. Start development (3 terminals)
+cd ../server && pyrpc watch --module myproject.views --client ../client  # Terminal 1: type generation
+cd ../server && python manage.py runserver                               # Terminal 2: Django on :8000
+cd ../client && npm run dev                                              # Terminal 3: Next.js dev server
 ```
 
 Visit: http://localhost:3000
@@ -51,19 +52,19 @@ django-nextjs/
 
 ## How It Works
 
-1. **Backend**: Django serves pyRPC endpoints at `/rpc/` (port 8000)
-2. **Type Generation**: `pyrpc dev` watches Python files and regenerates TypeScript types
+1. **Backend**: Django serves pyRPC endpoints at `/rpc` (port 8000)
+2. **Type Generation**: `pyrpc watch` watches Python files and regenerates TypeScript types
 3. **Frontend**: Next.js components use generated types for full type safety
 4. **Queries/Mutations**: TanStack Query provides caching and state management
 
 ## Key Features Demonstrated
 
-- End-to-end type safetyfrom Python to TypeScript  
-- Automatic type generation** with `pyrpc dev`
-- Django project structure** following official tutorial
-- Async views** with pyRPC procedures
-- TanStack Query integration** for data fetching
-- CORS configuration** for development
+- End-to-end type safety from Python to TypeScript
+- Automatic type generation with `pyrpc watch`
+- Django project structure following official tutorial
+- Async views with pyRPC procedures
+- TanStack Query integration for data fetching
+- CORS configuration for development
 
 ## Technologies Used
 
@@ -82,7 +83,7 @@ django-nextjs/
 
 To adapt this example:
 1. **Modify procedures** in `server/myproject/views.py`
-2. **Run `pyrpc dev`** to regenerate types
+2. **Run `pyrpc watch`** to regenerate types
 3. **Use new procedures** in React components with full type safety
 
 ## Related Examples

@@ -1,11 +1,11 @@
 {
-  "name": "fastapi-react-client",
+  "name": "flask-react-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@pyrpc/react": "^0.12.0",
-    "@pyrpc/client": "^0.12.0",
-    "@pyrpc/types": "^0.12.0",
+    "@pyrpc/react": "^0.12.1",
+    "@pyrpc/client": "^0.12.1",
+    "@pyrpc/types": "^0.12.1",
     "@tanstack/react-query": "^5.83.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",

@@ -1,6 +1,6 @@
-# pyRPC v0.10.0 — Verification Walkthrough
+# pyRPC v0.12.1 — Verification Walkthrough
 
-End-to-end steps to verify everything works after the v0.10.0 changes.
+End-to-end steps to verify everything works.
 
 ## 1. Fresh project setup
 
@@ -11,29 +11,16 @@ npx create-next-app@latest . --typescript --app --no-tailwind --no-eslint --src-
 # Python server deps — one command with the adapter as an extra
 pip install pyrpc-core[fastapi]
 
-# TypeScript client deps — one command per framework
+# TypeScript client deps — one command per framework (the adapter pulls in
+# @pyrpc/client and @pyrpc/types for you)
 # Next.js:
-npm install @pyrpc/client @pyrpc/next
-# React (Vite):
-npm install @pyrpc/client @pyrpc/react
+npm install @pyrpc/next @tanstack/react-query
+# React (Vite / CRA):
+npm install @pyrpc/react @tanstack/react-query
 # Vue:
-npm install @pyrpc/client @pyrpc/vue
+npm install @pyrpc/vue @tanstack/vue-query
 # Svelte:
-npm install @pyrpc/client @pyrpc/svelte
-```
-
-After `npm install` completes you should see:
-```
-  ✓ @pyrpc/types → src/__pyrpc.ts (tsconfig.json)
-  Run 'pyrpc dev' to start generating types.
-```
-
-Check your `tsconfig.json` — it should now contain:
-```json
-"paths": {
-  "@/*": ["./*"],
-  "@pyrpc/types": ["./src/__pyrpc.ts"]
-}
+npm install @pyrpc/svelte @tanstack/svelte-query
 ```
 
 ## 2. Write the Python server
@@ -91,26 +78,24 @@ Expected output:
 pyRPC setup (runs once — saved to pyrpc.json)
 
 ? Entry module  › main          ← auto-filled from main.py
+? Client project root  › .      ← the frontend project
 ? Frontend framework  › Next.js ← auto-detected from next.config.ts
 
   ✓ pyrpc.json created
-  ✓ types generated (2 procs) → src/__pyrpc.ts
+  ✓ types generated (2 procs) → __pyrpc.ts
   pyRPC dev  http://127.0.0.1:8000/rpc
-  pyrpc>
 ```
 
-If the frontend config isn't detected (server-first setup), the wizard asks:
-```
-? Output path for generated types  › src/__pyrpc.ts
-```
+`pyrpc dev` wires `@pyrpc/types` to the generated file automatically:
+tsconfig `paths` plus a bundler alias for Vite/SvelteKit/Next.js.
 
-Check `src/__pyrpc.ts` exists and contains `greet` and `set_name`.
-Check `pyrpc.json`:
+Check `__pyrpc.ts` exists at the client project root and contains `greet`
+and `set_name`. Check `pyrpc.json`:
 ```json
 {
   "module": "main",
   "framework": "Next.js",
-  "output": "src/__pyrpc.ts"
+  "client": "."
 }
 ```
 
@@ -121,20 +106,20 @@ Create `lib/pyrpc.ts`:
 **Next.js:**
 ```ts
 import type { Types } from '@pyrpc/types';
-import { createNextClient } from '@pyrpc/next';
+import { createNextClient, httpLink } from '@pyrpc/next';
 
 export const api = createNextClient<Types>({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000',
+  links: [httpLink({ url: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000' })],
 });
 ```
 
 **React (Vite):**
 ```ts
 import type { Types } from '@pyrpc/types';
-import { createReactClient } from '@pyrpc/react';
+import { createReactClient, httpLink } from '@pyrpc/react';
 
 export const api = createReactClient<Types>({
-  baseUrl: import.meta.env.VITE_API_URL ?? 'http://localhost:8000',
+  links: [httpLink({ url: import.meta.env.VITE_API_URL ?? 'http://localhost:8000' })],
 });
 ```
 
@@ -168,8 +153,7 @@ uvicorn main:app --reload
 Now run `pyrpc dev` in another terminal:
 ```
   ○ server already running at http://127.0.0.1:8000/rpc — skipping uvicorn
-  ✓ types generated (3 procs) → src/__pyrpc.ts
-  pyrpc>
+  ✓ types generated (3 procs) → __pyrpc.ts
 ```
 
 ## 7. Verify `pyrpc watch` (watcher only)
@@ -180,7 +164,7 @@ pyrpc watch                 # terminal 2 — reads pyrpc.json
 ```
 
 ```
-  ✓ types generated (3 procs) → src/__pyrpc.ts
+  ✓ types generated (3 procs) → __pyrpc.ts
   watching... (Ctrl+C to stop)
 ```
 
@@ -207,13 +191,20 @@ if __name__ == "__main__":
 ## 9. Django example
 
 ```python
-# urls.py
-from pyrpc_django import mount_django  # pip install pyrpc-core[django]
-from pyrpc_core import rpc
+# myproject/urls.py
+from django.contrib import admin
+from django.urls import path
+from pyrpc_django import mount_django  # pip install "pyrpc-core[django]"
+from . import views  # required: triggers @rpc decorator execution
 
-@rpc.query
-def greet(name: str = "World") -> str:
-    return f"Hello, {name}!"
+urlpatterns = [
+    path("admin/", admin.site.urls),
+]
 
-urlpatterns = mount_django()
+# Appends POST /rpc (dispatch) and GET /rpc (introspection) to the list.
+mount_django(urlpatterns)
 ```
+
+`mount_django` mutates `urlpatterns` in place and returns None — it does
+not return a new list. The `views` import matters: without it Python never
+executes the module, so no procedures are registered.

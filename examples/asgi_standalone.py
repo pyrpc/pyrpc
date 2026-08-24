@@ -24,7 +24,8 @@ def greet(name: str = "World") -> str:
 @rpc
 async def get_status() -> dict:
     """Asynchronously returns server status."""
-    return {"status": "online", "version": "0.1.0"}
+    import pyrpc_core
+    return {"status": "online", "version": pyrpc_core.__version__}
 
 if __name__ == "__main__":
     print("Starting asgi_standalone on http://localhost:8000")

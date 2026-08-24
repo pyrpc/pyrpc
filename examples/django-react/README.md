@@ -7,7 +7,7 @@ Full-stack example: Django backend + React frontend, connected by pyRPC.
 ```bash
 # 1. Install Python dependencies
 cd server
-pip install pyrpc-core pyrpc-django-adapter
+pip install "pyrpc-core[django]" django-cors-headers
 
 # 2. Install frontend dependencies  
 cd ../client
@@ -17,13 +17,17 @@ npm install
 ## Development
 
 ```bash
-# Terminal 1 - Django server with type generation
+# Terminal 1 - type generation watcher
 cd server
-pyrpc dev
+pyrpc watch --module myproject.views --client ../client
 
-# Terminal 2 - React development server
-cd client  
-npm run dev
+# Terminal 2 - Django server on http://localhost:8000
+cd server
+python manage.py runserver
+
+# Terminal 3 - React development server
+cd client
+npm start
 ```
 
 ## Architecture
@@ -36,5 +40,5 @@ npm run dev
 
 - `server/manage.py` - Django management script
 - `server/myproject/views.py` - Django views with @rpc procedures
-- `client/lib/pyrpc.ts` - pyRPC client configuration  
+- `client/src/pyrpc.ts` - pyRPC client configuration  
 - `client/src/` - React application code

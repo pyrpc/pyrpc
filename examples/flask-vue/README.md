@@ -7,7 +7,7 @@ Full-stack example: Flask backend + Vue frontend, connected by pyRPC.
 ```bash
 # 1. Install Python dependencies
 cd server
-pip install pyrpc-core[flask]
+pip install "pyrpc-core[flask]" flask-cors
 
 # 2. Install frontend dependencies  
 cd ../client
@@ -17,12 +17,16 @@ npm install
 ## Development
 
 ```bash
-# Terminal 1 - Flask server with type generation
+# Terminal 1 - type generation watcher
 cd server
-pyrpc dev
+pyrpc watch --module main --client ../client
 
-# Terminal 2 - Vue development server
-cd client  
+# Terminal 2 - Flask server on http://localhost:5000
+cd server
+python main.py
+
+# Terminal 3 - Vue development server
+cd client
 npm run dev
 ```
 
@@ -35,5 +39,5 @@ npm run dev
 ## Key Files
 
 - `server/main.py` - Flask app with @rpc procedures
-- `client/lib/pyrpc.ts` - pyRPC client configuration  
+- `client/src/pyrpc.ts` - pyRPC client configuration  
 - `client/src/` - Vue application code
