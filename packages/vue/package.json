@@ -1,6 +1,6 @@
 {
   "name": "@pyrpc/vue",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Vue + TanStack Query adapter for pyRPC",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -29,8 +29,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@pyrpc/client": "^0.13.0",
-    "@pyrpc/types": "^0.13.0"
+    "@pyrpc/client": "^0.14.0",
+    "@pyrpc/types": "^0.14.0"
   },
   "peerDependencies": {
     "@tanstack/vue-query": "^5.0.0",

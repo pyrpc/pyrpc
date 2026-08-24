@@ -13,6 +13,50 @@ export interface Release {
 
 export const releases: Release[] = [
     {
+        version: 'v0.14.0',
+        date: '2026-08-25',
+        tag: 'v0.14.0',
+        description: 'pyRPC now speaks MCP. Run pyrpc mcp inside your project and AI coding clients work from your real registry: full procedure introspection with JSON Schemas, argument validation that never executes your code, and dry-run-first codegen through the same pipeline as pyrpc codegen.',
+        sections: [
+            {
+                title: 'Features',
+                items: [
+                    'Local MCP server: `pyrpc mcp` serves the standard MCP stdio transport on the official Python SDK (spec 2026-07-28). Clients launch it as a subprocess in your project environment; the server imports your configured backend module and answers from the live registry, never from static parsing.',
+                    '`introspect_project` returns framework, entrypoint, types module, configured clients, and every registered procedure with kind (query/mutation), parameter names, types, requiredness, defaults, docstrings, and full input/output JSON Schemas via `get_registry_schema`.',
+                    '`check_call` validates hypothetical arguments against a procedure\'s real pydantic TypeAdapters without executing it, returning structured per-parameter errors. Binding and validation were extracted into `Procedure.validate_args`, shared by both the RPC hot path and MCP so they cannot drift.',
+                    '`run_codegen` regenerates each configured client\'s `__pyrpc.ts` through `generate_typescript_client`/`save_typescript_client`. `dry_run=true` by default: targets are reported as up to date, would update, or would create, byte-compared against the exact renderer. Only generated files are written; tsconfig and bundler setup stay with `pyrpc init`/`pyrpc codegen`.',
+                    'Tool annotations are declared honestly: read-only tools set `readOnlyHint` and `openWorldHint=false`; codegen sets `readOnlyHint=false`, `destructiveHint=false`, `idempotentHint=true`.',
+                ],
+            },
+            {
+                title: 'Security',
+                items: [
+                    'No procedure execution tool exists: agents can introspect schemas and validate payloads but can never trigger backend side effects through MCP. A sentinel test registers a file-writing procedure and proves check_call leaves no trace.',
+                    'The server is local-only stdio with no telemetry and no network egress. stdout carries protocol frames exclusively while serving; all diagnostics go to stderr via logging, enforced by tests that parse every stdout line as JSON-RPC.',
+                ],
+            },
+            {
+                title: 'Packaging',
+                items: [
+                    'The MCP SDK ships as an optional extra: `uv add "pyrpc-core[mcp]"`. Production installs of plain pyrpc-core stay lean (the SDK pulls cryptography, starlette, and OpenTelemetry API). Plain installs running `pyrpc mcp` print the exact remediation commands on stderr and exit 2.',
+                ],
+            },
+            {
+                title: 'Fixes',
+                items: [
+                    'Client root paths in MCP output are posix-normalized on every platform; Windows runners caught native backslash separators leaking into agent-facing paths.',
+                ],
+            },
+            {
+                title: 'Documentation',
+                items: [
+                    'New MCP guide under Get Started: how it works, copy-paste client configuration for Claude Code, Cursor, VS Code, Claude Desktop, Windsurf, and OpenCode, the security model, example interactions, and troubleshooting.',
+                    'The landing page agent card now shows `pyrpc mcp` for the MCP tab.',
+                ],
+            },
+        ],
+    },
+    {
         version: 'v0.13.0',
         date: '2026-08-24',
         tag: 'v0.13.0',

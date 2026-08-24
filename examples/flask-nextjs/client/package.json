@@ -9,10 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@pyrpc/next": "^0.13.0",
-    "@pyrpc/react": "^0.13.0",
-    "@pyrpc/client": "^0.13.0",
-    "@pyrpc/types": "^0.13.0",
+    "@pyrpc/next": "^0.14.0",
+    "@pyrpc/react": "^0.14.0",
+    "@pyrpc/client": "^0.14.0",
+    "@pyrpc/types": "^0.14.0",
     "@tanstack/react-query": "^5.83.0",
     "next": "15.4.2",
     "react": "19.1.0",
