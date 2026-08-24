@@ -228,7 +228,9 @@ def load_project_context() -> tuple[_ProjectContext, Any]:
         if resolved not in seen_roots:
             seen_roots.add(resolved)
             client_roots.append(root)
-            clients.append(ClientInfo(framework=client.get("framework"), root=str(root)))
+            clients.append(
+                ClientInfo(framework=client.get("framework"), root=root.as_posix())
+            )
 
     ctx = _ProjectContext(
         config_path=config_path,
