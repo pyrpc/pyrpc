@@ -18,13 +18,17 @@ pyrpc/
 ├── packages/
 │   ├── client/          # TypeScript client (@pyrpc/client)
 │   ├── types/           # TypeScript type declarations (@pyrpc/types)
-│   ├── pyrpc-core/      # Python runtime + CLI (serve, dev, inspect, codegen, pull)
+│   ├── react/           # React adapter (@pyrpc/react)
+│   ├── next/            # Next.js adapter (@pyrpc/next)
+│   ├── vue/             # Vue adapter (@pyrpc/vue)
+│   ├── svelte/          # Svelte adapter (@pyrpc/svelte)
+│   ├── pyrpc-core/      # Python runtime + CLI (dev, watch, serve, codegen, pull, inspect)
 │   ├── pyrpc-codegen/   # Python codegen library (pure, standalone)
 │   ├── pyrpc-fastapi/   # FastAPI adapter
-│   └── pyrpc-flask/     # Flask adapter
-|   └── pyrpc-django-adapter/ # Django adapter
+│   ├── pyrpc-flask/     # Flask adapter
+│   └── pyrpc-django-adapter/ # Django adapter
 ├── docs/                # Documentation site (Next.js + fumadocs)
-├── examples/            # Example projects
+├── examples/            # Example projects (12 framework combinations)
 └── scripts/             # Release and utility scripts
 ```
 
@@ -98,7 +102,7 @@ Open a draft PR early if you want feedback mid-flight. Mark "Ready for review" w
 
 ### Required checks
 
-Merging into `main` requires the `Test` workflow jobs to pass: branch protection requires the `test-python` and `test-ts` checks (matched by check-run job name, not `Test / <job>`). If you rename, split, or add jobs in `test.yml`, update these required checks to match the job names exactly, or every PR will silently fail to merge.
+Merging into `main` requires the `Test` workflow jobs to pass: branch protection requires the `test-python` and `test-ts` checks (matched by check-run job name, not `Test / <job>`). The same workflow also runs a `lint-docs` job for the docs site; it is informational, not required. If you rename, split, or add jobs in `test.yml`, update these required checks to match the job names exactly, or every PR will silently fail to merge.
 
 Approvals are not enforced by branch protection, but maintainers review contributor PRs and may ask for changes before merging.
 

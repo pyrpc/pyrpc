@@ -84,7 +84,9 @@ mount_fastapi(app)
 pyrpc dev
 ```
 
-First run: answers a couple of quick questions (entry module + client project root; the frontend framework is auto-detected) and writes `pyrpc.json`. Every run after: reads `pyrpc.json`, no questions asked. Starts the server, watches `.py` files, and regenerates TypeScript types automatically.
+First run: a short wizard asks for your backend framework and entry point, then your client project root and frontend framework (the wizard preselects what it detects), and writes `pyrpc.json`. Every run after: reads `pyrpc.json`, no questions asked. Launches your framework's native dev server — uvicorn for FastAPI/ASGI, `flask run` for Flask, `manage.py runserver` for Django — watches `.py` files, and regenerates TypeScript types automatically.
+
+Non-interactive (CI): `pyrpc dev --yes --framework fastapi --module main --client ../frontend`.
 
 ### 3. Call from TypeScript
 

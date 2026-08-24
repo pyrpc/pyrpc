@@ -124,7 +124,7 @@ api.greet.useQuery({ nme: "Ada" })   // type error -- typo caught at compile tim
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `links` | `Link[]` |, | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
+| `links` | `Link[]` | required | Link pipeline; exactly one terminating link (`httpLink` or `httpBatchLink`) |
 | `kinds` | `ProcedureKindMap` | generated | Override generated procedure kinds |
 
 ## Full working examples
