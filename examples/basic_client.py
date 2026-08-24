@@ -1,7 +1,8 @@
 """
 Python client example for pyRPC.
 
-Requires a running pyRPC server (e.g. basic_server.py or pyrpc serve).
+Requires a running pyRPC server (e.g. examples/asgi_standalone.py,
+examples/fastapi-react/server/main.py, or `pyrpc serve`).
 
 Run:
     uv run python examples/basic_client.py
@@ -43,10 +44,10 @@ async def run_async_example():
             print(f"Caught RPC Error: {e.code} - {e.message}")
 
 if __name__ == "__main__":
-    # Note: Requires the server in basic_server.py to be running!
+    # Note: Requires a pyRPC server to be running (see docstring above)!
     try:
         run_sync_example()
         asyncio.run(run_async_example())
     except Exception as e:
         print(f"\nCould not connect to server: {e}")
-        print("Make sure basic_server.py is running first!")
+        print("Make sure a pyRPC server is running on http://localhost:8000 first!")
