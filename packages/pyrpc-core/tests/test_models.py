@@ -1,5 +1,7 @@
-from pyrpc_core import RpcRequest, RpcResponse
 import json
+
+from pyrpc_core import RpcRequest, RpcResponse
+
 
 def test_rpc_request_serialization():
     req = RpcRequest(id=1, method="add", params=[1, 2])
@@ -31,8 +33,8 @@ def test_rpc_response_error():
 
 
 def test_rpc_request_invalid():
-    from pydantic import ValidationError
     import pytest
+    from pydantic import ValidationError
     
     with pytest.raises(ValidationError):
         # Missing method

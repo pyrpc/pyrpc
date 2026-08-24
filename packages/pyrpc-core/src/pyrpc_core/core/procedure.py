@@ -1,17 +1,18 @@
 import inspect
-import asyncio
-from typing import Any, Callable, Dict, Literal, Optional, List
+from collections.abc import Callable
+from typing import Any, Literal
+
 from pydantic import TypeAdapter, ValidationError
 
 ProcedureKind = Literal["query", "mutation"]
 
-def _format_validation_error(e: ValidationError) -> Dict[str, Any]:
+def _format_validation_error(e: ValidationError) -> dict[str, Any]:
     errors = e.errors()
     if not errors:
         return {"field": "unknown", "message": "Validation failed"}
     
     first_error = errors[0]
-    loc = ".".join(str(l) for l in first_error.get("loc", []))
+    loc = ".".join(str(part) for part in first_error.get("loc", []))
     return {
         "field": loc,
         "message": first_error.get("msg", "Validation failed"),
@@ -19,7 +20,7 @@ def _format_validation_error(e: ValidationError) -> Dict[str, Any]:
     }
 
 class ProcedureError(Exception):
-    def __init__(self, code: int, message: str, data: Optional[Dict[str, Any]] = None):
+    def __init__(self, code: int, message: str, data: dict[str, Any] | None = None):
         self.code = code
         self.message = message
         self.data = data or {}
@@ -33,7 +34,7 @@ class Procedure:
     def __init__(
         self,
         fn: Callable[..., Any],
-        name: Optional[str] = None,
+        name: str | None = None,
         kind: ProcedureKind = "query",
     ):
         self.fn = fn
@@ -43,13 +44,13 @@ class Procedure:
         self.is_async = inspect.iscoroutinefunction(fn)
         
         # Pre-build Pydantic TypeAdapters for all parameters
-        self.arg_adapters: Dict[str, TypeAdapter] = {}
+        self.arg_adapters: dict[str, TypeAdapter] = {}
         for param_name, param in self.sig.parameters.items():
             if param.annotation is not inspect.Parameter.empty and param.annotation is not Any:
                 self.arg_adapters[param_name] = TypeAdapter(param.annotation)
         
         # Pre-build Return TypeAdapter
-        self.return_adapter: Optional[TypeAdapter] = None
+        self.return_adapter: TypeAdapter | None = None
         if self.sig.return_annotation is not inspect.Signature.empty and self.sig.return_annotation is not Any:
             self.return_adapter = TypeAdapter(self.sig.return_annotation)
 
@@ -67,7 +68,7 @@ class Procedure:
             else:
                 raise TypeError("Params must be a list or dict")
         except TypeError as e:
-            raise ProcedureError(code=-32602, message=f"Invalid params: {str(e)}")
+            raise ProcedureError(code=-32602, message=f"Invalid params: {str(e)}") from e
 
         # 2. Validate arguments using pre-built adapters
         for name, value in bound_args.arguments.items():
@@ -80,7 +81,7 @@ class Procedure:
                     error_data = _format_validation_error(ve)
                     if not error_data.get("field") or error_data["field"] == "unknown":
                         error_data["field"] = name
-                    raise ProcedureError(code=-32602, message="Validation failed", data=error_data)
+                    raise ProcedureError(code=-32602, message="Validation failed", data=error_data) from ve
 
         # 3. Call the function (Sync or Async)
         if self.is_async:
@@ -94,6 +95,6 @@ class Procedure:
                 result = self.return_adapter.validate_python(result)
             except ValidationError as ve:
                 error_data = _format_validation_error(ve)
-                raise ProcedureError(code=-32603, message="Internal Error: Return type validation failed", data=error_data)
+                raise ProcedureError(code=-32603, message="Internal Error: Return type validation failed", data=error_data) from ve
 
         return result

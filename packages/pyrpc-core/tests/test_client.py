@@ -1,5 +1,6 @@
 import pytest
-from pyrpc_core import rpc, asgi_app, default_router, RPCClient
+from pyrpc_core import RPCClient, asgi_app, default_router, rpc
+
 
 @pytest.fixture(autouse=True)
 def clear_registry():

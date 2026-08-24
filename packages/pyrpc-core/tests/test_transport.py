@@ -1,10 +1,10 @@
-import pytest
-from typing import List, Optional
-from pydantic import BaseModel
-from pyrpc_core.core.registry import Router, Procedure
-from pyrpc_core.core.introspection import get_procedure_schema, get_registry_schema
-from pyrpc_core.transport.asgi import PyRPCAsgiApp
 import json
+
+import pytest
+from pydantic import BaseModel
+from pyrpc_core.core.introspection import get_procedure_schema, get_registry_schema
+from pyrpc_core.core.registry import Procedure, Router
+from pyrpc_core.transport.asgi import PyRPCAsgiApp
 
 # --- Introspection Tests ---
 
@@ -13,7 +13,7 @@ class User(BaseModel):
     name: str
 
 def test_procedure_introspection():
-    def my_func(user: User, tags: List[str]) -> bool:
+    def my_func(user: User, tags: list[str]) -> bool:
         """My docstring"""
         return True
     

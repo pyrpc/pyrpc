@@ -1,10 +1,11 @@
 import inspect
 
-import pytest
 import httpx
+import pytest
 from pyrpc_core.client.python_client import RPCClient, RPCError
-from pyrpc_core.transport.asgi import PyRPCAsgiApp
 from pyrpc_core.core.registry import Router
+from pyrpc_core.transport.asgi import PyRPCAsgiApp
+
 
 @pytest.mark.asyncio
 async def test_rpc_client_integration():
@@ -24,8 +25,7 @@ async def test_rpc_client_integration():
     # This allows the client to talk to the app without a real server
     transport = httpx.ASGITransport(app=app)
     async_client = httpx.AsyncClient(transport=transport, base_url="http://testserver")
-    sync_client = httpx.Client(transport=transport, base_url="http://testserver")
-    
+
     async with RPCClient("http://testserver", async_client=async_client) as client:
         # Test Async Call
         res = await client.multiply.aio(a=5, b=6)

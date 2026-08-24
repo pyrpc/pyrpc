@@ -1,7 +1,8 @@
 import json
+
 import anyio
 import pytest
-from pyrpc_core import rpc, default_router
+from pyrpc_core import default_router, rpc
 
 
 @pytest.fixture(autouse=True)
@@ -10,8 +11,8 @@ def clear_registry():
 
 
 def test_django_mount_success():
-    from pyrpc_django import mount_django
     from django.test import RequestFactory
+    from pyrpc_django import mount_django
 
     @rpc
     def greet(name: str) -> str:
@@ -36,8 +37,8 @@ def test_django_mount_success():
 
 
 def test_django_async_procedure():
-    from pyrpc_django import mount_django
     from django.test import RequestFactory
+    from pyrpc_django import mount_django
 
     @rpc
     async def async_greet(name: str) -> str:
@@ -60,8 +61,8 @@ def test_django_async_procedure():
 
 
 def test_django_introspection():
-    from pyrpc_django import mount_django
     from django.test import RequestFactory
+    from pyrpc_django import mount_django
 
     @rpc
     def add(a: int, b: int) -> int:

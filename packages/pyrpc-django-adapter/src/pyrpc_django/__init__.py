@@ -1,13 +1,15 @@
-from pyrpc_core import handle_request, Router, rpc, model, default_router
-from typing import Any, Optional
+from pyrpc_core import Router, default_router, handle_request, model, rpc
+
+__all__ = ["mount_django", "rpc", "model", "Router", "default_router", "handle_request"]
 
 
-def mount_django(urlpatterns: list, router: Optional[Router] = None) -> None:
+def mount_django(urlpatterns: list, router: Router | None = None) -> None:
+    import inspect
+    import json
+
     from django.http import HttpRequest, JsonResponse
     from django.urls import path
     from django.views.decorators.csrf import csrf_exempt
-    import inspect
-    import json
 
     resolved = router or default_router
 

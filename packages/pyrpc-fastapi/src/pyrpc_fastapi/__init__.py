@@ -1,8 +1,11 @@
-from pyrpc_core import handle_request, Router, rpc, model, default_router
-from typing import Any, Optional, Dict
+from typing import Any
+
+from pyrpc_core import Router, default_router, handle_request, model, rpc
+
+__all__ = ["mount_fastapi", "rpc", "model", "Router", "default_router", "handle_request"]
 
 
-def mount_fastapi(app: Any, router: Optional[Router] = None) -> None:
+def mount_fastapi(app: Any, router: Router | None = None) -> None:
     """
     Mount the pyRPC RPC endpoint onto a FastAPI application.
 
@@ -13,7 +16,7 @@ def mount_fastapi(app: Any, router: Optional[Router] = None) -> None:
     resolved = router or default_router
 
     @app.post("/rpc")
-    async def rpc_endpoint(payload: Dict[str, Any]):
+    async def rpc_endpoint(payload: dict[str, Any]):
         return await handle_request(payload, router=resolved)
 
     @app.get("/rpc")

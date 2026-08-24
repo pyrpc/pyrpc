@@ -5,11 +5,11 @@ Runs directly (no server needed):
     uv run python examples/validation_demo.py
 """
 
-from typing import Optional, Dict
 import asyncio
 import json
 
-from pyrpc_core import rpc, model, handle_request
+from pyrpc_core import handle_request, model, rpc
+
 
 # 1. Simple primitives
 @rpc
@@ -27,10 +27,10 @@ class User:
     id: int
     name: str
     address: Address
-    tags: Optional[list[str]] = None
+    tags: list[str] | None = None
 
 @rpc
-def create_user(user: User) -> Dict[str, str]:
+def create_user(user: User) -> dict[str, str]:
     return {"status": "success", "user_id": str(user.id)}
 
 # 3. Return type validation

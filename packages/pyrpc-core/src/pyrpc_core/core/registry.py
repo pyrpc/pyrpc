@@ -1,7 +1,8 @@
 import threading
-from typing import Any, Dict, List, Optional
+
 from .procedure import Procedure
 from .rpc_decorator import RpcDecorator
+
 
 class Router:
     """
@@ -10,7 +11,7 @@ class Router:
     """
 
     def __init__(self) -> None:
-        self._procedures: Dict[str, Procedure] = {}
+        self._procedures: dict[str, Procedure] = {}
         self._lock = threading.Lock()
         self.rpc = RpcDecorator(self)
 
@@ -28,11 +29,11 @@ class Router:
                     # though proc.name is mostly for introspection
                     self._procedures[new_name] = proc
 
-    def get(self, name: str) -> Optional[Procedure]:
+    def get(self, name: str) -> Procedure | None:
         with self._lock:
             return self._procedures.get(name)
 
-    def list(self) -> List[str]:
+    def list(self) -> list[str]:
         with self._lock:
             return list(self._procedures.keys())
 

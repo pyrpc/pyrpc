@@ -1,14 +1,11 @@
-import asyncio
-import inspect
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
-from .decorators import default_router
-from .registry import Router
 from pydantic import ValidationError
 
+from .decorators import default_router
 from .models import RpcErrorModel, RpcRequest, RpcResponse
-
-from .procedure import Procedure, ProcedureError, _format_validation_error
+from .procedure import ProcedureError, _format_validation_error
+from .registry import Router
 
 # Maximum number of operations allowed in a single batch request. Guards
 # against arbitrarily large payloads; the client-side httpBatchLink default
@@ -17,9 +14,9 @@ MAX_BATCH_SIZE = 100
 
 
 async def handle_request(
-    payload: Union[Dict[str, Any], List[Dict[str, Any]]],
-    router: Optional[Router] = None
-) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+    payload: dict[str, Any] | list[dict[str, Any]],
+    router: Router | None = None
+) -> dict[str, Any] | list[dict[str, Any]]:
     """
     Handle an incoming RPC request using pre-compiled Procedures.
 
@@ -48,7 +45,7 @@ async def handle_request(
     return await _handle_single(payload, router)
 
 
-async def _handle_single(payload: Any, router: Router) -> Dict[str, Any]:
+async def _handle_single(payload: Any, router: Router) -> dict[str, Any]:
     request_id = None
     if isinstance(payload, dict):
         request_id = payload.get("id")

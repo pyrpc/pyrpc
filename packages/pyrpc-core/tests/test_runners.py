@@ -1,7 +1,6 @@
 import sys
 
 import pytest
-
 from pyrpc_core.config import BackendConfigError, BackendSpec, normalize_entrypoint
 from pyrpc_core.runners import resolve_launch, resolve_types_module
 

@@ -1,7 +1,8 @@
 import pytest
 from pydantic import BaseModel
-from pyrpc_core import rpc, default_router, get_procedure_schema, get_registry_schema
+from pyrpc_core import default_router, get_procedure_schema, get_registry_schema, rpc
 from pyrpc_core.core.procedure import Procedure
+
 
 @pytest.fixture(autouse=True)
 def clear_registry():

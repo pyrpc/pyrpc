@@ -1,5 +1,6 @@
 from pyrpc_core import default_router, rpc
 
+
 def test_rpc_decorator_default_name():
     # Clear registry for clean test
     default_router._procedures.clear()

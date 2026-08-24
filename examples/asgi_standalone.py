@@ -9,7 +9,8 @@ Or with the CLI:
 """
 
 import uvicorn
-from pyrpc_core import rpc, asgi_app
+from pyrpc_core import asgi_app, rpc
+
 
 @rpc
 def add(a: int, b: int) -> int:

@@ -1,8 +1,11 @@
-from pyrpc_core import handle_request, Router, rpc, model, default_router
-from typing import Any, Optional
+from typing import Any
+
+from pyrpc_core import Router, default_router, handle_request, model, rpc
+
+__all__ = ["mount_flask", "rpc", "model", "Router", "default_router", "handle_request"]
 
 
-def mount_flask(app: Any, router: Optional[Router] = None) -> None:
+def mount_flask(app: Any, router: Router | None = None) -> None:
     """
     Mount the pyRPC RPC endpoint onto a Flask application.
 
@@ -13,8 +16,8 @@ def mount_flask(app: Any, router: Optional[Router] = None) -> None:
     resolved = router or default_router
 
     # Import inside function to avoid hard dependency on Flask if not used
-    from flask import request, jsonify
     import anyio
+    from flask import jsonify, request
 
     @app.route("/rpc", methods=["POST"])
     def rpc_endpoint():

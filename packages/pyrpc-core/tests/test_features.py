@@ -1,9 +1,9 @@
-import pytest
 import asyncio
-from typing import List, Optional
+
+import pytest
 from pydantic import BaseModel
-from pyrpc_core.core.registry import Router
 from pyrpc_core.core.interpreter import handle_request
+from pyrpc_core.core.registry import Router
 
 # --- Setup Procedures ---
 

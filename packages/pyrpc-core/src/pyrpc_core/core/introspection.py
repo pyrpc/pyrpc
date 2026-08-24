@@ -1,23 +1,25 @@
 import inspect
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from pydantic import BaseModel
+
 from .procedure import Procedure
 
 
 class ParameterSchema(BaseModel):
     name: str
     type: str
-    schema_: Dict[str, Any]
+    schema_: dict[str, Any]
     required: bool
-    default: Optional[Any] = None
+    default: Any | None = None
 
 
 class ProcedureSchema(BaseModel):
     name: str
-    parameters: List[ParameterSchema]
+    parameters: list[ParameterSchema]
     return_type: str
-    return_schema: Dict[str, Any]
-    doc: Optional[str] = None
+    return_schema: dict[str, Any]
+    doc: str | None = None
     is_async: bool = False
     kind: str = "query"
 
@@ -67,7 +69,7 @@ def get_procedure_schema(proc: Procedure) -> ProcedureSchema:
     )
 
 
-def get_registry_schema(router: Any) -> Dict[str, ProcedureSchema]:
+def get_registry_schema(router: Any) -> dict[str, ProcedureSchema]:
     """
     Generate schemas for all procedures in a router.
     """
