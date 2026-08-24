@@ -20,8 +20,7 @@ function App() {
   };
 
   return (
-    <api.Provider>
-      <div className="App">
+    <div className="App">
         <header className="App-header">
           <h1>pyRPC × FastAPI × React</h1>
           <p>Full-stack type safety with FastAPI backend and React frontend</p>
@@ -64,7 +63,6 @@ function App() {
           </div>
         </div>
       </div>
-    </api.Provider>
   );
 }
 
