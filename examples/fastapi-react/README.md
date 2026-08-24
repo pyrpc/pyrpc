@@ -52,12 +52,12 @@ fastapi-react/
 
 ## Key Features Demonstrated
 
-- End-to-end type safetyfrom Python to TypeScript  
-- Automatic type generation** with `pyrpc dev`
-- Create React App** structure and conventions
-- @pyrpc/react** adapter with Provider pattern
-- TanStack Query hooks** for data fetching
-- CORS configuration** for development
+- End-to-end type safety from Python to TypeScript
+- Automatic type generation with `pyrpc dev`
+- Create React App structure and conventions
+- `@pyrpc/react` adapter with Provider pattern
+- TanStack Query hooks for data fetching
+- CORS configuration for development
 
 ## Technologies Used
 

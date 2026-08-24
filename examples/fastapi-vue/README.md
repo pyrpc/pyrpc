@@ -52,12 +52,12 @@ fastapi-vue/
 
 ## Key Features Demonstrated
 
-- End-to-end type safetyfrom Python to TypeScript  
-- Automatic type generation** with `pyrpc dev`
-- Vue 3 Composition API** with `<script setup>`
-- @pyrpc/vue** adapter with plugin pattern
-- TanStack Vue Query** for reactive data
-- Vite** for fast development and building
+- End-to-end type safety from Python to TypeScript
+- Automatic type generation with `pyrpc dev`
+- Vue 3 Composition API with `<script setup>`
+- `@pyrpc/vue` adapter with plugin pattern
+- TanStack Vue Query for reactive data
+- Vite for fast development and building
 
 ## Technologies Used
 
@@ -77,7 +77,7 @@ fastapi-vue/
 To adapt this example:
 1. **Modify procedures** in `server/main.py`
 2. **Run `pyrpc dev`** to regenerate types
-3. **Use new procedures** in Vue components with `pyrpc.procedure.createQuery()`
+3. **Use new procedures** in Vue components with `pyrpc.procedure.useQuery()`
 
 ## Related Examples
 
