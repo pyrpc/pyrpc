@@ -4,9 +4,9 @@ import { pyrpc } from "./pyrpc";
 
 const name = ref("");
 
-const { data: greeting, isPending: isLoadingGreeting } = pyrpc.read_root.createQuery();
-const { data: item } = pyrpc.read_item.createQuery(() => ({ item_id: 42, q: "test" }));
-const createItem = pyrpc.create_item.createMutation();
+const { data: greeting, isPending: isLoadingGreeting } = pyrpc.greet.useQuery({ name: "Flask User" });
+const { data: item } = pyrpc.read_item.useQuery({ item_id: 42, q: "test" });
+const createItem = pyrpc.create_item.useMutation();
 
 const handleCreate = () => {
   if (name.value.trim()) {
@@ -21,8 +21,8 @@ const handleCreate = () => {
 
 <template>
   <div>
-    <h1>pyRPC × FastAPI × Vue</h1>
-    <p>Full-stack type safety with FastAPI backend and Vue frontend</p>
+    <h1>pyRPC × Flask × Vue</h1>
+    <p>Full-stack type safety with Flask backend and Vue frontend</p>
     
     <div class="card">
       <h3>API Response</h3>
