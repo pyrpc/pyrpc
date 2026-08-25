@@ -36,9 +36,7 @@ const AGENT_PROMPT = `Set up pyRPC in my project for end-to-end type safety betw
 
 5. Create lib/pyrpc.ts. Call createClient<Types>() with httpBatchLink({ url: "http://localhost:8000/rpc" }).
 
-6. Replace hand-written fetch calls with typed api.<procedure> calls.
-
-Refer to pyrpc.com/docs for exact API and adapter syntax.`;
+6. Replace hand-written fetch calls with typed api.<procedure> calls.`;
 
 const MCP_COMMAND = 'npx @pyrpc/mcp mcp';
 
@@ -355,8 +353,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Right, tabbed code window: server.py / client.ts — theme aware,
-          same surface treatment as better-auth's hero code block */}
+      {/* Right, tabbed code window: server.py / client.ts — theme aware */}
       <div className="w-full min-w-0">
         <div className="w-full overflow-hidden border border-foreground/[0.08] bg-neutral-50 dark:bg-black">
           <div className="flex items-stretch border-b border-foreground/[0.08]">
