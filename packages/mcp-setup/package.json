@@ -1,0 +1,45 @@
+{
+  "name": "pyrpc",
+  "version": "0.1.0",
+  "description": "Connect your AI coding agent to the pyRPC documentation MCP server.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pyrpc/pyrpc.git",
+    "directory": "packages/mcp-setup"
+  },
+  "homepage": "https://pyrpc.dev/docs/get-started/mcp",
+  "keywords": [
+    "pyrpc",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "claude",
+    "cursor"
+  ],
+  "bin": {
+    "pyrpc": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "add-mcp": "^2.3.0",
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0",
+    "vitest": "^3.2.7"
+  }
+}
