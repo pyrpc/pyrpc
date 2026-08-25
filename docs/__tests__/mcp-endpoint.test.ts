@@ -153,16 +153,9 @@ describe('Metadata endpoint (GET /)', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toMatchObject({
-      name: 'pyrpc-docs',
+      name: 'pyRPC Documentation MCP Server',
       version: '0.1.0',
-      url: 'https://mcp.pyrpc.com/mcp',
-      capabilities: {
-        tools: {
-          search_docs: expect.any(Object),
-          get_doc: expect.any(Object),
-        },
-      },
-      authentication: null,
+      mcp_endpoint: '/mcp',
     });
   });
 
