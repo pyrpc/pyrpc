@@ -33,8 +33,6 @@ export default function HomeClient({
       <div className="relative z-10">
         <HeroSection />
 
-        <McpClientsBar />
-
         {/* Supported Frameworks, full-width hairline, content centered inside */}
         <div className="mt-10 w-full md:mt-12 pt-8 md:pt-10 border-b border-neutral-200 dark:border-white/[0.1]">
           <div className="grid grid-cols-[1fr_min(1200px,100vw)_1fr] items-center">
@@ -78,6 +76,8 @@ export default function HomeClient({
           text2={text2}
           text3={text3}
         />
+
+        <McpClientsBar />
 
         <TestimonialsSection />
 
