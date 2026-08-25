@@ -14,7 +14,7 @@ export interface Release {
 export const releases: Release[] = [
     {
         version: 'v0.14.0',
-        date: '2026-08-25',
+        date: '2026-08-24',
         tag: 'v0.14.0',
         description: 'pyRPC now speaks MCP. Run pyrpc mcp inside your project and AI coding clients work from your real registry: full procedure introspection with JSON Schemas, argument validation that never executes your code, and dry-run-first codegen through the same pipeline as pyrpc codegen.',
         sections: [
@@ -139,7 +139,7 @@ export const releases: Release[] = [
     },
     {
         version: 'v0.12.0',
-        date: '2026-08-12',
+        date: '2026-08-11',
         tag: 'v0.12.0',
         description: 'Generated types are now a real runtime module: codegen emits `<client>/__pyrpc.ts` with a runtime `procedureKinds` map, and pyrpc dev auto-configures bundler aliases so framework adapters only expose the hooks a procedure actually supports.',
         sections: [
@@ -192,7 +192,7 @@ export const releases: Release[] = [
     },
     {
         version: 'v0.11.0',
-        date: '2026-08-11',
+        date: '2026-08-10',
         tag: 'v0.11.0',
         description: 'Multi-client support: pyrpc.json now stores one or more client project roots, and generated types always land at `<client>/__pyrpc.d.ts` with surgical tsconfig path injection via jsonc-edit.',
         sections: [
@@ -274,7 +274,7 @@ export const releases: Release[] = [
     },
     {
         version: 'v0.10.0',
-        date: '2026-08-04',
+        date: '2026-08-08',
         tag: 'v0.10.0',
         description: 'Zero-config setup: pyrpc dev wizard, tsconfig paths injection, source-tree type generation, server-detection, and 12 full-stack examples (FastAPI/Flask/Django x React/Next.js/Vue/Svelte).',
         sections: [
@@ -382,7 +382,7 @@ export const releases: Release[] = [
     },
     {
         version: 'v0.8.0',
-        date: '2026-06-14',
+        date: '2026-06-13',
         tag: 'v0.8.0',
         description: 'npx daemon 715× speedup for type generation and reduced file watcher debounce.',
         sections: [
@@ -405,7 +405,7 @@ export const releases: Release[] = [
     },
     {
         version: 'v0.7.7',
-        date: '2026-06-14',
+        date: '2026-06-13',
         tag: 'v0.7.7',
         description: 'Windows npx.cmd fix via jsonschema-ts v0.2.1.',
         sections: [
@@ -426,7 +426,7 @@ export const releases: Release[] = [
     },
     {
         version: 'v0.7.6',
-        date: '2026-06-14',
+        date: '2026-06-13',
         tag: 'v0.7.6',
         description: 'Dependency pin fix and dynamic __version__ in CLI.',
         sections: [
@@ -450,7 +450,7 @@ export const releases: Release[] = [
     },
     {
         version: 'v0.7.5',
-        date: '2026-06-14',
+        date: '2026-06-13',
         tag: 'v0.7.5',
         description: 'CLI daemonizes and automatically installs adapters via npm, removing manual pip install steps.',
         sections: [

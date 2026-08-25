@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const MCP_HOST = 'mcp.pyrpc.com';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const hostname = request.headers.get('host')?.split(':')[0] ?? '';
 
   if (hostname === MCP_HOST) {
