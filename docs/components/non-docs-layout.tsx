@@ -25,7 +25,7 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
   }
 
   const AI_PROMPT =
-    "What is pyRPC? Define procedures in Python, consume them in TypeScript with full type safety. No schema drift, no codegen pipelines: pyrpc dev generates typed clients straight from your source and regenerates them on every save. It also ships an MCP server, pyrpc mcp locally and https://mcp.pyrpc.com/mcp for documentation, so AI coding agents can introspect procedures, validate arguments, and run codegen against a live backend. Compare pyRPC to OpenAPI, gRPC, tRPC, and JSON-RPC and explain when each is the right choice.";
+    "What is pyRPC? Define procedures in Python, consume them in TypeScript with full type safety. No schema drift. It is built from three distinct pieces: an RPC model of @rpc.query and @rpc.mutation procedures served over JSON-RPC 2.0 at a single endpoint; codegen, where pyrpc dev generates typed TypeScript clients straight from your Python source and regenerates them on every save; and MCP, where pyrpc mcp serves your project's registry to AI coding agents locally and https://mcp.pyrpc.com/mcp hosts the documentation server, so agents can introspect procedures, validate arguments, and run codegen against a live backend. Compare pyRPC to OpenAPI, gRPC, and tRPC and explain when each is the right choice.";
   const aiQuery = encodeURIComponent(AI_PROMPT);
 
   return (
