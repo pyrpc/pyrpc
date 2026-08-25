@@ -19,7 +19,7 @@ html {
   overflow-y: auto;
   overflow-x: hidden;
   /* Anchored headings land below the fixed 3.5rem header with breathing
-     room — same offset math better-auth.com uses. */
+     room. */
   scroll-padding-top: calc(3.5rem + 24px);
 }
 
@@ -35,9 +35,9 @@ body {
   margin: 0;
 }
 
-/* Light mode, warm neutral scale matching better-auth.com's light theme
-   (same oklch values as their :root). Fumadocs consumes the --color-fd-*
-   set from fumadocs-ui/css/black.css, identical to better-auth's import;
+/* Light mode, warm neutral scale.
+   Fumadocs consumes the --color-fd-*
+   set from fumadocs-ui/css/black.css;
    the shadcn-style tokens here document the same palette for hand-rolled
    components. */
 :root {
@@ -62,7 +62,7 @@ body {
 }
 
 /* =============================================
-   Dark Mode, better-auth.com parity
+   Dark Mode
    Body stays pure black; the docs shell (#nd-docs-layout, sidebar, TOC)
    follows fumadocs black theme tokens: #050505 canvas.
    ============================================= */
@@ -225,7 +225,7 @@ aside button[aria-label*="Search"] {
   display: none !important;
 }
 
-/* Docs canvas follows the body background exactly like better-auth.com:
+/* Docs canvas follows the body background exactly:
    pure white in light mode, pure black in dark. Only the chrome (sidebar,
    header, toc) carries the fd-background token (#fafafa / #050505) via its
    own component classes — no forced repaints here. */
@@ -429,8 +429,7 @@ aside button[aria-label*="Search"] {
 
 /* =============================================
    Code blocks — flat near-black in dark mode, sharp edges, no
-   gradients (ported from better-auth.com globals.css; both sites
-   use the same fumadocs-ui 16.12 codeblock markup).
+   gradients (standard fumadocs-ui 16.12 codeblock markup).
    ============================================= */
 .dark .shiki {
   background-color: #050505 !important;
@@ -569,7 +568,7 @@ html:not(.dark) .mosaic-tile {
 
 /* =============================================
    Docs page footer nav (prev/next) — sharp, minimal, monospaced.
-   Ported from better-auth.com globals.css; pyrpc's PageFooter renders
+   pyrpc's PageFooter renders
    the same `div.@container` structure directly inside article#nd-page.
    ============================================= */
 #nd-page > div.\@container {

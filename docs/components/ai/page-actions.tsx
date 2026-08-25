@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from 'fumadocs-ui/components/
 const cache = new Map<string, string>();
 
 /**
- * Shared styling for the docs page actions, ported from better-auth.com:
+ * Shared styling for the docs page actions:
  * small uppercase monospace-ish labels that sit quietly next to the title
  * and only reveal a hairline border on hover.
  */
