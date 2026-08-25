@@ -24,7 +24,9 @@ export function NonDocsLayout({ children }: { children: ReactNode }) {
     )
   }
 
-  const aiQuery = "What+is+pyRPC%3F+It+is+a+Python+library+that+provides+tRPC-level+type+safety+for+teams+shipping+Python+backends+with+TypeScript+frontends.+Procedures+are+defined+in+Python+and+called+from+TypeScript+with+full+type+safety+-+no+schemas,+no+drift,+no+boilerplate.+Compare+it+to+alternatives+like+OpenAPI,+gRPC,+and+JSON-RPC+and+explain+when+to+use+it."
+  const AI_PROMPT =
+    "What is pyRPC? Define procedures in Python, consume them in TypeScript with full type safety. No schema drift, no codegen pipelines: pyrpc dev generates typed clients straight from your source and regenerates them on every save. It also ships an MCP server, pyrpc mcp locally and https://mcp.pyrpc.com/mcp for documentation, so AI coding agents can introspect procedures, validate arguments, and run codegen against a live backend. Compare pyRPC to OpenAPI, gRPC, tRPC, and JSON-RPC and explain when each is the right choice.";
+  const aiQuery = encodeURIComponent(AI_PROMPT);
 
   return (
     <div className="relative min-h-screen">
