@@ -14,7 +14,7 @@ const MCP_CLIENTS = [
 ];
 
 const LogosList = () => (
-  <ul className="m-0 flex shrink-0 items-center gap-10 p-0 px-10">
+  <ul className="m-0 flex shrink-0 items-center gap-8 p-0">
     {MCP_CLIENTS.map((client) => (
       <li key={client.name} className="m-0 flex list-none items-center gap-2.5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
