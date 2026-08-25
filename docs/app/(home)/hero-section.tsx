@@ -20,13 +20,25 @@ const STR = 'text-emerald-700 dark:text-[#97c983]';
 const TYPE = 'italic text-neutral-500 dark:text-[#a3a3a3]';
 const DIM = 'text-neutral-400 dark:text-[#6b6b6b]';
 
-const AGENT_PROMPT = `Set up pyRPC in this repo: Python backend, TypeScript frontend, end-to-end type safety.
+const AGENT_PROMPT = `Set up pyRPC in my project for end-to-end type safety between my Python backend and my TypeScript frontend (pyrpc-core on the server, @pyrpc/client on the client).
 
-Install pyrpc-core with uv (fall back to pip if the project uses pip), preferring the [mcp] extra. If FastAPI, Flask, or Django is already configured, mount the RPC router into the existing app instead of creating a new one. Add server.py with a few @model schemas and @rpc procedures, then run pyrpc dev: it serves the backend and regenerates the TypeScript types on every save.
+1. Install pyrpc-core. Use uv if the project already uses it, otherwise pip. If FastAPI, Flask, or Django is already configured, mount the RPC router into my existing app instead of creating a new one.
 
-On the frontend, install @pyrpc/client plus the adapter matching the framework in use, wire api.ts with createClient<Types>() and httpBatchLink pointed at the server URL, and replace hand-written fetch calls with typed api.<procedure> calls.
+2. Create main.py. Define request and response models with @model and expose them as procedures with @rpc.query and @rpc.mutation.
 
-Finally, wire up the AI layer: run npx @pyrpc/mcp mcp to give your agents the hosted pyRPC docs server (search the docs without leaving the editor), and add the local project server from the [mcp] extra to your agent config (claude mcp add pyrpc -- pyrpc mcp or equivalent) so sessions can introspect procedures, validate payloads, and run codegen against this live registry.`;
+3. Run pyrpc dev. It starts the dev server and regenerates the typed client on every save. First run walks through a short setup wizard; pass --yes to skip it.
+
+4. Install @pyrpc/client plus the adapter for my frontend framework:
+   - React: @pyrpc/react
+   - Next.js: @pyrpc/next
+   - Vue: @pyrpc/vue
+   - Svelte: @pyrpc/svelte
+
+5. Create lib/pyrpc.ts. Call createClient<Types>() with httpBatchLink({ url: "http://localhost:8000/rpc" }).
+
+6. Replace hand-written fetch calls with typed api.<procedure> calls.
+
+Refer to pyrpc.com/docs for exact API and adapter syntax.`;
 
 const MCP_COMMAND = 'npx @pyrpc/mcp mcp';
 
