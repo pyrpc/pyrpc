@@ -55,6 +55,7 @@ Framework adapters are available as extras, the adapter is included in the same 
 pip install pyrpc-core[fastapi]   # FastAPI
 pip install pyrpc-core[flask]     # Flask
 pip install pyrpc-core[django]    # Django
+pip install pyrpc-core[mcp]       # MCP (AI agent integration)
 ```
 
 ## Quick Start
