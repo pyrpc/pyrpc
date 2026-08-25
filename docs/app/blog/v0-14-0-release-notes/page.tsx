@@ -37,7 +37,7 @@ export default function V0140ReleaseNotes() {
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Remote documentation MCP</h2>
                 <p>
-                    A second server lives at <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">mcp.pyrpc.com/mcp</code> and serves pyRPC documentation. Launch it with <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">npx pyrpc mcp</code>. It is read-only, requires no authentication, and carries zero access to your project. The agent gets up-to-date docs without leaving the IDE.
+                    A second server lives at <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">mcp.pyrpc.com/mcp</code> and serves pyRPC documentation. Launch it with <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">npx @pyrpc/mcp mcp</code>. It is read-only, requires no authentication, and carries zero access to your project. The agent gets up-to-date docs without leaving the IDE.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Architecture</h2>

@@ -8,7 +8,7 @@ export default function McpWithoutALauncher() {
                     &larr; Back to Blog
                 </Link>
                 <h1 className="text-2xl font-bold tracking-tight mt-6 mb-3">
-                    MCP Without a Launcher: The npx pyrpc mcp Pattern
+                    MCP Without a Launcher: The npx @pyrpc/mcp mcp Pattern
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
                     <time>August 25, 2026</time>
@@ -27,12 +27,12 @@ export default function McpWithoutALauncher() {
                     The MCP ecosystem has at least 19 recognized agent config formats. They differ in location, syntax, nesting depth, and how they reference server commands. A launcher that writes them all must track each format, handle version drift, and cope with agents that reorganize their configs between releases. That is a maintenance surface disguised as a convenience.
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What npx pyrpc mcp actually wraps</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What npx @pyrpc/mcp mcp actually wraps</h2>
                 <p>
                     The distribution CLI calls add-mcp@2.3.0, an Apache-2.0 ESM package whose sole job is understanding all 19 agent config formats. It detects which agents are installed, presents a multiselect, and calls upsertServer() per agent to update config files atomically. pyRPC does not shell out to the add-mcp CLI, maintain its own agent database, or handle any protocol details.
                 </p>
 
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`npx pyrpc mcp
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`npx @pyrpc/mcp mcp
   -> detects installed agents (Cursor, Claude, Windsurf, ...)
   -> multiselect prompt
   -> upsertServer() per selected agent
@@ -62,7 +62,7 @@ for (const agent of selected) {
   try {
     await upsertServer(agent, {
       name: "pyrpc",
-      command: "npx pyrpc mcp",
+      command: "npx @pyrpc/mcp mcp",
     });
     report(agent, "updated");
   } catch (e) {

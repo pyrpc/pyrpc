@@ -35,7 +35,7 @@ export default function LocalVsRemoteTrustBoundary() {
                     The documentation MCP lives at <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">mcp.pyrpc.com/mcp</code>. It serves pyRPC documentation, adapter guides, and procedure reference material. It is read-only, requires no authentication, and carries zero access to any user&rsquo;s codebase.
                 </p>
                 <p>
-                    Launch it with <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">npx pyrpc mcp</code>. The agent gets up-to-date documentation without leaving the IDE, and the server gets nothing in return but the query.
+                    Launch it with <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">npx @pyrpc/mcp mcp</code>. The agent gets up-to-date documentation without leaving the IDE, and the server gets nothing in return but the query.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The trust boundary</h2>
