@@ -7,14 +7,14 @@ const MCP_CLIENTS = [
   { name: "Windsurf", icon: "https://cdn.simpleicons.org/windsurf" },
   { name: "Cline", icon: "https://cdn.simpleicons.org/cline" },
   { name: "Zed", icon: "https://cdn.simpleicons.org/zedindustries" },
-  { name: "Codex", icon: "https://cdn.simpleicons.org/openai" },
+  { name: "Codex", icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/openai.svg" },
   { name: "Grok", icon: "https://cdn.simpleicons.org/x" },
   { name: "Antigravity", icon: "https://cdn.simpleicons.org/googlegemini" },
   { name: "OpenCode", icon: "https://cdn.simpleicons.org/opencode" },
 ];
 
 const LogosList = () => (
-  <ul className="m-0 flex shrink-0 items-center gap-8 p-0">
+  <ul className="m-0 flex shrink-0 items-center gap-8 p-0 px-4">
     {MCP_CLIENTS.map((client) => (
       <li key={client.name} className="m-0 flex list-none items-center gap-2.5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -39,7 +39,7 @@ export default function McpClientsBar() {
           Connect MCP clients to pyRPC:
         </p>
         <div className="relative mx-auto w-full min-w-0 overflow-hidden lg:max-w-none lg:px-8 md:px-5">
-          <div className="flex w-max animate-[scroll-logos_30s_linear_infinite] hover:[animation-play-state:paused]">
+          <div className="flex w-max animate-[scroll-logos_45s_linear_infinite] hover:[animation-play-state:paused]">
             <LogosList />
             <LogosList />
           </div>
