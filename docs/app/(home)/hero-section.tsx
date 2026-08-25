@@ -26,7 +26,7 @@ Install pyrpc-core (use uv if the project already uses it, otherwise pip). If I 
 
 On the frontend, install @pyrpc/client, create api.ts with createClient<Types>() and httpBatchLink pointing at my server URL, then replace any hand-written fetch calls with typed api.<procedure> calls.`;
 
-const MCP_COMMAND = 'pyrpc mcp';
+const MCP_COMMAND = 'npx pyrpc mcp';
 
 function LineNumbers({ count }: { count: number }) {
   return (
