@@ -37,7 +37,7 @@ export default function HowToSetUpMcpInUnder5Minutes() {
 uv add "pyrpc-core[mcp]"
 
 # 2. Register with your agent
-uv run pyrpc mcp
+pyrpc mcp
 
 # 3. Verify it works
 # Ask your agent: "introspect my project"`}</code></pre>
@@ -49,7 +49,7 @@ uv run pyrpc mcp
                     <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">uv add "pyrpc-core[mcp]"</code> installs pyRPC core with the optional MCP extra. The MCP Python SDK becomes available. No other packages are needed.
                 </p>
                 <p>
-                    <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">uv run pyrpc mcp</code> detects your agent, writes the stdio server config, and registers it. For Claude Code it writes <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">.claude/settings.json</code>. For Cursor it writes <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">.cursor/mcp.json</code>. For VS Code it writes <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">.vscode/mcp.json</code>.
+                    <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">pyrpc mcp</code> detects your agent, writes the stdio server config, and registers it. For Claude Code it writes <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">.claude/settings.json</code>. For Cursor it writes <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">.cursor/mcp.json</code>. For VS Code it writes <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">.vscode/mcp.json</code>.
                 </p>
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The it-just-works principle</h2>
                 <p>
@@ -62,7 +62,7 @@ Remote (30s)                   Local (5min)
 npx pyrpc mcp                  uv add "pyrpc-core[mcp]"
   |                              |
   v                              v
-select agent                   uv run pyrpc mcp
+select agent                   pyrpc mcp
   |                              |
   v                              v
 done                           verify with agent
@@ -85,7 +85,7 @@ framework docs                 full code introspection
                     <strong>MCP SDK not installed.</strong> Re-run <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">uv add "pyrpc-core[mcp]"</code>. The extra is required for the <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">mcp</code> subcommand.
                 </p>
                 <p>
-                    <strong>Server crashes on start.</strong> Run <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">uv run pyrpc mcp</code> directly and check stderr. Import errors in your entrypoint are the usual cause.
+                    <strong>Server crashes on start.</strong> Run <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">pyrpc mcp</code> directly and check stderr. Import errors in your entrypoint are the usual cause.
                 </p>
             </section>
         </article>

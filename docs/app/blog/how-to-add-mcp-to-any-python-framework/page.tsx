@@ -44,7 +44,7 @@ export default function HowToAddMcpToAnyPythonFramework() {
                     Each agent has a different config format. The <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">pyrpc mcp</code> command handles this automatically, but here is what it writes so you understand the surface:
                 </p>
                 <p>
-                    <strong>Claude Code</strong> gets an entry in <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">.claude/settings.json</code> under <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">mcpServers</code>. The command is <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">uv run pyrpc mcp</code> and the transport is stdio.
+                    <strong>Claude Code</strong> gets an entry in <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">.claude/settings.json</code> under <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">mcpServers</code>. The command is <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">pyrpc mcp</code> and the transport is stdio.
                 </p>
                 <p>
                     <strong>Cursor</strong> gets an entry in <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">.cursor/mcp.json</code> with the same command shape.
@@ -101,7 +101,7 @@ agent reads procedure tree
                     <strong>&ldquo;MCP SDK not installed&rdquo;</strong> means you forgot the extra. Re-run <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">uv add "pyrpc-core[mcp]"</code> and check that <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">uv pip list | grep mcp</code> shows the SDK.
                 </p>
                 <p>
-                    <strong>&ldquo;Tool call failed&rdquo;</strong> in the agent usually means the stdio process crashed. Check stderr from <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">uv run pyrpc mcp</code> directly. Import errors and missing dependencies are the usual suspects.
+                    <strong>&ldquo;Tool call failed&rdquo;</strong> in the agent usually means the stdio process crashed. Check stderr from <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">pyrpc mcp</code> directly. Import errors and missing dependencies are the usual suspects.
                 </p>
             </section>
         </article>

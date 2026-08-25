@@ -19,155 +19,106 @@ export default function GettingStartedWithMcp() {
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    pyRPC has two MCP surfaces: a remote server that provides documentation to agents, and a local server that provides your project's API to agents. This guide walks through setting up both, then combining them.
+                    pyRPC has two MCP surfaces: a remote server that provides documentation to agents, and a local server that provides your project&apos;s API to agents. This guide walks through setting up both, then combining them.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Prerequisites</h2>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`Python 3.11+
-Node.js 18+
-uv (https://docs.astral.sh/uv/getting-started/installation/)`}</code></pre>
+                <ul className="list-disc pl-5 space-y-2">
+                    <li>Python 3.11 or later</li>
+                    <li>Node.js 18 or later</li>
+                    <li><a href="https://docs.astral.sh/uv/getting-started/installation/" className="text-fd-foreground underline underline-offset-2 hover:text-fd-muted-foreground transition-colors">uv</a> installed</li>
+                </ul>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Part 1: Remote Documentation MCP (5 minutes)</h2>
                 <p>
                     The remote MCP server provides pyRPC documentation to your agent. No project setup required.
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`# Step 1: Start the remote MCP server
-npx pyrpc mcp
 
-# The CLI will prompt you to select an agent.
-# Choose your agent (Claude, Cursor, VS Code, etc.)
-# and it will configure the MCP server automatically.`}</code></pre>
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`npx pyrpc mcp`}</code></pre>
                 <p>
-                    Verify the connection by asking your agent to search for something. Try:
+                    The CLI detects which AI coding agents are installed on your system and lets you select which ones to configure. It writes the MCP server URL (<code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">https://mcp.pyrpc.com/mcp</code>) into each agent&apos;s config file.
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`"Search the pyRPC docs for FastAPI integration"
-
-# The agent should return results from the documentation,
-# including relevant guide pages and code examples.`}</code></pre>
                 <p>
-                    That is it. Your agent now has access to the full pyRPC documentation. It can search for topics, read pages, and answer questions about pyRPC without leaving your editor.
+                    Verify the connection by asking your agent to search for something:
+                </p>
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`"Search the pyRPC docs for FastAPI integration"`}</code></pre>
+                <p>
+                    The agent should return results from the documentation, including relevant guide pages and code examples. That is it. Your agent now has access to the full pyRPC documentation.
                 </p>
 
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Part 2: Local Project MCP (15 minutes)</h2>
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Part 2: Local Project MCP (5 minutes)</h2>
                 <p>
-                    The local MCP server provides your project's actual API to your agent. This is where the real power is.
+                    The local MCP server provides your project&apos;s actual API to your agent. This is where the real power is.
                 </p>
 
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`# Step 1: Create a pyRPC project (skip if you have one)
-mkdir my-project && cd my-project
-pyrpc init
-
-# Step 2: Add MCP support to your project
-uv add "pyrpc-core[mcp]"
-
-# Step 3: Register the local MCP with your agent
-# This adds the local server to your agent's config
-npx pyrpc mcp --local`}</code></pre>
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`# Add MCP support to your project
+uv add "pyrpc-core[mcp]"`}</code></pre>
+                <p>
+                    Then register the local server with your agent. For Claude Code:
+                </p>
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`claude mcp add pyrpc -- pyrpc mcp`}</code></pre>
+                <p>
+                    For other agents, add the MCP entry manually to their config:
+                </p>
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`{
+  "mcpServers": {
+    "pyrpc": {
+      "command": "pyrpc",
+      "args": ["mcp"]
+    }
+  }
+}`}</code></pre>
 
                 <p>
                     Now try the three core tools:
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`# Tool 1: introspect_project
-# Ask your agent: "What procedures does my project expose?"
-# The agent calls introspect_project and sees every registered
-# procedure with full parameter schemas.
-
-# Tool 2: check_call
-# Ask your agent: "Would calling create_user with email=test@example.com work?"
-# The agent calls check_call and gets back:
-# { "valid": true } or per-parameter errors if something is wrong.
-
-# Tool 3: run_codegen
-# Ask your agent: "Generate a React hook for create_user"
-# The agent calls run_codegen with dry_run=true, sees the output,
-# and writes it only after approval.`}</code></pre>
+                <ul className="list-disc pl-5 space-y-2">
+                    <li><strong>introspect_project:</strong> Ask &ldquo;What procedures does my project expose?&rdquo; The agent sees every registered procedure with full parameter schemas.</li>
+                    <li><strong>check_call:</strong> Ask &ldquo;Would calling create_user with email=test@example.com work?&rdquo; The agent gets back per-parameter errors if something is wrong.</li>
+                    <li><strong>run_codegen:</strong> Ask &ldquo;Generate a React hook for create_user&rdquo; The agent runs codegen with dry_run=true first, then writes it only after approval.</li>
+                </ul>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Part 3: Both together</h2>
                 <p>
                     Configure both servers in the same agent. This gives your agent two capabilities: understanding your project and understanding pyRPC.
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`# Your agent config (e.g., .claude/config.json)
-{
-  "mcpServers": {
-    "pyrpc-docs": {
-      "command": "npx",
-      "args": ["pyrpc", "mcp"],
-      "description": "pyRPC documentation server"
-    },
-    "pyrpc-project": {
-      "command": "npx",
-      "args": ["pyrpc", "mcp", "--local"],
-      "description": "Local project API server"
-    }
-  }
-}`}</code></pre>
                 <p>
-                    Now the agent can answer "how do I add authentication?" using the remote docs server, and "what procedures does my app expose?" using the local server. It switches between them based on context.
+                    Now the agent can answer &ldquo;how do I add authentication?&rdquo; using the remote docs server, and &ldquo;what procedures does my app expose?&rdquo; using the local server. It switches between them based on context.
                 </p>
-
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Setup checklist</h2>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`  Remote Documentation MCP
-  [x] Node.js 18+ installed
-  [x] npx pyrpc mcp run
-  [x] Agent selected and configured
-  [x] Tested: search for a topic
-  [x] Verified: agent reads doc pages
-
-  Local Project MCP
-  [x] Python 3.11+ installed
-  [x] uv installed
-  [x] pyRPC project exists (pyrpc init)
-  [x] pyrpc-core[mcp] added to dependencies
-  [x] Local MCP registered with agent
-  [x] Tested: introspect_project
-  [x] Tested: check_call
-  [x] Tested: run_codegen (dry run)
-
-  Both Together
-  [x] Both servers in agent config
-  [x] Verified: agent uses docs for questions
-  [x] Verified: agent uses local for your code`}</code></pre>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Troubleshooting</h2>
 
                 <p>
-                    <strong>1. "npx pyrpc mcp" hangs or times out</strong>
+                    <strong>npx pyrpc mcp hangs or times out</strong>
                 </p>
                 <p>
-                    The MCP server communicates over stdio. Make sure your agent is configured to use stdio transport, not HTTP. If you see a timeout, check that Node.js 18+ is installed by running node --version.
-                </p>
-
-                <p>
-                    <strong>2. introspect_project returns "no config found"</strong>
-                </p>
-                <p>
-                    The local MCP server looks for pyrpc.json in your project root. Make sure you are running npx pyrpc mcp --local from the directory that contains pyrpc.json. If you have not created one yet, run pyrpc init.
+                    The MCP server communicates over stdio. Make sure your agent is configured to use stdio transport, not HTTP. Check that Node.js 18+ is installed by running <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">node --version</code>.
                 </p>
 
                 <p>
-                    <strong>3. check_call says "procedure not found"</strong>
+                    <strong>introspect_project returns &ldquo;no config found&rdquo;</strong>
                 </p>
                 <p>
-                    The procedure name must match exactly, including the namespace. If your procedure is registered under users.create_user, call it as users.create_user, not create_user. Run introspect_project to see the full qualified names.
-                </p>
-
-                <p>
-                    <strong>4. Agent does not see the MCP tools</strong>
-                </p>
-                <p>
-                    Restart your agent after adding the MCP server to its config. Most agents only read MCP configuration at startup. If the tools still do not appear, check the agent's MCP logs for connection errors.
+                    The local MCP server looks for <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">pyrpc.json</code> in your project root. Make sure you are running from the directory that contains it. If you have not created one yet, run <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">pyrpc init</code>.
                 </p>
 
                 <p>
-                    <strong>5. "uv add" fails with dependency conflict</strong>
+                    <strong>Client shows no tools</strong>
                 </p>
                 <p>
-                    Make sure your project uses a compatible pyrpc version. Run uv pip list | grep pyrpc to check. If you need to update, run uv add "pyrpc-core&gt;=0.13.0" to get the version that includes MCP support.
+                    Confirm <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">uv add &quot;pyrpc-core[mcp]&quot;</code> succeeded. Restart your agent after adding the MCP server. Most agents only read MCP configuration at startup.
+                </p>
+
+                <p>
+                    <strong>ModuleNotFoundError on import</strong>
+                </p>
+                <p>
+                    A dependency of your entrypoint module is missing from the environment running the MCP server. Verify <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">pyrpc dev</code> works in the same checkout.
                 </p>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Next steps</h2>
                 <p>
-                    With both MCP servers running, explore the full documentation at pyrpc.dev, join the community to ask questions and share what you build, or contribute to the project itself. The two-server pattern scales: add more MCP servers for your database, your deployment platform, or any other tool your agent needs to understand.
+                    With both MCP servers running, explore the full documentation, join the community to ask questions and share what you build, or contribute to the project itself. The two-server pattern scales: add more MCP servers for your database, your deployment platform, or any other tool your agent needs to understand.
                 </p>
             </section>
         </article>
