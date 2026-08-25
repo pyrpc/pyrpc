@@ -27,6 +27,11 @@ export default function QuickstartSection({
   text2: string;
   text3: string;
 }) {
+  const Command = ({ children }: { children: React.ReactNode }) => (
+    <code className="inline-block rounded border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] font-medium text-neutral-800 dark:border-white/10 dark:bg-white/[0.06] dark:text-white/90">
+      {children}
+    </code>
+  );
   const [active, setActive] = useState(0);
   const [copied, setCopied] = useState(false);
 
@@ -35,8 +40,11 @@ export default function QuickstartSection({
       label: 'Install pyRPC',
       filename: 'server.py',
       icon: PYTHON_ICON,
-      description:
-        'uv add pyrpc-core installs the core runtime with Pydantic-powered validation and async support.',
+      description: (
+        <>
+          <Command>uv add pyrpc-core</Command> installs the core runtime with Pydantic-powered validation and async support.
+        </>
+      ),
       code: snippet1,
       text: text1,
     },
@@ -44,8 +52,11 @@ export default function QuickstartSection({
       label: 'Generate types',
       filename: '__pyrpc.ts',
       icon: TS_ICON,
-      description:
-        'pyrpc dev serves your procedures and regenerates the TypeScript types on every save.',
+      description: (
+        <>
+          <Command>pyrpc dev</Command> serves your procedures and regenerates the TypeScript types on every save.
+        </>
+      ),
       code: snippet2,
       text: text2,
     },
@@ -53,8 +64,11 @@ export default function QuickstartSection({
       label: 'Call it from TypeScript',
       filename: 'client.ts',
       icon: TS_ICON,
-      description:
-        'Install @pyrpc/client in your frontend. Full inference, no manual codegen, no schema drift.',
+      description: (
+        <>
+          Install <Command>@pyrpc/client</Command> in your frontend. Full inference, no manual codegen, no schema drift.
+        </>
+      ),
       code: snippet3,
       text: text3,
     },
