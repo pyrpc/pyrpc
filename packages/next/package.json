@@ -55,9 +55,9 @@
     "@pyrpc/react": "*",
     "@pyrpc/types": "*",
     "@tanstack/react-query": "^5.83.0",
-    "@types/react": "^19.1.8",
+    "@types/react": "^19.2.18",
     "next": "^15.4.2",
-    "react": "^19.1.0",
+    "react": "^19.2.8",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^3.0.0"
