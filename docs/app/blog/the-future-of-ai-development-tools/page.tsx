@@ -43,7 +43,7 @@ export default function TheFutureOfAiDevelopmentTools() {
            - serves pyRPC documentation
            - answers "how do I" questions
            - provides examples and patterns
-           - runs on pyrpc.dev`}</code></pre>
+           - runs on pyrpc.com`}</code></pre>
 
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Agent-first design</h2>
                 <p>
