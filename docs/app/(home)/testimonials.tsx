@@ -110,7 +110,7 @@ function initials(name: string) {
 
 export default function TestimonialsSection() {
   return (
-    <div className="mt-16 w-full border-t border-neutral-200 pt-8 dark:border-white/[0.1] md:mt-20 md:pt-10">
+    <div className="mt-10 w-full border-t border-neutral-200 pt-8 dark:border-white/[0.1] md:mt-12 md:pt-10">
       <div className="mx-auto max-w-[1200px] px-6 md:px-10">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
