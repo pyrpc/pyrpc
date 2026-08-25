@@ -42,20 +42,16 @@
 > pyRPC is in active development. APIs may change as we approach a stable release. Read the [changelog](https://pyrpc.com/changelog) and [roadmap](./ROADMAP.md) for direction.
 
 ```bash
-# Using uv
 uv add pyrpc-core
-
-# Using pip
-pip install pyrpc-core
 ```
 
 Framework adapters are available as extras, the adapter is included in the same install:
 
 ```bash
-pip install pyrpc-core[fastapi]   # FastAPI
-pip install pyrpc-core[flask]     # Flask
-pip install pyrpc-core[django]    # Django
-pip install pyrpc-core[mcp]       # MCP (AI agent integration)
+uv add pyrpc-core[fastapi]   # FastAPI
+uv add pyrpc-core[flask]     # Flask
+uv add pyrpc-core[django]    # Django
+uv add pyrpc-core[mcp]       # MCP (AI agent integration)
 ```
 
 ## Quick Start
