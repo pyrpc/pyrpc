@@ -1,6 +1,7 @@
 "use client";
 
 import HeroSection from "./hero-section";
+import McpClientsBar from "./mcp-clients-bar";
 import FeatureSections, { FRAMEWORKS } from "./feature-sections";
 import CTASection from "./cta-section";
 import TestimonialsSection from "./testimonials";
@@ -31,6 +32,8 @@ export default function HomeClient({
 
       <div className="relative z-10">
         <HeroSection />
+
+        <McpClientsBar />
 
         {/* Supported Frameworks, full-width hairline, content centered inside */}
         <div className="mt-10 w-full md:mt-12 pt-8 md:pt-10 border-b border-neutral-200 dark:border-white/[0.1]">
