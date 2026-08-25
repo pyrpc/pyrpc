@@ -22,6 +22,7 @@ pyrpc/
 │   ├── next/            # Next.js adapter (@pyrpc/next)
 │   ├── vue/             # Vue adapter (@pyrpc/vue)
 │   ├── svelte/          # Svelte adapter (@pyrpc/svelte)
+│   ├── mcp/             # MCP distribution CLI (@pyrpc/mcp, npm)
 │   ├── pyrpc-core/      # Python runtime + CLI (dev, watch, serve, codegen, pull, inspect)
 │   ├── pyrpc-codegen/   # Python codegen library (pure, standalone)
 │   ├── pyrpc-fastapi/   # FastAPI adapter
@@ -63,6 +64,7 @@ PRs should be scoped to one subsystem. A single PR touching core, adapters, and 
 | Adapter | `packages/pyrpc-fastapi/`, `packages/pyrpc-flask/`, `packages/pyrpc-django-adapter/` | Correct HTTP translation, error mapping, framework integration |
 | Client | `packages/client/`, `packages/types/` | TypeScript ergonomics, type inference, API surface |
 | Codegen | `packages/pyrpc-codegen/` | Type mapping accuracy, output correctness, introspection alignment |
+| MCP | `packages/mcp/` (npm `@pyrpc/mcp`), `packages/pyrpc-core/src/pyrpc_core/mcp_server.py` | Agent configuration, tool schemas, protocol compliance, add-mcp integration |
 | Docs | `docs/` | Accuracy, build output |
 | Release | `scripts/`, root config | Version consistency, tag discipline |
 
@@ -92,7 +94,7 @@ security(codegen): tighten path traversal guard
 
 Types: `feat`, `fix`, `chore`, `docs`, `perf`, `refactor`, `test`, `build`, `ci`, `security`.
 
-Common scopes: `core`, `adapter`, `client`, `codegen`, `docs`, `release`, `cli`.
+Common scopes: `core`, `adapter`, `client`, `codegen`, `mcp`, `docs`, `release`, `cli`.
 
 Within a PR, individual commit messages can be free-form (they get squashed or grouped).
 
@@ -115,6 +117,7 @@ The same workflow also runs these informational (non-required) jobs: `lint-docs`
 | Tests + coverage floor | `uv run pytest --cov=pyrpc_core --cov=pyrpc_codegen --cov=pyrpc_fastapi --cov=pyrpc_flask --cov=pyrpc_django --cov-fail-under=78` |
 | Types (packages) | `npm run typecheck --workspaces --if-present` |
 | Lint (packages) | `npm run lint:packages` |
+| Tests (mcp) | `cd packages/mcp && npx vitest run` |
 | Examples | `uv pip install flask-cors django-cors-headers && uv run python scripts/verify_examples.py` |
 | Docs code blocks | `uv run python scripts/check_docs_code.py` |
 

@@ -23,6 +23,7 @@ body:
         - "@pyrpc/next (Next.js adapter)"
         - "@pyrpc/vue (Vue adapter)"
         - "@pyrpc/svelte (Svelte adapter)"
+        - "@pyrpc/mcp (MCP distribution CLI)"
         - docs / examples
         - release / tooling
     validations:

@@ -113,6 +113,6 @@ When adding new examples:
 
 ## Learn More
 
-- [pyRPC Documentation](https://pyrpc.dev)
+- [pyRPC Documentation](https://pyrpc.com)
 - [pyRPC GitHub](https://github.com/pyrpc/pyrpc)
-- [Tutorial: Building a Full-Stack App](https://pyrpc.dev/blog/building-a-full-stack-app-with-pyrpc)
+- [Tutorial: Building a Full-Stack App](https://pyrpc.com/blog/building-a-full-stack-app-with-pyrpc)

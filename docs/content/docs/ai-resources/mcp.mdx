@@ -1,62 +1,247 @@
 ---
 title: MCP
-description: Connect pyRPC documentation to MCP-capable clients via the documentation MCP server.
+description: Connect AI coding agents to pyRPC - the hosted documentation server and your own local project.
 ---
 
-pyRPC ships a **documentation MCP server** that exposes docs search, examples, and setup help to any MCP-capable client (Cursor, Claude Code, Open Code, and others).
+pyRPC ships two distinct MCP surfaces. They solve different problems and can
+be used together.
 
-## Using the CLI
+## Which MCP should I use?
 
-Run the pyRPC CLI and pick your client:
+| | Local Project MCP | Remote Documentation MCP |
+|---|---|---|
+| Purpose | Your application: routers, procedures, schemas, backend config, generated client | pyRPC itself: docs, APIs, concepts, usage |
+| Runs | Your machine | pyRPC infrastructure |
+| Needs Python | Yes | No |
+| Needs a pyRPC project | Yes | No |
+| Transport | stdio (subprocess) | Streamable HTTP |
+| Install | `uv add "pyrpc-core[mcp]"` then `pyrpc mcp` | `npx pyrpc mcp` |
+| Server | launched by your client from your project | `https://mcp.pyrpc.com/mcp` |
 
-```bash title="terminal"
+An agent can have both configured at once. The local one understands "my
+application"; the remote one understands "pyRPC".
+
+## Remote Documentation MCP
+
+The hosted documentation server exposes read-only search and retrieval over
+the entire pyRPC documentation. No Python installation and no pyRPC project
+are required.
+
+```bash
 npx pyrpc mcp
 ```
 
-With no flags, the command lists supported targets. You can pass a target directly:
+This command configures your AI coding client to use:
 
-<Tabs items={["Cursor", "Claude Code", "Open Code", "Manual"]}>
-  <Tab value="Cursor">
-    ```bash title="terminal"
-    npx pyrpc mcp --cursor
-    ```
+```
+https://mcp.pyrpc.com/mcp
+```
 
-    This opens Cursor with a deeplink so the server is added to your MCP configuration.
-  </Tab>
+It is a thin convenience wrapper around the
+[add-mcp](https://github.com/neon-solutions/add-mcp) configuration engine,
+which maintains native support for 19 coding agents including Claude Code,
+Cursor, VS Code, OpenCode, Windsurf, Codex, Zed, Antigravity, Cline, and
+Gemini CLI. add-mcp is the configuration utility; it is not the MCP server.
 
-  <Tab value="Claude Code">
-    ```bash title="terminal"
-    npx pyrpc mcp --claude-code
-    ```
+Useful flags:
 
-    This runs `claude mcp add` with the pyRPC URL. If that fails, the CLI prints the exact command to run yourself.
-  </Tab>
+```bash
+npx pyrpc mcp --global            # user-level instead of project-level
+npx pyrpc mcp --agent cursor      # configure a specific agent
+npx pyrpc mcp --list              # supported agents
+```
 
-  <Tab value="Open Code">
-    ```bash title="terminal"
-    npx pyrpc mcp --open-code
-    ```
+Prefer the upstream tool directly? It is the same result:
 
-    This merges a `pyrpc` entry into `opencode.json` in the current directory (remote transport).
-  </Tab>
+```bash
+npx add-mcp https://mcp.pyrpc.com/mcp
+```
 
-  <Tab value="Manual">
-    ```bash title="terminal"
-    npx pyrpc mcp --manual
-    ```
+### Claude Desktop
 
-    Writes or merges `mcp.json` in the current working directory with:
+`claude_desktop_config.json` only accepts local stdio servers. For remote
+servers, Claude Desktop uses connectors configured in the app:
+**Settings -> Connectors -> Add custom connector**, then paste
+`https://mcp.pyrpc.com/mcp`. The connection is brokered through Anthropic's
+cloud per their custom-connector model.
 
-    ```json
-    {
-      "pyrpc": {
-        "url": "https://pyrpc.com/mcp"
-      }
+### Manual configuration
+
+Enterprise teams that prefer not to run installer utilities can paste an
+entry directly.
+
+**Claude Code** (`.mcp.json`)
+
+```json
+{
+  "mcpServers": {
+    "pyrpc-docs": { "type": "http", "url": "https://mcp.pyrpc.com/mcp" }
+  }
+}
+```
+
+**Cursor** (`.cursor/mcp.json`)
+
+```json
+{
+  "mcpServers": {
+    "pyrpc-docs": { "url": "https://mcp.pyrpc.com/mcp" }
+  }
+}
+```
+
+**VS Code** (`.vscode/mcp.json`)
+
+```json
+{
+  "servers": {
+    "pyrpc-docs": { "type": "http", "url": "https://mcp.pyrpc.com/mcp" }
+  }
+}
+```
+
+**OpenCode** (`opencode.json`)
+
+```json
+{
+  "mcp": {
+    "pyrpc-docs": {
+      "type": "remote",
+      "url": "https://mcp.pyrpc.com/mcp"
     }
-    ```
+  }
+}
+```
 
-    For **Cursor**, you can add the same `pyrpc` entry to MCP config—commonly `~/.cursor/mcp.json` (user) or `.cursor/mcp.json` (project)—using the shape your Cursor version expects for HTTP servers (`url` for remote MCP).
+**Windsurf** (`~/.codeium/windsurf/mcp_config.json`)
 
-    Restart or reload MCP in your client after changes.
-  </Tab>
-</Tabs>
+```json
+{
+  "mcpServers": {
+    "pyrpc-docs": { "serverUrl": "https://mcp.pyrpc.com/mcp" }
+  }
+}
+```
+
+Reload your agent after any manual change.
+
+## Local Project MCP
+
+The local server runs inside your project's Python environment, imports your
+configured backend module, and answers from the live registry, giving agents
+ground truth about *your* application.
+
+```bash
+uv add "pyrpc-core[mcp]"
+```
+
+Then register it with your agent:
+
+**Claude Code**
+
+```bash
+claude mcp add pyrpc -- pyrpc mcp
+```
+
+**Cursor** (`.cursor/mcp.json`)
+
+```json
+{
+  "mcpServers": {
+    "pyrpc": {
+      "command": "pyrpc",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+**VS Code** (`.vscode/mcp.json`)
+
+```json
+{
+  "servers": {
+    "pyrpc": {
+      "command": "pyrpc",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### Tools
+
+| Tool | Read-only | What it gives the agent |
+|---|---|---|
+| `introspect_project` | yes | Backend framework, entrypoint, every registered procedure with kind, parameters, types, requiredness, defaults, docstrings, and input/output JSON Schemas |
+| `check_call` | yes | Whether hypothetical arguments would be accepted by a procedure, validated against real Python types with per-parameter errors. Nothing is executed |
+| `run_codegen` | when `dry_run=true` (default) | Regenerates each configured client's `__pyrpc.ts`; dry run reports up to date / would update / would create |
+
+### Security model
+
+- **No procedure execution.** There is no tool that invokes your backend
+  code, so agents cannot cause database writes, network calls, or other side
+  effects through pyRPC's MCP.
+- **Local-only.** The process is spawned by your own client in your project
+  environment. No telemetry, no network egress.
+- **Narrow writes.** `run_codegen` writes generated files only;
+  tsconfig/bundler setup stays with `pyrpc init` / `pyrpc codegen`.
+- **Structured errors.** Missing or ambiguous configuration produces
+  actionable errors (including what was detected) rather than guesses.
+
+### How it works
+
+```
+Claude / Cursor / VS Code / OpenCode
+        | launches subprocess
+        v
+    pyrpc mcp
+        | imports your backend module
+        v
+your routers, registry, schemas
+```
+
+The server must run in the same Python environment as your project because it
+imports your code. That is automatic when clients spawn `pyrpc mcp` from the
+project root.
+
+## Example interaction
+
+With both servers connected, an agent grounds its work in reality:
+
+> **Agent:** calls `introspect_project` on the local server.
+>
+> ```json
+> {
+>   "framework": "fastapi",
+>   "procedures": [
+>     { "name": "get_post", "kind": "query",
+>       "parameters": [{ "name": "id", "required": true }] }
+>   ]
+> }
+> ```
+>
+> **Agent:** unsure how mutation invalidation works, searches the remote
+> docs server for `mutation invalidation react`, reads the adapter guide via
+> `get_doc`, and follows the documented pattern.
+>
+> **Agent:** verifies the payload with
+> `check_call("get_post", { "id": "abc" })` before writing client code:
+>
+> ```json
+> { "valid": false, "errors": [{ "param": "id",
+>     "message": "Input should be a valid integer" }] }
+> ```
+>
+> **Agent:** fixes the payload, confirms types are current with
+> `run_codegen(dry_run=true)`, regenerates with `dry_run=false`.
+
+## Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| `No pyrpc.json found` | Run the client from your project root (or configure `cwd`) so config discovery finds `pyrpc.json`. |
+| `has no valid 'backend' section` | Set `backend.framework` and `backend.entrypoint`; run `pyrpc init` to generate them interactively. The error lists what was detected. |
+| Django: `must set backend.types_module` | Add `"types_module": "myproject.views"` (the module whose import registers your procedures). |
+| `Failed to import backend module ...` | A dependency of that module is missing from the environment running the MCP server. Verify `pyrpc dev` works in the same checkout. |
+| Client shows no tools | Confirm `uv add "pyrpc-core[mcp]"` succeeded; plain installs print a remediation hint on stderr when `pyrpc mcp` starts without it. |

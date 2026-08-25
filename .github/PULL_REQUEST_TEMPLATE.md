@@ -17,6 +17,7 @@
 - [ ] `@pyrpc/next`
 - [ ] `@pyrpc/vue`
 - [ ] `@pyrpc/svelte`
+- [ ] `@pyrpc/mcp`
 - [ ] docs / examples
 - [ ] release / tooling
 

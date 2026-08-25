@@ -8,34 +8,74 @@ export default function McpWithoutALauncher() {
                     &larr; Back to Blog
                 </Link>
                 <h1 className="text-2xl font-bold tracking-tight mt-6 mb-3">
-                    Why pyrpc mcp is a subcommand, not a package
+                    MCP Without a Launcher: The npx pyrpc mcp Pattern
                 </h1>
                 <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-fd-muted-foreground">
-                    <time>August 25, 2026 at 9:00am</time>
+                    <time>August 25, 2026</time>
                     <span>&middot;</span>
-                    <span>5 min read</span>
+                    <span>7 min read</span>
                 </div>
             </div>
 
             <section className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-5 text-fd-muted-foreground [&_strong]:text-fd-foreground">
                 <p>
-                    When we decided pyRPC should speak MCP, the first question was not which tools to expose. It was what shape the artifact should take. A separate launcher package? A standalone server binary? We shipped none of those, and the research says that is the mature choice.
+                    Every AI coding agent has its own config format. Cursor uses .cursor/mcp.json, Claude Desktop uses .mcp.json, Windsurf has its own, and opencode.json looks nothing like either. If you want your MCP server to work across agents, you face a choice: ship a launcher that writes all these files, or find a better way.
                 </p>
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The graveyard of launcher packages</h2>
+
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The config format problem</h2>
                 <p>
-                    Neon published @neondatabase/mcp-server-neon as a local stdio proxy for two years and forty versions. It is now formally deprecated in favor of their hosted endpoint, with the SSE transport scheduled to start answering 410 Gone. The lesson is not that local servers are wrong. It is that a second artifact with its own version line, supply chain, and discovery story is a liability you eventually pay down.
+                    The MCP ecosystem has at least 19 recognized agent config formats. They differ in location, syntax, nesting depth, and how they reference server commands. A launcher that writes them all must track each format, handle version drift, and cope with agents that reorganize their configs between releases. That is a maintenance surface disguised as a convenience.
                 </p>
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What Prisma does instead</h2>
+
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What npx pyrpc mcp actually wraps</h2>
                 <p>
-                    Prisma's local MCP has no package of its own at all. The repository named prisma/mcp contains only registry metadata and a stale desktop-extension launcher; the real implementation lives inside the main prisma CLI as the <code>mcp</code> subcommand. You install the tool you already use and gain the capability for free. Better Auth's CLI similarly carries an mcp command whose entire job is registering their hosted endpoint into whatever client you run.
+                    The distribution CLI calls add-mcp@2.3.0, an Apache-2.0 ESM package whose sole job is understanding all 19 agent config formats. It detects which agents are installed, presents a multiselect, and calls upsertServer() per agent to update config files atomically. pyRPC does not shell out to the add-mcp CLI, maintain its own agent database, or handle any protocol details.
                 </p>
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The pyRPC decision</h2>
+
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`npx pyrpc mcp
+  -> detects installed agents (Cursor, Claude, Windsurf, ...)
+  -> multiselect prompt
+  -> upsertServer() per selected agent
+  -> config files updated in place`}</code></pre>
+
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What the wrapper adds</h2>
                 <p>
-                    <code>pyrpc mcp</code> is a subcommand of the CLI users already have, for three reasons that compound. First, distribution: uv add pyrpc-core is the only step, and the client config references a command that provably exists. Second, lifecycle: the server updates with the framework it introspects, so there is exactly one version train to reason about. Third, trust: the process is launched by the user's own client from their own environment, which is precisely the privilege model introspection requires.
+                    The 50-line cli.ts that wraps add-mcp adds only things that matter for user experience: a branded banner so you know which tool ran, scope selection so you choose which agents to configure, per-agent result reporting so you see exactly what changed, and failure remediation hints when a config path is unexpected or a file is unwritable. None of that is protocol code.
                 </p>
-                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The cost we accepted</h2>
+
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">What it does not do</h2>
                 <p>
-                    A subcommand must live where the CLI lives, so the MCP SDK becomes part of our dependency tree rather than a separate project's. That tradeoff is real, and we handled it by making the dependency optional at the package level while keeping the command first-class at the CLI level. The next post covers why the split between local and remote surfaces made this asymmetry acceptable.
+                    The wrapper does not parse JSON-RPC, manage stdio transports, serialize tool schemas, or track agent protocol versions. It delegates all of that to add-mcp for agent configs and to the MCP SDK for the server itself. The separation is deliberate: the wrapper is a thin UX layer, not a second implementation.
+                </p>
+
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">The code walkthrough</h2>
+                <p>
+                    The entire flow fits in 50 lines. The CLI entry point imports add-mcp programmatically, calls detectAgents() to find installed clients, prompts for selection, calls upsertServer() for each, and reports results. Error handling wraps each upsert in a try-catch that prints the failing agent name and a remediation hint. There are no abstractions, no interfaces, no plugin system. It is a script.
+                </p>
+
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`import { detectAgents, upsertServer } from "add-mcp";
+
+const agents = await detectAgents();
+const selected = await promptMultiselect(agents);
+
+for (const agent of selected) {
+  try {
+    await upsertServer(agent, {
+      name: "pyrpc",
+      command: "npx pyrpc mcp",
+    });
+    report(agent, "updated");
+  } catch (e) {
+    report(agent, "failed", remediationHint(e));
+  }
+}`}</code></pre>
+
+                <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Why this beats a custom launcher</h2>
+                <p>
+                    A custom launcher means zero protocol code, zero client-specific code, and upstream handles all agent complexity. When add-mcp adds support for a new agent, pyRPC gets it for free. When an agent changes its config format, add-mcp fixes it, and the wrapper keeps working without a release. The alternative, maintaining a 19-format config writer inside pyRPC, would mean versioned releases for config changes that have nothing to do with RPC or MCP protocol.
+                </p>
+                <p>
+                    The pattern generalizes: if your tool needs to register into agent configs, depend on the package that knows the formats, and wrap it with UX. Do not rewrite it.
                 </p>
             </section>
         </article>
