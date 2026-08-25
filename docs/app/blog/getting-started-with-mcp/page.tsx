@@ -34,7 +34,7 @@ export default function GettingStartedWithMcp() {
                     The remote MCP server provides pyRPC documentation to your agent. No project setup required.
                 </p>
 
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`npx pyrpc mcp`}</code></pre>
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`npx @pyrpc/mcp mcp`}</code></pre>
                 <p>
                     The CLI detects which AI coding agents are installed on your system and lets you select which ones to configure. It writes the MCP server URL (<code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">https://mcp.pyrpc.com/mcp</code>) into each agent&apos;s config file.
                 </p>
@@ -89,7 +89,7 @@ uv add "pyrpc-core[mcp]"`}</code></pre>
                 <h2 className="text-lg font-bold tracking-tight text-fd-foreground mt-10">Troubleshooting</h2>
 
                 <p>
-                    <strong>npx pyrpc mcp hangs or times out</strong>
+                    <strong>npx @pyrpc/mcp mcp hangs or times out</strong>
                 </p>
                 <p>
                     The MCP server communicates over stdio. Make sure your agent is configured to use stdio transport, not HTTP. Check that Node.js 18+ is installed by running <code className="text-fd-muted-foreground bg-fd-muted/50 px-1.5 py-0.5 rounded text-xs">node --version</code>.

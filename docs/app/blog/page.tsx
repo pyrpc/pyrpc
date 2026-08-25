@@ -1281,7 +1281,7 @@ const posts: Post[] = [
   },
   {
    slug: 'mcp-without-a-launcher',
-   title: 'MCP Without a Launcher: The npx pyrpc mcp Pattern',
+   title: 'MCP Without a Launcher: The npx @pyrpc/mcp mcp Pattern',
    description: 'How a 50-line branded wrapper over add-mcp configures 19 AI coding agents without maintaining a single line of protocol or client-specific code.',
    date: 'August 25, 2026 at 10:30am',
    readTime: '7 min',

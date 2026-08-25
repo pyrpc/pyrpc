@@ -15,7 +15,7 @@ be used together.
 | Needs Python | Yes | No |
 | Needs a pyRPC project | Yes | No |
 | Transport | stdio (subprocess) | Streamable HTTP |
-| Install | `uv add "pyrpc-core[mcp]"` then `pyrpc mcp` | `npx pyrpc mcp` |
+| Install | `uv add "pyrpc-core[mcp]"` then `pyrpc mcp` | `npx @pyrpc/mcp mcp` |
 | Server | launched by your client from your project | `https://mcp.pyrpc.com/mcp` |
 
 An agent can have both configured at once. The local one understands "my
@@ -28,7 +28,7 @@ the entire pyRPC documentation. No Python installation and no pyRPC project
 are required.
 
 ```bash
-npx pyrpc mcp
+npx @pyrpc/mcp mcp
 ```
 
 This command configures your AI coding client to use:
@@ -46,9 +46,9 @@ Gemini CLI. add-mcp is the configuration utility; it is not the MCP server.
 Useful flags:
 
 ```bash
-npx pyrpc mcp --global            # user-level instead of project-level
-npx pyrpc mcp --agent cursor      # configure a specific agent
-npx pyrpc mcp --list              # supported agents
+npx @pyrpc/mcp mcp --global            # user-level instead of project-level
+npx @pyrpc/mcp mcp --agent cursor      # configure a specific agent
+npx @pyrpc/mcp mcp --list              # supported agents
 ```
 
 Prefer the upstream tool directly? It is the same result:

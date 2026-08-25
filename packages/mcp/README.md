@@ -3,7 +3,7 @@
 Connect your AI coding agent to the **pyRPC documentation MCP**:
 
 ```bash
-npx pyrpc mcp
+npx @pyrpc/mcp mcp
 ```
 
 This configures your agent to use the hosted, read-only pyRPC docs server at
@@ -15,10 +15,10 @@ supported agents.
 ## Commands
 
 ```bash
-npx pyrpc mcp                 # interactive agent selection
-npx pyrpc mcp --agent cursor  # configure one agent directly
-npx pyrpc mcp --agent claude-code --global
-npx pyrpc mcp --list          # supported agents
+npx @pyrpc/mcp mcp                 # interactive agent selection
+npx @pyrpc/mcp mcp --agent cursor  # configure one agent directly
+npx @pyrpc/mcp mcp --agent claude-code --global
+npx @pyrpc/mcp mcp --list          # supported agents
 ```
 
 Looking for the **local project MCP** instead (introspection, call validation,

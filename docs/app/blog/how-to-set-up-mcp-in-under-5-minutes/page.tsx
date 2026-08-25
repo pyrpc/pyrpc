@@ -25,7 +25,7 @@ export default function HowToSetUpMcpInUnder5Minutes() {
                 <p>
                     If you just need framework documentation, run the remote setup:
                 </p>
-                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`npx pyrpc mcp`}</code></pre>
+                <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`npx @pyrpc/mcp mcp`}</code></pre>
                 <p>
                     Select your agent from the list. The command writes the config, registers the remote documentation server, and exits. No install, no dependencies, no config files to hand-edit. The server hosts current framework docs and serves them through MCP tool calls your agent already understands.
                 </p>
@@ -59,7 +59,7 @@ pyrpc mcp
                 <pre className="bg-fd-muted/30 p-4 rounded-lg text-xs overflow-x-auto"><code>{`
 Remote (30s)                   Local (5min)
 -----------                    ------------
-npx pyrpc mcp                  uv add "pyrpc-core[mcp]"
+npx @pyrpc/mcp mcp                  uv add "pyrpc-core[mcp]"
   |                              |
   v                              v
 select agent                   pyrpc mcp
