@@ -12,6 +12,12 @@ import type { ReactNode } from 'react';
 const PYTHON_ICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg';
 const TS_ICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg';
 
+const Command = ({ children }: { children: React.ReactNode }) => (
+  <code className="inline-block rounded border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] font-medium text-neutral-800 dark:border-white/10 dark:bg-white/[0.06] dark:text-white/90">
+    {children}
+  </code>
+);
+
 export default function QuickstartSection({
   snippet1,
   snippet2,
@@ -27,11 +33,6 @@ export default function QuickstartSection({
   text2: string;
   text3: string;
 }) {
-  const Command = ({ children }: { children: React.ReactNode }) => (
-    <code className="inline-block rounded border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] font-medium text-neutral-800 dark:border-white/10 dark:bg-white/[0.06] dark:text-white/90">
-      {children}
-    </code>
-  );
   const [active, setActive] = useState(0);
   const [copied, setCopied] = useState(false);
 
