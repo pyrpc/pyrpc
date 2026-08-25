@@ -233,7 +233,7 @@ const AGENT_TABS = [
   { label: 'CLI', command: 'uv add pyrpc-core' },
   { label: 'Prompt', command: undefined, content: AGENT_PROMPT },
   { label: 'MCP', command: MCP_COMMAND },
-  { label: 'Skills', command: 'npx skills add pyrpc' },
+  // { label: 'Skills', command: 'npx skills add pyrpc' },
 ];
 
 export default function HeroSection() {
@@ -257,7 +257,7 @@ export default function HeroSection() {
           drift. No hand-written clients.
         </p>
 
-        {/* CLI / Prompt / MCP / Skills, agent tab card */}
+        {/* CLI / Prompt / MCP, agent tab card */}
         <div className="mt-8 w-full max-w-lg rounded-md border border-foreground/[0.1] relative overflow-hidden text-left">
           <div className="flex items-center border-b border-foreground/[0.1]">
             {AGENT_TABS.map((t, i) => (
