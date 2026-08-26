@@ -59,20 +59,20 @@ uv add pyrpc-core[mcp]       # MCP (AI agent integration)
 ### 1. Define your procedures
 
 ```python
-from pyrpc_core import rpc
-from pyrpc_fastapi import mount_fastapi
-from fastapi import FastAPI
+from pyrpc_core import rpc, model
 
-# Your FastAPI app: you own it fully.
-# mount_fastapi() adds POST /rpc and GET /rpc to it.
-# No wrapping, no separate server, just two new routes.
-app = FastAPI()
+@model
+class User:
+    name: str
+    age: int
 
 @rpc.query
 def add(a: int, b: int) -> int:
     return a + b
 
-mount_fastapi(app)
+@rpc.query
+def greet(user: User) -> str:
+    return f"Hello, {user.name}!"
 ```
 
 ### 2. Start the dev server
@@ -91,22 +91,20 @@ Non-interactive (CI): `pyrpc dev --yes --framework fastapi --module main --clien
 import type { Types } from "@pyrpc/types"
 import { createClient, httpLink } from "@pyrpc/client"
 
-// @pyrpc/types resolves to <client>/__pyrpc.ts via tsconfig paths
-// (wired automatically by pyrpc dev using jsonc-edit)
-const client = createClient<Types>({
+const api = createClient<Types>({
   links: [httpLink({ url: "http://localhost:8000" })],
 })
-const result = await client.add(10, 5)
+const result = await api.add(10, 5)
 console.log(result)  // 15
 ```
 
 Framework adapters (TanStack Query): `@pyrpc/react`, `@pyrpc/next`, `@pyrpc/vue`, `@pyrpc/svelte`.
 
 ```bash
-npm install @pyrpc/client @pyrpc/next    # Next.js
-npm install @pyrpc/client @pyrpc/react   # React (Vite)
-npm install @pyrpc/client @pyrpc/vue     # Vue
-npm install @pyrpc/client @pyrpc/svelte  # Svelte
+npm install @pyrpc/next @tanstack/react-query    # Next.js
+npm install @pyrpc/react @tanstack/react-query   # React (Vite)
+npm install @pyrpc/vue @tanstack/react-query     # Vue
+npm install @pyrpc/svelte @tanstack/react-query  # Svelte
 ```
 
 See [docs](https://pyrpc.com/docs/client/adapters/react) and `examples/fastapi-nextjs`.
