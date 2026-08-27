@@ -24,7 +24,7 @@ def add(a: int, b: int) -> int:
 mount_fastapi(app)
 ```
 
-Creates `POST /rpc` for JSON-RPC 2.0 calls and `GET /rpc` for schema introspection.
+Creates `POST /rpc` for JSON-RPC 2.0 calls (single and batch) and `GET /rpc` for schema introspection.
 
 ## License
 

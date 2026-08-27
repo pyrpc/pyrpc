@@ -13,6 +13,20 @@ export interface Release {
 
 export const releases: Release[] = [
     {
+        version: 'v0.14.1',
+        date: '2026-08-27',
+        tag: 'v0.14.1',
+        description: 'Patch release: the FastAPI adapter now accepts batch requests. The type annotation on the /rpc endpoint was narrowed to dict, which caused FastAPI to reject JSON arrays before handle_request could process them.',
+        sections: [
+            {
+                title: 'Bug Fixes',
+                items: [
+                    'FastAPI adapter: widened payload type annotation from `dict[str, Any]` to `dict[str, Any] | list[dict[str, Any]]` so batch requests (JSON arrays) pass through to `handle_request` instead of being rejected by FastAPI validation.',
+                ],
+            },
+        ],
+    },
+    {
         version: 'v0.14.0',
         date: '2026-08-24',
         tag: 'v0.14.0',
