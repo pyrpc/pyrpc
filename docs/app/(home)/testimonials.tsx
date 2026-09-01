@@ -24,6 +24,15 @@ type Testimonial = {
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
+      'if there an option for compatibility with oRPC RPC/OpenAPI client v2, you will get support from me.',
+    name: 'Định Lê',
+    role: 'Creator, oRPC',
+    profileUrl: 'https://x.com/dinwwwh',
+    postUrl: 'https://x.com/dinwwwh/status/2093495822986211419',
+    avatar: '/avatars/dinwwwh.jpg',
+  },
+  {
+    quote:
       "Dude, love this. As someone who uses FastAPI a lot, I'm gonna try this.",
     name: 'Sanku',
     role: '@sankalpa_02',
@@ -66,13 +75,6 @@ const TESTIMONIALS: Testimonial[] = [
     name: 'Cyber Guardians',
     role: 'Full-Stack Developer',
     avatar: '/avatars/cyber_guardians.jpg',
-  },
-  {
-    quote:
-      'pyRPC is basically tRPC for Python. Set it up in an afternoon and the schema drift meetings just disappeared.',
-    name: 'Nate',
-    role: 'AI/ML Engineer',
-    avatar: '/avatars/nate.jpg',
   },
   {
     quote: 'Good work 👏',
