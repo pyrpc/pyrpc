@@ -39,13 +39,13 @@
   "devDependencies": {
     "@pyrpc/client": "*",
     "@pyrpc/types": "*",
-    "@tanstack/vue-query": "^5.83.0",
+    "@tanstack/vue-query": "^5.102.8",
     "@vitejs/plugin-vue": "^6.0.0",
-    "@vue/test-utils": "^2.4.6",
+    "@vue/test-utils": "^2.5.0",
     "jsdom": "^26.1.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^3.0.0",
-    "vue": "^3.5.17"
+    "vue": "^3.5.42"
   }
 }
