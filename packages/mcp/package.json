@@ -39,7 +39,7 @@
     "commander": "^13.1.0"
   },
   "devDependencies": {
-    "typescript": "^5.8.0",
+    "typescript": "^7.0.2",
     "vitest": "^3.2.7"
   }
 }
