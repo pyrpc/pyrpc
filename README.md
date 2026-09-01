@@ -39,8 +39,6 @@
 
 ## Install
 
-> pyRPC is in active development. APIs may change as we approach a stable release. Read the [changelog](https://pyrpc.com/changelog) and [roadmap](./ROADMAP.md) for direction.
-
 ```bash
 uv add pyrpc-core
 ```
