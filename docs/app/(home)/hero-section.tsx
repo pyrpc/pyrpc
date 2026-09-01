@@ -20,13 +20,25 @@ const STR = 'text-emerald-700 dark:text-[#97c983]';
 const TYPE = 'italic text-neutral-500 dark:text-[#a3a3a3]';
 const DIM = 'text-neutral-400 dark:text-[#6b6b6b]';
 
-const AGENT_PROMPT = `Set up pyRPC in my project and connect my Python backend to my TypeScript frontend with end-to-end type safety.
+const AGENT_PROMPT = `Set up pyRPC in my project for end-to-end type safety between my Python backend and my TypeScript frontend (pyrpc-core on the server, @pyrpc/client on the client).
 
-Install pyrpc-core (use uv if the project already uses it, otherwise pip). If I have FastAPI or Django configured, mount the RPC router into my existing app instead of creating a new one. Create server.py with a few @model schemas and @rpc procedures. Run pyrpc dev to generate the typed client.
+1. Install pyrpc-core. Use uv if the project already uses it, otherwise pip. If FastAPI, Flask, or Django is already configured, mount the RPC router into my existing app instead of creating a new one.
 
-On the frontend, install @pyrpc/client, create api.ts with createClient<Types>() and httpBatchLink pointing at my server URL, then replace any hand-written fetch calls with typed api.<procedure> calls.`;
+2. Create main.py. Define request and response models with @model and expose them as procedures with @rpc.query and @rpc.mutation.
 
-const MCP_COMMAND = 'npx pyrpc mcp';
+3. Run pyrpc dev. It starts the dev server and regenerates the typed client on every save. First run walks through a short setup wizard; pass --yes to skip it.
+
+4. Install @pyrpc/client plus the adapter for my frontend framework:
+   - React: @pyrpc/react
+   - Next.js: @pyrpc/next
+   - Vue: @pyrpc/vue
+   - Svelte: @pyrpc/svelte
+
+5. Create lib/pyrpc.ts. Call createClient<Types>() with httpBatchLink({ url: "http://localhost:8000/rpc" }).
+
+6. Replace hand-written fetch calls with typed api.<procedure> calls.`;
+
+const MCP_COMMAND = 'npx @pyrpc/mcp mcp';
 
 function LineNumbers({ count }: { count: number }) {
   return (
@@ -233,7 +245,7 @@ const AGENT_TABS = [
   { label: 'CLI', command: 'uv add pyrpc-core' },
   { label: 'Prompt', command: undefined, content: AGENT_PROMPT },
   { label: 'MCP', command: MCP_COMMAND },
-  { label: 'Skills', command: 'npx skills add pyrpc' },
+  // { label: 'Skills', command: 'npx skills add pyrpc' },
 ];
 
 export default function HeroSection() {
@@ -257,7 +269,7 @@ export default function HeroSection() {
           drift. No hand-written clients.
         </p>
 
-        {/* CLI / Prompt / MCP / Skills, agent tab card */}
+        {/* CLI / Prompt / MCP, agent tab card */}
         <div className="mt-8 w-full max-w-lg rounded-md border border-foreground/[0.1] relative overflow-hidden text-left">
           <div className="flex items-center border-b border-foreground/[0.1]">
             {AGENT_TABS.map((t, i) => (
@@ -341,8 +353,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Right, tabbed code window: server.py / client.ts — theme aware,
-          same surface treatment as better-auth's hero code block */}
+      {/* Right, tabbed code window: server.py / client.ts — theme aware */}
       <div className="w-full min-w-0">
         <div className="w-full overflow-hidden border border-foreground/[0.08] bg-neutral-50 dark:bg-black">
           <div className="flex items-stretch border-b border-foreground/[0.08]">

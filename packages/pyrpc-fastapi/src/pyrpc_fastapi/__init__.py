@@ -16,7 +16,7 @@ def mount_fastapi(app: Any, router: Router | None = None) -> None:
     resolved = router or default_router
 
     @app.post("/rpc")
-    async def rpc_endpoint(payload: dict[str, Any]):
+    async def rpc_endpoint(payload: dict[str, Any] | list[dict[str, Any]]):
         return await handle_request(payload, router=resolved)
 
     @app.get("/rpc")

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pyrpc-workspace"
-version = "0.12.1"
+version = "0.14.0"
 description = "pyRPC Monorepo Workspace"
 requires-python = ">=3.11"
 dependencies = []
@@ -72,7 +72,7 @@ files = [
 exclude = ["tests"]
 
 [[tool.mypy.overrides]]
-module = ["jsonc_edit.*", "jsonschema_ts.*", "django.*"]
+module = ["jsonc_edit.*", "jsonschema_ts.*", "django.*", "pyrpc_codegen.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
@@ -98,6 +98,7 @@ dev = [
     "fastapi>=0.128.7",
     "flask>=3.1.2",
     "jinja2>=3.1.6",
+    "mcp>=2.1,<3",
     "mypy>=2.3.1",
     "pydantic-core==2.41.5",
     "pyrpc-codegen",

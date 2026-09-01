@@ -1,6 +1,6 @@
 [project]
 name = "pyrpc-core"
-version = "0.13.0"
+version = "0.14.0"
 description = "pyRPC Core - tRPC-style RPC protocol and runtime for Python"
 requires-python = ">=3.11"
 dependencies = [
@@ -17,6 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+mcp = ["mcp>=2.1,<3"]
 fastapi = ["fastapi>=0.100.0", "pyrpc-fastapi"]
 flask = ["flask>=3.0.0", "pyrpc-flask"]
 django = ["django>=4.2.0", "pyrpc-django-adapter"]

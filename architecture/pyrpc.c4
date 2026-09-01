@@ -41,12 +41,18 @@ model {
   ts_dev = actor 'TypeScript Developer' {
     description 'Consumes the typed RPC client in frontend applications. Imports createClient<Types>() from @pyrpc/client.'
   }
+  ai_dev = actor 'AI Coding Agent' {
+    description 'AI-powered coding assistant (Cursor, Windsurf, Claude Code, Copilot, Codex, etc.) that reads project context and generates code. Connects to MCP servers for tool-based access to documentation and project introspection.'
+  }
 
   // ═══════════════════════════════════════════
   // EXTERNAL SYSTEMS
   // ═══════════════════════════════════════════
   jsonrpc_protocol = system 'JSON-RPC 2.0' {
     description 'Wire protocol standard defining the request/response envelope structure. pyrpc uses id, method, params, result, error fields.'
+  }
+  mcp_protocol = system 'Model Context Protocol' {
+    description 'Anthropic-designed protocol for exposing tools, resources, and prompts to AI agents over JSON-RPC. Supports local (stdio) and remote (Streamable HTTP) transports.'
   }
 
   // ═══════════════════════════════════════════
@@ -110,6 +116,24 @@ model {
       core_pyclient = component 'Python RPCClient' {
         description 'Dynamic Python client using httpx. Wraps sync/async HTTP calls. Auto-fetches schema via GET /rpc for method introspection. Supports named and positional arguments. Context manager compatible.'
         technology 'client/python_client.py'
+      }
+
+      // ── MCP LOCAL SERVER ──
+      core_mcp_server = component 'MCP Server' {
+        description 'Project-local MCP server using the Python mcp>=2.1 library. Provides AI coding agents with runtime access to project introspection, code generation, and call policy. Registered via uv add "pyrpc-core[mcp]" optional extra. Exposed as "pyrpc mcp" CLI subcommand over stdio transport.'
+        technology 'mcp_server.py / mcp>=2.1'
+      }
+      core_mcp_introspect = component 'introspect_project()' {
+        description 'MCP tool: reads pyrpc.json, discovers entry point, imports the router, and returns procedures, router metadata, and client wiring state. Returns structured JSON for AI consumption.'
+        technology 'mcp_server.py'
+      }
+      core_mcp_codegen = component 'run_codegen()' {
+        description 'MCP tool: executes pyrpc codegen on-the-fly given client_root and optional output_path. Returns success with generated path or error details. Used by AI agents to regenerate TypeScript types after editing Python code.'
+        technology 'mcp_server.py'
+      }
+      core_mcp_callcheck = component 'check_call()' {
+        description 'MCP tool: runs a procedure call locally via handle_request without network, returning result or validation error. Used by AI agents to verify proposed RPC calls before writing them to code.'
+        technology 'mcp_server.py'
       }
     }
 
@@ -255,6 +279,24 @@ model {
         description 'Proxy over createClient exposing createQuery/createMutation stores; kinds load from @pyrpc/types. Accepts and re-exports the terminating links.'
         technology 'src/createSvelteClient.ts'
       }
+    }
+
+    // ── MCP DOCUMENTATION SERVER ──
+    pyrpc_mcp_docs = container '@pyrpc/mcp' {
+      description 'npm-distributed MCP server for pyRPC documentation. Hosted at mcp.pyrpc.com/mcp as Streamable HTTP. Two read-only tools: search_docs (Orama full-text index of all docs, guides, changelogs) and get_doc (fumadocs MDX source). Uses @modelcontextprotocol/sdk stateless transport. Configurable into 19+ AI coding agents via add-mcp.'
+      technology 'TypeScript / Next.js / @modelcontextprotocol/sdk'
+    }
+    mcp_docs_search = component 'search_docs' {
+      description 'MCP tool: full-text search across the entire pyRPC documentation corpus via Orama. Returns top-K results with title, slug, and relevance score. Read-only, stateless, no auth required.'
+      technology 'docs/app/api/search/route.ts'
+    }
+    mcp_docs_get = component 'get_doc' {
+      description 'MCP tool: fetch a single doc page by slug. Calls fumadocs source.getLLMText() to return the raw MDX content optimised for LLM consumption. Read-only, stateless, no auth required.'
+      technology 'docs/lib/source.ts'
+    }
+    mcp_docs_dist = component 'npx @pyrpc/mcp' {
+      description 'Distribution CLI for configuring the documentation MCP server into local AI agent configs. Wraps add-mcp to create the HTTP endpoint entry in each agent config (Claude Code, Cursor, Windsurf, Copilot, Codex, Zed, etc.). Supports --agent, --global, --list flags.'
+      technology 'packages/mcp/src/cli.ts'
     }
   }
 
@@ -432,6 +474,50 @@ model {
   types_index -> client_proxy 'Types generic parameter provides full type safety and autocompletion' {
     description 'The generated Types interface is passed as a generic to createClient<Types>(), enabling type-safe RPC calls with IDE autocompletion.'
   }
+
+  // ── MCP: Local Project Server ──
+  core_mcp_server -> core_router 'reads Router procedures for runtime introspection' {
+    description 'The MCP server imports the project router and reads registered procedures to provide live project context to AI agents.'
+  }
+  core_mcp_server -> core_introspection 'delegates to get_registry_schema() for procedure metadata' {
+    description 'introspect_project() returns structured procedure data: names, kinds, parameter types, return types, docstrings.'
+  }
+  core_mcp_server -> core_interpreter 'delegates to handle_request() for check_call()' {
+    description 'check_call() executes a procedure locally without network, returning the result or validation error for pre-flight verification.'
+  }
+  core_mcp_server -> core_cli 'delegates to pyrpc codegen for run_codegen()' {
+    description 'run_codegen() triggers TypeScript type regeneration from the current router state.'
+  }
+  core_mcp_server -> mcp_protocol 'speaks MCP over stdio transport' {
+    description 'Local project MCP server uses the Python mcp library with stdio transport for process-level integration with AI agents.'
+  }
+
+  // ── MCP: Remote Documentation Server ──
+  pyrpc_mcp_docs -> mcp_protocol 'speaks MCP over Streamable HTTP' {
+    description 'Remote documentation MCP server hosted at mcp.pyrpc.com/mcp using stateless Streamable HTTP transport.'
+  }
+  mcp_docs_search -> pyrpc_mcp_docs 'implements search_docs tool' {
+    description 'Full-text search across docs, guides, and changelogs via Orama index.'
+  }
+  mcp_docs_get -> pyrpc_mcp_docs 'implements get_doc tool' {
+    description 'Fetches raw MDX content for a single doc page via fumadocs getLLMText().'
+  }
+
+  // ── MCP: Distribution CLI ──
+  ai_dev -> mcp_docs_dist 'npx @pyrpc/mcp configures docs MCP in agent config' {
+    description 'One command registers mcp.pyrpc.com/mcp in the AI agent config (Claude Code, Cursor, Windsurf, Copilot, Codex, Zed, etc.).'
+  }
+  mcp_docs_dist -> pyrpc_mcp_docs 'creates HTTP endpoint entry via add-mcp' {
+    description 'The distribution CLI wraps add-mcp to upsert the documentation MCP server URL into each supported agent config.'
+  }
+
+  // ── AI Agent -> MCP Servers ──
+  ai_dev -> core_mcp_server 'connects over stdio for project-local introspection' {
+    description 'AI coding agents (Claude Code, Cursor, Windsurf) connect to the local MCP server for runtime project context: introspect_project, check_call, run_codegen.'
+  }
+  ai_dev -> pyrpc_mcp_docs 'connects over HTTP for documentation access' {
+    description 'AI coding agents access the remote documentation MCP server for full-text search and page retrieval across all pyRPC docs.'
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -452,7 +538,7 @@ views {
   view of pyrpc {
     title 'pyRPC - Container Diagram'
 
-    description 'Core (with the BackendSpec config model and native launch resolver), server adapters, codegen, @pyrpc/client/types with terminating links, framework adapters (react/next/vue/svelte), plus external actors and config files.'
+    description 'Core (with BackendSpec config, native launch resolver, and local MCP server), server adapters, codegen, @pyrpc/client/types with terminating links, framework adapters (react/next/vue/svelte), remote documentation MCP server, and external actors.'
 
     include *
   }
@@ -485,13 +571,16 @@ views {
   view of pyrpc_core {
     title 'pyrpc-core - Internal Components'
 
-    description 'Deep dive into the core package: the Router, Procedure compilation, request interpreter, introspection engine, ASGI transport, CLI, and Python client.'
+    description 'Deep dive into the core package: the Router, Procedure compilation, request interpreter, introspection engine, ASGI transport, CLI, Python client, and local MCP server.'
 
     include *
     style python_dev {
       color muted
     }
     style jsonrpc_protocol {
+      color muted
+    }
+    style mcp_protocol {
       color muted
     }
   }
@@ -543,6 +632,32 @@ views {
       color muted
     }
     style cfg_pyrpc_json {
+      color muted
+    }
+  }
+
+  // ── LEVEL 3e: MCP SURFACE ──
+  view mcp_surface {
+    title 'MCP Surface - Local + Remote AI Integration'
+
+    description 'How AI coding agents integrate with pyRPC: local project MCP server (stdio) for runtime introspection and code generation, plus remote documentation MCP server (HTTP) for search and doc retrieval. The distribution CLI wires both into 19+ agent configs.'
+
+    include ai_dev
+    include core_mcp_server
+    include core_mcp_introspect
+    include core_mcp_codegen
+    include core_mcp_callcheck
+    include core_router
+    include core_introspection
+    include core_interpreter
+    include core_cli
+    include pyrpc_mcp_docs
+    include mcp_docs_search
+    include mcp_docs_get
+    include mcp_docs_dist
+    include mcp_protocol
+
+    style mcp_protocol {
       color muted
     }
   }
@@ -762,6 +877,60 @@ views {
     }
     core_cli -> codegen_save 're-wire regen callback' {
       description 'Clients-only changes re-point codegen at new roots with no restart'
+    }
+  }
+
+  // ── DYNAMIC: MCP CALL FLOW ──
+  dynamic view mcp_call_flow {
+    title 'MCP Call Flow - AI Agent Tool Execution'
+
+    description 'How an AI coding agent uses the local MCP server: agent connects over stdio, calls introspect_project to read the current project state, check_call to validate an RPC invocation, and run_codegen to regenerate TypeScript types.'
+
+    include ai_dev
+    include core_mcp_server
+    include core_mcp_introspect
+    include core_mcp_codegen
+    include core_mcp_callcheck
+    include core_router
+    include core_introspection
+    include core_interpreter
+    include core_cli
+    include codegen_save
+    include types_index
+    include cfg_pyrpc_json
+
+    ai_dev -> core_mcp_server 'stdio connect' {
+      description 'Agent spawns pyrpc mcp subprocess, MCP handshake over stdio'
+    }
+    core_mcp_server -> core_router 'reads _procedures' {
+      description 'introspect_project() imports router and lists registered procedures'
+    }
+    core_router -> core_introspection 'get_registry_schema()' {
+      description 'Extracts full procedure metadata: names, kinds, params, return types'
+    }
+    core_mcp_server -> ai_dev 'returns procedures + router metadata' {
+      description 'Structured JSON with procedures, clients, pyrpc.json state'
+    }
+    ai_dev -> core_mcp_server 'check_call("createUser", args)' {
+      description 'Agent proposes an RPC call to verify before writing code'
+    }
+    core_mcp_server -> core_interpreter 'handle_request(payload, router)' {
+      description 'Executes the procedure locally without network'
+    }
+    core_interpreter -> core_mcp_server 'returns result or validation error' {
+      description 'Agent gets confirmation the call is valid'
+    }
+    ai_dev -> core_mcp_server 'run_codegen(client_root="./src")' {
+      description 'Agent triggers TypeScript regeneration after editing Python code'
+    }
+    core_mcp_server -> core_cli 'pyrpc codegen pipeline' {
+      description 'Introspection + codegen + save'
+    }
+    core_cli -> types_index 'writes <client>/__pyrpc.ts' {
+      description 'Types regenerated on disk'
+    }
+    core_mcp_server -> ai_dev 'returns success: generated path' {
+      description 'Agent confirms types are up to date'
     }
   }
 }

@@ -7,7 +7,7 @@ description: Get a working pyRPC server and client in under 2 minutes.
 ## 1. Install
 
 ```bash
-uv add pyrpc-core[fastapi]
+uv add pyrpc-core
 ```
 
 > `uvicorn` is included as a dependency of `pyrpc-core` - no need to install it separately. The `pyrpc dev` command uses it under the hood.
@@ -17,11 +17,12 @@ uv add pyrpc-core[fastapi]
 Create `server.py`:
 
 ```python test
-from fastapi import FastAPI
-from pyrpc_core import rpc
-from pyrpc_fastapi import mount_fastapi
+from pyrpc_core import rpc, model
 
-app = FastAPI()
+@model
+class User:
+    name: str
+    age: int
 
 @rpc
 def add(a: int, b: int) -> int:
@@ -29,11 +30,9 @@ def add(a: int, b: int) -> int:
     return a + b
 
 @rpc
-def greet(name: str = "World") -> str:
-    """Greet someone."""
-    return f"Hello, {name}!"
-
-mount_fastapi(app)
+def greet(user: User) -> str:
+    """Greet a user."""
+    return f"Hello, {user.name}!"
 ```
 
 ## 3. Start the dev server
@@ -76,7 +75,7 @@ With `--yes`, pyRPC sniffs your code for `mount_fastapi` / `mount_flask` / `moun
 import { createClient, httpBatchLink } from "@pyrpc/client"
 import type { Types } from "@pyrpc/types"
 
-const client = createClient<Types>({
+const api = createClient<Types>({
   links: [
     httpBatchLink({
       url: "http://localhost:8000",
@@ -84,9 +83,8 @@ const client = createClient<Types>({
   ],
 })
 
-// Fully typed result and parameters!
-const result = await client.add(10, 5)
-const message = await client.greet("pyRPC")
+const result = await api.add(10, 5)
+const message = await api.greet({ name: "pyRPC", age: 1 })
 
 console.log(result, message)
 ```

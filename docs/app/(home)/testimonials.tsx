@@ -24,6 +24,15 @@ type Testimonial = {
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
+      'if there an option for compatibility with oRPC RPC/OpenAPI client v2, you will get support from me.',
+    name: 'Định Lê',
+    role: 'Creator, oRPC',
+    profileUrl: 'https://x.com/dinwwwh',
+    postUrl: 'https://x.com/dinwwwh/status/2093495822986211419',
+    avatar: '/avatars/dinwwwh.jpg',
+  },
+  {
+    quote:
       "Dude, love this. As someone who uses FastAPI a lot, I'm gonna try this.",
     name: 'Sanku',
     role: '@sankalpa_02',
@@ -68,13 +77,6 @@ const TESTIMONIALS: Testimonial[] = [
     avatar: '/avatars/cyber_guardians.jpg',
   },
   {
-    quote:
-      'pyRPC is basically tRPC for Python. Set it up in an afternoon and the schema drift meetings just disappeared.',
-    name: 'Nate',
-    role: 'AI/ML Engineer',
-    avatar: '/avatars/nate.jpg',
-  },
-  {
     quote: 'Good work 👏',
     name: 'ኢዮብ z ሽቱ',
     role: '@kilopal_',
@@ -110,7 +112,7 @@ function initials(name: string) {
 
 export default function TestimonialsSection() {
   return (
-    <div className="mt-16 w-full border-t border-neutral-200 pt-8 dark:border-white/[0.1] md:mt-20 md:pt-10">
+    <div className="mt-10 w-full border-t border-neutral-200 pt-8 dark:border-white/[0.1] md:mt-12 md:pt-10">
       <div className="mx-auto max-w-[1200px] px-6 md:px-10">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}

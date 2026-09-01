@@ -1095,5 +1095,31 @@ def dev(
         raise typer.Exit(code=1)
 
 
+@app.command("mcp")
+def mcp():
+    """Run the local pyRPC MCP server over stdio (for AI coding clients).
+
+    Launched by MCP clients (Claude, Cursor, VS Code, OpenCode, ...), not
+    meant for interactive use. Requires the optional MCP dependency:
+
+        uv add "pyrpc-core[mcp]"
+    """
+    try:
+        from mcp.server import MCPServer  # noqa: F401
+    except ImportError:
+        typer.echo(
+            "pyRPC MCP requires the optional 'mcp' dependency.\n"
+            "Install it with one of:\n"
+            '    uv add "pyrpc-core[mcp]"\n'
+            '    pip install "pyrpc-core[mcp]"',
+            err=True,
+        )
+        raise typer.Exit(code=2) from None
+
+    from pyrpc_core.mcp_server import run_mcp_server
+
+    run_mcp_server()
+
+
 if __name__ == "__main__":
     app()

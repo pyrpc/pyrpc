@@ -1,6 +1,7 @@
 "use client";
 
 import HeroSection from "./hero-section";
+import McpClientsBar from "./mcp-clients-bar";
 import FeatureSections, { FRAMEWORKS } from "./feature-sections";
 import CTASection from "./cta-section";
 import TestimonialsSection from "./testimonials";
@@ -75,6 +76,8 @@ export default function HomeClient({
           text2={text2}
           text3={text3}
         />
+
+        <McpClientsBar />
 
         <TestimonialsSection />
 

@@ -55,7 +55,7 @@ const FEATURES: {
       index: '04',
       title: 'Batteries included.',
       description: 'Validation, middleware, error handling, and links out of the box.',
-      href: '/docs/get-started/installation',
+      href: '/docs/server/overview',
     },
     {
       index: '05',
