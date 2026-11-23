@@ -40,7 +40,7 @@
     "@pyrpc/client": "*",
     "@pyrpc/types": "*",
     "@tanstack/svelte-query": "^5.83.0",
-    "svelte": "^5.35.0",
+    "svelte": "^5.56.10",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^3.0.0"
